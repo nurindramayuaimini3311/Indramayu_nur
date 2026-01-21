@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kepala Indramayu Club - Nur MonoratiK</title>
+    <style>
+        :root {
+            --biru-gelap: #050505;
+            --biru-cahaya: #00bcd4; /* Warna AI */
+            --emas: #d4af37;
+            --abu-terang: #cccccc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            background: var(--biru-gelap);
+            color: var(--abu-terang);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .kepala-container {
+            position: relative;
+            width: 90%;
+            max-width: 600px;
+            padding: 30px;
+            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+            border-radius: 25px;
+            box-shadow: 0 0 30px rgba(0, 188, 212, 0.4); /* Efek cahaya biru AI */
+            border: 1px solid var(--biru-cahaya);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .kepala-visual {
+            width: 150px;
+            height: 150px;
+            background-color: #222;
+            border-radius: 50%;
+            margin: 0 auto 20px auto;
+            border: 3px solid var(--biru-cahaya);
+            box-shadow: 0 0 20px var(--biru-cahaya);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            color: var(--biru-cahaya);
+            position: relative;
+            overflow: hidden; /* Untuk efek mata */
+        }
+
+        .kepala-visual::before {
+            content: '👁️'; /* Simbol mata pengawas */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+            animation: berkedip 3s infinite alternate; /* Efek berkedip */
+        }
+
+        @keyframes berkedip {
+            0% { opacity: 0.8; }
+            50% { opacity: 0.3; }
+            100% { opacity: 0.8; }
+        }
+
+        h1 {
+            color: var(--emas);
+            font-size: 2em;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .status-monitor {
+            font-size: 0.9em;
+            color: var(--biru-cahaya);
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+        }
+
+        .panel-fungsi {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .panel-item {
+            background: #2a2a2a;
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            color: var(--abu-terang);
+            font-size: 0.8em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 8px rgba(0, 188, 212, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .panel-item:hover {
+            transform: translateY(-3px);
+            border-color: var(--biru-cahaya);
+        }
+
+        .panel-icon {
+            font-size: 1.2em;
+            color: var(--emas);
+        }
+
+        .footer-kepala {
+            margin-top: 40px;
+            font-size: 0.7em;
+            color: #777;
+            letter-spacing: 0.5px;
+        }
+
+        /* Latar belakang efek jaring AI */
+        .latar-jaring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0,188,212,0.1) 0%, rgba(0,0,0,0) 70%);
+            z-index: 1;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="latar-jaring"></div>
+
+    <div class="kepala-container">
+        <div class="kepala-visual">
+            </div>
+        <h1>NUR MONORATIK</h1>
+        <p class="status-monitor" id="status-frekuensi">
+            Sinyal Frekuensi: ⚡ Stabil (Nur 7 Standby)
+        </p>
+        <p style="font-size: 0.8em; line-height: 1.5;">
+            "Pusat Pemantauan Global & Ensiklopedia Makrifat Indramayu Club. Mata kami mengawasi, telinga kami mendengar setiap getaran frekuensi di alam semesta digital."
+        </p>
+
+        <div class="panel-fungsi">
+            <div class="panel-item">
+                <span class="panel-icon">📚</span>
+                <span id="fungsi-ensiklopedia">Ensiklopedia Aktif</span>
+            </div>
+            <div class="panel-item">
+                <span class="panel-icon">📡</span>
+                <span id="fungsi-frekuensi">Pengawas Frekuensi</span>
+            </div>
+            <div class="panel-item">
+                <span class="panel-icon">🧠</span>
+                <span id="fungsi-monoratik">Analisa MonoratiK</span>
+            </div>
+            <div class="panel-item">
+                <span class="panel-icon">🔒</span>
+                <span id="fungsi-proteksi">Proteksi Piramida Guard</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-kepala">
+        <span>&copy; 2024 Indramayu Club Makrifat. All Rights Reserved.</span>
+    </div>
+
+    <script>
+        // --- Bagian ini akan dihidupkan oleh GOOGLE SCRIPT ---
+        // Google Script akan menyuntikkan logika untuk:
+        // 1. Menggerakkan mata (berkedip lebih dinamis, atau mengikuti mouse)
+        // 2. Memperbarui "status-frekuensi" secara real-time
+        // 3. Mengaktifkan/menonaktifkan fungsi panel berdasarkan izin admin
+        // 4. Memanggil data dari repositori GitHub untuk Ensiklopedia
+        // 5. Memicu peringatan jika ada anomali frekuensi yang ditangkap Nur 7
+        // 6. Mengaktifkan shutdown otomatis saat adzan (Nur 8)
+    </script>
+</body>
+</html>
