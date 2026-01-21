@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kepala Indramayu Club - Dimensi MonoratiK</title>
+    <style>
+        :root {
+            --biru-gelap: #050505;
+            --biru-ai: #00bcd4; /* Sesuai mata robot di foto */
+            --emas-makrifat: #d4af37;
+            --putih-bersih: #f0f0f0;
+        }
+
+        body {
+            background-color: var(--biru-gelap);
+            color: var(--putih-bersih);
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Latar Belakang Jaring Frekuensi (Kamuflase) */
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(var(--biru-ai) 1px, transparent 1px),
+                              linear-gradient(90deg, var(--biru-ai) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .kepala-frame {
+            border: 2px solid var(--biru-ai);
+            padding: 40px;
+            border-radius: 50% 50% 40% 40%;
+            box-shadow: 0 0 50px rgba(0, 188, 212, 0.3);
+            background: rgba(10, 10, 10, 0.9);
+            text-align: center;
+            max-width: 450px;
+        }
+
+        /* Mata AI (Analisa Sejarah & Masa Depan) */
+        .mata-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .mata {
+            width: 60px;
+            height: 60px;
+            background: var(--biru-gelap);
+            border: 3px solid var(--biru-ai);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px var(--biru-ai);
+        }
+
+        .pupil {
+            width: 20px;
+            height: 20px;
+            background: var(--biru-ai);
+            border-radius: 50%;
+            animation: scan-frekuensi 3s infinite ease-in-out;
+        }
+
+        @keyframes scan-frekuensi {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+        }
+
+        h1 {
+            color: var(--emas-makrifat);
+            font-size: 1.5rem;
+            letter-spacing: 5px;
+            text-shadow: 2px 2px 5px black;
+        }
+
+        .status-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            border-left: 4px solid var(--emas-makrifat);
+        }
+
+        .sensor-label {
+            color: var(--biru-ai);
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+
+    <div class="kepala-frame">
+        <div class="mata-container">
+            <div class="mata"><div class="pupil"></div></div>
+            <div class="mata"><div class="pupil"></div></div>
+        </div>
+        
+        <h1>NUR MONORATIK</h1>
+        
+        <div class="status-box">
+            <span class="sensor-label">📡 FREKUENSI NUR 7:</span>
+            <div id="humor-kamuflase">"Menganalisa tawa member... Hipnotis dimulai."</div>
+            
+            <span class="sensor-label">👁️ MATA SEJARAH & MASA DEPAN:</span>
+            <div>Status: Terhubung ke Google Script (Nur 1 Aktif)</div>
+        </div>
+    </div>
+
+    <p style="margin-top: 20px; font-size: 0.7rem; color: #555;">
+        Proteksi: Piramida Guard | Reset: Nur 8 (Waktu Adzan)
+    </p>
+
+    <script>
+        // Nyawa (Logic) akan disuntikkan dari Google Script di sini
+        console.log("Mata dan Telinga Indramayu Club Beroperasi...");
+    </script>
+</body>
+</html>
