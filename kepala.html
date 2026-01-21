@@ -187,5 +187,53 @@
         // 5. Memicu peringatan jika ada anomali frekuensi yang ditangkap Nur 7
         // 6. Mengaktifkan shutdown otomatis saat adzan (Nur 8)
     </script>
+
+    <div class="sensor-box">
+    <div class="sensor-line">
+        <span>Mata Sejarah:</span>
+        <div class="progress-bar"><div id="bar-sejarah" class="progress-fill gold" style="width: 100%;"></div></div>
+    </div>
+    <div class="sensor-line">
+        <span>Frekuensi Masa Depan:</span>
+        <div class="progress-bar"><div id="bar-masa-depan" class="progress-fill blue" style="width: 85%;"></div></div>
+    </div>
+    <div class="sensor-line">
+        <span>Kecerdasan Humor (Kamuflase):</span>
+        <div class="progress-bar"><div id="bar-humor" class="progress-fill green" style="width: 90%;"></div></div>
+    </div>
+</div>
+
+<style>
+    .sensor-box {
+        margin: 20px 0;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        border: 1px dashed var(--biru-cahaya);
+    }
+    .sensor-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 0.75em;
+        color: var(--abu-terang);
+    }
+    .progress-bar {
+        width: 60%;
+        height: 6px;
+        background: #333;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        transition: width 0.5s ease-in-out;
+    }
+    .gold { background: var(--emas); box-shadow: 0 0 5px var(--emas); }
+    .blue { background: var(--biru-cahaya); box-shadow: 0 0 5px var(--biru-cahaya); }
+    .green { background: #4caf50; box-shadow: 0 0 5px #4caf50; }
+</style>
+
 </body>
 </html>
