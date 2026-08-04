@@ -1,4 +1,21 @@
-<!DOCTYPE html>
+# scroll paling bawah, cari </body>, di atasnya paste:
+# <script src="alwi_bubble.js"></script>
+# Ctrl+O Enter, Ctrl+X keluar
+
+# ATAU pakai cara otomatis (tanpa nano):
+sed -i 's|</body>|<script src="alwi_bubble.js"></script>\n</body>|' index_portal.html
+
+# 3. Cek udah kepasang?
+grep "alwi_bubble" index_portal.html
+
+# 4. Commit & Push yang bener
+git add index_portal.html alwi_bubble.js
+git commit -m "CONNECT bubble to portal - alwi_bubble.js"
+git push origin main --force
+
+# 5. Tunggu 30 detik + cek live
+sleep 30
+curl -s https://nurindramayuaimini3311.github.io/hugoNUR8/index_portal.html | grep alwi_bubble<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
