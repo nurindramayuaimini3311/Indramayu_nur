@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Komentar Member - Indramayu Club</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;padding:18px;max-width:900px;margin:0 auto}
+    h1{font-size:20px}
+    label{display:block;margin-top:8px}
+    input,textarea,button,select{width:100%;padding:8px;margin-top:6px}
+    .row{display:flex;gap:8px}
+    .row > *{flex:1}
+    .member{border:1px solid #ddd;padding:8px;margin:8px 0;border-radius:6px}
+    .meta{font-size:12px;color:#555}
+  </style>
+</head>
+<body>
+  <h1>Komentar Member • Indramayu Club</h1>
+  <p>Form komentar ini menggunakan <code>member_system.js</code> (localStorage). Jika Anda menginginkan backend/server nyata, beri tahu saya dan saya bantu integrasikan.</p>
+
+  <form id="komentarForm">
+    <label for="idMember">ID Member</label>
+    <input id="idMember" name="idMember" placeholder="mis: NUR001" required>
+
+    <label for="nama">Nama (opsional - bila member baru akan dibuat)</label>
+    <input id="nama" name="nama" placeholder="Nama lengkap">
+
+    <label for="komentar">Komentar</label>
+    <textarea id="komentar" name="komentar" rows="4" placeholder="Tulis komentar..." required></textarea>
+
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button type="submit">Kirim Komentar (+5 poin)</button>
+      <button type="button" id="fakeLogin">Simulasi Login (+10 poin)</button>
+      <button type="button" id="clearData" style="background:#f66;color:#fff">Hapus Semua Data</button>
+    </div>
+  </form>
+
+  <h2>Daftar Member (localStorage)</h2>
+  <div id="memberList"></div>
+
+  <script>
+  // Pastikan path ke member_system.js benar. Jika file di root, gunakan '../member_system.js' dari folder konten.
+  (function(){
+    // Jika MEMBER_SYSTEM belum dimuat sebagai file eksternal, kita tetap menggunakan object dari repo
+    function ready(callback){
+      if (window.MEMBER_SYSTEM) return callback();
+      // coba load otomatis dari path relatif
+      var script = document.createElement('script');
+      script.src = '../member_system.js';
+      script.onload = callback;
+      script.onerror = function(){
+        console.warn('Tidak dapat load member_system.js otomatis. Pastikan file ada di root atau include manual. Menggunakan fallback minimal.');
+        // fallback minimal
+        window.MEMBER_SYSTEM = window.MEMBER_SYSTEM || {
+          storage: 'indramayu_members',
+          init(){ if(!localStorage.getItem(this.storage)) localStorage.setItem(this.storage, JSON.stringify([])); },
+          getAllMembers(){ this.init(); return JSON.parse(localStorage.getItem(this.storage)) || []; },
+          getMember(id){ return this.getAllMembers().find(m=>m.idMember===id); },
+          loginMember(nama,idMember){ this.init(); const members=JSON.parse(localStorage.getItem(this.storage)); const ex=members.find(m=>m.idMember===idMember); if(ex){ ex.poin+=10; ex.lastLogin=new Date().toLocaleString('id-ID'); ex.loginCount=(ex.loginCount||0)+1; localStorage.setItem(this.storage, JSON.stringify(members)); return {status:'success',poin:ex.poin}; } else { members.push({nama,idMember,poin:10,loginCount:1,komentarCount:0,quizCount:0,lastLogin:new Date().toLocaleString('id-ID'),joinDate:new Date().toLocaleString('id-ID'),history:[{type:'login',poin:10,waktu:new Date().toLocaleString('id-ID')}]}); localStorage.setItem(this.storage, JSON.stringify(members)); return {status:'success',poin:10}; } },
+          addKomentar(idMember,komentar){ this.init(); const members=JSON.parse(localStorage.getItem(this.storage)); let m=members.find(x=>x.idMember===idMember); if(!m) return {status:'error',message:'Member tidak ditemukan'}; m.poin+=5; m.komentarCount=(m.komentarCount||0)+1; m.history=m.history||[]; m.history.push({type:'komentar',poin:5,komentar:komentar.substring(0,50)+'...',waktu:new Date().toLocaleString('id-ID')}); localStorage.setItem(this.storage, JSON.stringify(members)); return {status:'success',poin:m.poin}; }
+        };
+        callback();
+      };
+      document.head.appendChild(script);
+    }
+
+    ready(function(){
+      const form = document.getElementById('komentarForm');
+      const memberList = document.getElementById('memberList');
+      const fakeLoginBtn = document.getElementById('fakeLogin');
+      const clearBtn = document.getElementById('clearData');
+
+      function render(){
+        const members = MEMBER_SYSTEM.getAllMembers();
+        if(!members.length){ memberList.innerHTML = '<p>Tidak ada member. Silakan login/daftar terlebih dahulu.</p>'; return; }
+        memberList.innerHTML = members.map(m=>{
+          const comments = (m.history||[]).filter(h=>h.type==='komentar').map(c=>`<div class="meta">${c.waktu} — ${c.komentar}</div>`).join('');
+          return `<div class="member"><strong>${m.nama||'(tanpa nama)'} • ${m.idMember}</strong>
+            <div class="meta">Poin: ${m.poin} • Login: ${m.loginCount||0} • Komentar: ${m.komentarCount||0}</div>
+            <div style="margin-top:8px">${comments || '<span class="meta">Tidak ada komentar</span>'}</div>
+          </div>`;
+        }).join('');
+      }
+
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        const id = document.getElementById('idMember').value.trim();
+        const nama = document.getElementById('nama').value.trim();
+        const komentar = document.getElementById('komentar').value.trim();
+        if(!id || !komentar) return alert('ID Member dan komentar wajib.');
+
+        // jika member tidak ada, otomatis buat member baru dengan poin awal 10 (login)
+        const existing = MEMBER_SYSTEM.getMember(id);
+        if(!existing){
+          MEMBER_SYSTEM.loginMember(nama || '(baru)', id);
+        }
+
+        const res = MEMBER_SYSTEM.addKomentar(id, komentar);
+        if(res.status === 'success'){
+          alert('Komentar tersimpan! +' + 5 + ' poin');
+          document.getElementById('komentar').value = '';
+          render();
+        } else {
+          alert(res.message || 'Error saat menambah komentar');
+        }
+      });
+
+      fakeLoginBtn.addEventListener('click', function(){
+        const id = document.getElementById('idMember').value.trim();
+        const nama = document.getElementById('nama').value.trim() || '(sim)';
+        if(!id) return alert('Masukkan ID Member terlebih dahulu');
+        const res = MEMBER_SYSTEM.loginMember(nama, id);
+        alert('Login simulasi: +' + 10 + ' poin');
+        render();
+      });
+
+      clearBtn.addEventListener('click', function(){
+        if(confirm('⚠️ Hapus semua data member dari localStorage?')){
+          localStorage.removeItem(MEMBER_SYSTEM.storage);
+          render();
+        }
+      });
+
+      render();
+    });
+
+  })();
+  </script>
+</body>
+</html>
