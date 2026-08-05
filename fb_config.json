@@ -1,16 +1,6 @@
 {
-  "app_info": {
-    "id": "1555290985525756",
-    "name": "indramayuclub_makrifat",
-    "category": "Games",
-    "link": "https://facebook.com/gaming/play/1555290985525756/"
-  },
-  "credentials": {
-    "app_id": "1555290985525756",
-    "app_access_token": "1555290985525756|uXDjb4J4_wPk1d5FCmnS6dmX_wc"
-  },
-  "api_config": {
-    "version": "v26.0",
-    "endpoint": "https://graph.facebook.com/v26.0/1555290985525756"
-  }
+  "app_id": "2055539978374338",
+  "namespace": "dulkohar-alwi",
+  "app_url": "https://nurindramayuaimini3311.github.io/Indramayu_nur/",
+  "canvas_url": "https://apps.facebook.com/dulkohar-alwi/"
 }
