@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>Alwi Q&A</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; }
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    
+    header {
+      background: linear-gradient(90deg,#06140b,#0a2e1c);
+      border-bottom: 1px solid #c9a84c;
+      padding: 10px 15px;
+      flex-shrink: 0;
+    }
+    
+    header h1 {
+      font-size: 16px;
+      color: #FFD700;
+      letter-spacing: 0.5px;
+    }
+    
+    .qa-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .qa-item {
+      background: #111;
+      border-left: 2px solid #c9a84c;
+      padding: 10px;
+      border-radius: 4px;
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .qa-item.q {
+      border-left-color: #4caf50;
+      margin-left: 30px;
+    }
+    
+    .qa-item.a {
+      border-left-color: #FFD700;
+      margin-right: 10px;
+    }
+    
+    .qa-time {
+      font-size: 11px;
+      color: #777;
+      margin-bottom: 4px;
+    }
+    
+    .qa-text {
+      word-break: break-word;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    
+    .qa-item.q .qa-text { color: #aaa; }
+    .qa-item.a .qa-text { color: #fff; }
+    
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #555;
+      text-align: center;
+      gap: 8px;
+    }
+    
+    .empty-state p { font-size: 12px; }
+    
+    footer {
+      border-top: 1px solid #222;
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    
+    #questionInput {
+      flex: 1;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: #fff;
+      padding: 8px 10px;
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+    }
+    
+    #questionInput:focus {
+      border-color: #c9a84c;
+      box-shadow: 0 0 8px rgba(201,168,76,0.2);
+    }
+    
+    #askBtn {
+      background: #c9a84c;
+      border: none;
+      color: #000;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+      transition: 0.2s;
+      flex-shrink: 0;
+    }
+    
+    #askBtn:hover { background: #FFD700; transform: translateY(-1px); }
+    #askBtn:active { transform: translateY(0); }
+    #askBtn:disabled { background: #555; cursor: not-allowed; opacity: 0.5; }
+    
+    .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⛑️ ALWI Q&A</h1>
+</header>
+
+<div class="qa-list scrollbar-thin" id="qaList">
+  <div class="empty-state">
+    <p>⛑️ Alwi AI</p>
+    <p style="font-size:11px;color:#555;">Tanya tentang Nur 1-10, coding, atau apapun</p>
+  </div>
+</div>
+
+<footer>
+  <input type="text" id="questionInput" placeholder="Tanya..." autocomplete="off">
+  <button id="askBtn">Tanya</button>
+</footer>
+
+<script src="alwi_qa_lite.js"></script>
+<script>
+  const list = document.getElementById('qaList');
+  const input = document.getElementById('questionInput');
+  const btn = document.getElementById('askBtn');
+  
+  function clearEmpty() {
+    if (list.querySelector('.empty-state')) {
+      list.innerHTML = '';
+    }
+  }
+  
+  function addQA(q, a, t) {
+    clearEmpty();
+    
+    const qEl = document.createElement('div');
+    qEl.className = 'qa-item q';
+    qEl.innerHTML = `<div class="qa-text">Q: ${q}</div>`;
+    list.appendChild(qEl);
+    
+    const aEl = document.createElement('div');
+    aEl.className = 'qa-item a';
+    aEl.innerHTML = `<div class="qa-time">${t}</div><div class="qa-text">Alwi: ${a}</div>`;
+    list.appendChild(aEl);
+    
+    list.scrollTop = list.scrollHeight;
+  }
+  
+  function ask() {
+    const q = input.value.trim();
+    if (!q || btn.disabled) return;
+    
+    btn.disabled = true;
+    const t = new Date().toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'});
+    const a = ALWI_QA.getResponse(q);
+    
+    ALWI_QA.add(q, a);
+    addQA(q, a, t);
+    
+    input.value = '';
+    input.focus();
+    btn.disabled = false;
+  }
+  
+  btn.onclick = ask;
+  input.addEventListener('keypress', e => { if (e.key === 'Enter') ask(); });
+  
+  // Load history
+  const data = ALWI_QA.getAll();
+  if (data.length > 0) {
+    clearEmpty();
+    data.slice(-10).forEach(item => {
+      addQA(item.q, item.a, item.t);
+    });
+  }
+  
+  input.focus();
+</script>
+
+<script src="/alwi_bubble_v4_MENU.js"></script>
+</body>
+</html>

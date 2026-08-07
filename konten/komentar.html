@@ -1,131 +1,176 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Komentar Member - Indramayu Club</title>
-  <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;padding:18px;max-width:900px;margin:0 auto}
-    h1{font-size:20px}
-    label{display:block;margin-top:8px}
-    input,textarea,button,select{width:100%;padding:8px;margin-top:6px}
-    .row{display:flex;gap:8px}
-    .row > *{flex:1}
-    .member{border:1px solid #ddd;padding:8px;margin:8px 0;border-radius:6px}
-    .meta{font-size:12px;color:#555}
-  </style>
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Komentar - ALWI PUSAT</title>
+<link rel="manifest" href="../manifest.json">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000 url('../img/alwi_ghost_bug.png') no-repeat center center fixed;background-size:cover;color:#fff;font-family:Arial,sans-serif;min-height:100vh}
+body::before{content:"";position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:-1}
+.wrap{max-width:720px;margin:0 auto;padding:12px}
+.header{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.96);border-bottom:2px solid #FFD700;padding:10px 16px;display:flex;justify-content:space-between;align-items:center}
+.logo{color:#e50914;font-weight:900}
+.btn{padding:9px 14px;border-radius:8px;border:none;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+.btn-gold{background:#FFD700;color:#000}
+.btn-red{background:#e50914;color:#fff}
+.card{background:rgba(22,22,22,0.96);border:1.5px solid #333;border-radius:12px;padding:12px;margin:10px 0}
+.card.gold{border-color:#FFD700;box-shadow:0 0 18px rgba(255,215,0,0.18)}
+.input{width:100%;background:#111;border:1.5px solid #444;color:#fff;padding:10px;border-radius:10px;margin:6px 0}
+.comment{background:#222;border-left:4px solid #FFD700;border-radius:10px;padding:10px;margin:8px 0}
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;border:1px solid #FFD700;color:#FFD700;background:rgba(255,215,0,0.15)}
+.small{font-size:11px;color:#aaa}
+code{background:#111;padding:2px 6px;border-radius:4px;color:#FFD700}
+</style>
 </head>
 <body>
-  <h1>Komentar Member • Indramayu Club</h1>
-  <p>Form komentar ini menggunakan <code>member_system.js</code> (localStorage). Jika Anda menginginkan backend/server nyata, beri tahu saya dan saya bantu integrasikan.</p>
+<div class="header">
+  <div class="logo">ALWI PUSAT ⛑️ KOMENTAR</div>
+  <a href="../index.html" class="btn btn-red">HOME</a>
+</div>
 
-  <form id="komentarForm">
-    <label for="idMember">ID Member</label>
-    <input id="idMember" name="idMember" placeholder="mis: NUR001" required>
-
-    <label for="nama">Nama (opsional - bila member baru akan dibuat)</label>
-    <input id="nama" name="nama" placeholder="Nama lengkap">
-
-    <label for="komentar">Komentar</label>
-    <textarea id="komentar" name="komentar" rows="4" placeholder="Tulis komentar..." required></textarea>
-
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <button type="submit">Kirim Komentar (+5 poin)</button>
-      <button type="button" id="fakeLogin">Simulasi Login (+10 poin)</button>
-      <button type="button" id="clearData" style="background:#f66;color:#fff">Hapus Semua Data</button>
+<div class="wrap">
+  <div class="card gold">
+    <b style="color:#FFD700">📍 TEMPAT KOMENTAR ADA DI SINI BOS!</b><br>
+    <div class="small" style="margin-top:6px">
+      File: <code>~/hugoNUR8/konten/komentar.html</code><br>
+      Backend: <code>app.py</code> (port 5000) + <code>member_system.js</code> + <code>indramayu_club.db</code><br>
+      Akses: <code>https://dulkohar-alwi.vercel.app/konten/komentar.html</code> atau <code>http://localhost:5000/konten/komentar.html</code> kalau jalanin <code>python app.py</code>
     </div>
-  </form>
+  </div>
 
-  <h2>Daftar Member (localStorage)</h2>
-  <div id="memberList"></div>
+  <div class="card gold" id="loginBox">
+    <h3 style="color:#FFD700">👥 Login Member (+10 Poin)</h3>
+    <input id="nama" class="input" placeholder="Nama: Dul Kohar">
+    <input id="idMember" class="input" placeholder="ID Member: alwi001">
+    <button class="btn btn-gold" onclick="login()">🔐 LOGIN / DAFTAR</button>
+    <div id="loginStatus" class="small" style="margin-top:6px"></div>
+  </div>
 
-  <script>
-  // Pastikan path ke member_system.js benar. Jika file di root, gunakan '../member_system.js' dari folder konten.
-  (function(){
-    // Jika MEMBER_SYSTEM belum dimuat sebagai file eksternal, kita tetap menggunakan object dari repo
-    function ready(callback){
-      if (window.MEMBER_SYSTEM) return callback();
-      // coba load otomatis dari path relatif
-      var script = document.createElement('script');
-      script.src = '../member_system.js';
-      script.onload = callback;
-      script.onerror = function(){
-        console.warn('Tidak dapat load member_system.js otomatis. Pastikan file ada di root atau include manual. Menggunakan fallback minimal.');
-        // fallback minimal
-        window.MEMBER_SYSTEM = window.MEMBER_SYSTEM || {
-          storage: 'indramayu_members',
-          init(){ if(!localStorage.getItem(this.storage)) localStorage.setItem(this.storage, JSON.stringify([])); },
-          getAllMembers(){ this.init(); return JSON.parse(localStorage.getItem(this.storage)) || []; },
-          getMember(id){ return this.getAllMembers().find(m=>m.idMember===id); },
-          loginMember(nama,idMember){ this.init(); const members=JSON.parse(localStorage.getItem(this.storage)); const ex=members.find(m=>m.idMember===idMember); if(ex){ ex.poin+=10; ex.lastLogin=new Date().toLocaleString('id-ID'); ex.loginCount=(ex.loginCount||0)+1; localStorage.setItem(this.storage, JSON.stringify(members)); return {status:'success',poin:ex.poin}; } else { members.push({nama,idMember,poin:10,loginCount:1,komentarCount:0,quizCount:0,lastLogin:new Date().toLocaleString('id-ID'),joinDate:new Date().toLocaleString('id-ID'),history:[{type:'login',poin:10,waktu:new Date().toLocaleString('id-ID')}]}); localStorage.setItem(this.storage, JSON.stringify(members)); return {status:'success',poin:10}; } },
-          addKomentar(idMember,komentar){ this.init(); const members=JSON.parse(localStorage.getItem(this.storage)); let m=members.find(x=>x.idMember===idMember); if(!m) return {status:'error',message:'Member tidak ditemukan'}; m.poin+=5; m.komentarCount=(m.komentarCount||0)+1; m.history=m.history||[]; m.history.push({type:'komentar',poin:5,komentar:komentar.substring(0,50)+'...',waktu:new Date().toLocaleString('id-ID')}); localStorage.setItem(this.storage, JSON.stringify(members)); return {status:'success',poin:m.poin}; }
-        };
-        callback();
-      };
-      document.head.appendChild(script);
+  <div class="card" id="poinBox" style="display:none">
+    <div style="display:flex;justify-content:space-between">
+      <div><b id="namaDisplay">-</b> <span class="small" id="idDisplay"></span></div>
+      <div><span class="badge" id="poinDisplay">0 POIN</span></div>
+    </div>
+    <div class="small" id="statDisplay"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="color:#FFD700">💬 Tulis Komentar (+5 Poin)</h3>
+    <textarea id="teksKomentar" class="input" rows="3" placeholder="Tulis komentar tentang NUR / Alwi..."></textarea>
+    <button class="btn btn-gold" onclick="kirim()">📤 KIRIM</button>
+    <button class="btn" style="background:#222;color:#fff;border:1px solid #444" onclick="loadKomentar()">🔄 REFRESH</button>
+    <div id="kirimStatus" class="small" style="margin-top:6px"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="color:#FFD700">📜 Komentar Member</h3>
+    <div id="listKomentar" class="small">Loading...</div>
+  </div>
+
+  <div class="card">
+    <h3 style="color:#FFD700">🛠️ Fix Server Double</h3>
+    <div class="small">
+      Kalau error <code>EADDRINUSE</code> = ada 2 server jalan di port sama.<br>
+      Cek: <code>lsof -i :5000</code> → <code>kill -9 PID</code><br>
+      PM2: <code>pm2 list</code> → <code>pm2 stop all</code><br>
+      Cukup jalanin 1x: <code>python app.py</code> (Flask port 5000)<br>
+      Vercel = static only, gak pakai port, aman gak double.
+    </div>
+  </div>
+</div>
+
+<script src="../member_system.js"></script>
+<script>
+let currentId = localStorage.getItem('alwi_current_id') || null;
+const API_URL = '/api/komentar';
+
+function init(){
+  if(typeof MEMBER_SYSTEM !== 'undefined'){ MEMBER_SYSTEM.init(); }
+  if(currentId) showMember(currentId);
+  loadKomentar();
+}
+init();
+
+function login(){
+  const nama = document.getElementById('nama').value.trim();
+  const id = document.getElementById('idMember').value.trim().toLowerCase();
+  if(!nama || !id){ alert('Isi nama & ID!'); return; }
+  const res = MEMBER_SYSTEM.loginMember(nama, id);
+  localStorage.setItem('alwi_current_id', id);
+  currentId = id;
+  document.getElementById('loginStatus').innerText = res.message + ' Total: ' + res.poin;
+  showMember(id);
+}
+
+function showMember(id){
+  const m = MEMBER_SYSTEM.getMember(id);
+  if(!m) return;
+  document.getElementById('poinBox').style.display='block';
+  document.getElementById('namaDisplay').innerText = m.nama;
+  document.getElementById('idDisplay').innerText = '('+m.idMember+')';
+  document.getElementById('poinDisplay').innerText = m.poin + ' POIN';
+  document.getElementById('statDisplay').innerText = `Login: ${m.loginCount||0} • Komentar: ${m.komentarCount||0} • Quiz: ${m.quizCount||0}`;
+}
+
+async function kirim(){
+  if(!currentId){ alert('Login dulu Bos!'); return; }
+  const teks = document.getElementById('teksKomentar').value.trim();
+  if(!teks){ alert('Komentar kosong!'); return; }
+  const member = MEMBER_SYSTEM.getMember(currentId);
+  MEMBER_SYSTEM.addKomentar(currentId, teks);
+  showMember(currentId);
+  try{
+    const r = await fetch(API_URL, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idMember:currentId,nama:member.nama,teks})});
+    document.getElementById('kirimStatus').innerText = r.ok ? '✅ Terkirim ke server app.py!' : '⚠️ Server error, simpan lokal';
+  }catch(e){
+    let list = JSON.parse(localStorage.getItem('alwi_komentar_list')||'[]');
+    list.unshift({idMember:currentId,nama:member.nama,teks,waktu:new Date().toLocaleString('id-ID')});
+    localStorage.setItem('alwi_komentar_list', JSON.stringify(list));
+    document.getElementById('kirimStatus').innerText = '⚠️ app.py belum jalan, simpan di localStorage';
+  }
+  document.getElementById('teksKomentar').value='';
+  loadKomentar();
+}
+
+async function loadKomentar(){
+  const el = document.getElementById('listKomentar');
+  try{
+    const r = await fetch(API_URL);
+    if(r.ok){
+      const data = await r.json();
+      if(data.length==0){ el.innerHTML='Belum ada komentar. Jadi yang pertama!'; return; }
+      el.innerHTML = data.map(k=>`<div class="comment"><b>${k.nama||k.idMember}</b> <span class="small">(${k.idMember}) • ${k.waktu||''}</span><div style="margin-top:6px">${k.teks||k.komentar}</div></div>`).join('');
+      return;
     }
-
-    ready(function(){
-      const form = document.getElementById('komentarForm');
-      const memberList = document.getElementById('memberList');
-      const fakeLoginBtn = document.getElementById('fakeLogin');
-      const clearBtn = document.getElementById('clearData');
-
-      function render(){
-        const members = MEMBER_SYSTEM.getAllMembers();
-        if(!members.length){ memberList.innerHTML = '<p>Tidak ada member. Silakan login/daftar terlebih dahulu.</p>'; return; }
-        memberList.innerHTML = members.map(m=>{
-          const comments = (m.history||[]).filter(h=>h.type==='komentar').map(c=>`<div class="meta">${c.waktu} — ${c.komentar}</div>`).join('');
-          return `<div class="member"><strong>${m.nama||'(tanpa nama)'} • ${m.idMember}</strong>
-            <div class="meta">Poin: ${m.poin} • Login: ${m.loginCount||0} • Komentar: ${m.komentarCount||0}</div>
-            <div style="margin-top:8px">${comments || '<span class="meta">Tidak ada komentar</span>'}</div>
-          </div>`;
-        }).join('');
-      }
-
-      form.addEventListener('submit', function(e){
-        e.preventDefault();
-        const id = document.getElementById('idMember').value.trim();
-        const nama = document.getElementById('nama').value.trim();
-        const komentar = document.getElementById('komentar').value.trim();
-        if(!id || !komentar) return alert('ID Member dan komentar wajib.');
-
-        // jika member tidak ada, otomatis buat member baru dengan poin awal 10 (login)
-        const existing = MEMBER_SYSTEM.getMember(id);
-        if(!existing){
-          MEMBER_SYSTEM.loginMember(nama || '(baru)', id);
-        }
-
-        const res = MEMBER_SYSTEM.addKomentar(id, komentar);
-        if(res.status === 'success'){
-          alert('Komentar tersimpan! +' + 5 + ' poin');
-          document.getElementById('komentar').value = '';
-          render();
-        } else {
-          alert(res.message || 'Error saat menambah komentar');
-        }
-      });
-
-      fakeLoginBtn.addEventListener('click', function(){
-        const id = document.getElementById('idMember').value.trim();
-        const nama = document.getElementById('nama').value.trim() || '(sim)';
-        if(!id) return alert('Masukkan ID Member terlebih dahulu');
-        const res = MEMBER_SYSTEM.loginMember(nama, id);
-        alert('Login simulasi: +' + 10 + ' poin');
-        render();
-      });
-
-      clearBtn.addEventListener('click', function(){
-        if(confirm('⚠️ Hapus semua data member dari localStorage?')){
-          localStorage.removeItem(MEMBER_SYSTEM.storage);
-          render();
-        }
-      });
-
-      render();
-    });
-
-  })();
-  </script>
+  }catch(e){}
+  const list = JSON.parse(localStorage.getItem('alwi_komentar_list')||'[]');
+  if(list.length==0){ el.innerHTML='Belum ada komentar (server belum jalan).'; return; }
+  el.innerHTML = list.map(k=>`<div class="comment"><b>${k.nama}</b> <span class="small">(${k.idMember}) • ${k.waktu}</span><div style="margin-top:6px">${k.teks}</div></div>`).join('');
+}
+</script>
+<script src="/alwi_bubble.js"></script>
+<script src="/alwi_bubble_v4_MENU.js"></script>
 </body>
 </html>
+
