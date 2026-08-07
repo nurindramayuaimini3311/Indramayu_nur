@@ -1,2 +1,6 @@
 chat.db
 __pycache__/
+fb_config.json
+*.bak
+beckup.html
+__pycache__/

@@ -1,19 +1,55 @@
-!function(){if(window.__ALWI)return;window.__ALWI=1;
-var WA="6282147573665";
-var b=document.createElement('div');
-b.innerHTML='<div id="ALWI_BADAK" style="position:fixed!important;bottom:20px!important;right:20px!important;z-index:999999999!important;width:70px;height:70px;background:radial-gradient(circle,#25D366,#128C7E);border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:36px;cursor:pointer;box-shadow:0 0 0 3px #25D366,0 10px 30px #000;animation:alwip 2s infinite">⛑️</div><style>@keyframes alwip{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}</style><div id="ALWI_BOX" style="display:none;position:fixed;bottom:100px;right:10px;width:350px;max-height:520px;background:#0a0a0a;border:2px solid #25D366;border-radius:16px;z-index:999999998;overflow:hidden;flex-direction:column;font-family:sans-serif"><div style="background:linear-gradient(135deg,#128C7E,#25D366);color:#fff;padding:12px;text-align:center;font-weight:900"><div style="font-size:16px">⛑️ ALWI PUSAT</div><div style="font-size:10px;opacity:0.9">Online • Balas Cepat via WhatsApp</div></div><div id="ALWI_CHAT" style="height:340px;overflow:auto;padding:10px;display:flex;flex-direction:column;gap:8px;background:#111 url(https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png)"></div><div style="padding:8px;background:#1a1a1a;display:grid;grid-template-columns:1fr 1fr;gap:6px"><button onclick="ALWI_MENU(1)" style="padding:8px;background:#222;color:#FFD700;border:1px solid #333;border-radius:8px;font-size:11px;font-weight:700">📚 NUR 1-3</button><button onclick="ALWI_MENU(2)" style="padding:8px;background:#222;color:#FFD700;border:1px solid #333;border-radius:8px;font-size:11px;font-weight:700">🌍 NUR 4-6</button><button onclick="ALWI_MENU(3)" style="padding:8px;background:#222;color:#FFD700;border:1px solid #333;border-radius:8px;font-size:11px;font-weight:700">👑 NUR 7-10</button><button onclick="ALWI_MENU(4)" style="padding:8px;background:#222;color:#FFD700;border:1px solid #333;border-radius:8px;font-size:11px;font-weight:700">🎬 NURFLIX</button></div><div style="padding:8px;background:#000;border-top:1px solid #222"><a id="ALWI_WA" href="https://wa.me/'+WA+'?text=Halo%20Operator%20Alwi%20Indramayu%20Club%20⛑️%20Saya%20mau%20tanya..." target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;padding:12px;border-radius:10px;text-decoration:none;font-weight:900;font-size:13px">💬 CHAT OPERATOR VIA WHATSAPP</a><div style="text-align:center;margin-top:5px"><a href="https://drive.google.com/drive/folders/1nM6UeY60YU0-WTynteXVjKw9W-s3F-7I" target="_blank" style="color:#FFD700;font-size:10px">📁 File Drive</a> • <a href="tel:+6282147573665" style="color:#25D366;font-size:10px">📞 Telepon</a></div></div></div>';
-document.body.appendChild(b);
-var btn=document.getElementById('ALWI_BADAK'),box=document.getElementById('ALWI_BOX'),chat=document.getElementById('ALWI_CHAT'),open=0;
-function add(t,who){var d=document.createElement('div');var me=who=='user'; d.style.cssText=me?'background:#dcf8c6;color:#000;margin-left:auto;max-width:80%;padding:8px 10px;border-radius:12px 12px 2px 12px;font-size:12px;box-shadow:0 1px 1px #000':'background:#fff;color:#000;max-width:85%;padding:8px 10px;border-radius:12px 12px 12px 2px;font-size:12px;box-shadow:0 1px 1px #000'; d.innerHTML=t; chat.appendChild(d); chat.scrollTop=9999;}
-btn.onclick=function(){open=!open; box.style.display=open?'flex':'none'; if(open&&chat.innerHTML==''){add('Halo Batur! Isun Alwi ⛑️<br><br>Isun cuma kasih menu cerita:<br>📚 NUR 1-3 = Cerita awal<br>🌍 NUR 4-6 = Petualangan<br>👑 NUR 7-10 = Raja-raja<br>🎬 NURFLIX = Film<br><br><b>Kalo mau upgrade cerita / tanya langsung, klik tombol hijau WhatsApp di bawah ya Batur!</b> 🙏','bot'); add('Pilih menu di bawah Batur 👇','bot');}};
+!function(){
+if(window.__ALWI)return;window.__ALWI=1;
+let WA="6282147573665";
+let isDragging=false, startX, startY, vx=0, vy=0, x=window.innerWidth-90, y=window.innerHeight-150;
+let ball=document.createElement('div');
+ball.id="ALWI_BOLA";
+ball.style.cssText=`position:fixed;left:${x}px;top:${y}px;z-index:999999999;width:68px;height:68px;background:radial-gradient(circle at 30% 30%,#2aff7a,#128C7E);border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:36px;cursor:grab;box-shadow:0 0 0 3px #25D366,0 10px 30px #000;user-select:none;touch-action:none;transition:box-shadow 0.1s`;
+ball.innerHTML="⛑️";
+document.body.appendChild(ball);
+
+let box=document.createElement('div');
+box.id="ALWI_BOX";
+box.style.cssText="display:none;position:fixed;bottom:100px;right:10px;width:352px;max-height:540px;background:#0a0a0a;border:2px solid #25D366;border-radius:16px;z-index:999999998;overflow:hidden;flex-direction:column;font-family:sans-serif;box-shadow:0 10px 40px #000";
+box.innerHTML=`<div style="background:linear-gradient(135deg,#128C7E,#25D366);color:#fff;padding:11px;text-align:center;font-weight:900;display:flex;justify-content:space-between;align-items:center"><span>⛑️ ALWI PUSAT • WA: 0821-4757-3665</span><span onclick="document.getElementById('ALWI_BOX').style.display='none'" style="cursor:pointer;background:rgba(0,0,0,0.3);padding:2px 8px;border-radius:50%">✕</span></div><div id="ALWI_CHAT" style="height:320px;overflow:auto;padding:10px;display:flex;flex-direction:column;gap:8px;background:#ece5dd"></div><div style="padding:7px;background:#1a1a1a;display:grid;grid-template-columns:1fr 1fr;gap:6px"><button onclick="ALWI_MENU(1)" style="padding:9px;background:#222;color:#FFD700;border:1px solid #333;border-radius:8px;font-size:11px;font-weight:800">📚 NUR 1-3</button><button onclick="ALWI_MENU(2)" style="padding:9px;background:#222;color:#FFD700;border:1px solid #333;border-radius:8px;font-size:11px;font-weight:800">🌍 NUR 4-6</button><button onclick="ALWI_MENU(3)" style="padding:9px;background:#222;color:#FFD700;border:1px solid #333;border-radius:8px;font-size:11px;font-weight:800">👑 NUR 7-10</button><button onclick="ALWI_MENU(4)" style="padding:9px;background:#222;color:#FFD700;border:1px solid #333;border-radius:8px;font-size:11px;font-weight:800">🎬 NURFLIX</button></div><div style="padding:8px;background:#000;border-top:1px solid #222"><a id="ALWI_WA" href="https://wa.me/${WA}?text=Halo%20Alwi%20mau%20upgrade" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;padding:12px;border-radius:10px;text-decoration:none;font-weight:900;font-size:13px;animation:pulse 1.5s infinite">💬 CHAT OPERATOR VIA WHATSAPP</a><div style="text-align:center;margin-top:5px"><a href="https://drive.google.com/drive/folders/1nM6UeY60YU0-WTynteXVjKw9W-s3F-7I" target="_blank" style="color:#FFD700;font-size:10px">📁 Drive</a> • <a href="tel:+6282147573665" style="color:#25D366;font-size:10px">📞 Telp</a> • <a href="/index.html" style="color:#fff;font-size:10px">🏠 Home 4 Menu</a></div></div><style>@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}</style>`;
+document.body.appendChild(box);
+let chat=box.querySelector('#ALWI_CHAT');
+
+function add(t,who){let d=document.createElement('div');let me=who=='user'; d.style.cssText=me?'background:#dcf8c6;color:#000;margin-left:auto;max-width:78%;padding:8px 11px;border-radius:12px 12px 2px 12px;font-size:12px;box-shadow:0 1px 1px #000':'background:#fff;color:#000;max-width:86%;padding:8px 11px;border-radius:12px 12px 12px 2px;font-size:12px;box-shadow:0 1px 1px #000'; d.innerHTML=t; chat.appendChild(d); chat.scrollTop=9999;}
+
+let open=0;
+function toggleBox(){open=!open; box.style.display=open?'flex':'none'; if(open&&chat.innerHTML==''){add('Halo Batur! Isun Alwi ⛑️<br>Bola ini bisa ditendang lho! Coba geser / tendang! ⚽<br><br>Pilih menu dibawah ya!','bot');}}
+
+// === FISIKA BOLA TENDANG ===
+ball.addEventListener('pointerdown',e=>{isDragging=true; ball.setPointerCapture(e.pointerId); startX=e.clientX; startY=e.clientY; vx=0; vy=0; ball.style.cursor='grabbing'; ball.style.transition='none';});
+ball.addEventListener('pointermove',e=>{if(!isDragging)return; let dx=e.clientX-startX, dy=e.clientY-startY; x+=dx; y+=dy; vx=dx; vy=dy; startX=e.clientX; startY=e.clientY; ball.style.left=x+'px'; ball.style.top=y+'px'; if(Math.abs(vx)>1) ball.style.transform=`rotate(${vx*3}deg)`;});
+ball.addEventListener('pointerup',e=>{
+ isDragging=false; ball.style.cursor='grab'; ball.style.transition='left 0.8s cubic-bezier(0.2,0.8,0.2,1), top 0.8s cubic-bezier(0.2,0.8,0.2,1), transform 0.8s';
+ // tendangan!
+ let power=Math.sqrt(vx*vx+vy*vy);
+ if(power>2){
+   x+=vx*12; y+=vy*12;
+   // pantulan dinding
+   if(x<5) x=5, vx*=-0.7; if(x>window.innerWidth-75) x=window.innerWidth-75, vx*=-0.7;
+   if(y<5) y=5, vy*=-0.7; if(y>window.innerHeight-75) y=window.innerHeight-75, vy*=-0.7;
+   ball.style.left=x+'px'; ball.style.top=y+'px';
+   ball.style.transform=`rotate(${vx*20}deg) scale(1.15)`;
+   setTimeout(()=>ball.style.transform='rotate(0deg) scale(1)',800);
+   if(navigator.vibrate) navigator.vibrate(50);
+ }else{
+   // klik biasa = buka chat
+   if(power<2) toggleBox();
+ }
+});
+window.addEventListener('resize',()=>{if(x>window.innerWidth-80) x=window.innerWidth-80; if(y>window.innerHeight-80) y=window.innerHeight-80; ball.style.left=x+'px'; ball.style.top=y+'px';});
+
 window.ALWI_MENU=function(n){
- var txt=["","📚 NUR 1-3: Cerita Nur awal, belajar bahasa Jawa Indramayu, asal-usul Nur","🌍 NUR 4-6: Petualangan Nur ke dunia lain, ketemu hantu, wali, keluarga Alwi","👑 NUR 7-10: Nur jadi Raja, perang besar, rahasia Gareng Petruk Bagong","🎬 NURFLIX: Kumpulan film pendek Nur, horor, komedi, keluarga"];
+ let txt=["","📚 NUR 1-3: Variable, Cahaya, Batik Sopan","🌍 NUR 4-6: Loop Petualangan, Hantu, Wali, Keluarga Alwi","👑 NUR 7-10: Nur jadi Raja, perang besar, Gareng Petruk Bagong","🎬 NURFLIX: Film pendek Nur horor komedi"];
  add("Mau "+txt[n].split(':')[0],'user');
- setTimeout(function(){
-  add(txt[n]+'<br><br><b>Mau baca full / upgrade cerita terbaru?</b><br>Chat Operator langsung via WhatsApp ya Batur! 👇','bot');
-  document.getElementById('ALWI_WA').href="https://wa.me/"+WA+"?text=Halo%20Operator%20Alwi%20%F0%9F%9B%91%20Saya%20mau%20upgrade%20"+encodeURIComponent(txt[n].split(':')[0]+" - "+location.pathname);
-  document.getElementById('ALWI_WA').style.animation="pulse 1s infinite";
- },500);
+ setTimeout(()=>{
+  add(txt[n]+'<br><br><b>Mau full / upgrade?</b><br>Klik hijau WA dibawah Batur! 👇','bot');
+  box.querySelector('#ALWI_WA').href=`https://wa.me/${WA}?text=Halo%20Alwi%20${encodeURIComponent(txt[n].split(':')[0])}%20Mau%20upgrade%20di%20${encodeURIComponent(location.pathname)}`;
+ },400);
 };
-console.log("✅ ALWI WA MODE: "+WA);
+console.log("⚽ BOLA ALWI SIAP DITENDANG!");
 }();
