@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "server.ts", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/fb-embed", "dest": "server.ts" },
+    { "src": "/api/fb-info", "dest": "server.ts" },
+    { "src": "/api/mutt/(.*)", "dest": "server.ts" },
+    { "src": "/(.*)", "dest": "/fb_Steaming.html" }
+  ]
+}
