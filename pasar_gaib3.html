@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pasar Gaib - Cerita 3</title>
+<style>
+  body{background:#000;color:#eee;font-family:sans-serif;margin:0}
+  header{position:sticky;top:0;background:#111;padding:12px;text-align:center;border-bottom:2px solid #E50914;z-index:10}
+  h1{color:#E50914;font-size:1.1rem}
+  .btn{background:#E50914;color:#fff;border:none;padding:8px 14px;border-radius:20px;margin:4px;cursor:pointer}
+  img{max-width:100%;display:block;border-radius:12px;margin:auto}
+  .card{margin:12px;background:#181818;border-radius:12px;overflow:hidden;border:1px solid #333}
+  .card-body{padding:12px}
+  p{margin:8px 0;background:rgba(255,255,255,.06);padding:12px;border-radius:8px;line-height:1.6;cursor:pointer}
+  p.active{border-left:4px solid #E50914;background:rgba(229,9,20,.18)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⛑️ PASAR GAIB - MISTERI KOIN EMAS</h1>
+  <button class="btn" onclick="playAll()">▶️ Play Alwi</button>
+  <button class="btn" onclick="stopS()">⏹️ Stop</button>
+</header>
+
+<div class="card">
+  <img src="img/pasar_gaib.webp">
+  <div class="card-body">
+    <h2>Bab 1 - Pilihan ing Simpang Telu</h2>
+    <p onclick="s(this)">Sakwise lolos saka godhaan sate gagak, Gareng lan Bagong nemoni simpang telu ing tengah alas gaib. Ing pojok dalan, ana embah-embah tuwa sing dodolan koin kuna.</p>
+    <p onclick="s(this)">Bagong sing isih penasaran banjur nyedak. Embah iku ngandhani yen koin emas kuwi bisa digunakake kanggo tuku kunci metu saka alas gaib.</p>
+  </div>
+</div>
+
+<div class="card">
+  <img src="img/Gareng.webp">
+  <div class="card-body">
+    <h2>Bab 2 - Pituture Gareng</h2>
+    <p onclick="s(this)">Gareng ngelingake Bagong supaya ora gampang tergiur karo barang sing mencorong ing alam gaib. Ojo sembrana, ora kabeh emas iku mupStructure, kadang iku mung racun sing ditutupi keindahan.</p>
+    <p onclick="s(this)">Nanging Bagong njupuk koin siji. Dumadakan lemah ing saupeng e mulai horeg lan swara ngguyu demit krungu saka kadohan.</p>
+  </div>
+</div>
+
+<div class="card">
+  <img src="img/rumah_joglo.webp">
+  <div class="card-body">
+    <h2>Kesimpulan</h2>
+    <p onclick="s(this)">Aja gampang kepincut karo kasenangan sepele sing bisa nasibake awakmu ing jurang bahaya. Kasabaran lan kejujuran tetep dadi benteng paling ampuh.</p>
+  </div>
+</div>
+
+<script>
+let syn=speechSynthesis,cur=0,playing=false;
+function gP(){return document.querySelectorAll('p')}
+function s(el){stopS();cur=[...gP()].indexOf(el);play(cur)}
+function play(i){let ps=gP();if(i>=ps.length)return;ps.forEach(p=>p.classList.remove('active'));let p=ps[i];p.classList.add('active');p.scrollIntoView({behavior:'smooth',block:'center'});let u=new SpeechSynthesisUtterance(p.innerText);u.lang='id-ID';u.rate=0.9;u.onend=()=>{if(playing)play(i+1)};syn.speak(u);cur=i+1}
+function playAll(){playing=true;play(cur)}
+function stopS(){syn.cancel();playing=false;gP().forEach(p=>p.classList.remove('active'))}
+</script>
+
+<script src="/alwi_bubble_v4_MENU.js"></script>
+</body>
+</html>
+

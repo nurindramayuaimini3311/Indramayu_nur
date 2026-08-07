@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alwi Q&A PWA</title>
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230a0a0a' width='192' height='192'/><text x='50%' y='50%' font-size='100' text-anchor='middle' dominant-baseline='middle' font-family='Arial'>⛑️</text></svg>">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; }
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      font-family: system-ui,sans-serif;
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+    }
+    
+    header {
+      background: linear-gradient(90deg,#06140b,#0a2e1c);
+      border-bottom: 1px solid #c9a84c;
+      padding: 12px 15px;
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    header h1 {
+      font-size: 16px;
+      color: #FFD700;
+      letter-spacing: 0.5px;
+    }
+    
+    .hdr-btn {
+      background: transparent;
+      border: 1px solid #c9a84c;
+      color: #FFD700;
+      width: 28px; height: 28px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+    
+    .hdr-btn:hover { background: #c9a84c; color: #000; }
+    
+    .qa-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .qa-item {
+      background: #111;
+      border-left: 2px solid #c9a84c;
+      padding: 8px;
+      border-radius: 3px;
+      animation: slideIn 0.25s ease;
+      font-size: 12px;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .qa-item.q { border-left-color: #4caf50; margin-left: 20px; }
+    .qa-item.a { border-left-color: #FFD700; }
+    
+    .qa-time { font-size: 10px; color: #666; margin-bottom: 2px; }
+    .qa-text { word-break: break-word; line-height: 1.3; }
+    .qa-item.q .qa-text { color: #888; }
+    .qa-item.a .qa-text { color: #fff; }
+    
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #555;
+      gap: 6px;
+      font-size: 12px;
+    }
+    
+    footer {
+      border-top: 1px solid #222;
+      padding: 8px 10px;
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+      background: rgba(0,0,0,0.5);
+    }
+    
+    input {
+      flex: 1;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 3px;
+      color: #fff;
+      padding: 7px 8px;
+      font-size: 12px;
+      outline: none;
+      font-family: inherit;
+    }
+    
+    input:focus { border-color: #c9a84c; box-shadow: 0 0 6px rgba(201,168,76,0.2); }
+    
+    button {
+      background: #c9a84c;
+      border: none;
+      color: #000;
+      padding: 7px 12px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 11px;
+      transition: 0.2s;
+      flex-shrink: 0;
+    }
+    
+    button:hover { background: #FFD700; }
+    button:active { transform: scale(0.95); }
+    button:disabled { background: #555; cursor: not-allowed; opacity: 0.5; }
+    
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⛑️ ALWI QA</h1>
+  <button class="hdr-btn" id="clearBtn" title="Clear">🗑️</button>
+</header>
+
+<div class="qa-list" id="qaList">
+  <div class="empty-state"><p>⛑️ Alwi</p><p>Tanya apa?</p></div>
+</div>
+
+<footer>
+  <input type="text" id="q" placeholder="Tanya..." autocomplete="off">
+  <button id="askBtn">Go</button>
+</footer>
+
+<script src="alwi_qa_lite.js"></script>
+<script>
+  const list = document.getElementById('qaList');
+  const inp = document.getElementById('q');
+  const btn = document.getElementById('askBtn');
+  const clr = document.getElementById('clearBtn');
+  
+  function clearEmpty() {
+    if (list.querySelector('.empty-state')) list.innerHTML = '';
+  }
+  
+  function add(q, a, t) {
+    clearEmpty();
+    const qEl = document.createElement('div');
+    qEl.className = 'qa-item q';
+    qEl.textContent = 'Q: ' + q;
+    list.appendChild(qEl);
+    const aEl = document.createElement('div');
+    aEl.className = 'qa-item a';
+    aEl.innerHTML = '<div class="qa-time">' + t + '</div><div class="qa-text">A: ' + a + '</div>';
+    list.appendChild(aEl);
+    list.scrollTop = list.scrollHeight;
+  }
+  
+  function ask() {
+    const q = inp.value.trim();
+    if (!q || btn.disabled) return;
+    btn.disabled = true;
+    const t = new Date().toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'});
+    const a = ALWI_QA.getResponse(q);
+    ALWI_QA.add(q, a);
+    add(q, a, t);
+    inp.value = '';
+    inp.focus();
+    btn.disabled = false;
+  }
+  
+  btn.onclick = ask;
+  inp.addEventListener('keypress', e => { if (e.key === 'Enter') ask(); });
+  clr.onclick = () => {
+    if (confirm('Clear all?')) {
+      ALWI_QA.clear();
+      list.innerHTML = '<div class="empty-state"><p>Cleared</p></div>';
+    }
+  };
+  
+  const data = ALWI_QA.getAll();
+  if (data.length > 0) {
+    clearEmpty();
+    data.slice(-15).forEach(item => add(item.q, item.a, item.t));
+  }
+  
+  inp.focus();
+  
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+</script>
+<script src="/alwi_bubble_v4_MENU.js"></script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal Indramayu Club — Bot Alwi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep: #0a1f1c;
+    --bg-panel: #0f2b26;
+    --line: #2a5049;
+    --gold: #d4af37;
+    --gold-soft: #e8c766;
+    --cream: #f2ead3;
+    --cream-dim: #b9b39d;
+    --amber: #f4a300;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:
+      radial-gradient(circle at 15% 8%, rgba(212,175,55,0.08), transparent 40%),
+      radial-gradient(circle at 85% 95%, rgba(212,175,55,0.06), transparent 45%),
+      var(--bg-deep);
+    color: var(--cream);
+    font-family: 'Noto Sans', sans-serif;
+    min-height:100%;
+    display:flex;
+    justify-content:center;
+    padding: 28px 16px 60px;
+  }
+  .wrap{ width:100%; max-width: 560px; }
+
+  .lentera{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    justify-content:center;
+    margin-bottom: 6px;
+  }
+  .lentera .dot{
+    width:6px; height:6px; border-radius:50%;
+    background: var(--gold);
+    box-shadow: 0 0 10px var(--gold);
+  }
+  .lentera .garis{ height:1px; width:36px; background: linear-gradient(90deg, transparent, var(--line), transparent); }
+
+  h1{
+    font-family:'Amiri', serif;
+    font-weight:700;
+    font-size: clamp(24px, 6vw, 32px);
+    color: var(--gold-soft);
+    text-align:center;
+    letter-spacing:0.3px;
+  }
+  .tagline{
+    text-align:center;
+    color: var(--cream-dim);
+    font-size:13px;
+    margin-top:4px;
+    margin-bottom: 22px;
+  }
+
+  /* Bubble sambutan Bot Alwi */
+  .alwi-box{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    background: var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 26px;
+  }
+  .alwi-avatar{
+    flex-shrink:0;
+    width:44px; height:44px;
+    border-radius:50%;
+    background: linear-gradient(135deg, var(--gold), var(--amber));
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px;
+  }
+  .alwi-teks{ font-size:13.5px; line-height:1.55; color:var(--cream); }
+  .alwi-teks b{ color:var(--gold-soft); font-family:'Amiri',serif; font-size:15px; }
+
+  /* Menu */
+  .menu-label{
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color: var(--cream-dim);
+    margin: 0 2px 10px;
+  }
+  .menu{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom: 24px;
+  }
+  .menu-item{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 16px;
+    text-decoration:none;
+    color: var(--cream);
+    transition: all .2s ease;
+    position:relative;
+  }
+  .menu-item:hover{ border-color: var(--gold); background: rgba(212,175,55,0.06); }
+  .menu-icon{
+    width:38px; height:38px;
+    border-radius:10px;
+    background: rgba(212,175,55,0.1);
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px;
+    flex-shrink:0;
+  }
+  .menu-teks b{ display:block; font-family:'Amiri',serif; font-size:15.5px; color: var(--gold-soft); }
+  .menu-teks span{ display:block; font-size:12px; color: var(--cream-dim); margin-top:1px; }
+  .menu-panah{ margin-left:auto; color: var(--cream-dim); font-size:14px; }
+
+  .menu-item.segera{ opacity:0.5; pointer-events:none; }
+  .menu-item.segera .menu-teks span::after{ content:" — segera hadir"; }
+
+  footer{
+    text-align:center;
+    font-size:11px;
+    color: var(--cream-dim);
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lentera"><span class="dot"></span><span class="garis"></span><span class="dot"></span></div>
+  <h1>Indramayu Club</h1>
+  <div class="tagline">Portal anggota — satu pintu untuk semua kegiatan</div>
+
+  <div class="alwi-box">
+    <div class="alwi-avatar">⛑️</div>
+    <div class="alwi-teks">
+      <b>Bot Alwi</b><br>
+      Assalamu'alaikum, kang/teh! Semua kegiatan klub sekarang ada di satu tempat ini — nggak perlu lagi nyari-nyari link terpisah. Tinggal pilih menu di bawah.
+    </div>
+  </div>
+
+  <div class="menu-label">Menu Anggota</div>
+  <div class="menu">
+    <a class="menu-item" href="quiz.html">
+      <div class="menu-icon">🕌</div>
+      <div class="menu-teks">
+        <b>Tangga Hikmah</b>
+        <span>Kuis agama berjenjang, 15 level</span>
+      </div>
+      <div class="menu-panah">→</div>
+    </a>
+
+    <a class="menu-item" href="index.html">
+      <div class="menu-icon">💬</div>
+      <div class="menu-teks">
+        <b>Komentar & Diskusi</b>
+        <span>Sampaikan pertanyaan atau pendapat</span>
+      </div>
+      <div class="menu-panah">→</div>
+    </a>
+
+    <div class="menu-item segera">
+      <div class="menu-icon">📋</div>
+      <div class="menu-teks">
+        <b>Daftar Member</b>
+        <span>Lihat & kelola data anggota</span>
+      </div>
+    </div>
+
+    <div class="menu-item segera">
+      <div class="menu-icon">📅</div>
+      <div class="menu-teks">
+        <b>Jadwal Kegiatan</b>
+        <span>Agenda klub</span>
+      </div>
+    </div>
+  </div>
+
+  <footer>Indramayu Club — dijaga oleh Bot Alwi</footer>
+</div>
+<script src="/alwi_bubble_v4_MENU.js"></script>
+</body>
+</html>
+

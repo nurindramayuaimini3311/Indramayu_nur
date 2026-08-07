@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Member - INDRAMAYU CLUB</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .login-container {
+      background: rgba(17, 17, 17, 0.9);
+      border: 2px solid #c9a84c;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    }
+    
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .login-header h1 {
+      color: #FFD700;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    
+    .login-header p {
+      color: #aaa;
+      font-size: 12px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      color: #FFD700;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px;
+      background: #0a0a0a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: 0.3s;
+    }
+    
+    input:focus {
+      border-color: #c9a84c;
+      box-shadow: 0 0 12px rgba(201, 168, 76, 0.3);
+    }
+    
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #c9a84c, #FFD700);
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(201, 168, 76, 0.4);
+    }
+    
+    .login-btn:active {
+      transform: translateY(0);
+    }
+    
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 13px;
+      text-align: center;
+      display: none;
+    }
+    
+    .message.success {
+      background: rgba(46, 125, 50, 0.2);
+      border: 1px solid #2e7d32;
+      color: #4caf50;
+      display: block;
+    }
+    
+    .message.error {
+      background: rgba(198, 40, 40, 0.2);
+      border: 1px solid #c62828;
+      color: #ef5350;
+      display: block;
+    }
+    
+    .poin-display {
+      text-align: center;
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid #FFD700;
+      border-radius: 8px;
+      display: none;
+    }
+    
+    .poin-display h3 {
+      color: #FFD700;
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+    
+    .poin-display p {
+      color: #aaa;
+      font-size: 12px;
+    }
+    
+    .komentar-section {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #333;
+    }
+    
+    .komentar-section h3 {
+      color: #FFD700;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+    
+    textarea {
+      width: 100%;
+      padding: 10px;
+      background: #0a0a0a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      resize: vertical;
+      min-height: 80px;
+      outline: none;
+      transition: 0.3s;
+    }
+    
+    textarea:focus {
+      border-color: #c9a84c;
+    }
+    
+    .btn-secondary {
+      width: 100%;
+      padding: 10px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #FFD700;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.3s;
+    }
+    
+    .btn-secondary:hover {
+      background: #2a2a2a;
+      border-color: #c9a84c;
+    }
+    
+    .info-box {
+      background: rgba(25, 118, 210, 0.1);
+      border-left: 4px solid #1976d2;
+      padding: 12px;
+      margin-top: 15px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #64b5f6;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <div class="login-header">
+    <h1>⛑️ LOGIN MEMBER</h1>
+    <p>INDRAMAYU CLUB ECOSYSTEM</p>
+  </div>
+  
+  <form id="loginForm">
+    <div class="form-group">
+      <label for="nama">Nama Member:</label>
+      <input type="text" id="nama" placeholder="Masukkan nama lengkap" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="idMember">ID Member:</label>
+      <input type="text" id="idMember" placeholder="Contoh: IMC-001" required>
+    </div>
+    
+    <button type="submit" class="login-btn">🔓 Login & Dapatkan 10 🎁</button>
+  </form>
+  
+  <div id="loginMessage" class="message"></div>
+  
+  <div id="poinDisplay" class="poin-display">
+    <h3 id="poinCount">10 🎁</h3>
+    <p>Poin Anda sekarang</p>
+  </div>
+  
+  <div class="info-box">
+    ℹ️ <strong>Sistem Poin:</strong><br>
+    • Login = +10 🎁<br>
+    • Komentar = +5 🎁<br>
+    • Quiz Selesai = +50 🎁<br>
+    • Checkpoint = +100 🏆
+  </div>
+  
+  <div class="komentar-section" id="komentarSection" style="display: none;">
+    <h3>💬 Tambah Komentar</h3>
+    <textarea id="komentarText" placeholder="Tulis komentar Anda (opsional)..."></textarea>
+    <button type="button" class="btn-secondary" onclick="sendKomentar()">📤 Kirim Komentar + 5 🎁</button>
+  </div>
+</div>
+
+<script src="member_system.js"></script>
+<script>
+  // HANDLE LOGIN
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const nama = document.getElementById('nama').value.trim();
+    const idMember = document.getElementById('idMember').value.trim();
+    
+    if (!nama || !idMember) {
+      showMessage('error', 'Isi semua field!');
+      return;
+    }
+    
+    // Panggil member system
+    const result = MEMBER_SYSTEM.loginMember(nama, idMember);
+    
+    if (result.status === 'success') {
+      showMessage('success', result.message);
+      
+      // Tampilkan poin
+      document.getElementById('poinCount').textContent = result.poin + ' 🎁';
+      document.getElementById('poinDisplay').style.display = 'block';
+      
+      // Tampilkan section komentar
+      document.getElementById('komentarSection').style.display = 'block';
+      document.getElementById('komentarText').focus();
+      
+      // Simpan session
+      sessionStorage.setItem('currentMember', JSON.stringify({nama, idMember, poin: result.poin}));
+    } else {
+      showMessage('error', result.message);
+    }
+  });
+  
+  // HANDLE KOMENTAR
+  function sendKomentar() {
+    const komentarText = document.getElementById('komentarText').value.trim();
+    
+    if (!komentarText) {
+      alert('Tulis komentar terlebih dahulu!');
+      return;
+    }
+    
+    const member = JSON.parse(sessionStorage.getItem('currentMember'));
+    
+    if (!member) {
+      showMessage('error', 'Silakan login dulu!');
+      return;
+    }
+    
+    const result = MEMBER_SYSTEM.addKomentar(member.idMember, komentarText);
+    
+    if (result.status === 'success') {
+      showMessage('success', result.message);
+      document.getElementById('poinCount').textContent = result.poin + ' 🎁';
+      document.getElementById('komentarText').value = '';
+      
+      // Update session
+      member.poin = result.poin;
+      sessionStorage.setItem('currentMember', JSON.stringify(member));
+    }
+  }
+  
+  // SHOW MESSAGE
+  function showMessage(type, text) {
+    const el = document.getElementById('loginMessage');
+    el.textContent = text;
+    el.className = `message ${type}`;
+    setTimeout(() => {
+      el.className = 'message';
+    }, 4000);
+  }
+</script>
+
+<script src="/alwi_bubble_v4_MENU.js"></script>
+</body>
+</html>

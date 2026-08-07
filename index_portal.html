@@ -1,67 +1,30 @@
-# scroll paling bawah, cari </body>, di atasnya paste:
-# <script src="alwi_bubble.js"></script>
-# Ctrl+O Enter, Ctrl+X keluar
-
-# ATAU pakai cara otomatis (tanpa nano):
-sed -i 's|</body>|<script src="alwi_bubble.js"></script>\n</body>|' index_portal.html
-
-# 3. Cek udah kepasang?
-grep "alwi_bubble" index_portal.html
-
-# 4. Commit & Push yang bener
-git add index_portal.html alwi_bubble.js
-git commit -m "CONNECT bubble to portal - alwi_bubble.js"
-git push origin main --force
-
-# 5. Tunggu 30 detik + cek live
-sleep 30
-curl -s https://nurindramayuaimini3311.github.io/hugoNUR8/index_portal.html | grep alwi_bubble<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ALWI PUSAT - 10 Nur Cahaya | Portal Resmi Dulkohar</title>
-
-<!-- FB OG FIX - HARUS PALING ATAS -->
-<meta property="fb:app_id" content="2055539978374338">
-<meta property="og:url" content="https://nurindramayuaimini3311.github.io/hugoNUR8/index_portal.html">
-<meta property="og:type" content="website">
-<meta property="og:title" content="ALWI PUSAT - 10 Nur Cahaya | Portal Resmi Dulkohar">
-<meta property="og:description" content="Target: Ghost Bug • Status: Active. Hantu=Bug Python. 2 Bot 24 jam FB Ollama + Llama.">
-<meta property="og:image" content="https://nurindramayuaimini3311.github.io/hugoNUR8/ALWI_grendle.png">
-<meta property="og:image:secure_url" content="https://nurindramayuaimini3311.github.io/hugoNUR8/ALWI_grendle.png">
-<meta property="og:image:type" content="image/png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="ALWI Agent - Ghost Bug Hunter">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://nurindramayuaimini3311.github.io/hugoNUR8/ALWI_grendle.png">
-
-<link rel="icon" href="img/icon-192.png">
-<link rel="manifest" href="manifest.json">
-<style>
-body{font-family:system-ui;background:#0a0a0a;color:#fff;text-align:center;padding:20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-top:20px}
-.card{background:#151515;border:1px solid #333;border-radius:16px;padding:15px}
-.card img{width:100%;border-radius:12px}
-a{color:#00ff88;text-decoration:none;font-weight:bold}
-</style>
-</head>
-<body>
-<h1>🔴 ALWI PUSAT - 10 Nur Cahaya</h1>
-<p>Target: Ghost Bug • Status: Active | Hantu=Bug Python</p>
-<img src="ALWI_grendle.png" style="max-width:360px;border-radius:20px;box-shadow:0 0 30px #00ff88">
-
-<div class="grid">
-<div class="card"><img src="img/Gareng.webp"><h3>Gareng</h3><a href="index.html">Masuk</a></div>
-<div class="card"><img src="img/bagong.webp"><h3>Bagong</h3><a href="index.html">Masuk</a></div>
-<div class="card"><img src="img/petruk.webp"><h3>Petruk</h3><a href="index.html">Masuk</a></div>
-<div class="card"><img src="img/guru_nur1.webp"><h3>Guru Nur</h3><a href="index.html">Masuk</a></div>
-<div class="card"><img src="img/hantu1.webp"><h3>Hantu 1</h3><a href="index.html">Masuk</a></div>
-<div class="card"><img src="img/wali_Alwi.webp"><h3>Wali Alwi</h3><a href="index.html">Masuk</a></div>
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ALWI IFRAME BOT - DROPDOWN</title><style>
+*{box-sizing:border-box}body{margin:0;background:#061106;color:#d4ffde;font-family:system-ui}
+.top{background:#0f2210;border-bottom:2px solid #145a32;padding:8px;display:flex;gap:6px;align-items:center;position:sticky;top:0;z-index:99}
+select,button{background:#0a1a0a;color:#2ecc71;border:1px solid #145a32;padding:10px 12px;border-radius:10px;font-weight:bold}
+iframe{width:100%;height:calc(100vh - 48px);border:none;background:#000}
+.badge{font-size:11px;color:#7fbf8f;margin-left:auto}
+</style></head><body>
+<div class="top">
+<select id="server" onchange="ganti()">
+<option value="https://affect-categories-exclusive-authorization.trycloudflare.com/">⛑️ ALWI PUSAT (VPS)</option>
+<option value="https://carrying-flu-smallest-room.trycloudflare.com">🤖 OLLAMA VPS (2 model)</option>
+<option value="hantu.html">👻 HANTU.HTML (2.1MB)</option>
+<option value="ceritaHOROR.html">📖 CERITA HOROR</option>
+<option value="pasarGAIB.html">🏚️ PASAR GAIB</option>
+<option value="kilat.html">⚡ KILAT</option>
+<option value="netflix/index.html">📁 NURFLIX</option>
+<option value="index.html">🏠 INDEX HOROR DRIVE</option>
+</select>
+<button onclick="reload()">🔄 Reload</button>
+<span class="badge" id="status">iframe bot bubble dropdown ON 🔊</span>
 </div>
-
-<p style="margin-top:30px"><a href="index.html">🔴 ALWI PUSAT LIVE</a> | <a href="alwi_pusat_live.html">🎬 NURFLIX</a></p>
-<script src="alwi_bubble.js"></script>
-</body>
-</html>
+<iframe id="frame" src="https://affect-categories-exclusive-authorization.trycloudflare.com/" allow="clipboard-read; clipboard-write; autoplay"></iframe>
+<script>
+const f=document.getElementById('frame');
+function ganti(){f.src=document.getElementById('server').value; document.getElementById('status').textContent='Loading '+f.src+'...';}
+function reload(){f.contentWindow.location.reload();}
+f.onload=()=>{document.getElementById('status').textContent='✅ Loaded: '+f.src;};
+</script>
+<script src="/alwi_bubble_v4_MENU.js"></script>
+</body></html>

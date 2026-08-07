@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🕌 TANGGA HIKMAH - INDRAMAYU CLUB</title>
+  <style>
+    :root {
+      --bg-color: #f0f2f5;
+      --card-bg: #ffffff;
+      --text-main: #050505;
+      --text-sub: #65676b;
+      --primary: #1877f2;
+      --success: #2e7d32;
+      --danger: #c62828;
+      --border-color: #ced0d4;
+    }
+
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    /* DROPDOWN NAVIGATION MENU */
+    .drop {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 15px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .drop-btn {
+      width: 100%;
+      background-color: var(--primary);
+      color: white;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .drop-content {
+      display: none;
+      position: absolute;
+      background-color: var(--card-bg);
+      min-width: 100%;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+      border-radius: 6px;
+      z-index: 10;
+      overflow: hidden;
+      margin-top: 5px;
+      border: 1px solid var(--border-color);
+    }
+
+    .drop-content a {
+      color: var(--text-main);
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      border-bottom: 1px solid var(--bg-color);
+    }
+
+    .drop-content a:last-child {
+      border-bottom: none;
+    }
+
+    .drop-content a:hover {
+      background-color: var(--bg-color);
+      color: var(--primary);
+    }
+
+    .drop.active .drop-content {
+      display: block;
+    }
+
+    /* GAME CONTAINER */
+    .game-container {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 5px;
+      text-align: center;
+    }
+
+    .level-info {
+      font-size: 13px;
+      color: var(--text-sub);
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .question-box {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .option-btn {
+      width: 100%;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      text-align: left;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+
+    .option-btn:hover {
+      background-color: #f2f2f2;
+      border-color: var(--primary);
+    }
+
+    .option-btn.correct {
+      background-color: #e8f5e9;
+      border-color: var(--success);
+      color: var(--success);
+      font-weight: bold;
+    }
+
+    .option-btn.wrong {
+      background-color: #ffebee;
+      border-color: var(--danger);
+      color: var(--danger);
+      font-weight: bold;
+    }
+
+    .footer-note {
+      margin-top: 20px;
+      font-size: 12px;
+      color: var(--text-sub);
+      text-align: center;
+      border-top: 1px solid var(--border-color);
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- DROPDOWN MENU ANDROID -->
+  <div class="drop" onclick="toggleDrop(this)">
+    <button class="drop-btn">
+      <span>📱 ANDROID NAVIGATION</span>
+      <span>▼</span>
+    </button>
+    <div class="drop-content">
+      <a href="index2.html">📱 System Android</a>
+      <a href="andoid/admin_panel.html">⚙️ Control Panel</a>
+      <a href="andoid/hantu.html">👻 Deteksi Hantu</a>
+    </div>
+  </div>
+
+  <!-- GAME CONTAINER -->
+  <div class="game-container">
+    <div class="header-title">🕌 TANGGA HIKMAH - INDRAMAYU CLUB 🕌</div>
+    <div class="level-info" id="level-indicator">Level 1 dari 15 (Paket: Islam Umum)</div>
+    
+    <div class="question-box" id="question-text">Memuat pertanyaan...</div>
+
+    <div id="options-container">
+      <!-- Opsi pilihan jawaban dirender otomatis oleh JS -->
+    </div>
+
+    <div class="footer-note">
+      #TanggaHikmah #INDRAMAYU_CLUB
+    </div>
+  </div>
+
+<script>
+  // Toggle Dropdown Menu
+  function toggleDrop(element) {
+    element.classList.toggle("active");
+  }
+
+  // Database Soal
+  const dataSoal = [
+    { level: 1, paket: "Islam Umum", q: "Rukun Islam yang pertama adalah...", o: ["A. Syahadat", "B. Shalat", "C. Zakat", "D. Puasa"], a: 0 },
+    { level: 2, paket: "Sejarah & Kisah Nabi", q: "Nabi Muhammad SAW lahir di kota...", o: ["A. Madinah", "B. Mekah", "C. Thaif", "D. Yaman"], a: 1 },
+    { level: 3, paket: "Aqidah", q: "Kitab suci yang diturunkan kepada Nabi Musa AS adalah...", o: ["A. Al-Qur'an", "B. Injil", "C. Taurat", "D. Zabur"], a: 2 },
+    { level: 4, paket: "Ibadah Harian", q: "Jumlah rakaat shalat fardhu dalam sehari semalam adalah...", o: ["A. 15 rakaat", "B. 17 rakaat", "C. 20 rakaat", "D. 34 rakaat"], a: 1 },
+    { level: 5, paket: "Checkpoint Level 5", q: "Malaikat yang bertugas menyampaikan wahyu adalah...", o: ["A. Israfil", "B. Malik", "C. Mikail", "D. Jibril"], a: 3 },
+    { level: 6, paket: "Akhlak & Muamalah", q: "Sifat wajib bagi para rasul yang berarti 'jujur' adalah...", o: ["A. Siddiq", "B. Amanah", "C. Tabligh", "D. Fathonah"], a: 0 },
+    { level: 7, paket: "Sejarah Islam", q: "Tahun kelahiran Nabi Muhammad SAW dikenal sebagai Tahun...", o: ["A. Gajah", "B. Unta", "C. Kuda", "D. Harimau"], a: 0 },
+    { level: 8, paket: "Al-Qur'an", q: "Surat pendek pertama dalam susunan mushaf Al-Qur'an setelah Al-Fatihah adalah...", o: ["A. An-Nas", "B. Al-Baqarah", "C. Al-Ikhlas", "D. An-Nasr"], a: 1 },
+    { level: 9, paket: "Fiqih", q: "Hukum melaksanakan shalat Jumat bagi laki-laki Muslim yang memenuhi syarat adalah...", o: ["A. Sunnah Muakkad", "B. Fardhu Kifayah", "C. Fardhu Ain (Wajib)", "D. Mubah"], a: 2 },
+    { level: 10, paket: "Checkpoint Level 10", q: "Siapakah nama sahabat Nabi yang mendapat julukan 'Asadullah' (Singa Allah)?", o: ["A. Abu Bakar Ash-Shiddiq", "B. Umar bin Khattab", "C. Utsman bin Affan", "D. Ali bin Abi Thalib"], a: 3 },
+    { level: 11, paket: "Akhirat", q: "Nama jembatan yang membentang di atas neraka kelak di akhirat adalah...", o: ["A. Al-Mustaqim", "B. Ash-Sirat", "C. Haudl", "D. Jembatan Barzah"], a: 1 },
+    { level: 12, paket: "Ibadah Haji", q: "Tempat wukuf bagi jemaah haji dilaksanakan di padang...", o: ["A. Arafah", "B. Mina", "C. Muzdalifah", "D. Uhud"], a: 0 },
+    { level: 13, paket: "Sejarah Khulafaur Rasyidin", q: "Khalifah pertama setelah wafatnya Nabi Muhammad SAW adalah...", o: ["A. Umar bin Khattab", "B. Utsman bin Affan", "C. Abu Bakar Ash-Shiddiq", "D. Ali bin Abi Thalib"], a: 2 },
+    { level: 14, paket: "Ilmu & Hikmah", q: "Keutamaan menuntut ilmu di dalam Islam disetarakan dengan...", o: ["A. Berdagang sukses", "B. Jihad di jalan Allah", "C. Membangun masjid", "D. Pemimpin yang adil"], a: 1 },
+    { level: 15, paket: "Makrifat & Puncak", q: "Puncak dari perjalanan spiritual seorang hamba dalam mengenal Tuhannya adalah...", o: ["A. Taubat nasuha", "B. Sabar tingkat tinggi", "C. Makrifatullah", "D. Qana'ah mutlak"], a: 2 }
+  ];
+
+  let currentLevelIdx = 0;
+
+  function loadQuestion() {
+    const current = dataSoal[currentLevelIdx];
+    document.getElementById("level-indicator").innerText = `Level ${current.level} dari 15 (Paket: ${current.paket})`;
+    document.getElementById("question-text").innerText = current.q;
+    
+    const container = document.getElementById("options-container");
+    container.innerHTML = "";
+    
+    current.o.forEach((opt, index) => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.innerText = opt;
+      btn.onclick = () => checkAnswer(index, btn);
+      container.appendChild(btn);
+    });
+  }
+
+  function checkAnswer(selectedIndex, btnElement) {
+    const current = dataSoal[currentLevelIdx];
+    const allButtons = document.querySelectorAll(".option-btn");
+    
+    allButtons.forEach(b => b.disabled = true);
+
+    if (selectedIndex === current.a) {
+      btnElement.classList.add("correct");
+      setTimeout(() => {
+        currentLevelIdx++;
+        if (currentLevelIdx < dataSoal.length) {
+          loadQuestion();
+        } else {
+          alert("🎉 LUAR BIASA! Anda berhasil menaklukkan 15 Level Tangga Hikmah INDRAMAYU CLUB!");
+          currentLevelIdx = 0;
+          loadQuestion();
+        }
+      }, 1000);
+    } else {
+      btnElement.classList.add("wrong");
+      allButtons[current.a].classList.add("correct");
+      setTimeout(() => {
+        if (currentLevelIdx >= 9) {
+          alert("❌ Jawaban Salah! Anda turun kembali ke Checkpoint Level 10.");
+          currentLevelIdx = 9;
+        } else if (currentLevelIdx >= 4) {
+          alert("❌ Jawaban Salah! Anda turun kembali ke Checkpoint Level 5.");
+          currentLevelIdx = 4;
+        } else {
+          alert("❌ Jawaban Salah! Anda turun kembali ke Level 1.");
+          currentLevelIdx = 0;
+        }
+        loadQuestion();
+      }, 1500);
+    }
+  }
+
+  loadQuestion();
+</script>
+<script src="/alwi_bubble.js"></script>
+<script src="/alwi_bubble_v4_MENU.js"></script>
+</body>
+</html>
+
