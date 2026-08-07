@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Naga Jari - Tanpa Stik</title>
+<style>
+  html, body { margin:0; padding:0; background:#050810; overflow:hidden; height:100%; }
+  canvas { display:block; width:100vw; height:100vh; touch-action:none; }
+  #hint { position:fixed; bottom:12px; left:50%; transform:translateX(-50%); color:#3fa9f5; font:13px monospace; opacity:0.7; text-align:center; pointer-events:none; }
+  #score { position:fixed; top:12px; left:12px; color:#facc15; font:bold 18px monospace; }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="score">Skor: 0</div>
+<div id="hint">GERAKKAN JARI DI LAYAR • NAGA IKUT JARI • LEPAS = PETIR • 2 JARI = 2 NAGA</div>
+<script>
+const canvas=document.getElementById('game');
+const ctx=canvas.getContext('2d');
+function resize(){ canvas.width=innerWidth; canvas.height=innerHeight; }
+resize(); addEventListener('resize',resize);
+
+let score=0;
+const fingers={}; // pointerId -> {x,y, tail:[], active}
+
+class NagaJari {
+  constructor(id){
+    this.id=id;
+    this.x=0; this.y=0;
+    this.tail=[];
+    for(let i=0;i<18;i++) this.tail.push({x:0,y:0});
+    this.color=`hsl(${200+Math.random()*60},100%,60%)`;
+  }
+  update(tx,ty){
+    this.x=tx; this.y=ty;
+    this.tail[0].x+= (tx - this.tail[0].x)*0.4;
+    this.tail[0].y+= (ty - this.tail[0].y)*0.4;
+    for(let i=1;i<this.tail.length;i++){
+      this.tail[i].x+= (this.tail[i-1].x - this.tail[i].x)*0.35;
+      this.tail[i].y+= (this.tail[i-1].y - this.tail[i].y)*0.35;
+    }
+  }
+}
+
+const nagas={};
+let particles=[];
+
+function spawnParticles(x,y,color){
+  for(let i=0;i<12;i++){
+    particles.push({x,y, vx:(Math.random()-0.5)*8, vy:(Math.random()-0.5)*8, life:30, color});
+  }
+  score++;
+  document.getElementById('score').textContent='Skor: '+score;
+}
+
+canvas.addEventListener('pointerdown', e=>{
+  e.preventDefault();
+  const n = new NagaJari(e.pointerId);
+  n.x=e.clientX; n.y=e.clientY;
+  nagas[e.pointerId]=n;
+  fingers[e.pointerId]={x:e.clientX,y:e.clientY};
+  canvas.setPointerCapture(e.pointerId);
+});
+
+canvas.addEventListener('pointermove', e=>{
+  if(!nagas[e.pointerId]) return;
+  fingers[e.pointerId]={x:e.clientX,y:e.clientY};
+  nagas[e.pointerId].update(e.clientX,e.clientY);
+});
+
+canvas.addEventListener('pointerup', e=>{
+  const n=nagas[e.pointerId];
+  if(n){
+    // petir ledakan pas lepas
+    spawnParticles(n.x,n.y,n.color);
+    // efek petir garis
+    ctx.strokeStyle=n.color;
+    ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.moveTo(n.x,n.y);
+    ctx.lineTo(n.x+(Math.random()-0.5)*200, -20);
+    ctx.stroke();
+  }
+  delete nagas[e.pointerId];
+  delete fingers[e.pointerId];
+});
+
+function loop(){
+  ctx.fillStyle='rgba(5,8,16,0.25)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  
+  // gambar naga jari
+  Object.values(nagas).forEach(n=>{
+    // ekor
+    for(let i=n.tail.length-1;i>=0;i--){
+      const t=n.tail[i];
+      const s= 14*(1-i/n.tail.length);
+      ctx.fillStyle=n.color;
+      ctx.globalAlpha=0.8*(1-i/n.tail.length);
+      ctx.beginPath();
+      ctx.arc(t.x,t.y,s,0,Math.PI*2);
+      ctx.fill();
+      // glow
+      ctx.shadowColor=n.color;
+      ctx.shadowBlur=15;
+      ctx.fill();
+      ctx.shadowBlur=0;
+    }
+    // kepala
+    ctx.globalAlpha=1;
+    ctx.fillStyle='#fff';
+    ctx.beginPath();
+    ctx.arc(n.x,n.y,16,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle=n.color;
+    ctx.beginPath();
+    ctx.arc(n.x,n.y,10,0,Math.PI*2);
+    ctx.fill();
+  });
+  
+  // particles
+  particles.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy; p.life--;
+    ctx.globalAlpha=p.life/30;
+    ctx.fillStyle=p.color;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,4,0,Math.PI*2);
+    ctx.fill();
+  });
+  particles=particles.filter(p=>p.life>0);
+  ctx.globalAlpha=1;
+  
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>
+

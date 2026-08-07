@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alwi & Jimat Ajaib Python</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Fira+Code:wght@400;600&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0b0f19;
+            --bg-card: #131b2e;
+            --accent-gold: #e5a93c;
+            --accent-blue: #38bdf8;
+            --accent-glow: #f59e0b;
+            --text-main: #e2e8f0;
+            --text-dim: #94a3b8;
+            --border-color: #1e293b;
+            --code-bg: #090d16;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Spectral', serif;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            padding: 20px 15px;
+            background-image: 
+                radial-gradient(circle at 50% 0%, #1e1b4b 0%, transparent 70%),
+                radial-gradient(circle at 50% 100%, #0284c715 0%, transparent 70%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            background: rgba(19, 27, 46, 0.9);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.8), 0 0 20px rgba(229, 169, 60, 0.15);
+            backdrop-filter: blur(8px);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        header::after {
+            content: '🐍 ✦ 📜';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            padding: 0 15px;
+            color: var(--accent-gold);
+            font-size: 0.9rem;
+            letter-spacing: 4px;
+        }
+
+        .tagline {
+            font-family: 'Fira Code', monospace;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            color: #f8fafc;
+            font-size: 2.3rem;
+            font-weight: 900;
+            text-shadow: 0 0 12px rgba(229, 169, 60, 0.3);
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-style: italic;
+            font-size: 1.05rem;
+        }
+
+        .story-section {
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--accent-gold);
+            font-size: 1.4rem;
+            border-left: 4px solid var(--accent-gold);
+            padding-left: 12px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin-bottom: 18px;
+            text-align: justify;
+            text-indent: 2em;
+        }
+
+        p:first-of-type::first-letter {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            float: left;
+            line-height: 0.8;
+            margin-right: 10px;
+            color: var(--accent-gold);
+            font-weight: 700;
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            color: #38bdf8;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .code-block .keyword { color: #f43f5e; }
+        .code-block .string { color: #a3e635; }
+        .code-block .comment { color: #64748b; font-style: italic; }
+        .code-block .function { color: #fbbf24; }
+
+        .interactive-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px dashed var(--accent-gold);
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .interactive-box h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(245, 158, 11, 0.4);
+        }
+
+        #output {
+            margin-top: 15px;
+            font-family: 'Fira Code', monospace;
+            color: var(--accent-blue);
+            min-height: 24px;
+            font-weight: 600;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-family: 'Fira Code', monospace;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px 18px;
+            }
+            h1 {
+                font-size: 1.7rem;
+            }
+            body {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="tagline">Kisah Teknologi Mistik</div>
+            <h1>Alwi & Kode Jimat Rahasia</h1>
+            <div class="subtitle">Sintesis Algoritma Python dan Kearifan Luhur</div>
+        </header>
+
+        <article>
+            <section class="story-section">
+                <h2>Bab 1: Mantra Dalam Kode</h2>
+                <p>Di dalam ruangan berpenerangan hangat yang dipenuhi perangkat elektronik tua dan ukiran kayu khas Nusantara, Alwi—seorang pemuda ber-udeng dan mengenakan kemeja batik—duduk tekun di depan komputer laptopnya. Matanya menatap tajam ke arah layar monitor yang menampilkan barisan kode pemrograman Python.</p>
+                <p>Di sebelah keyboard laptopnya, tergeletak sebuah jimat kayu ukir tua peninggalan leluhur. Jimat itu tidak hanya diam; setiap kali Alwi mengetikkan fungsi logika Python yang rumit, ukiran pada jimat tersebut memancarkan pendaran cahaya keemasan yang lembut, seolah memberikan petunjuk dan kejelasan logika ke dalam pikirannya.</p>
+
+                <div class="code-block">
+<span class="keyword">import</span> time
+
+<span class="keyword">class</span> <span class="function">JimatAjaib</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, nama_jimat, elemen):
+        self.nama = nama_jimat
+        self.elemen = elemen
+        self.energi = <span class="string">100</span>
+
+    <span class="keyword">def</span> <span class="function">aktifkan_murni</span>(self):
+        <span class="keyword">if</span> self.energi > <span class="string">0</span>:
+            print(<span class="string">f"[+] Jimat {self.nama} berpendar! Elemen {self.elemen} aktif."</span>)
+            self.energi -= <span class="string">10</span>
+
+<span class="comment"># Inisialisasi Alwi</span>
+alwi_jimat = JimatAjaib(<span class="string">"Nur Kalimasada"</span>, <span class="string">"Cahaya Sakti"</span>)
+alwi_jimat.aktifkan_murni()
+                </div>
+            </section>
+
+            <section class="story-section">
+                <h2>Bab 2: Pendaran Cahaya Monitor</h2>
+                <p>Setiap kali baris kode berhasil dieksekusi tanpa error, logo Python berwarna kuning-biru yang mengambang di sekitar ruangan bergetar halus. Jimat ajaib di sampingnya memancarkan gelombang mistik tipis yang membuat proses debugging menjadi sangat cepat.</p>
+                <p>Alwi tersenyum tipis. Kombinasi antara ilmu teknologi modern dan kearifan mistik kuno telah menciptakan harmoni baru di layar monitor—sebuah langkah awal menuju penguasaan sistem berteknologi spiritual tinggi.</p>
+            </section>
+        </article>
+
+        <div class="interactive-box">
+            <h3>Coba Aktifkan Energi Jimat Alwi</h3>
+            <p style="text-indent: 0; text-align: center; color: var(--text-dim); margin-bottom: 15px;">Tekan tombol di bawah untuk menjalankan fungsi Python secara virtual:</p>
+            <button onclick="runVirtualPython()">[ EXECUTE SCRIPT ]</button>
+            <div id="output"></div>
+        </div>
+
+        <footer>
+            &copy; 2026 Indramayu Dev Community — Alwi Python Mistik
+        </footer>
+    </div>
+
+    <script>
+        let energi = 100;
+        function runVirtualPython() {
+            const outputDiv = document.getElementById('output');
+            if (energi > 0) {
+                energi -= 25;
+                outputDiv.style.color = "#38bdf8";
+                outputDiv.innerHTML = `[+] SCRIPT RUN: Jimat Nur Kalimasada Aktif! Sisa Energi Mistik: ${energi}%`;
+            } else {
+                outputDiv.style.color = "#f43f5e";
+                outputDiv.innerHTML = `[-] WARNING: Energi Jimat Habis! Silakan lakukan meditasi / recharge.`;
+            }
+        }
+    </script>
+<script src="/alwi_bubble.js"></script>
+</body>
+</html>
+

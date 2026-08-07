@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kartu Member - Indramayu Club</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/kartu.css') }}">
+</head>
+<body>
+<div class="kartu-wrap">
+    <div class="kartu" id="kartuMember">
+        <div class="kartu-header">
+            <img src="{{ url_for('static', filename='img/icon-192.png') }}" class="logo" onerror="this.src='../img/icon-192.png'">
+            <div>
+                <h2>INDRAMAYU CLUB</h2>
+                <span>Member Resmi • IMC</span>
+            </div>
+            <div class="badge">AKTIF</div>
+        </div>
+        <div class="kartu-body">
+            <img id="fotoMember" src="{{ url_for('static', filename='img/agent_alwi_icon.png') }}" class="foto">
+            <div class="info">
+                <h3 id="namaMember">Abdul Kohar</h3>
+                <p id="idMember">IMC-001</p>
+                <p id="jabatan">Agent Alwi Senior</p>
+                <div class="qr-area">
+                    <canvas id="qrCanvas"></canvas>
+                    <small>Scan untuk verifikasi</small>
+                </div>
+            </div>
+        </div>
+        <div class="kartu-footer">
+            <span>📍 Indramayu - Palangkaraya</span>
+            <span id="tgl">2026</span>
+        </div>
+    </div>
+
+    <div class="aksi">
+        <button onclick="downloadKartu()">📥 Download Kartu (PNG)</button>
+        <button onclick="window.location.href='/kamera-hantu/scan'">📷 Scan Kartu Member</button>
+        <button onclick="shareWA()">🟢 Share ke WA</button>
+    </div>
+
+    <div class="penjelasan">
+        <h4>ℹ️ Fungsi templates/ & static/ buat kartu member:</h4>
+        <ul>
+            <li><b>templates/kartu.html</b> = kerangka kartu (HTML + Jinja {{ }})</li>
+            <li><b>static/css/kartu.css</b> = desain kartu biar keren kayak KTP</li>
+            <li><b>static/js/kartu.js</b> = bikin QR + download PNG</li>
+            <li><b>static/img/</b> = logo, foto member, icon-192.png kamu</li>
+        </ul>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="{{ url_for('static', filename='js/kartu.js') }}"></script>
+<script>
+// Fallback jika tidak pakai Flask - ambil dari localStorage login_member.html
+const nama = localStorage.getItem('imc_nama') || 'Abdul Kohar';
+const idm = localStorage.getItem('imc_id') || 'IMC-001';
+document.getElementById('namaMember').textContent = nama;
+document.getElementById('idMember').textContent = idm;
+
+// Generate QR
+const canvas = document.getElementById('qrCanvas');
+QRCode.toCanvas(canvas, `INDRAMAYU-CLUB|${idm}|${nama}|${new Date().toISOString()}`, {width:100}, function (error) {
+  if (error) console.error(error);
+});
+
+function downloadKartu(){
+  alert('Fitur download butuh html2canvas - sudah ada di static/js/kartu.js');
+}
+function shareWA(){
+  const text = `Kartu Member Indramayu Club\nNama: ${nama}\nID: ${idm}\nVerifikasi: https://indramayu-club.web/${idm}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(text), '_blank');
+}
+</script>
+</body>
+</html>
+

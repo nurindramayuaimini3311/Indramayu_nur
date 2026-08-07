@@ -1,26 +1,34 @@
 #!/bin/bash
-# 1. Ganti kamus pakai FINAL
-if [ -f android/kamus_FINAL_KATA_ACAK_only.html ]; then
-  cp android/kamus_FINAL_KATA_ACAK_only.html android/kamus.html
-  echo "✅ kamus FINAL dipasang dari android/"
+echo "🧹 Bersihkan folder nyasar..."
+# Dari ~/Indramayu_nur
+rm -rf img/img
+rm -rf img/konten
+rm -f img/cp
+rm -f img/cp/suster-gaib.jpg 2>/dev/null
+rm -rf img/konten/suster-gaib.jpg 2>/dev/null
+
+# Betulkan typo
+if [ -f static/kartu_member.htmk ]; then
+  mv static/kartu_member.htmk static/kartu_member.html
+  echo "✅ Fix typo htmk -> html"
 fi
 
-# 2. Bersihin bubble lama
-find . -name "*.html" -type f -exec sed -i '/alwi_bubble/d' {} \;
-
-# 3. Pastikan bubble v3
-if [ -f alwi_bubble_v3_ALL.js ]; then
-  cp alwi_bubble_v3_ALL.js alwi_bubble.js
-  echo "✅ alwi_bubble.js = v3"
+# Pastikan suster-gaib ada di 2 tempat
+if [ ! -f img/suster-gaib.jpg ] && [ -f konten/suster-gaib.jpg ]; then
+  cp konten/suster-gaib.jpg img/suster-gaib.jpg
+  echo "✅ Copy suster ke img/"
 fi
 
-# 4. Pasang bubble
-for f in index.html android/index.html android/kamus.html android/admin_panel.html konten/komentar.html netflix/index.html peta/peta.html pencuri/index.html kamera-hantu/kamera_hantu2.html kuis/quiz.html; do
-  if [ -f "$f" ] && grep -q "</body>" "$f"; then
-    sed -i 's|</body>|<script src="/alwi_bubble.js"></script>\n</body>|' "$f"
-    echo "✅ $f"
-  fi
-done
+if [ ! -f konten/suster-gaib.jpg ] && [ -f img/suster-gaib.jpg ]; then
+  cp img/suster-gaib.jpg konten/suster-gaib.jpg
+  echo "✅ Copy suster ke konten/"
+fi
 
-grep -l "alwi_bubble" android/kamus.html && echo "✅ kamus ada bubble" || echo "❌ belum"
-grep "btn-acak" android/kamus.html && echo "✅ kamus KATA ACAK ONLY" || echo "❌ kamus masih lama"
+echo ""
+echo "✅ SELESAI - Cek tree:"
+tree -I "node_modules|.git" -L 2
+echo ""
+echo "📁 konten/ harus 14 file:"
+ls konten/ | wc -l
+ls konten/
+
