@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novel Kamera Hantu</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #ff4d4d;
+            border-bottom: 2px solid #ff4d4d;
+            padding-bottom: 10px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #1e1e1e;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            border-left: 4px solid #ff4d4d;
+            border-radius: 4px;
+        }
+        a {
+            color: #ff8080;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .story-text {
+            margin-top: 10px;
+            color: #ccc;
+        }
+        .audio-btn {
+            background-color: #ff4d4d;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        .audio-btn:hover {
+            background-color: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <h1>Indeks Novel: Kamera Hantu</h1>
+    <ul>
+        <li>
+            <a href="kmrHANTU.html">Bab 1: Kamera Hantu</a>
+            <p id="story-1" class="story-text">
+                Rian menemukan kamera analog tua dengan ukiran aneh di pasar loak. Saat membidikkan lensa ke sudut kamar, ia melihat sosok tinggi berwajah pucat tepat di belakangnya melalui jendela pembidik.
+            </p>
+            <button class="audio-btn" onclick="playAudio('story-1')">🔊 Suara</button>
+        </li>
+        <li>
+            <a href="kilat.html">Bab 2: Kilat Cahaya</a>
+            <p id="story-2" class="story-text">
+                Saat mengambil foto dalam kegelapan, kilat cahaya lampu blitz menyala terang. Dalam sepersekian detik kilatan tersebut, bayangan-bayangan makhluk halus mendadak muncul mengelilinginya.
+            </p>
+            <button class="audio-btn" onclick="playAudio('story-2')">🔊 Suara</button>
+        </li>
+        <li>
+            <a href="hantu.html">Bab 3: Teror Makhluk Halus</a>
+            <p id="story-3" class="story-text">
+                Sosok-sosok hantu yang terganggu mulai mewujud di dunia nyata. Bisikan dingin dan ketukan jendela meneror Rian, menuntut kamera tua itu dikembalikan atau dihancurkan.
+            </p>
+            <button class="audio-btn" onclick="playAudio('story-3')">🔊 Suara</button>
+        </li>
+        <li>
+            <a href="index2.html">Bab 4: Bayangan di Cermin</a>
+            <p id="story-4" class="story-text">
+                Ketika berdiri di depan cermin tua sambil memegang kamera, Rian menyadari pantulan dirinya tidak lagi bergerak sesuai gerakan aslinya. Cermin memperlihatkan dimensi alternatif penjerat jiwanya.
+            </p>
+            <button class="audio-btn" onclick="playAudio('story-4')">🔊 Suara</button>
+        </li>
+        <li>
+            <a href="kamera_hantu2.html">Bab 5: Kebangkitan Kamera Hantu</a>
+            <p id="story-5" class="story-text">
+                Kutukan kamera bangkit sepenuhnya. Rian harus memilih antara mengorbankan penglihatannya atau membiarkan kekuatan Kamera Hantu menelan seluruh jiwa yang pernah tertangkap lensa.
+            </p>
+            <button class="audio-btn" onclick="playAudio('story-5')">🔊 Suara</button>
+        </li>
+    </ul>
+
+    <script>
+        function playAudio(elementId) {
+            window.speechSynthesis.cancel();
+            const text = document.getElementById(elementId).innerText;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'id-ID';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+    </script>
+</body>
+</html>
+
