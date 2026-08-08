@@ -1,4 +1,11 @@
 {
+  "version": 2,
   "cleanUrls": true,
-  "github": { "silent": true }
+  "builds": [
+    {
+      "src": "**/*",
+      "use": "@vercel/static"
+    }
+  ]
 }
+
