@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ALWI PUSAT - Indramayu Club</title>
 <meta property="og:image" content="https://indramayu-nur.vercel.app/img/icon-512.png">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#c9a84c">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -105,7 +105,7 @@ body{background:#0a0a0a;color:#fff;font-family:Arial,sans-serif;min-height:100vh
 <script>
 function toggleDrop(e){e.stopPropagation();document.getElementById('navDropdown').classList.toggle('active');}
 document.addEventListener('click',function(e){var d=document.getElementById('navDropdown');if(d&&!d.contains(e.target))d.classList.remove('active');});
-if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js');}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}
 </script>
 </body>
 </html>
