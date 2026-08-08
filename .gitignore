@@ -9,3 +9,5 @@ url-alwi.txt
 .env
 fb_config.json
 url-alwi.txt
+.vercel
+.env*
