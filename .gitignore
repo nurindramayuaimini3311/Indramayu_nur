@@ -11,3 +11,6 @@ fb_config.json
 url-alwi.txt
 .vercel
 .env*
+node_modules/
+www/
+android/

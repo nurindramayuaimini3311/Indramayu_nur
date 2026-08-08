@@ -1,0 +1,17 @@
+{
+  "name": "ALWI PUSAT - 10 Nur Cahaya",
+  "short_name": "ALWI PUSAT",
+  "description": "Hantu=Bug Python. Dropdown fix di depan gambar.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#c9a84c",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    { "src": "/img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/img/icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/img/agent_alwi_icon.png", "sizes": "192x192", "type": "image/png" }
+  ]
+}

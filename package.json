@@ -1,0 +1,29 @@
+{
+  "name": "indramayu_nur",
+  "version": "1.0.0",
+  "description": "Portal Komunitas & Ecosystem Digital Indramayu Club.",
+  "main": "alwi_bubble.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nurindramayuaimini3311/Indramayu_nur.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/nurindramayuaimini3311/Indramayu_nur/issues"
+  },
+  "homepage": "https://github.com/nurindramayuaimini3311/Indramayu_nur#readme",
+  "dependencies": {
+    "@capacitor/core": "^8.5.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.5.0",
+    "@capacitor/cli": "^8.5.0"
+  }
+}
+
