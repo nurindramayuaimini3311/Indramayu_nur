@@ -1,105 +1,93 @@
 <!DOCTYPE html>
 <html lang="id">
-<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
-(function() {
-  if (window.__playableTouchPatchInstalled) return;
-  window.__playableTouchPatchInstalled = true;
-  var origAdd = EventTarget.prototype.addEventListener;
-  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
-  EventTarget.prototype.addEventListener = function(type, listener, options) {
-    if (blockedTypes[type]) {
-      if (options === undefined || options === null) {
-        options = { passive: true };
-      } else if (typeof options === 'boolean') {
-        options = { capture: options, passive: true };
-      } else {
-        options = Object.assign({}, options, { passive: true });
-      }
-    }
-    return origAdd.call(this, type, listener, options);
-  };
-})();
-</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AlwiSD - Index</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0} body{font-family:'Segoe UI',sans-serif;background:#f8f5e9;display:flex;justify-content:center;padding:15px}
-.wrap{max-width:560px;width:100%}
-header{background:#fff;border-radius:16px;padding:18px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.06);border:2px solid #4caf50}
-header h1{color:#2e7d32;font-size:20px} header p{font-size:11px;color:#888;margin-top:4px}
-.card{display:flex;gap:12px;background:#fff;border-radius:12px;padding:14px;margin-top:10px;text-decoration:none;color:#333;box-shadow:0 2px 8px rgba(0,0,0,0.05);border:1px solid #eee;transition:0.2s}
-.card:hover{border-color:#4caf50;transform:translateY(-2px)} .card .ic{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.card b{font-size:13px;color:#2e7d32} .card span{font-size:11px;color:#777;display:block;margin-top:2px}
-.badge{margin-left:auto;font-size:9px;background:#e8f5e9;color:#2e7d32;padding:4px 8px;border-radius:6px;height:fit-content}
-.card.math{background:linear-gradient(135deg,#e8f5e9,#fff)} .card.novel{background:linear-gradient(135deg,#fff3e0,#fff)}
-</style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alwi SD - Menu Utama</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background-color: #1e1e1e;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+        }
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .menu-btn {
+            display: block;
+            padding: 14px 18px;
+            background-color: #2a2a2a;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: 1px solid #444;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+        .menu-btn:hover, .menu-btn:active {
+            background-color: #ffd700;
+            color: #000000;
+            border-color: #ffd700;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #888;
+        }
+    </style>
 </head>
 <body>
-<div class="wrap">
-<header>
-<h1>📚 ALWISD - ~/Indramayu_nur/alwiSD/</h1>
-<p>Bot Novel + Game Matematika Anak SD</p>
-</header>
 
-<a class="card math" href="data:text/html;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImlkIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij48bWV0YSBuYW1lPSJ2aWV3cG9ydCIgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoLCBpbml0aWFsLXNjYWxlPTEuMCwgbWF4aW11bS1zY2FsZT0xLjAsIlaguHVzZXItc2NhbGFibGU9bm8iPgo8dGl0bGU+QWx3aSBTRCAtIFBldHVhbGFuZ2FuIE1hdGVtYXRpa2E8L3RpdGxlPgo8c3R5bGU+Cip7bWFyZ2luOjA7cGFkZGluZzowO2JveC1zaXppbmc6Ym9yZGVyLWJveH0KYm9keXtmb250LWZhbWlseTonUGx1cyBKYWthcnRhIFNhbnMnLCdTZWdvZSBVSScsc2Fucy1zZXJpZjtiYWNrZ3JvdW5kOiNmOGY1ZTk7Y29sb3I6IzMzMzttaW4taGVpZ2h0OjEwMHZoO2Rpc3BsYXk6ZmxleDtqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyO3BhZGRpbmc6MTJweH0KLndyYXB7bWF4LXdpZHRoOjQ4MHB4O3dpZHRoOjEwMCV9CmhlYWRlcntiYWNrZ3JvdW5kOmxpbmVhci1ncmFkaWVudCgxMzVkZWcsIzRjYWY1MCwjOGJjMzRhKTtjb2xvcjojZmZmO2JvcmRlci1yYWRpdXM6MTZweDtwYWRkaW5nOjE0cHg7dGV4dC1hbGlnbjpjZW50ZXI7Ym94LXNoYWRvdzowIDRweCAxMnB4IHJnYmEoMCwwLDAsMC4xKX0KaGVhZGVyIGgxe2ZvbnQtc2l6ZToxOHB4fSBoZWFkZXIgcHtmb250LXNpemU6MTFweDtvcGFjaXR5OjAuOTttYXJnaW4tdG9wOjJweH0KLmxldmVsLWJhcntkaXNwbGF5OmZsZXg7Z2FwOjZweDttYXJnaW46MTJweCAwO292ZXJmbG93LXg6YXV0bztwYWRkaW5nLWJvdHRvbTo0cHh9Ci5sZXZlbC1idG57ZmxleC1zaHJpbms6MDtwYWRkaW5nOjhweCAxMnB4O2JvcmRlci1yYWRpdXM6MjBweDtib3JkZXI6MnB4IHNvbGlkICM0Y2FmNTA7YmFja2dyb3VuZDojZmZmO2NvbG9yOiM0Y2FmNTA7Zm9udC13ZWlnaHQ6Ym9sZDtmb250LXNpemU6MTFweDtjdXJzb3I6cG9pbnRlcn0KLmxldmVsLWJ0bi5hY3RpdmV7YmFja2dyb3VuZDojNGNhZjUwO2NvbG9yOiNmZmZ9Ci5zdG9yeS1ib3h7YmFja2dyb3VuZDojZmZmO2JvcmRlci1yYWRpdXM6MTJweDtwYWRkaW5nOjE0cHg7Ym9yZGVyLWxlZnQ6NHB4IHNvbGlkICM0Y2FmNTA7bWFyZ2luLWJvdHRvbToxMnB4O2JveC1zaGFkb3c6MCAycHggOHB4IHJnYmEoMCwwLDAsMC4wNSk7ZGlzcGxheTpmbGV4O2dhcDoxMHB4fQouc3RvcnktYm94IGltZ3t3aWR0aDo1NHB4O2hlaWdodDo1NHB4O2JvcmRlci1yYWRpdXM6MTBweDtvYmplY3QtZml0OmNvdmVyO2ZsZXgtc2hyaW5rOjA7Ym9yZGVyOjJweCBzb2xpZCAjZThmNWU5fQouc3RvcnktYm94IGJ7Y29sb3I6IzJlN2QzMjtmb250LXNpemU6MTNweH0gLnN0b3J5LWJveCBzcGFue2ZvbnQtc2l6ZToxMnB4O2xpbmUtaGVpZ2h0OjEuNTtjb2xvcjojNTU1fQoucXVlc3Rpb257YmFja2dyb3VuZDojZmZmO2JvcmRlci1yYWRpdXM6MTRweDtwYWRkaW5nOjE4cHg7dGV4dC1hbGlnbjpjZW50ZXI7Ym94LXNoYWRvdzowIDRweCAxNXB4IHJnYmEoMCwwLDAsMC4wOCl9Ci5xLWljb257Zm9udC1zaXplOjM2cHg7bWFyZ2luLWJvdHRvbTo4cHh9Ci5xLXRleHR7Zm9udC1zaXplOjIwcHg7Zm9udC13ZWlnaHQ6ODAwO21hcmdpbjo4cHggMDtsZXR0ZXItc3BhY2luZzoxcHh9Ci5xLXN1Yntmb250LXNpemU6MTFweDtjb2xvcjojODg4O21hcmdpbi1ib3R0b206MTRweH0KLm9wdHN7ZGlzcGxheTpncmlkO2dyaWQtdGVtcGxhdGUtY29sdW1uczoxZnIgMWZyO2dhcDoxMHB4fQoub3B0e3BhZGRpbmc6MTRweDtib3JkZXI6MnB4IHNvbGlkICNlMGUwZTA7Ym9yZGVyLXJhZGl1czoxMnB4O2JhY2tncm91bmQ6I2ZmZjtmb250LXNpemU6MThweDtmb250LXdlaWdodDpib2xkO2N1cnNvcjpwb2ludGVyO3RyYW5zaXRpb246MC4yc30KLm9wdDpob3Zlcntib3JkZXItY29sb3I6IzRjYWY1MDtiYWNrZ3JvdW5kOiNmMWY4ZTk7dHJhbnNmb3JtOnNjYWxlKDEuMDMpfQoub3B0LmNvcnJlY3R7YmFja2dyb3VuZDojZThmNWU5O2JvcmRlci1jb2xvcjojMmU3ZDMyO2NvbG9yOiMyZTdkMzJ9Ci5vcHQud3Jvbmd7YmFja2dyb3VuZDojZmZlYmVlO2JvcmRlci1jb2xvcjojYzYyODI4O2NvbG9yOiNjNjI4Mjg7YW5pbWF0aW9uOnNoYWtlIDAuM3N9CkBrZXlmcmFtZXMgc2hha2V7MCUsMTAwJXt0cmFuc2Zvcm06dHJhbnNsYXRlWCgwKX0yNSV7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTRweCl9NzUle3RyYW5zZm9ybTp0cmFuc2xhdGVYKDRweCl9fQouc3RhdHN7ZGlzcGxheTpmbGV4O2dhcDo4cHg7bWFyZ2luLXRvcDoxMnB4fQouc3RhdHtmbGV4OjE7YmFja2dyb3VuZDojZmZmO2JvcmRlci1yYWRpdXM6MTBweDtwYWRkaW5nOjEwcHg7dGV4dC1hbGlnbjpjZW50ZXI7Ym94LXNoYWRvdzowIDJweCA2cHggcmdiYSgwLDAsMCwwLjA1KX0KLnN0YXQgYntkaXNwbGF5OmJsb2NrO2ZvbnQtc2l6ZToxNnB4O2NvbG9yOiM0Y2FmNTB9IC5zdGF0IHNwYW57Zm9udC1zaXplOjEwcHg7Y29sb3I6Izg4ODt0ZXh0LXRyYW5zZm9ybTp1cHBlcmNhc2V9Ci5mb290ZXJ7Zm9udC1zaXplOjEwcHg7Y29sb3I6I2FhYTt0ZXh0LWFsaWduOmNlbnRlcjttYXJnaW4tdG9wOjE2cHh9Cjwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CjxkaXYgY2xhc3M9IndyYXAiPgo8aGVhZGVyPgo8aDE+8J+TmiBBTFdJIFNEIC0gUEVUVUFMQU5HQU4gTUFURU1BVElLQTwvaDE+CjxwPkJvdCBOb3ZlbCArIE1hdGVtYXRpa2EgQ2VyaXRhIOKAoiBLZWxhcyAxLTYg4oCiIEluZHJhbWF5dTwvcD4KPC9oZWFkZXI+Cgo8ZGl2IGNsYXNzPSJsZXZlbC1iYXIiIGlkPSJsZXZlbEJhciI+PC9kaXY+Cgo8ZGl2IGNsYXNzPSJzdG9yeS1ib3giPgo8aW1nIGlkPSJjaGFySW1nIiBzcmM9Ii4uL2ltZy9hZ2VudF9hbHdpX2ljb24ucG5nIiBvbmVycm9yPSJ0aGlzLnNyYz0naHR0cHM6Ly92aWEucGxhY2Vob2xkZXIuY29tLzU0JyI+CjxkaXY+PGIgaWQ9InN0b3J5VGl0bGUiPkFsd2kgZGkgUGFzYXIgTWFuZ2dhPC9iPjxicj48c3BhbiBpZD0ic3RvcnlUZXh0Ij5BbHdpIGJhd2EgNSBtYW5nZ2EsIEJhZ29uZyBtaW50YSAyLiBTaXNhIGJlcmFwYSB5YT8gQmFudHUgQWx3aSBoaXR1bmchPC9zcGFuPjwvZGl2Pgo8L2Rpdj4KCjxkaXYgY2xhc3M9InF1ZXN0aW9uIj4KPGRpdiBjbGFzcz0icS1pY29uIiBpZD0icUljb24iPvCfpa08L2Rpdj4KPGRpdiBjbGFzcz0icS10ZXh0IiBpZD0icVRleHQiPjUgLSAyID0gPzwvZGl2Pgo8ZGl2IGNsYXNzPSJxLXN1YiIgaWQ9InFTdWIiPlRhcCBqYXdhYmFuIHlhbmcgYmVuYXIhPC9kaXY+CjxkaXYgY2xhc3M9Im9wdHMiIGlkPSJvcHRzIj48L2Rpdj4KPGRpdiBjbGFzcz0ic3RhdHMiPgo8ZGl2IGNsYXNzPSJzdGF0Ij48YiBpZD0ic2tvciI+MDwvYj48c3Bhbj5Ta29yPC9zcGFuPjwvZGl2Pgo8ZGl2IGNsYXNzPSJzdGF0Ij48YiBpZD0ibnlhd2EiPuKdpO+4j+KdpO+4j+KdpO+4jzwvYj48c3Bhbj5OeWF3YTwvc3Bhbj48L2Rpdj4KPGRpdiBjbGFzcz0ic3RhdCI+PGIgaWQ9ImxldmVsIj5MdiAxPC9iPjxzcGFuPkxldmVsPC9zcGFuPjwvZGl2Pgo8L2Rpdj4KPC9kaXY+Cgo8ZGl2IGNsYXNzPSJmb290ZXIiPn4vSW5kcmFtYXl1X251ci9hbHdpU0QvIOKAoiBrYXJha3RlcjogR2FyZW5nLCBCYWdvbmcsIFBldHJ1aywgQWx3aSwgR3VydSBOdXIg4oCiIGFzZXQgaW1nLyDigKIgc3VwcG9ydCBIUDwvZGl2Pgo8L2Rpdj4KCjxzY3JpcHQ+CmNvbnN0IGxldmVscz1bCntpZDoxLG5hbWU6J0tlbGFzIDEtMjogVGFtYmFoIEt1cmFuZycsIGljb246J+KelScsIGNvbG9yOicjNGNhZjUwJywgb3BzOlsnKycsJy0nXSwgbWF4OjIwLCBzdG9yaWVzOlsKe3Q6J0Fsd2kgZGkgUGFzYXIgTWFuZ2dhJywgZDonQWx3aSBiYXdhIDUgbWFuZ2dhLCBCYWdvbmcgbWludGEgMi4gU2lzYT8nLCBpbWc6J2FnZW50X2Fsd2lfaWNvbi5wbmcnLCBpY29uOifwn6WtJ30sCnt0OidHYXJlbmcgQmFnaSBLZWxlcmVuZycsIGQ6J0dhcmVuZyBwdW55YSA4IGtlbGVyZW5nLCBkaWthc2loIFBldHJ1ayA0LiBKYWRpPycsIGltZzonR2FyZW5nLndlYnAnLCBpY29uOifwn5S1J30sCnt0OidQZXRydWsgUGFuZW4gUGFkaScsIGQ6J1BldHJ1ayBwYW5lbiAxMCBrYXJ1bmcsIDMgZGlqdWFsLiBTaXNhPycsIGltZzoncGV0cnVrLndlYnAnLCBpY29uOifwn4y+J30KXX0sCntpZDoyLG5hbWU6J0tlbGFzIDM6IEthbGkgQmFnaScsIGljb246J+Kclu+4jycsIGNvbG9yOicjZmY5ODAwJywgb3BzOlsneCcsJzonXSwgbWF4OjUwLCBzdG9yaWVzOlsKe3Q6J0JhZ29uZyBKdWFsIFVkYW5nJywgZDonQmFnb25nIHB1bnlhIDYga2VyYW5qYW5nLCAxIGtlcmFuamFuZyA0a2cgdWRhbmcuIFRvdGFsPycsIGltZzonYmFnb25nLndlYnAnLCBpY29uOifwn6aQJ30sCnt0OidSdW1haCBKb2dsbyBCYXRhJywgZDonMSBqb2dsbyBidXR1aCA4IHRpYW5nLCBrYWxhdSAzIGpvZ2xvPycsIGltZzoncnVtYWhfam9nbG8ud2VicCcsIGljb246J/Cfj5rvuI8nfSwKe3Q6J0Fsd2kgQmFnaSBCdWt1JywgZDonMjAgYnVrdSBkaWJhZ2kgNCBhbmFrLiAxIGFuYWsgZGFwYXQ/JywgaW1nOidudXIxLndlYnAnLCBpY29uOifwn5OaJ30KXX0sCntpZDozLG5hbWU6J0tlbGFzIDQtNTogQ2VyaXRhIENhbXB1cicsIGljb246J/Cfp6AnLCBjb2xvcjonIzIxOTZmMycsIG9wczpbJysnLCctJywneCcsJzonXSwgbWF4OjEwMCwgc3RvcmllczpbCnt0OidHdXJ1IE51ciBCYWdpIE1hbmdnYScsIGQ6J0d1cnUgTnVyIHB1bnlhIDQ4IG1hbmdnYSwgZGliYWdpIDYgc2lzd2EsIDEgc2lzd2EgbWFrYW4gMi4gU2lzYSBwZXIgc2lzd2E/JywgaW1nOidndXJ1X251cjEud2VicCcsIGljb246J/CfkanigI3wn4+rJ30sCnt0OidLZWx1YXJnYSBBbHdpIE11ZGlrJywgZDonSmFyYWsgMTIwa20sIHN1ZGFoIDgwa20uIFNpc2E/JywgaW1nOidrZWx1YXJnYV9BbHdpLndlYnAnLCBpY29uOifwn5qXJ30sCnt0OidXYWxpIEFsd2kgU2VkZWthaCcsIGQ6J1dhbGkgQWx3aSBzZWRla2FoIDEwMHJiLCAzIG9yYW5nIEAyMHJiLiBTaXNhPycsIGltZzond2FsaV9BbHdpLndlYnAnLCBpY29uOifwn6SyJ30KXX0sCntpZDo0LG5hbWU6J0tlbGFzIDY6IExvZ2lrYSBDZXBhdCcsIGljb246J/CfmoAnLCBjb2xvcjonIzljMjdiMCcsIG9wczpbJysnLCctJywneCcsJzonXSwgbWF4OjIwMCwgc3RvcmllczpbCnt0OidBZ2VudCBBbHdpIFNjYW4gSGFudHUnLCBkOicxIHNjYW4gMTUgZGV0aWssIDggaGFudHU/JywgaW1nOidhbHdpX2FnZW50X2dyYWRsZS5wbmcnLCBpY29uOifwn5G7J30sCnt0OidQZXRhayBVbXBldCBKb2dsbycsIGQ6JzQgaGFudHUgbmd1bXBldCwga2V0ZW11IDEgdGlhcCAzIG1lbml0LiBUb3RhbCB3YWt0dT8nLCBpbWc6J2hhbnR1MS53ZWJwJywgaWNvbjon4o+x77iPJ30sCl19Cl07CgpsZXQgY3VyTGV2ZWw9MCwgc2tvcj0wLCBueWF3YT0zLCBzb2FsSWR4PTA7CmxldCBjdXJyZW50QW5zPTA7CgpmdW5jdGlvbiBpbml0QmFyKCl7CiAgY29uc3QgYmFyPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsZXZlbEJhcicpOwogIGxldmVscy5mb3JFYWNoKChsdixpKT0+ewogICAgY29uc3QgYj1kb2N1bWVudC5jcmVhdGVFbGVtZW50KCdidXR0b24nKTsKICAgIGIuY2xhc3NOYW1lPSdsZXZlbC1idG4nKyhpPT09MD8nIGFjdGl2ZSc6JycpOwogICAgYi50ZXh0Q29udGVudD1sdi5pY29uKycgJytsdi5uYW1lOwogICAgYi5vbmNsaWNrPSgpPT5zZXRMZXZlbChpKTsKICAgIGJhci5hcHBlbmRDaGlsZChiKTsKICB9KTsKfQpmdW5jdGlvbiBzZXRMZXZlbChpKXsKICBjdXJMZXZlbD1pOyBzb2FsSWR4PTA7CiAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgnLmxldmVsLWJ0bicpLmZvckVhY2goKGIsaWR4KT0+Yi5jbGFzc0xpc3QudG9nZ2xlKCdhY3RpdmUnLCBpZHg9PT1pKSk7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xldmVsJykudGV4dENvbnRlbnQ9J0x2ICcrKGkrMSk7CiAgZ2VuU29hbCgpOwp9CmZ1bmN0aW9uIGdlblNvYWwoKXsKICBjb25zdCBsdj1sZXZlbHNbY3VyTGV2ZWxdOwogIGNvbnN0IHN0b3J5PWx2LnN0b3JpZXNbc29hbElkeCAlIGx2LnN0b3JpZXMubGVuZ3RoXTsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc3RvcnlUaXRsZScpLnRleHRDb250ZW50PXN0b3J5LnQ7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3N0b3J5VGV4dCcpLnRleHRDb250ZW50PXN0b3J5LmQ7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NoYXJJbWcnKS5zcmM9Jy4uL2ltZy8nK3N0b3J5LmltZzsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncUljb24nKS50ZXh0Q29udGVudD1zdG9yeS5pY29uOwoKICBjb25zdCBvcD1sdi5vcHNbTWF0aC5mbG9vcihNYXRoLnJhbmRvbSgpKmx2Lm9wcy5sZW5ndGgpXTsKICBsZXQgYSxiLGFucyx0eHQ7CiAgaWYob3A9PT0nKycpeyBhPXJhbmQoMSxsdi5tYXgvMik7IGI9cmFuZCgxLGx2Lm1heC8yKTsgYW5zPWErYjsgdHh0PWAke2F9ICsgJHtifSA9ID9gOyB9CiAgZWxzZSBpZihvcD09PSctJyl7IGE9cmFuZCgxMCxsdi5tYXgpOyBiPXJhbmQoMSxhLTEpOyBhbnM9YS1iOyB0eHQ9YCR7YX0gLSAke2J9ID0gP2A7IH0KICBlbHNlIGlmKG9wPT09J3gnKXsgYT1yYW5kKDIsMTApOyBiPXJhbmQoMiwxMCk7IGFucz1hKmI7IHR4dD1gJHthfSDDlyAke2J9ID0gP2A7IH0KICBlbHNlIHsgYj1yYW5kKDIsMTApOyBhbnM9cmFuZCgyLDEyKTsgYT1iKmFuczsgdHh0PWAke2F9IMO3ICR7Yn0gPSA/YDsgfQoKICBjdXJyZW50QW5zPWFuczsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncVRleHQnKS50ZXh0Q29udGVudD10eHQ7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3FTdWInKS50ZXh0Q29udGVudD1zdG9yeS5kOwoKICBjb25zdCBvcHRzPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdvcHRzJyk7IG9wdHMuaW5uZXJIVE1MPScnOwogIGxldCBjaG9pY2VzPVthbnNdOwogIHdoaWxlKGNob2ljZXMubGVuZ3RoPDQpeyBsZXQgZmFrZT1hbnMrcmFuZCgtOCw4KTsgaWYoZmFrZSE9PWFucyAmJiBmYWtlPj0wICYmICFjaG9pY2VzLmluY2x1ZGVzKGZha2UpKSBjaG9pY2VzLnB1c2goZmFrZSk7IH0KICBzaHVmZmxlKGNob2ljZXMpOwogIGNob2ljZXMuZm9yRWFjaChjPT57CiAgICBjb25zdCBidG49ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnYnV0dG9uJyk7IGJ0bi5jbGFzc05hbWU9J29wdCc7IGJ0bi50ZXh0Q29udGVudD1jOwogICAgYnRuLm9uY2xpY2s9KCk9PmNlayhjLGJ0bik7IG9wdHMuYXBwZW5kQ2hpbGQoYnRuKTsKICB9KTsKfQpmdW5jdGlvbiBjZWsodmFsLGJ0bil7CiAgY29uc3Qgb3B0cz1kb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCcub3B0Jyk7IG9wdHMuZm9yRWFjaChvPT5vLmRpc2FibGVkPXRydWUpOwogIGlmKHZhbD09PWN1cnJlbnRBbnMpewogICAgYnRuLmNsYXNzTGlzdC5hZGQoJ2NvcnJlY3QnKTsgc2tvcis9MTA7IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdza29yJykudGV4dENvbnRlbnQ9c2tvcjsKICAgIGlmKG5hdmlnYXRvci52aWJyYXRlKSBuYXZpZ2F0b3IudmlicmF0ZSg1MCk7CiAgICBzZXRUaW1lb3V0KCgpPT57IHNvYWxJZHgrKzsgZ2VuU29hbCgpOyB9LDcwMCk7CiAgfSBlbHNlIHsKICAgIGJ0bi5jbGFzc0xpc3QuYWRkKCd3cm9uZycpOyBueWF3YS0tOyBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbnlhd2EnKS50ZXh0Q29udGVudD0n4p2k77iPJy5yZXBlYXQoTWF0aC5tYXgoMCxueWF3YSkpOwogICAgb3B0cy5mb3JFYWNoKG89PnsgaWYocGFyc2VJbnQoby50ZXh0Q29udGVudCk9PT1jdXJyZW50QW5zKSBvLmNsYXNzTGlzdC5hZGQoJ2NvcnJlY3QnKTsgfSk7CiAgICBpZihueWF3YTw9MCl7IHNldFRpbWVvdXQoKCk9PnsgYWxlcnQoYEdhbWUgT3ZlciEgU2tvciBha2hpciAke3Nrb3J9IC0gQmVsYWphciBsYWdpIGJhcmVuZyBHdXJ1IE51ciB5YSFgKTsgc2tvcj0wOyBueWF3YT0zOyBzb2FsSWR4PTA7IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdza29yJykudGV4dENvbnRlbnQ9MDsgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ255YXdhJykudGV4dENvbnRlbnQ9J+KdpO+4j+KdpO+4j+KdpO+4jyc7IGdlblNvYWwoKTsgfSw4MDApOyB9CiAgICBlbHNlIHsgc2V0VGltZW91dCgoKT0+Z2VuU29hbCgpLDEwMDApOyB9CiAgfQp9CmZ1bmN0aW9uIHJhbmQobW4sbXgpeyByZXR1cm4gTWF0aC5mbG9vcihNYXRoLnJhbmRvbSgpKihteC1tbisxKSkrbW47IH0KZnVuY3Rpb24gc2h1ZmZsZShhKXsgZm9yKGxldCBpPWEubGVuZ3RoLTE7aT4wO2ktLSl7IGNvbnN0IGo9TWF0aC5mbG9vcihNYXRoLnJhbmRvbSgpKihpKzEpKTsgW2FbaV0sYVtqXV09W2Fbal0sYVtpXV07IH0gcmV0dXJuIGE7IH0KCmluaXRCYXIoKTsgZ2VuU29hbCgpOwo8L3NjcmlwdD4KPC9ib2R5Pgo8L2h0bWw+Cg==">
-<div class="ic" style="background:#4caf50;color:#fff">➕</div>
-<div><b	>alwiSD/matamatika.html</b><span>4 level: Tambah-Kurang, Kali-Bagi, Cerita, Logika. Pakai karakter Gareng, Bagong, Petruk</span></div>
-<div class="badge">GAME</div>
-</a>
+    <div class="container">
+        <h1>DAFTAR MENU ALWI SD</h1>
+        
+        <div class="menu-list">
+            <a href="matematika.html" class="menu-btn">📐 1. Matematika</a>
+            <a href="matematika2.html" class="menu-btn">📐 2. Matematika 2</a>
+            <a href="bot_novel.html" class="menu-btn">🤖 3. Bot Novel</a>
+            <a href="novelalwi2.html" class="menu-btn">📖 4. Novel Alwi 2</a>
+            <a href="lukis.html" class="menu-btn">🎨 5. Lukis</a>
+            <a href="sanggarLUKIS.html" class="menu-btn">🎨 6. Sanggar Lukis</a>
+            <a href="index22.html" class="menu-btn">📄 7. Index 22</a>
+        </div>
 
+        <div class="footer">
+            Indramayu Club &copy; 2026
+        </div>
+    </div>
 
-<a class="card novel" href="index22.html">
-<div class="ic" style="background:#ff9800;color:#fff">📖</div>
-<div><b>alwiSD</b><span>Index novel utama</span></div>
-<div class="badge">NOVEL</div>
-</a>
-
-
-<a class="card novel" href="matematika.html">
-<div class="ic" style="background:#ff9800;color:#fff">💻</div>
-<div><b>belajar hitung</b><span>matematika</span></div>
-<div class="badge">NOVEL</div> 
-</a>
-
-<a class="card novel" href="matematika2.html">
-<div class="ic" style="background:#ff9800;color:#fff">📋</div>
-<div><b>📐📐hitung2</b><span>matematika</span></div>
-<div class="badge">NOVEL</div>
-</a>
-
-<a class="card novel" href="bot_novel.html">
-<div class="ic" style="background:#2196f3;color:#fff">🤖</div>
-<div><b>bot_novel.html</b><span>Bot Novel Alwi - cerita interaktif</span></div>
-<div class="badge">BOT</div>
-</a>
-
-<a class="card novel" href="novelalwi2.html">
-<div class="ic" style="background:#9c27b0;color:#fff">📘</div>
-<div><b>novelalwi2.html</b><span>Novel Alwi versi 2</span></div>
-<div class="badge">NOVEL 2</div>
-</a>
-
-<a class="card novel" href="lukis.html">
-<div class="ic" style="background:#9c27b0;color:#fff">🖌🖍🖊</div>         <div><b>novelalwi2.html</b><span>Novel Alwi versi 2</span></div>       
-<div class="badge">lukis</div>
-</a>
-
-
-<a class="card novel" href="sanggarLUKIS.html">
-<div class="ic" style="background:#9c27b0;color:#fff">🏆🏆</div>
-<div><b>sanggar LUKIS</b><span>segera hadir</span></div>
-<div class="badge">LUKIS</div>
-</a>
-
-<div style="margin-top:18px;background:#fff;border-radius:10px;padding:12px;font-size:11px;color:#666;line-height:1.6;border:1px dashed #ccc">
-<b>Rekomendasi Game Matematika lain yang bisa dibuat:</b><br>
-1. <b>Pasar Mangga</b> - hitung kembalian (kelas 2)<br>
-2. <b>Joglo Builder</b> - hitung balok & tiang joglo (bangun datar)<br>
-3. <b>Punakawan Bagi Kue</b> - pecahan (½, ¼) pakai Gareng/Bagong<br>
-4. <b>Agent Alwi vs Hantu Angka</b> - tap angka yang hilang<br><br>
-Game di atas sudah cover semua, pakai aset <code>../img/</code> biar anak kenal budaya Indramayu.
-</div>
-</div>
 </body>
 </html>
 
