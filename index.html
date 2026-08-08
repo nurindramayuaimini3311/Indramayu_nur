@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALWI PUSAT - Indramayu Club</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#c9a84c">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0a0a;color:#fff;font-family:Arial,sans-serif;min-height:100vh}
+.header{position:sticky;top:0;z-index:99998;background:rgba(10,10,10,0.98);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(201,168,76,0.35)}
+.logo{color:#FFD700;font-weight:900;font-size:18px}
+.btn-live{background:#e50914;color:#fff;padding:8px 14px;border-radius:6px;font-weight:700;text-decoration:none;font-size:13px}
+.nav{position:sticky;top:52px;z-index:99999;display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;background:#111;border-bottom:2px solid #c9a84c}
+.drop{position:relative}
+.drop-btn{background:#222;border:2px solid #FFD700;color:#FFD700;padding:9px 16px;border-radius:20px;cursor:pointer;font-weight:700;font-size:12px}
+.drop.active .drop-btn{background:#FFD700;color:#000}
+.drop-content{display:none;position:absolute;top:48px;left:0;min-width:260px;background:#1a1a1a;border:2px solid #FFD700;border-radius:14px;overflow:hidden;z-index:100000;box-shadow:0 15px 50px rgba(0,0,0,0.95)}
+.drop.active .drop-content{display:block}
+.drop-content a{display:block;padding:12px 16px;color:#fff;text-decoration:none;font-size:13px;border-bottom:1px solid #333}
+.drop-content a:hover{background:#FFD700;color:#000}
+.hero{padding:32px 20px;text-align:center;max-width:800px;margin:0 auto;background:linear-gradient(180deg,#1a1a1a,#0a0a0a);border-bottom:1px solid #222}
+.hero h1{color:#FFD700;font-size:26px}
+.hero p{color:#aaa;font-size:14px;line-height:1.6;margin-top:8px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px;max-width:800px;margin:0 auto}
+.card{background:#191919;border:2px solid #2a2a2a;border-radius:14px;padding:16px;text-align:center;text-decoration:none;color:#fff;transition:.15s}
+.card:hover{border-color:#FFD700;transform:translateY(-2px)}
+.card.hot{border-color:#e50914;background:rgba(229,9,20,0.12)}
+.card b{font-size:14px;display:block}
+.card span{font-size:11px;color:#FFD700;display:block;margin-top:4px}
+.section{max-width:800px;margin:18px auto;padding:0 16px}
+.section h2{color:#FFD700;font-size:16px;margin:20px 0 10px;border-left:4px solid #FFD700;padding-left:10px}
+.list{background:#191919;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden}
+.list a{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;color:#fff;text-decoration:none;border-bottom:1px solid #222;font-size:13px}
+.list a:hover{background:#222;color:#FFD700}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">ALWI PUSAT ⛑️ INDRAMAYU CLUB</div>
+  <a href="alwi_pusat_live.html" class="btn-live">🔴 LIVE</a>
+  <a href="index2.html" class="btn-live">👥META AI</a>
+</div>
+
+<div class="nav">
+  <div class="drop" id="navDropdown">
+    <button class="drop-btn" onclick="toggleDrop(event)">🔴 NAVIGASI FOLDER ▼</button>
+    <div class="drop-content">
+      <a href="fb_streaming.html">📺 FB Streaming</a>
+      <a href="alwiSD/index.html">🏫 Alwi SD</a>
+      <a href="android/index.html">📱 Android Hub</a>
+      <a href="game/index.html">🎮 Pusat Game</a>
+      <a href="kamera-hantu/index.html">📷 Kamera Hantu</a>
+      <a href="konten/index.html">📚 Pusat Konten</a>
+      <a href="kuis/index.html">🧠 Kuis Alwi</a>
+      <a href="netflix/index.html">🎬 Alwi TV / Netflix</a>
+      <a href="pencuri/index.html">🕵️ Mode Pencuri</a>
+      <a href="peta/index.html">🗺️ Peta AI</a>
+    </div>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>Selamat Datang di Alwi Pusat</h1>
+  <p>Portal Utama Layanan Digital & Komunitas Indramayu Club</p>
+</div>
+
+<div class="grid">
+  <a href="android/index.html" class="card hot">
+    <b>ANDROID APP</b>
+    <span>Aplikasi & Tool</span>
+  </a>
+  <a href="game/index.html" class="card">
+    <b>MINI GAMES</b>
+    <span>Game & Hiburan</span>
+  </a>
+  <a href="konten/index.html" class="card">
+    <b>KONTEN & CERITA</b>
+    <span>E-Book & Artikel</span>
+  </a>
+  <a href="netflix/index.html" class="card">
+    <b>ALWI STREAMING</b>
+    <span>Koleksi Video</span>
+  </a>
+</div>
+
+<div class="section">
+  <h2>DAFTAR FOLDER UTAMA</h2>
+  <div class="list">
+    <a href="alwiSD/index.html"><span>🏫 Sanggar & Pembelajaran Alwi SD</span> ➔</a>
+    <a href="kamera-hantu/index.html"><span>📷 Kamera Hantu & Penampakan</span> ➔</a>
+    <a href="kuis/index.html"><span>🧠 Kuis & Asah Otak</span> ➔</a>
+    <a href="pencuri/index.html"><span>🕵️ Game Pencuri Ruangan</span> ➔</a>
+    <a href="peta/index.html"><span>🗺️ Peta COD & Meta AI</span> ➔</a>
+  </div>
+</div>
+
+<script>
+function toggleDrop(e) {
+  e.stopPropagation();
+  var drop = document.getElementById('navDropdown');
+  drop.classList.toggle('active');
+}
+
+document.addEventListener('click', function(e) {
+  var drop = document.getElementById('navDropdown');
+  if (drop && !drop.contains(e.target)) {
+    drop.classList.remove('active');
+  }
+});
+</script>
+
+</body>
+</html>
+
