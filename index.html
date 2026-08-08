@@ -105,7 +105,7 @@ body{background:#0a0a0a;color:#fff;font-family:Arial,sans-serif;min-height:100vh
 <script>
 function toggleDrop(e){e.stopPropagation();document.getElementById('navDropdown').classList.toggle('active');}
 document.addEventListener('click',function(e){var d=document.getElementById('navDropdown');if(d&&!d.contains(e.target))d.classList.remove('active');});
-if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}
+if('serviceWorker' in navigator){navigator.serviceWorker.register(/sw.js');}
 </script>
 </body>
 </html>
