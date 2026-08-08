@@ -1,35 +1,67 @@
-const CACHE = "alwi-pusat-offline-v2";
-const URLS = [
-  "./",
-  "./index.html",
-  "./alwi_pusat_live.html",
-  "./manifest.json",
-  "./alwi_bubble.js",
-  "./alwi_qa_lite.js",
-  "./member_system.js",
-  "./img/icon-192.png",
-  "./img/icon-512.png",
-  "./alwiSD/index.html",
-  "./alwiSD/matematika.html",
-  "./alwiSD/novelalwi2.html",
-  "./android/index.html",
-  "./game/index.html",
-  "./kamera-hantu/index.html",
-  "./konten/index.html",
-  "./kuis/index.html",
-  "./netflix/index.html",
-  "./peta/index.html",
-  "./pencuri/index.html",
-  "./static/style.css",
-  "./static/kartu.css"
+const CACHE_NAME = 'alwi-v4-dropdown-fix-2025-08-04';
+const ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/img/alwi_ghost_bug.png',
+  '/img/icon-192.png',
+  '/img/icon-512.png',
+  '/alwi_bubble.js'
 ];
-self.addEventListener("install", e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(URLS)));
+
+// INSTALL - cache baru
+self.addEventListener('install', e => {
   self.skipWaiting();
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(c => c.addAll(ASSETS))
+  );
 });
-self.addEventListener("activate", e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+
+// ACTIVATE - HAPUS CACHE LAMA
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys => Promise.all(
+      keys.map(k => {
+        if (k !== CACHE_NAME) {
+          console.log('Hapus cache lama:', k);
+          return caches.delete(k);
+        }
+      })
+    )).then(() => self.clients.claim())
+  );
 });
-self.addEventListener("fetch", e => {
-  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+
+// FETCH - NETWORK FIRST untuk navigasi/html
+self.addEventListener('fetch', e => {
+  const req = e.request;
+  const url = new URL(req.url);
+
+  if (req.mode === 'navigate' || url.pathname.endsWith('index.html') || url.pathname === '/' || url.pathname.endsWith('/')) {
+    e.respondWith(
+      fetch(req)
+        .then(res => {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(req, copy));
+          return res;
+        })
+        .catch(() => caches.match(req).then(r => r || caches.match('/index.html')))
+    );
+    return;
+  }
+
+  // Aset lain: cache-first
+  e.respondWith(
+    caches.match(req).then(cached => {
+      const fetchPromise = fetch(req).then(networkRes => {
+        if (networkRes && networkRes.status === 200 && networkRes.type !== 'opaque') {
+          const copy = networkRes.clone();
+          caches.open(CACHE_NAME).then(c => c.put(req, copy));
+        }
+        return networkRes;
+      }).catch(() => {
+        if (req.destination === 'image') return caches.match('/img/alwi_ghost_bug.png');
+      });
+      return cached || fetchPromise;
+    })
+  );
 });
