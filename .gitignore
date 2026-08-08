@@ -14,3 +14,4 @@ url-alwi.txt
 node_modules/
 www/
 android/
+.vercel
