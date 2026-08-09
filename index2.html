@@ -1,52 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
-<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
-(function() {
-  if (window.__playableTouchPatchInstalled) return;
-  window.__playableTouchPatchInstalled = true;
-  var origAdd = EventTarget.prototype.addEventListener;
-  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
-  EventTarget.prototype.addEventListener = function(type, listener, options) {
-    if (blockedTypes[type]) {
-      if (options === undefined || options === null) {
-        options = { passive: true };
-      } else if (typeof options === 'boolean') {
-        options = { capture: options, passive: true };
-      } else {
-        options = Object.assign({}, options, { passive: true });
-      }
-    }
-    return origAdd.call(this, type, listener, options);
-  };
-})();
-</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal Alwi - FIXED Helm ⛑️</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0a;color:#fff;font-family:Inter,Arial,sans-serif;min-height:100vh}
-.panggung{width:100%;display:flex;align-items:center;justify-content:center;padding:15px}
-.panggung img{max-width:100%;border-radius:12px}
-.wrapper{max-width:1100px;margin:0 auto;padding:10px 16px 30px;display:flex;flex-direction:column;gap:10px}
-.btn-sultan{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#C9A84C,#FFD700);color:#000;font-weight:900;text-align:center;border-radius:12px;text-decoration:none}
-.badge{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.4);color:#FFD700;font-size:11px;padding:6px 14px;border-radius:20px;text-align:center;align-self:center}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:780px){.grid-2{grid-template-columns:1fr}}
-.card{background:#111;border:1px solid rgba(201,168,76,.3);border-radius:14px;overflow:hidden}
-.card-header{padding:11px 14px;font-weight:800;font-size:13px;display:flex;align-items:center;gap:8px}
-.card-header.meta{background:linear-gradient(135deg,#0a3a8a,#1877F2)}
-.card-header.google{background:linear-gradient(135deg,#0a5a2a,#34A853)}
-.card-body iframe{width:100%;height:420px;border:none}
-.info{padding:10px;font-size:11px;color:#aaa;background:#0e0e0e}
-.chat-big{display:flex;gap:8px;flex-wrap:wrap}
-.chat-big a{flex:1;min-width:140px;padding:14px;border-radius:10px;text-align:center;text-decoration:none;font-weight:800}
-.config-box{background:#1a1a00;border:1px dashed #FFD700;padding:12px;border-radius:10px;font-size:11px;line-height:1.6}
-</style>
-</head>
-<body>
-
-<!-- ALWI PUSAT NAV - TEMPEL DI ATAS <body> SETIAP HALAMAN -->
+<head>
 <div style="position:sticky;top:0;z-index:99999;background:rgba(10,10,10,0.96);border-bottom:2px solid #FFD700;padding:8px 12px;display:flex;gap:6px;overflow-x:auto;white-space:nowrap;backdrop-filter:blur(8px)">
   <a href="../index.html" style="background:#e50914;color:#fff;padding:6px 12px;border-radius:20px;text-decoration:none;font-weight:700;font-size:11px">🏠 ALWI PUSAT</a>
   <a href="../konten/komentar.html" style="background:#FFD700;color:#000;padding:6px 12px;border-radius:20px;text-decoration:none;font-weight:700;font-size:11px">💬 KOMENTAR</a>
@@ -107,81 +61,28 @@ body{background:#0a0a0a;color:#fff;font-family:Inter,Arial,sans-serif;min-height
 <script src="/alwi_bubble_v4_MENU.js"></script>
 <script src="/alwi_bubble.js"></script>
 
-<!-- ALWI NAV KIRI KANAN -->
-<div id="alwi-rl" style="position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:space-between;z-index:9999999;padding:0 10px;pointer-events:none"><a id="rlL" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px #000">←</a><a id="rlR" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px #000">→</a></div>
+
+<!-- NAV FINAL ALWI - 1x ONLY -->
+<div id="alwi-rl" style="position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:space-between;z-index:9999999;padding:0 12px;pointer-events:none"><a id="rlL" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px rgba(0,0,0,.5)">←</a><a id="rlR" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px rgba(0,0,0,.5)">→</a></div>
 <script>
 (function(){
-const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html","/peta/peta.html"];
-let p=location.pathname;
-let i=PAGES.indexOf(p);
-if(i==-1){i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));}
-if(i<0)i=0;
-let prev=PAGES[(i-1+PAGES.length)%PAGES.length];
-let next=PAGES[(i+1)%PAGES.length];
-document.getElementById('rlL').href=prev;
-document.getElementById('rlR').href=next;
+const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
+let p=location.pathname; let i=PAGES.indexOf(p);
+if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));
+if(i<0) i=0;
+let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
+let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+L.href=prev; R.href=next;
+let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
+[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
 let sx=0;
 document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
-document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){ if(dx>0) location.href=prev; else location.href=next; }},{passive:true});
-})();
-</script>
-
-<script>
-// SUARA TUK TUK - ALWI SD CERIA
-let audioCtx;
-function tuk(){
-  try{
-    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-    let o = audioCtx.createOscillator();
-    let g = audioCtx.createGain();
-    o.type='square';
-    o.frequency.setValueAtTime(600, audioCtx.currentTime);
-    o.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime+0.12);
-    g.gain.setValueAtTime(0.8, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.15);
-    o.connect(g); g.connect(audioCtx.destination);
-    o.start(); o.stop(audioCtx.currentTime+0.15);
-    if(navigator.vibrate) navigator.vibrate(50);
-  }catch(e){}
-}
-// pasang ke tombol RL
-let cek = setInterval(()=>{
-  let L=document.getElementById('rlL'), R=document.getElementById('rlR');
-  if(L && R){
-    clearInterval(cek);
-    [L,R].forEach(b=>{
-      b.addEventListener('click', (e)=>{
-        tuk();
-        // animasi kocak
-        b.style.transform='scale(0.7) rotate(10deg)';
-        setTimeout(()=>b.style.transform='',150);
-      });
-      b.addEventListener('touchstart', tuk, {passive:true});
-    });
-    // tuk tuk pas swipe
-    let sx=0;
-    document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
-    document.addEventListener('touchend',e=>{
-      let dx=e.changedTouches[0].clientX-sx;
-      if(Math.abs(dx)>70){ tuk(); setTimeout(tuk,80); }
-    },{passive:true});
-  }
-},300);
-// style kuning goyang untuk SD
+document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
 if(location.pathname.includes('alwiSD')){
-  let s=document.createElement('style');
-  s.innerHTML=`#alwi-rl a{animation:alwi-bounce 0.8s infinite alternate!important;background:#FFD700!important; border:3px solid #000!important;}
-  #alwi-rl a:nth-child(2){animation-delay:0.4s!important;}
-  @keyframes alwi-bounce{0%{transform:translateY(0)}100%{transform:translateY(-10px) scale(1.15);box-shadow:0 8px 20px rgba(255,215,0,.9)}}`;
-  document.head.appendChild(s);
-  // label lucu
-  let lab=document.createElement('div');
-  lab.style="position:fixed;bottom:85px;left:0;right:0;text-align:center;font-size:13px;color:#FFD700;font-weight:900;text-shadow:0 2px 4px #000;z-index:9999998;pointer-events:none";
-  lab.innerHTML="👇 PENCET KUNING TUK TUK! 👇";
-  document.body.appendChild(lab);
+ let s=document.createElement('style');s.innerHTML="#alwi-rl a{animation:bob 0.7s infinite alternate} @keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-8px) scale(1.1)}}";document.head.appendChild(s);
 }
+})();
 </script>
 </body>
 </html>
-
 
