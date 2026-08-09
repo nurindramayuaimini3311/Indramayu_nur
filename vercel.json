@@ -1,16 +1,4 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false,
-  "rewrites": [
-    { "source": "/game", "destination": "/game/index.html" },
-    { "source": "/kuis", "destination": "/kuis/index.html" },
-    { "source": "/konten", "destination": "/konten/index.html" },
-    { "source": "/pencuri", "destination": "/pencuri/index.html" },
-    { "source": "/setting", "destination": "/setting/index.html" },
-    { "source": "/alwiSD", "destination": "/alwiSD/index.html" },
-    { "source": "/peta", "destination": "/peta/index.html" },
-    { "source": "/netflix", "destination": "/netflix/index.html" },
-    { "source": "/kamera-hantu", "destination": "/kamera-hantu/index.html" },
-    { "source": "/fiturBARU", "destination": "/fiturBARU/index.html" }
-  ]
+  "trailingSlash": false
 }
