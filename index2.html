@@ -3,87 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ALWI LIVE LINE 2 - Ollama Second Line</title>
-<link rel="icon" href="/img/icon-192.png">
+<title>ALWI LIVE LINE 2 - Ollama</title>
+<link rel="icon" href="img/icon-512.png">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#061106;color:#d4ffde;font-family:system-ui;min-height:100vh}
-.top{background:#0f2210;border-bottom:2px solid #FFD700;padding:10px 12px;display:flex;gap:8px;align-items:center;position:sticky;top:0;z-index:99999}
+body{background:#061106;color:#d4ffde;font-family:system-ui;min-height:100vh;display:flex;flex-direction:column}
+.top{background:#0f2210;border-bottom:2px solid #FFD700;padding:10px 12px;display:flex;gap:8px;align-items:center;position:sticky;top:0;z-index:9999}
 .top select{background:#0a1a0a;color:#2ecc71;border:1px solid #145a32;padding:10px 12px;border-radius:10px;font-weight:700;flex:1}
 .top button{background:#FFD700;color:#000;border:0;padding:10px 14px;border-radius:10px;font-weight:800}
-.badge{font-size:10px;color:#7fbf8f}
-.wrap{padding:12px;max-width:1100px;margin:0 auto}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.card{background:#111;border:2px solid #222;border-radius:14px;overflow:hidden}
-.head{padding:10px 14px;font-weight:800;font-size:12px;display:flex;justify-content:space-between}
-.head.meta{background:#1877F2;color:#fff}
-.head.ollama{background:#000;color:#FFD700;border-bottom:1px solid #333}
-.body{height:62vh;min-height:400px;background:#000}
-.body iframe{width:100%;height:100%;border:0}
-.note{padding:12px;font-size:11px;line-height:1.6;color:#8fbf8f}
-code{background:#000;color:#0f0;padding:2px 6px;border-radius:4px;font-size:10px}
-@media(max-width:800px){.grid{grid-template-columns:1fr}.body{height:50vh}}
+#frame{flex:1;width:100%;border:0;background:#000;min-height:90vh}
 </style>
 </head>
 <body>
-
 <div class="top">
   <a href="index.html" style="background:#e50914;color:#fff;padding:8px 12px;border-radius:20px;text-decoration:none;font-weight:800;font-size:11px">🏠 PUSAT</a>
-  <select id="srv" onchange="ganti()">
-    <option value="https://affect-categories-exclusive-authorization.trycloudflare.com/">⛑️ ALWI PUSAT - VPS Utama</option>
-    <option value="https://carrying-flu-smallest-room.trycloudflare.com">🤖 OLLAMA VPS - 2 Model</option>
-    <option value="http://localhost:11434">💻 OLLAMA LOCAL - localhost:11434</option>
+  <select id="srv" onchange="document.getElementById('frame').src=this.value">
+    <option value="https://affect-categories-exclusive-authorization.trycloudflare.com/">⛑️ ALWI PUSAT VPS</option>
+    <option value="https://carrying-flu-smallest-room.trycloudflare.com">🤖 OLLAMA VPS</option>
   </select>
-  <button onclick="reload()">🔄</button>
-  <span class="badge" id="st">TUK ON 🔊</span>
+  <button onclick="document.getElementById('frame').src=document.getElementById('frame').src">🔄</button>
 </div>
-
-<div class="wrap">
-<div class="grid">
-  <div class="card">
-    <div class="head meta">🔵 META AI - Messenger <span style="opacity:.7;font-size:10px">1208819327902583</span></div>
-    <div class="body" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;text-align:center">
-      <img src="img/meta_alwi_transparent.png" style="width:90px;border-radius:18px;border:2px solid #FFD700;background:#fff;padding:6px">
-      <a href="https://m.me/1208819327902583?is_ai=1" target="_blank" style="background:#1877F2;color:#fff;padding:12px 20px;border-radius:20px;text-decoration:none;font-weight:800">💬 Chat Messenger</a>
-      <div class="note">Bot Cloudflare utama:<br><code>affect-categories-exclusive-authorization.trycloudflare.com</code></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="head ollama">🟡 OLLAMA - Second Line <span id="ollStat" style="background:#FFD700;color:#000;padding:2px 8px;border-radius:10px;font-size:10px">CHECK</span></div>
-    <div class="body">
-      <iframe id="frm" src="https://affect-categories-exclusive-authorization.trycloudflare.com/" allow="clipboard-read;clipboard-write;autoplay"></iframe>
-    </div>
-    <div class="note" id="help" style="display:none">
-      <b style="color:#FFD700">Ollama Offline - Jalankan:</b><br>
-      <code>ollama serve</code> + <code>ollama run llama3.2</code><br>
-      Ganti iframe src jadi IP kamu.
-    </div>
-  </div>
-</div>
-</div>
-
-<script>
-let ctx;
-function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(120,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
-function ganti(){
- let s=document.getElementById('srv'), f=document.getElementById('frm'), st=document.getElementById('st');
- f.src=s.value; st.textContent='Loading...'; tuk();
- f.onload=()=>{st.textContent='OK - '+s.options[s.selectedIndex].text; document.getElementById('ollStat').textContent='Online'; document.getElementById('ollStat').style.background='#0f0'; tuk();};
- f.onerror=()=>{st.textContent='Offline'; document.getElementById('help').style.display='block'; tuk(); tuk();};
-}
-function reload(){document.getElementById('frm').src=document.getElementById('frm').src; tuk();}
-// auto cek ollama local kalau dipilih
-</script>
-
-<!-- NAV KUNING 1x - TUK TUK -->
-
-<!-- NAV BIASA ALWI - KUNING TUK -->
-
-<script>(function(){const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/"];let p=location.pathname,i=PAGES.indexOf(p);if(i==-1)i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));if(i<0)i=0;let prev=PAGES[(i-1+PAGES.length)%PAGES.length],next=PAGES[(i+1)%PAGES.length];let L=document.getElementById('rlL'),R=document.getElementById('rlR');L.href=prev;R.href=next;let ctx;function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));let sx=0;document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>70){tuk();setTimeout(tuk,70);if(dx>0)location.href=prev;else location.href=next;}},{passive:true});})();</script>
-
-<!-- NAV BIASA ALWI - KUNING TUK -->
-<div id="alwi-rl" style="position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:space-between;z-index:8000;padding:0 12px;pointer-events:none"><a id="rlL" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000">←</a><a id="rlR" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000">→</a></div>
-<script>(function(){const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/"];let p=location.pathname,i=PAGES.indexOf(p);if(i==-1)i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));if(i<0)i=0;let prev=PAGES[(i-1+PAGES.length)%PAGES.length],next=PAGES[(i+1)%PAGES.length];let L=document.getElementById('rlL'),R=document.getElementById('rlR');L.href=prev;R.href=next;let ctx;function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));let sx=0;document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>70){tuk();setTimeout(tuk,70);if(dx>0)location.href=prev;else location.href=next;}},{passive:true});})();</script>
+<iframe id="frame" src="https://affect-categories-exclusive-authorization.trycloudflare.com/" allow="clipboard-read;clipboard-write;autoplay"></iframe>
+<div id="alwi-rl" style="position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:space-between;z-index:8000;padding:0 12px;pointer-events:none"><a href="index.html" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000">←</a><a href="setting/" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000">→</a></div>
 </body>
 </html>
