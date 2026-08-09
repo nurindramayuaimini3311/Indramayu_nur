@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0f172a">
-<meta property="og:image" content="/img/icon-512.png">
 <title>ALWI PUSAT - Indramayu Club</title>
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" href="/img/icon-192.png">
@@ -18,9 +17,9 @@ body{background:#0a0a0a;color:#fff;font-family:Arial,sans-serif;min-height:100vh
 .nav{padding:12px 16px;background:#111;border-bottom:2px solid #c9a84c}
 .drop{position:relative;display:inline-block}
 .drop-btn{background:#222;border:2px solid #FFD700;color:#FFD700;padding:10px 16px;border-radius:20px;font-weight:700;cursor:pointer}
-.drop.active .drop-btn{background:#FFD700;color:#000}
-.drop-content{display:none;position:absolute;top:50px;left:0;background:#1a1a1a;border:2px solid #FFD700;border-radius:14px;min-width:280px;z-index:999;overflow:hidden}
-.drop.active .drop-content{display:block}
+.drop.active.drop-btn{background:#FFD700;color:#000}
+.drop-content{display:none;position:absolute;top:50px;left:0;background:#1a1a1a;border:2px solid #FFD700;border-radius:14px;min-width:280px;z-index:99999;overflow:hidden}
+.drop.active.drop-content{display:block}
 .drop-content a{display:block;padding:12px 16px;color:#fff;text-decoration:none;font-size:13px;border-bottom:1px solid #333}
 .drop-content a:hover{background:#FFD700;color:#000}
 .hero{padding:40px 20px;text-align:center;background:linear-gradient(180deg,#1a1a1a,#0a0a0a);border-bottom:1px solid #222}
@@ -33,7 +32,7 @@ body{background:#0a0a0a;color:#fff;font-family:Arial,sans-serif;min-height:100vh
 .card span{font-size:11px;color:#FFD700}
 .list{max-width:900px;margin:0 auto;padding:0 16px 20px}
 .list a{display:flex;justify-content:space-between;padding:12px 14px;background:#191919;border-bottom:1px solid #222;color:#fff;text-decoration:none;font-size:13px}
-.fab{position:fixed;bottom:20px;right:20px;background:#FFD700;color:#000;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;text-decoration:none;z-index:9999}
+.fab{position:fixed;bottom:20px;right:20px;background:#FFD700;color:#000;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;text-decoration:none;z-index:5000}
 </style>
 </head>
 <body>
@@ -54,7 +53,7 @@ body{background:#0a0a0a;color:#fff;font-family:Arial,sans-serif;min-height:100vh
 <a href="kuis/">🧠 Kuis Alwi</a>
 <a href="netflix/">🎬 Alwi TV</a>
 <a href="pencuri/">🕵️ Mode Pencuri</a>
-a<a href="peta/">🗺️ Peta AI</a>
+<a href="peta/">🗺️ Peta AI</a>
 </div>
 </div>
 </div>
@@ -73,9 +72,18 @@ a<a href="peta/">🗺️ Peta AI</a>
 </div>
 <a href="setting/" class="fab">⚙️</a>
 
+<script>
+// FIX DROPDOWN - YANG HILANG TADI
+function toggleDrop(e){
+  e.stopPropagation();
+  document.getElementById('navDropdown').classList.toggle('active');
+  try{ if(!window._tukCtx) window._tukCtx=new (window.AudioContext||window.webkitAudioContext)(); let o=_tukCtx.createOscillator(),g=_tukCtx.createGain(); o.frequency.setValueAtTime(500,_tukCtx.currentTime); o.frequency.exponentialRampToValueAtTime(200,_tukCtx.currentTime+0.1); g.gain.setValueAtTime(0.5,_tukCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01,_tukCtx.currentTime+0.12); o.connect(g); g.connect(_tukCtx.destination); o.start(); o.stop(_tukCtx.currentTime+0.12);}catch(err){}
+}
+document.addEventListener('click', function(){ document.getElementById('navDropdown').classList.remove('active'); });
+</script>
 
-<!-- NAV FINAL ALWI - 1x ONLY -->
-<div id="alwi-rl" style="position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:space-between;z-index:9999999;padding:0 12px;pointer-events:none"><a id="rlL" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px rgba(0,0,0,.5)">←</a><a id="rlR" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px rgba(0,0,0,.5)">→</a></div>
+<!-- NAV FINAL ALWI - 1x ONLY - z-index lebih kecil dari dropdown -->
+<div id="alwi-rl" style="position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:space-between;z-index:8000;padding:0 12px;pointer-events:none"><a id="rlL" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px rgba(0,0,0,.5)">←</a><a id="rlR" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px rgba(0,0,0,.5)">→</a></div>
 <script>
 (function(){
 const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
@@ -90,9 +98,6 @@ let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAu
 let sx=0;
 document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
 document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
-if(location.pathname.includes('alwiSD')){
- let s=document.createElement('style');s.innerHTML="#alwi-rl a{animation:bob 0.7s infinite alternate} @keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-8px) scale(1.1)}}";document.head.appendChild(s);
-}
 })();
 </script>
 </body>
