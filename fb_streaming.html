@@ -1,83 +1,22 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0f172a">
-<title>ALWI PUSAT - Indramayu Club IFRAME</title>
-<link rel="manifest" href="/manifest.json">
-<link rel="icon" href="/img/icon-192.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FB Streaming - ALWI</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#0a0a0a;color:#fff;font-family:Arial,sans-serif;height:100vh;display:flex;flex-direction:column}
-.top{position:sticky;top:0;z-index:99999;background:rgba(10,10,10,.96);border-bottom:2px solid #FFD700;padding:8px 10px;display:flex;gap:6px;align-items:center}
-.top select{flex:1;background:#1a1a1a;color:#FFD700;border:2px solid #FFD700;padding:10px 12px;border-radius:20px;font-weight:700;font-size:12px;max-width:55vw}
-.top button{background:#FFD700;color:#000;border:0;padding:10px 14px;border-radius:20px;font-weight:800;cursor:pointer}
-.top a{background:#e50914;color:#fff;padding:8px 12px;border-radius:20px;text-decoration:none;font-weight:800;font-size:11px;white-space:nowrap}
-.badge{font-size:10px;color:#888;margin-left:4px}
-#frame{flex:1;width:100%;border:0;background:#000}
-.drop{position:relative}
-.drop-btn{background:#222;border:2px solid #FFD700;color:#FFD700;padding:10px 14px;border-radius:20px;font-weight:700;cursor:pointer;font-size:12px}
-.drop-content{display:none;position:absolute;top:46px;left:0;background:#1a1a1a;border:2px solid #FFD700;border-radius:14px;min-width:280px;z-index:100000;overflow:hidden;max-height:70vh;overflow-y:auto}
-.drop.active .drop-content{display:block}
-.drop-content a{display:block;padding:12px 16px;color:#fff;text-decoration:none;font-size:13px;border-bottom:1px solid #333}
-.drop-content a:hover{background:#FFD700;color:#000}
+*{margin:0;padding:0;box-sizing:border-box}
+body,html{height:100%;background:#000}
+iframe{width:100%;height:100vh;border:0}
 </style>
 </head>
 <body>
+<iframe src="https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/" allow="clipboard-read; clipboard-write; autoplay; fullscreen"></iframe>
 
-<div class="top">
-  <div class="drop" id="navDrop">
-    <button class="drop-btn" onclick="toggleDrop(event)">📂 FOLDER ▼</button>
-    <div class="drop-content">
-      <a href="#" onclick="loadUrl('https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/');return false">🏠 ALWI PUSAT - GitHub Pages</a>
-      <a href="#" onclick="loadUrl('https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/setting/');return false">⚙️ Setting</a>
-      <a href="#" onclick="loadUrl('https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/alwiSD/');return false">🏫 Alwi SD</a>
-      <a href="#" onclick="loadUrl('https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/fiturBARU/');return false">📱 fiturBARU</a>
-      <a href="#" onclick="loadUrl('https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/game/');return false">🎮 Game</a>
-      <a href="#" onclick="loadUrl('https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/kamera-hantu/');return false">📷 Kamera Hantu</a>
-      <a href="#" onclick="loadUrl('https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/konten/');return false">📚 Konten</a>
-      <a href="#" onclick="loadUrl('https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/kuis/');return false">🧠 Kuis</a>
-      <a href="#" onclick="loadUrl('https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/netflix/');return false">🎬 Alwi TV</a>
-      <a href="#" onclick="loadUrl('https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/pencuri/');return false">🕵️ Pencuri</a>
-      <a href="#" onclick="loadUrl('https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/peta/');return false">🗺️ Peta</a>
-      <a href="#" onclick="loadUrl('https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/index_iframe_bot.html');return false">🤖 Bot Iframe</a>
-      <a href="#" onclick="loadUrl('https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/index2.html');return false">🔀 Line 2 Ollama</a>
-    </div>
-  </div>
-
-  <select id="srv" onchange="ganti()">
-    <option value="https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/">🏠 PUSAT - INDRAMAYU_CLUB (GitHub)</option>
-    <option value="https://affect-categories-exclusive-authorization.trycloudflare.com/">⛑️ ALWI PUSAT VPS</option>
-    <option value="https://carrying-flu-smallest-room.trycloudflare.com">🤖 OLLAMA VPS</option>
-    <option value="./setting/">⚙️ Setting Local</option>
-    <option value="./alwiSD/">🏫 Alwi SD Local</option>
-    <option value="./index_iframe_bot.html">🤖 Bot Iframe</option>
-    <option value="./index2.html">🔀 Line 2</option>
-  </select>
-  <button onclick="reloadFrame()">🔄</button>
-  <span class="badge" id="st">TUK ON</span>
+<!-- NAV KUNING BIASA TUK -->
+<div id="alwi-rl" style="position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:space-between;z-index:8000;padding:0 12px;pointer-events:none">
+<a href="index.html" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000">←</a>
+<a href="setting/" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000">→</a>
 </div>
-
-<iframe id="frame" src="https://alwigrandle-bit.github.io/INDRAMAYU_CLUB/" allow="clipboard-read; clipboard-write; autoplay; fullscreen"></iframe>
-
-<script>
-function toggleDrop(e){e.stopPropagation();document.getElementById('navDrop').classList.toggle('active');tuk();}
-document.addEventListener('click',()=>document.getElementById('navDrop').classList.remove('active'));
-let ctx;
-function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
-function loadUrl(u){document.getElementById('frame').src=u;document.getElementById('navDrop').classList.remove('active');document.getElementById('st').textContent=u.split('/').pop()||'Pusat';tuk();}
-function ganti(){let s=document.getElementById('srv');loadUrl(s.value);}
-function reloadFrame(){document.getElementById('frame').contentWindow.location.reload();tuk();}
-</script>
-
-<!-- NAV KUNING 1x - gak nutup dropdown karena z-index 8000 -->
-
-<!-- NAV BIASA ALWI - KUNING TUK -->
-
-<script>(function(){const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/"];let p=location.pathname,i=PAGES.indexOf(p);if(i==-1)i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));if(i<0)i=0;let prev=PAGES[(i-1+PAGES.length)%PAGES.length],next=PAGES[(i+1)%PAGES.length];let L=document.getElementById('rlL'),R=document.getElementById('rlR');L.href=prev;R.href=next;let ctx;function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));let sx=0;document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>70){tuk();setTimeout(tuk,70);if(dx>0)location.href=prev;else location.href=next;}},{passive:true});})();</script>
-
-<!-- NAV BIASA ALWI - KUNING TUK -->
-<div id="alwi-rl" style="position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:space-between;z-index:8000;padding:0 12px;pointer-events:none"><a id="rlL" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000">←</a><a id="rlR" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000">→</a></div>
-<script>(function(){const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/"];let p=location.pathname,i=PAGES.indexOf(p);if(i==-1)i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));if(i<0)i=0;let prev=PAGES[(i-1+PAGES.length)%PAGES.length],next=PAGES[(i+1)%PAGES.length];let L=document.getElementById('rlL'),R=document.getElementById('rlR');L.href=prev;R.href=next;let ctx;function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));let sx=0;document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>70){tuk();setTimeout(tuk,70);if(dx>0)location.href=prev;else location.href=next;}},{passive:true});})();</script>
 </body>
 </html>
