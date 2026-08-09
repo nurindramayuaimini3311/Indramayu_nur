@@ -47,4 +47,60 @@ document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true}
 document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){ if(dx>0) location.href=prev; else location.href=next; }},{passive:true});
 })();
 </script>
+
+<script>
+// SUARA TUK TUK - ALWI SD CERIA
+let audioCtx;
+function tuk(){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    let o = audioCtx.createOscillator();
+    let g = audioCtx.createGain();
+    o.type='square';
+    o.frequency.setValueAtTime(600, audioCtx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime+0.12);
+    g.gain.setValueAtTime(0.8, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.15);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime+0.15);
+    if(navigator.vibrate) navigator.vibrate(50);
+  }catch(e){}
+}
+// pasang ke tombol RL
+let cek = setInterval(()=>{
+  let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+  if(L && R){
+    clearInterval(cek);
+    [L,R].forEach(b=>{
+      b.addEventListener('click', (e)=>{
+        tuk();
+        // animasi kocak
+        b.style.transform='scale(0.7) rotate(10deg)';
+        setTimeout(()=>b.style.transform='',150);
+      });
+      b.addEventListener('touchstart', tuk, {passive:true});
+    });
+    // tuk tuk pas swipe
+    let sx=0;
+    document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+    document.addEventListener('touchend',e=>{
+      let dx=e.changedTouches[0].clientX-sx;
+      if(Math.abs(dx)>70){ tuk(); setTimeout(tuk,80); }
+    },{passive:true});
+  }
+},300);
+// style kuning goyang untuk SD
+if(location.pathname.includes('alwiSD')){
+  let s=document.createElement('style');
+  s.innerHTML=`#alwi-rl a{animation:alwi-bounce 0.8s infinite alternate!important;background:#FFD700!important; border:3px solid #000!important;}
+  #alwi-rl a:nth-child(2){animation-delay:0.4s!important;}
+  @keyframes alwi-bounce{0%{transform:translateY(0)}100%{transform:translateY(-10px) scale(1.15);box-shadow:0 8px 20px rgba(255,215,0,.9)}}`;
+  document.head.appendChild(s);
+  // label lucu
+  let lab=document.createElement('div');
+  lab.style="position:fixed;bottom:85px;left:0;right:0;text-align:center;font-size:13px;color:#FFD700;font-weight:900;text-shadow:0 2px 4px #000;z-index:9999998;pointer-events:none";
+  lab.innerHTML="👇 PENCET KUNING TUK TUK! 👇";
+  document.body.appendChild(lab);
+}
+</script>
 </body></html>
