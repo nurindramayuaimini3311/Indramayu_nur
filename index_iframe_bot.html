@@ -1,26 +1,31 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BOT IFRAME</title><style>body{margin:0;background:#000}.top{background:#0f2210;padding:8px;display:flex;gap:6px;position:sticky;top:0;z-index:9999}select{background:#0a1a0a;color:#2ecc71;border:1px solid #145a32;padding:10px;border-radius:10px}iframe{width:100%;height:calc(100vh - 48px);border:none}</style></head><body><div class="top"><select id="s" onchange="f.src=this.value"><option value="alwi_pusat_live.html">⛑️ PUSAT</option><option value="netflix/index.html">📁 NURFLIX</option></select></div><iframe id="f" src="alwi_pusat_live.html"></iframe><script src="/alwi_bubble_v4_MENU.js"></script>
-<script src="/alwi_bubble.js"></script>
-
-
-<!-- NAV FINAL ALWI - 1x ONLY -->
-<div id="alwi-rl" style="position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:space-between;z-index:9999999;padding:0 12px;pointer-events:none"><a id="rlL" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px rgba(0,0,0,.5)">←</a><a id="rlR" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px rgba(0,0,0,.5)">→</a></div>
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ALWI IFRAME BOT - DROPDOWN</title><style>
+*{box-sizing:border-box}body{margin:0;background:#061106;color:#d4ffde;font-family:system-ui}
+.top{background:#0f2210;border-bottom:2px solid #145a32;padding:8px;display:flex;gap:6px;align-items:center;position:sticky;top:0;z-index:99999}
+select,button{background:#0a1a0a;color:#2ecc71;border:1px solid #145a32;padding:10px 12px;border-radius:10px;font-weight:bold;max-width:65vw}
+iframe{width:100%;height:calc(100vh - 48px);border:none;background:#000}
+.badge{font-size:10px;color:#7fbf8f;margin-left:auto}
+</style></head><body>
+<div class="top">
+<select id="server" onchange="ganti()">
+<option value="https://affect-categories-exclusive-authorization.trycloudflare.com/">⛑️ ALWI PUSAT (VPS)</option>
+<option value="https://carrying-flu-smallest-room.trycloudflare.com">🤖 OLLAMA VPS (2 model)</option>
+<option value="hantu.html">👻 HANTU.HTML</option>
+<option value="ceritaHOROR.html">📖 CERITA HOROR</option>
+<option value="pasarGAIB.html">🏚️ PASAR GAIB</option>
+<option value="kilat.html">⚡ KILAT</option>
+<option value="netflix/index.html">📁 NURFLIX</option>
+<option value="index.html">🏠 INDEX HOROR DRIVE</option>
+<option value="index2.html">🔀 LINE 2 - Ollama Local</option>
+</select>
+<button onclick="reload()">🔄</button>
+<span class="badge" id="status">ON 🔊 TUK</span>
+</div>
+<iframe id="frame" src="https://affect-categories-exclusive-authorization.trycloudflare.com/" allow="clipboard-read; clipboard-write; autoplay"></iframe>
 <script>
-(function(){
-const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
-let p=location.pathname; let i=PAGES.indexOf(p);
-if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));
-if(i<0) i=0;
-let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
-let L=document.getElementById('rlL'), R=document.getElementById('rlR');
-L.href=prev; R.href=next;
-let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
-[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
-let sx=0;
-document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
-document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
-if(location.pathname.includes('alwiSD')){
- let s=document.createElement('style');s.innerHTML="#alwi-rl a{animation:bob 0.7s infinite alternate} @keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-8px) scale(1.1)}}";document.head.appendChild(s);
-}
-})();
+function ganti(){let s=document.getElementById('server'),f=document.getElementById('frame'),st=document.getElementById('status');f.src=s.value;st.textContent='Loading '+s.options[s.selectedIndex].text+'...';f.onload=()=>st.textContent='OK - '+s.options[s.selectedIndex].text;tuk();}
+function reload(){document.getElementById('frame').contentWindow.location.reload();tuk();}
+let ctx;function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);}catch(e){}}
 </script>
+<!-- NAV 1x only - z-index kecil biar gak nutup dropdown -->
+<div id="alwi-rl" style="position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:space-between;z-index:8000;padding:0 12px;pointer-events:none"><a id="rlL" href="index.html" style="pointer-events:auto;width:48px;height:48px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;text-decoration:none;border:2px solid #000">←</a><a id="rlR" href="index2.html" style="pointer-events:auto;width:48px;height:48px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;text-decoration:none;border:2px solid #000">→</a></div>
 </body></html>
