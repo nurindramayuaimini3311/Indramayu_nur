@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ALWI PUSAT - Indramayu Club</title>
-<meta property="og:image" content="https://indramayu-nur.vercel.app/img/icon-512.png">
+<meta property="og:image" content="/img/icon-512.png">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#c9a84c">
+<meta name="theme-color" content="#0f172a">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0a0a0a;color:#fff;font-family:Arial,sans-serif;min-height:100vh}
@@ -37,75 +37,57 @@ body{background:#0a0a0a;color:#fff;font-family:Arial,sans-serif;min-height:100vh
 </style>
 </head>
 <body>
-
 <div class="header">
   <div class="logo">ALWI PUSAT ⛑️ INDRAMAYU CLUB</div>
   <a href="alwi_pusat_live.html" class="btn-live">🔴 LIVE</a>
   <a href="setting/" class="btn-live" style="background:#FFD700;color:#000">⚙️ SETTING</a>
 </div>
-
 <div class="nav">
   <div class="drop" id="navDropdown">
     <button class="drop-btn" onclick="toggleDrop(event)">🔴 NAVIGASI FOLDER ▼</button>
     <div class="drop-content">
       <a href="setting/">⚙️ Setting & AI Bot Setting ⛑️ - BARU!</a>
-    <a href="index2.html">👥TANYA  META </a>
+      <a href="index2.html">👥 TANYA META</a>
       <a href="fb_streaming.html">📺 FB Streaming</a>
-      <a href="alwiSD/index.html">🏫 Alwi SD</a>
-      <a href="fiturBARU/index.html">📱 fitur BARU</a>
-      <a href="game/index.html">🎮 Pusat Game</a>
-      <a href="kamera-hantu/index.html">📷 Kamera Hantu</a>
-      <a href="konten/index.html">📚 Pusat Konten</a>
-      <a href="kuis/index.html">🧠 Kuis Alwi</a>
-      <a href="netflix/index.html">🎬 Alwi TV / Netflix</a>
-      <a href="pencuri/index.html">🕵️ Mode Pencuri</a>
-      <a href="peta/index.html">🗺️ Peta AI</a>
+      <a href="alwiSD/">🏫 Alwi SD</a>
+      <a href="fiturBARU/">📱 fitur BARU</a>
+      <a href="game/">🎮 Pusat Game</a>
+      <a href="kamera-hantu/">📷 Kamera Hantu</a>
+      <a href="konten/">📚 Pusat Konten</a>
+      <a href="kuis/">🧠 Kuis Alwi</a>
+      <a href="netflix/">🎬 Alwi TV / Netflix</a>
+      <a href="pencuri/">🕵️ Mode Pencuri</a>
+      <a href="peta/">🗺️ Peta AI</a>
     </div>
   </div>
 </div>
-
 <div class="hero">
   <h1>Selamat Datang di Alwi Pusat</h1>
   <p>Portal Utama Layanan Digital & Komunitas Indramayu Club</p>
 </div>
-
 <div class="grid">
-  <a href="setting/" class="card hot" style="border-color:#FFD700">
-    <b>⚙️ SETTING & AI BOT ⛑️</b>
-    <span>BARU! Atur AI & Cache</span>
-  </a>
-  <a href="fiturBARU/index.html" class="card hot">
-    <b>ANDROID APP</b>
-    <span>Aplikasi & Tool</span>
-  </a>
-  <a href="game/index.html" class="card">
-    <b>MINI GAMES</b>
-    <span>Game & Hiburan</span>
-  </a>
-  <a href="konten/index.html" class="card">
-    <b>KONTEN & CERITA</b>
-    <span>E-Book & Artikel</span>
-  </a>
+  <a href="setting/" class="card hot" style="border-color:#FFD700"><b>⚙️ SETTING & AI BOT ⛑️</b><span>BARU! Atur AI & Cache</span></a>
+  <a href="fiturBARU/" class="card hot"><b>ANDROID APP</b><span>Aplikasi & Tool</span></a>
+  <a href="game/" class="card"><b>MINI GAMES</b><span>Game & Hiburan</span></a>
+  <a href="konten/" class="card"><b>KONTEN & CERITA</b><span>E-Book & Artikel</span></a>
 </div>
-
 <div class="section">
   <h2>DAFTAR FOLDER UTAMA</h2>
   <div class="list">
     <a href="setting/"><span>⚙️ Setting & AI Bot Setting ⛑️ - BARU!</span> ➔</a>
-    <a href="alwiSD/index.html"><span>🏫 Sanggar & Pembelajaran Alwi SD</span> ➔</a>
-    <a href="kamera-hantu/index.html"><span>📷 Kamera Hantu & Penampakan</span> ➔</a>
-    <a href="kuis/index.html"><span>🧠 Kuis & Asah Otak</span> ➔</a>
-    <a href="pencuri/index.html"><span>🕵️ Game Pencuri Ruangan</span> ➔</a>
-    <a href="peta/index.html"><span>🗺️ Peta COD & Meta AI</span> ➔</a>
+    <a href="alwiSD/"><span>🏫 Sanggar & Pembelajaran Alwi SD</span> ➔</a>
+    <a href="kamera-hantu/"><span>📷 Kamera Hantu & Penampakan</span> ➔</a>
+    <a href="kuis/"><span>🧠 Kuis & Asah Otak</span> ➔</a>
+    <a href="pencuri/"><span>🕵️ Game Pencuri Ruangan</span> ➔</a>
+    <a href="peta/"><span>🗺️ Peta COD & Meta AI</span> ➔</a>
   </div>
 </div>
-
 <a href="setting/" class="fab">⚙️</a>
-
 <script>
 function toggleDrop(e){e.stopPropagation();document.getElementById('navDropdown').classList.toggle('active');}
 document.addEventListener('click',function(e){var d=document.getElementById('navDropdown');if(d&&!d.contains(e.target))d.classList.remove('active');});
-if('serviceWorker' in navigator){navigator.serviceWorker.register(/sw.js');}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}
 </script>
+<script src="/alwi_bubble.js"></script>
 </body>
 </html>
