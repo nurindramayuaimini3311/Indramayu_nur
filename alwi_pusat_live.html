@@ -1,43 +1,80 @@
-<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ALWI IFRAME BOT - DROPDOWN</title><style>
-*{box-sizing:border-box}body{margin:0;background:#061106;color:#d4ffde;font-family:system-ui}
-.top{background:#0f2210;border-bottom:2px solid #145a32;padding:8px;display:flex;gap:6px;align-items:center;position:sticky;top:0;z-index:99}
-select,button{background:#0a1a0a;color:#2ecc71;border:1px solid #145a32;padding:10px 12px;border-radius:10px;font-weight:bold}
-iframe{width:100%;height:calc(100vh - 48px);border:none;background:#000}
-.badge{font-size:11px;color:#7fbf8f;margin-left:auto}
-</style></head><body>
-<div class="top">
-<select id="server" onchange="ganti()">
-<option value="https://affect-categories-exclusive-authorization.trycloudflare.com/">⛑️ ALWI PUSAT (VPS)</option>
-<option value="https://carrying-flu-smallest-room.trycloudflare.com">🤖 OLLAMA VPS (2 model)</option>
-<option value="hantu.html">👻 HANTU.HTML (2.1MB)</option>
-<option value="ceritaHOROR.html">📖 CERITA HOROR</option>
-<option value="pasarGAIB.html">🏚️ PASAR GAIB</option>
-<option value="kilat.html">⚡ KILAT</option>
-<option value="netflix/index.html">📁 NURFLIX</option>
-<option value="index.html">🏠 INDEX HOROR DRIVE</option>
-</select>
-<button onclick="reload()">🔄 Reload</button>
-<span class="badge" id="status">iframe bot bubble dropdown ON 🔊</span>
-</div>
-<iframe id="frame" src="https://varied-aspects-boulder-chairman.trycloudflare.com/index-ollama-backup.html" allow="clipboard-read; clipboard-write; autoplay"></iframe>
-
+<!DOCTYPE html>
+<html lang="id">
+<head>
 <script>
-(function(){
-const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
-let p=location.pathname; let i=PAGES.indexOf(p);
-if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));
-if(i<0) i=0;
-let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
-let L=document.getElementById('rlL'), R=document.getElementById('rlR');
-L.href=prev; R.href=next;
-let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
-[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
-let sx=0;
-document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
-document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
-if(location.pathname.includes('alwiSD')){
- let s=document.createElement('style');s.innerHTML="#alwi-rl a{animation:bob 0.7s infinite alternate} @keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-8px) scale(1.1)}}";document.head.appendChild(s);
-}
-})();
+(function(){if(window.__playableTouchPatchInstalled)return;window.__playableTouchPatchInstalled=true;var origAdd=EventTarget.prototype.addEventListener;var blocked={touchstart:1,touchmove:1,wheel:1};EventTarget.prototype.addEventListener=function(t,l,o){if(blocked[t]){if(o==null)o={passive:true};else if(typeof o==='boolean')o={capture:o,passive:true};else o=Object.assign({},o,{passive:true});}return origAdd.call(this,t,l,o);}})();
 </script>
-</body></html>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TERMUX - Viewer VPS Putih Biru - ALWI V2</title>
+<style>
+*{box-sizing:border-box}:root{--biru:#0d6efd;--muda:#eaf4ff;--border:#cfe2ff;--text:#0f356e}
+body{margin:0;background:linear-gradient(180deg,#fff,var(--muda));color:var(--text);font-family:system-ui}
+header{position:sticky;top:0;z-index:99;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:2px solid var(--border);padding:10px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#0d6efd,#5ab0ff);display:grid;place-items:center;color:#fff;font-weight:900}
+h1{margin:0;font-size:14px;color:#0b5ed7}p{margin:0;font-size:10px;color:#6b8ab8}
+select,button{background:#fff;color:#0b5ed7;border:1.5px solid var(--border);padding:9px 12px;border-radius:10px;font-weight:700;font-size:12px}
+button{background:var(--biru);color:#fff;border-color:var(--biru)}
+.layout{display:grid;grid-template-columns:260px 1fr;height:calc(100vh - 58px)}
+@media(max-width:800px){.layout{grid-template-columns:1fr;grid-template-rows:auto 1fr}}
+.side{background:#fff;border-right:1.5px solid var(--border);overflow:auto;padding:8px}
+.item{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:9px;margin-bottom:6px;cursor:pointer}
+.item.active{background:#e8f2ff;border-color:var(--biru);box-shadow:0 0 0 2px rgba(13,110,253,.15)}
+.name{font-weight:800;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.url{font-size:9px;color:#6b8ab8}
+.main{display:flex;flex-direction:column;background:#f8fbff}
+.bar{background:#fff;border-bottom:1.5px solid var(--border);padding:6px 8px;display:flex;gap:6px;align-items:center}
+.bar input{flex:1;background:#f1f7ff;border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:11px}
+iframe{width:100%;flex:1;border:none;background:#fff}
+</style></head>
+<body>
+<header>
+<div class="logo">TX</div><div><h1>TERMUX → VPS Viewer</h1><p>VPS Direct: 34.170.37.50:3000</p></div>
+<select id="baseUrl" onchange="gantiBase()">
+<option value="http://34.170.37.50:3000/" selected>VPS Google Cloud (34.170.37.50:3000)</option>
+<option value="https://collected-chess-supplier-helps.trycloudflare.com/">Cloudflare Tunnel 1</option>
+<option value="https://affect-categories-exclusive-authorization.trycloudflare.com/">Cloudflare Tunnel 2</option>
+</select><button onclick="reload()">🔄 Refresh</button>
+</header>
+<div class="layout"><aside class="side" id="list"></aside>
+<main class="main"><div class="bar"><span>📍</span><input id="url" readonly><span id="st" style="font-size:10px;background:#e8f5e9;color:#2e7d32;padding:2px 6px;border-radius:20px">ready</span></div>
+<iframe id="frame" src="http://34.170.37.50:3000/index-ollama-backup.html" allow="clipboard-read; clipboard-write; autoplay"></iframe>
+</main></div>
+<script>
+let BASE = document.getElementById('baseUrl').value;
+// Daftar file sesuai permintaan
+const HTMLS=["index-ollama-backup.html","index2.html","alwi_pusat_live.html","LIVE1.html","index.html"];
+let active="index-ollama-backup.html";
+
+function render(){
+  document.getElementById('list').innerHTML=HTMLS.map(f=>{
+    const full=BASE+f;
+    const label = f === "index.html" ? "🕌 ADZAN (index.html)" : f;
+    return `<div class="item ${f===active?'active':''}" onclick="buka('${f}')"><div class="name">📄 ${label}</div><div class="url">${full}</div></div>`;
+  }).join('');
+}
+
+function buka(file){
+  active=file;
+  const full=BASE+file;
+  document.getElementById('frame').src=full;
+  document.getElementById('url').value=full;
+  document.getElementById('st').textContent="loading...";
+  render();
+  document.getElementById('frame').onload=()=>document.getElementById('st').textContent="✓ "+file;
+}
+
+function gantiBase(){
+  BASE=document.getElementById('baseUrl').value;
+  if(!BASE.endsWith('/'))BASE+='/';
+  buka(active);
+}
+
+function reload(){
+  document.getElementById('frame').src=BASE+active;
+}
+
+render();
+buka(active);
+</script>
+</body>
+</html>
+
