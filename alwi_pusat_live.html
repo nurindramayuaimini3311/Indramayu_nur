@@ -1,80 +1,76 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<script>
-(function(){if(window.__playableTouchPatchInstalled)return;window.__playableTouchPatchInstalled=true;var origAdd=EventTarget.prototype.addEventListener;var blocked={touchstart:1,touchmove:1,wheel:1};EventTarget.prototype.addEventListener=function(t,l,o){if(blocked[t]){if(o==null)o={passive:true};else if(typeof o==='boolean')o={capture:o,passive:true};else o=Object.assign({},o,{passive:true});}return origAdd.call(this,t,l,o);}})();
-</script>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TERMUX - Viewer VPS Putih Biru - ALWI V2</title>
-<style>
-*{box-sizing:border-box}:root{--biru:#0d6efd;--muda:#eaf4ff;--border:#cfe2ff;--text:#0f356e}
-body{margin:0;background:linear-gradient(180deg,#fff,var(--muda));color:var(--text);font-family:system-ui}
-header{position:sticky;top:0;z-index:99;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:2px solid var(--border);padding:10px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#0d6efd,#5ab0ff);display:grid;place-items:center;color:#fff;font-weight:900}
-h1{margin:0;font-size:14px;color:#0b5ed7}p{margin:0;font-size:10px;color:#6b8ab8}
-select,button{background:#fff;color:#0b5ed7;border:1.5px solid var(--border);padding:9px 12px;border-radius:10px;font-weight:700;font-size:12px}
-button{background:var(--biru);color:#fff;border-color:var(--biru)}
-.layout{display:grid;grid-template-columns:260px 1fr;height:calc(100vh - 58px)}
-@media(max-width:800px){.layout{grid-template-columns:1fr;grid-template-rows:auto 1fr}}
-.side{background:#fff;border-right:1.5px solid var(--border);overflow:auto;padding:8px}
-.item{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:9px;margin-bottom:6px;cursor:pointer}
-.item.active{background:#e8f2ff;border-color:var(--biru);box-shadow:0 0 0 2px rgba(13,110,253,.15)}
-.name{font-weight:800;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.url{font-size:9px;color:#6b8ab8}
-.main{display:flex;flex-direction:column;background:#f8fbff}
-.bar{background:#fff;border-bottom:1.5px solid var(--border);padding:6px 8px;display:flex;gap:6px;align-items:center}
-.bar input{flex:1;background:#f1f7ff;border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:11px}
-iframe{width:100%;flex:1;border:none;background:#fff}
-</style></head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>INDRAMAYU DIRECT DASHBOARD</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0d6efd; /* Warna background saat loading */
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    
+    /* Frame Konten Utama */
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background-color: #ffffff;
+    }
+
+    /* Indikator Loading saat Web VPS dimuat */
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #0d6efd, #0b5ed7);
+      color: #ffffff;
+      z-index: -1;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 12px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
 <body>
-<header>
-<div class="logo">TX</div><div><h1>TERMUX → VPS Viewer</h1><p>VPS Direct: 34.170.37.50:3000</p></div>
-<select id="baseUrl" onchange="gantiBase()">
-<option value="http://34.170.37.50:3000/" selected>VPS Google Cloud (34.170.37.50:3000)</option>
-<option value="https://collected-chess-supplier-helps.trycloudflare.com/">Cloudflare Tunnel 1</option>
-<option value="https://affect-categories-exclusive-authorization.trycloudflare.com/">Cloudflare Tunnel 2</option>
-</select><button onclick="reload()">🔄 Refresh</button>
-</header>
-<div class="layout"><aside class="side" id="list"></aside>
-<main class="main"><div class="bar"><span>📍</span><input id="url" readonly><span id="st" style="font-size:10px;background:#e8f5e9;color:#2e7d32;padding:2px 6px;border-radius:20px">ready</span></div>
-<iframe id="frame" src="http://34.170.37.50:3000/index-ollama-backup.html" allow="clipboard-read; clipboard-write; autoplay"></iframe>
-</main></div>
-<script>
-let BASE = document.getElementById('baseUrl').value;
-// Daftar file sesuai permintaan
-const HTMLS=["index-ollama-backup.html","index2.html","alwi_pusat_live.html","LIVE1.html","index.html"];
-let active="index-ollama-backup.html";
 
-function render(){
-  document.getElementById('list').innerHTML=HTMLS.map(f=>{
-    const full=BASE+f;
-    const label = f === "index.html" ? "🕌 ADZAN (index.html)" : f;
-    return `<div class="item ${f===active?'active':''}" onclick="buka('${f}')"><div class="name">📄 ${label}</div><div class="url">${full}</div></div>`;
-  }).join('');
-}
+  <!-- Background Loader -->
+  <div class="loading-screen">
+    <div class="spinner"></div>
+    <b style="font-size: 14px;">Memuat VPS Dashboard...</b>
+    <span style="font-size: 10px; opacity: 0.8; margin-top: 4px;">Indramayu Digital Ecosystem</span>
+  </div>
 
-function buka(file){
-  active=file;
-  const full=BASE+file;
-  document.getElementById('frame').src=full;
-  document.getElementById('url').value=full;
-  document.getElementById('st').textContent="loading...";
-  render();
-  document.getElementById('frame').onload=()=>document.getElementById('st').textContent="✓ "+file;
-}
+  <!-- Embed Iframe ke Web Server VPS -->
+  <iframe
+    id="vpsFrame"
+    src="https://roulette-bytes-fin-bye.trycloudflare.com/index11.html"
+    title="VPS Direct Dashboard"
+    allow="microphone; camera; clipboard-read; clipboard-write; autoplay; display-capture"
+    loading="eager">
+  </iframe>
 
-function gantiBase(){
-  BASE=document.getElementById('baseUrl').value;
-  if(!BASE.endsWith('/'))BASE+='/';
-  buka(active);
-}
-
-function reload(){
-  document.getElementById('frame').src=BASE+active;
-}
-
-render();
-buka(active);
-</script>
 </body>
 </html>
 
