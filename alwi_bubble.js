@@ -18,7 +18,7 @@ menu.innerHTML=`
     <span>⛑️ NAVIGASI FOLDER & VPS</span>
     <span onclick="document.getElementById('ALWI_DROPUP').style.display='none'" style="cursor:pointer;color:#888;">✕</span>
   </div>
-  <button onclick="bukaIframe('http://34.170.37.50:3000/index-ollama-backup.html')" style="padding:9px;background:#0284c7;color:#fff;border:1px solid #38bdf8;border-radius:8px;text-align:left;font-weight:700;font-size:12px;cursor:pointer;">🤖 VPS Ollama Direct (34.170.37.50)</button>
+  <button onclick="bukaIframe('http://34.170.37.50:3000/index.html')" style="padding:9px;background:#0284c7;color:#fff;border:1px solid #38bdf8;border-radius:8px;text-align:left;font-weight:700;font-size:12px;cursor:pointer;">🤖 VPS Ollama Direct (34.170.37.50)</button>
   <button onclick="bukaIframe('pusat.html')" style="padding:9px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:12px;cursor:pointer;">🏢 Pusat Portal (pusat.html)</button>
   <button onclick="bukaIframe('index2.html')" style="padding:9px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:12px;cursor:pointer;">🚀 Index 2 (index2.html)</button>
   <button onclick="bukaIframe('qa_lite.html')" style="padding:9px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:12px;cursor:pointer;">💡 Q&A Lite (qa_lite.html)</button>
