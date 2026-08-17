@@ -400,43 +400,54 @@
 
   <a href="setting/" class="fab" title="Buka Setting">⚙️</a>
 
+ 
+  <!-- 1. Muat SDK Facebook terlebih dahulu -->
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/id_ID/sdk.js"></script>
+
+  <!-- 2. Skrip Inisialisasi & Logika -->
   <script>
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId      : '2055539978374338', // App ID ALWI_granle
+        cookie     : true,
+        xfbml      : true,
+        version    : 'v20.0'
+      });
+    };
 
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/id_ID/sdk.js"></script>
-<script>
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '2055539978374338', // App ID ALWI_granle
-      cookie     : true,
-      xfbml      : true,
-      version    : 'v20.0'
-    });
-  };
-
-  function loginFB() {
-    FB.login(function(response){
-      if(response.authResponse){
-        localStorage.setItem('fb_token', response.authResponse.accessToken);
-        alert('Login Berhasil! Selamat datang di ALWI PUSAT');
-        window.location.href = 'setting/'; // langsung ke setting
-      } else {
-        alert('Login dibatalkan');
+    function loginFB() {
+      // Memastikan FB SDK sudah selesai dimuat sebelum dipanggil
+      if (typeof FB === 'undefined') {
+        alert('Facebook SDK sedang dimuat, silakan coba beberapa detik lagi.');
+        return;
       }
-    }, {scope: 'public_profile,email'});
-  }
+
+      FB.login(function(response){
+        if(response.authResponse){
+          localStorage.setItem('fb_token', response.authResponse.accessToken);
+          alert('Login Berhasil! Selamat datang di ALWI PUSAT');
+          window.location.href = 'setting/';
+        } else {
+          alert('Login dibatalkan');
+        }
+      }, {scope: 'public_profile,email'});
+    }
 
     function toggleNav() {
       document.getElementById('navDropdown').classList.toggle('active');
     }
+
     document.addEventListener('click', function(e) {
       const dropdown = document.getElementById('navDropdown');
       if (!dropdown.contains(e.target)) {
         dropdown.classList.remove('active');
       }
     });
+
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(() => {});
     }
+
     const script = document.createElement('script');
     script.src = '/alwi_bubble.js';
     script.onerror = () => {};
