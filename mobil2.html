@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🏎️ Road Fighter — Indramayu Club Retro</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    height:100%; background:#0a0a0f; overflow:hidden;
+    font-family: 'Courier New', monospace;
+    display:flex; align-items:center; justify-content:center;
+    touch-action: none;
+  }
+  #wrap {
+    position:relative;
+    width:100%;
+    max-width: 480px;
+    height:100vh;
+    max-height: 900px;
+    background:#111;
+    box-shadow: 0 0 40px rgba(255,0,80,0.25), inset 0 0 60px rgba(0,0,0,0.8);
+    overflow:hidden;
+  }
+  canvas { display:block; width:100%; height:100%; background:#222; }
+
+  #hud {
+    position:absolute; top:0; left:0; right:0;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding:10px 14px;
+    pointer-events:none;
+    text-shadow: 0 0 8px #000, 0 0 4px #000;
+    z-index:5;
+  }
+  .hud-box {
+    color:#0ff; font-weight:bold; font-size:15px;
+    letter-spacing:1px;
+  }
+  .hud-title { color:#ff2d55; font-size:12px; letter-spacing:2px; }
+  #fuelWrap {
+    width:110px; height:14px; border:2px solid #0ff;
+    background:rgba(0,0,0,0.5); margin-top:4px; border-radius:2px;
+    overflow:hidden;
+  }
+  #fuelBar {
+    height:100%; width:100%;
+    background: linear-gradient(90deg,#ff2d55,#ffcc00,#39ff88);
+    transition: width 0.15s linear;
+  }
+
+  #overlay {
+    position:absolute; inset:0; z-index:20;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:rgba(5,5,15,0.92);
+    color:#fff; text-align:center; padding:20px;
+  }
+  #overlay h1 {
+    color:#ff2d55; font-size:26px; letter-spacing:3px;
+    text-shadow: 0 0 12px #ff2d55, 0 0 24px #ff2d5588;
+    margin-bottom:6px;
+  }
+  #overlay .sub { color:#0ff; font-size:12px; letter-spacing:2px; margin-bottom:22px; }
+  #overlay p { font-size:13px; color:#ccc; line-height:1.7; margin-bottom:22px; max-width:320px; }
+  #overlay p b { color:#ffcc00; }
+  .btn {
+    background: linear-gradient(180deg,#ff2d55,#c4003a);
+    color:#fff; border:none; padding:14px 34px; font-size:16px;
+    font-weight:bold; letter-spacing:2px; border-radius:6px;
+    box-shadow: 0 0 20px rgba(255,45,85,0.6), inset 0 -3px 0 rgba(0,0,0,0.3);
+    font-family: inherit; cursor:pointer;
+  }
+  .btn:active { transform: translateY(2px); }
+  #hiscore { color:#39ff88; font-size:12px; margin-top:14px; letter-spacing:1px; }
+
+  #controls {
+    position:absolute; bottom:0; left:0; right:0;
+    display:flex; justify-content:space-between; padding:16px;
+    z-index:10;
+  }
+  .ctrl-btn {
+    width:70px; height:70px; border-radius:50%;
+    background:rgba(0,255,255,0.12); border:2px solid rgba(0,255,255,0.5);
+    color:#0ff; font-size:28px; display:flex; align-items:center; justify-content:center;
+    user-select:none;
+  }
+  .ctrl-btn.active { background:rgba(0,255,255,0.35); }
+  #leftPad { display:flex; gap:10px; }
+
+  #gameoverTxt { color:#ff2d55; }
+
+  #hudRestart {
+    width:36px; height:36px; border-radius:50%;
+    background:rgba(255,45,85,0.18); border:2px solid #ff2d55;
+    color:#ff2d55; font-size:18px; font-weight:bold;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; user-select:none;
+  }
+  #hudRestart:active { background:rgba(255,45,85,0.4); transform: scale(0.92); }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game"></canvas>
+
+  <div id="hud">
+    <div class="hud-box">
+      <div class="hud-title">SKOR</div>
+      <div id="scoreVal">0</div>
+    </div>
+    <div class="hud-box" style="text-align:right;">
+      <div class="hud-title">BBM</div>
+      <div id="fuelWrap"><div id="fuelBar"></div></div>
+    </div>
+    <div id="hudRestartWrap" class="hud-box" style="text-align:center; pointer-events:auto;">
+      <div id="hudRestart">↻</div>
+    </div>
+  </div>
+
+  <div id="controls">
+    <div id="leftPad">
+      <div class="ctrl-btn" id="btnLeft">◀</div>
+      <div class="ctrl-btn" id="btnRight">▶</div>
+    </div>
+    <div class="ctrl-btn" id="btnBoost">⚡</div>
+  </div>
+
+  <div id="overlay">
+    <div class="hud-title" style="color:#0ff; letter-spacing:3px;">INDRAMAYU CLUB PRESENTS</div>
+    <h1>🏎️ ROAD FIGHTER</h1>
+    <div class="sub">— RETRO EDITION —</div>
+    <p>
+      Kendalikan mobil <b>merah</b> lewat jalanan.<br>
+      Tabrak mobil <b>putih-hijau</b> = +BBM &amp; poin.<br>
+      Hindari mobil <b>kuning</b> (suka nyerempet) &amp;
+      <b>truk hitam</b> (langsung meledak!).<br>
+      Jaga BBM jangan sampai habis.
+    </p>
+    <button class="btn" id="startBtn">▶ MULAI</button>
+    <div id="hiscore">HI-SCORE: <span id="hiVal">0</span></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const wrap = document.getElementById('wrap');
+  const overlay = document.getElementById('overlay');
+  const scoreVal = document.getElementById('scoreVal');
+  const fuelBar = document.getElementById('fuelBar');
+  const startBtn = document.getElementById('startBtn');
+  const hiVal = document.getElementById('hiVal');
+
+  let W, H;
+  function resize() {
+    W = canvas.width = wrap.clientWidth;
+    H = canvas.height = wrap.clientHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const ROAD_MARGIN_RATIO = 0.12;
+  let roadLeft, roadRight, roadWidth;
+  function computeRoad() {
+    roadLeft = W * ROAD_MARGIN_RATIO;
+    roadRight = W * (1 - ROAD_MARGIN_RATIO);
+    roadWidth = roadRight - roadLeft;
+  }
+  computeRoad();
+
+  const HI_KEY = 'roadfighter_indramayu_hiscore';
+  let hiscore = parseInt(localStorage.getItem(HI_KEY) || '0', 10);
+  hiVal.textContent = hiscore;
+
+  let state = 'menu'; // menu | playing | gameover
+  let player, cars, dashOffset, score, fuel, baseSpeed, spawnTimer, elapsed;
+  let keys = { left:false, right:false, boost:false };
+  let shakeT = 0;
+
+  function initGame() {
+    player = {
+      w: W * 0.11, h: W * 0.11 * 1.7,
+      x: roadLeft + roadWidth/2,
+      y: H * 0.78,
+      vx: 0,
+      slip: 0
+    };
+    cars = [];
+    dashOffset = 0;
+    score = 0;
+    fuel = 100;
+    baseSpeed = H * 0.35;
+    spawnTimer = 0;
+    elapsed = 0;
+    shakeT = 0;
+    scoreVal.textContent = '0';
+    fuelBar.style.width = '100%';
+  }
+
+  function spawnCar() {
+    const types = ['bonus','bonus','yellow','yellow','truck'];
+    const type = types[Math.floor(Math.random()*types.length)];
+    const carW = type === 'truck' ? W*0.16 : W*0.105;
+    const carH = carW * 1.6;
+    const laneX = roadLeft + carW/2 + Math.random() * (roadWidth - carW);
+    cars.push({
+      type, x: laneX, y: -carH,
+      w: carW, h: carH,
+      vx: type === 'yellow' ? (Math.random()<0.5?-1:1) * (W*0.09) : 0,
+      dirTimer: Math.random()*2
+    });
+  }
+
+  function rectsOverlap(a, ax, ay, b, bx, by) {
+    return Math.abs(ax-bx) < (a.w+b.w)/2*0.78 && Math.abs(ay-by) < (a.h+b.h)/2*0.78;
+  }
+
+  function endGame() {
+    state = 'gameover';
+    if (score > hiscore) {
+      hiscore = score;
+      localStorage.setItem(HI_KEY, hiscore);
+    }
+    document.getElementById('hiVal').textContent = hiscore;
+    overlay.innerHTML = `
+      <h1 id="gameoverTxt">💥 MOBIL MELEDAK!</h1>
+      <p>Skor kamu: <b>${score}</b><br>Hi-Score: <b>${hiscore}</b></p>
+      <button class="btn" id="restartBtn">↻ MAIN LAGI</button>
+    `;
+    overlay.style.display = 'flex';
+    document.getElementById('restartBtn').addEventListener('click', startGame);
+  }
+
+  function startGame() {
+    overlay.style.display = 'none';
+    initGame();
+    state = 'playing';
+    requestAnimationFrame(loop);
+  }
+
+  startBtn.addEventListener('click', startGame);
+
+  const hudRestart = document.getElementById('hudRestart');
+  hudRestart.addEventListener('click', () => {
+    if (state === 'playing') startGame();
+  });
+
+  // ---- Kontrol ----
+  function bindHold(el, key) {
+    const on = e => { e.preventDefault(); keys[key] = true; el.classList.add('active'); };
+    const off = e => { keys[key] = false; el.classList.remove('active'); };
+    el.addEventListener('touchstart', on, {passive:false});
+    el.addEventListener('touchend', off);
+    el.addEventListener('touchcancel', off);
+    el.addEventListener('mousedown', on);
+    el.addEventListener('mouseup', off);
+    el.addEventListener('mouseleave', off);
+  }
+  bindHold(document.getElementById('btnLeft'), 'left');
+  bindHold(document.getElementById('btnRight'), 'right');
+  bindHold(document.getElementById('btnBoost'), 'boost');
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
+    if (e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
+    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') keys.boost = true;
+    if (e.key === 'Enter' && state !== 'playing') startGame();
+  });
+  window.addEventListener('keyup', e => {
+    if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
+    if (e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
+    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') keys.boost = false;
+  });
+
+  // ---- Gambar mobil pixel-style ----
+  function drawCar(x, y, w, h, bodyColor, roofColor) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.shadowColor = bodyColor;
+    ctx.shadowBlur = 8;
+    ctx.fillStyle = bodyColor;
+    roundRect(-w/2, -h/2, w, h, w*0.25);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = roofColor;
+    roundRect(-w*0.32, -h*0.12, w*0.64, h*0.42, w*0.15);
+    ctx.fill();
+    // ban
+    ctx.fillStyle = '#111';
+    ctx.fillRect(-w/2-2, -h*0.32, 4, h*0.22);
+    ctx.fillRect(w/2-2, -h*0.32, 4, h*0.22);
+    ctx.fillRect(-w/2-2, h*0.1, 4, h*0.22);
+    ctx.fillRect(w/2-2, h*0.1, 4, h*0.22);
+    // lampu belakang
+    ctx.fillStyle = '#ffdd55';
+    ctx.fillRect(-w*0.3, h*0.42, w*0.18, h*0.06);
+    ctx.fillRect(w*0.12, h*0.42, w*0.18, h*0.06);
+    ctx.restore();
+  }
+  function roundRect(x,y,w,h,r) {
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  function loop(ts) {
+    if (state !== 'playing') return;
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  let lastTime = null;
+  function update() {
+    const now = performance.now();
+    const dt = lastTime ? Math.min((now - lastTime)/1000, 0.05) : 0.016;
+    lastTime = now;
+    elapsed += dt;
+
+    const speed = baseSpeed + Math.min(elapsed * 6, 160) + (keys.boost ? W*0.25 : 0);
+
+    // gerak player
+    const moveSpeed = W * 1.1;
+    if (keys.left) player.vx = -moveSpeed;
+    else if (keys.right) player.vx = moveSpeed;
+    else player.vx *= 0.8;
+    player.x += player.vx * dt;
+
+    // batas jalan -> slip
+    if (player.x < roadLeft + player.w/2) {
+      player.x = roadLeft + player.w/2;
+      player.slip = 1;
+      shakeT = 0.15;
+      fuel -= 8*dt*10;
+    } else if (player.x > roadRight - player.w/2) {
+      player.x = roadRight - player.w/2;
+      player.slip = 1;
+      shakeT = 0.15;
+      fuel -= 8*dt*10;
+    } else {
+      player.slip *= 0.9;
+    }
+
+    // dash line jalan
+    dashOffset += speed * dt;
+
+    // fuel berkurang alami (diperlambat biar bertahan sampai ~2x ketemu mobil bonus)
+    fuel -= dt * (keys.boost ? 4.5 : 2.2);
+    if (fuel <= 0) { fuel = 0; endGame(); return; }
+    fuelBar.style.width = fuel + '%';
+
+    // spawn musuh
+    spawnTimer -= dt;
+    const spawnRate = Math.max(0.45, 1.1 - elapsed*0.01);
+    if (spawnTimer <= 0) {
+      spawnCar();
+      spawnTimer = spawnRate;
+    }
+
+    // update mobil2
+    for (let i = cars.length-1; i>=0; i--) {
+      const c = cars[i];
+      c.y += (speed + baseSpeed*0.3) * dt;
+
+      if (c.type === 'yellow') {
+        c.dirTimer -= dt;
+        if (c.dirTimer <= 0) { c.vx *= -1; c.dirTimer = 1 + Math.random()*1.5; }
+        c.x += c.vx * dt;
+        if (c.x < roadLeft + c.w/2) c.x = roadLeft + c.w/2;
+        if (c.x > roadRight - c.w/2) c.x = roadRight - c.w/2;
+      }
+
+      // tabrakan
+      if (rectsOverlap(player, player.x, player.y, c, c.x, c.y)) {
+        if (c.type === 'bonus') {
+          score += 50;
+          fuel = Math.min(100, fuel + 30);
+          cars.splice(i,1);
+          scoreVal.textContent = score;
+          continue;
+        } else {
+          endGame();
+          return;
+        }
+      }
+
+      if (c.y - c.h/2 > H) cars.splice(i,1);
+    }
+
+    score += Math.round(speed*dt*0.05);
+    scoreVal.textContent = score;
+
+    if (shakeT > 0) shakeT -= dt;
+  }
+
+  function draw() {
+    ctx.save();
+    if (shakeT > 0) {
+      ctx.translate((Math.random()-0.5)*8, (Math.random()-0.5)*8);
+    }
+
+    // background rumput
+    ctx.fillStyle = '#0d3d1f';
+    ctx.fillRect(0,0,W,H);
+    // pattern rumput sederhana
+    ctx.fillStyle = '#0f4a26';
+    const grassStep = 40;
+    const goff = dashOffset % (grassStep*2);
+    for (let y=-grassStep*2; y<H+grassStep*2; y+=grassStep*2) {
+      ctx.fillRect(0, y+goff, roadLeft, grassStep);
+      ctx.fillRect(roadRight, y+goff, W-roadRight, grassStep);
+    }
+
+    // jalan
+    ctx.fillStyle = '#2b2b33';
+    ctx.fillRect(roadLeft, 0, roadWidth, H);
+
+    // pembatas jalan
+    ctx.fillStyle = '#e8e8e8';
+    ctx.fillRect(roadLeft-4, 0, 4, H);
+    ctx.fillRect(roadRight, 0, 4, H);
+
+    // garis tengah putus-putus
+    ctx.fillStyle = '#ffcc00';
+    const dashLen = 34, gap = 26;
+    let y0 = (dashOffset % (dashLen+gap)) - (dashLen+gap);
+    for (let y = y0; y < H; y += dashLen+gap) {
+      ctx.fillRect(roadLeft + roadWidth/2 - 3, y, 6, dashLen);
+    }
+
+    // mobil-mobil lain
+    for (const c of cars) {
+      if (c.type === 'bonus') drawCar(c.x, c.y, c.w, c.h, '#39ff88', '#e8ffe8');
+      else if (c.type === 'yellow') drawCar(c.x, c.y, c.w, c.h, '#ffdd33', '#333');
+      else drawCar(c.x, c.y, c.w, c.h, '#222831', '#111');
+    }
+
+    // player
+    const wobble = player.slip * Math.sin(performance.now()*0.05) * 6;
+    drawCar(player.x + wobble, player.y, player.w, player.h, '#ff2d55', '#fff');
+
+    ctx.restore();
+  }
+
+  draw(); // preview di belakang overlay
+})();
+</script>
+</body>
+</html>
+
