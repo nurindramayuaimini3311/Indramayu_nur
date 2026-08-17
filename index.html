@@ -296,6 +296,9 @@
   </style>
 </head>
 <body>
+<button onclick="loginFB()" class="btn-live" style="background:#1877F2">
+  🔵 LOGIN FB
+</button>
   <div class="header">
     <div class="logo">⛑️ ALWI PUSAT</div>
     <div class="header-buttons">
@@ -398,6 +401,30 @@
   <a href="setting/" class="fab" title="Buka Setting">⚙️</a>
 
   <script>
+
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/id_ID/sdk.js"></script>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '2055539978374338', // App ID ALWI_granle
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v20.0'
+    });
+  };
+
+  function loginFB() {
+    FB.login(function(response){
+      if(response.authResponse){
+        localStorage.setItem('fb_token', response.authResponse.accessToken);
+        alert('Login Berhasil! Selamat datang di ALWI PUSAT');
+        window.location.href = 'setting/'; // langsung ke setting
+      } else {
+        alert('Login dibatalkan');
+      }
+    }, {scope: 'public_profile,email'});
+  }
+
     function toggleNav() {
       document.getElementById('navDropdown').classList.toggle('active');
     }
