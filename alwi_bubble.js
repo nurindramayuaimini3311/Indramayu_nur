@@ -1,6 +1,10 @@
 !function(){
 if(window.__ALWI)return;window.__ALWI=1;
 
+// Deteksi apakah sedang berada di dalam subfolder atau root
+let isInSubfolder = window.location.pathname.split('/').filter(Boolean).length > 1;
+let prefix = isInSubfolder ? "../" : "./";
+
 // 1. Buat Bola Helm ⛑️
 let isDragging=false, startX, startY, vx=0, vy=0, x=window.innerWidth-80, y=window.innerHeight-120;
 let ball=document.createElement('div');
@@ -9,7 +13,7 @@ ball.style.cssText=`position:fixed;left:${x}px;top:${y}px;z-index:999999999;widt
 ball.innerHTML="⛑️";
 document.body.appendChild(ball);
 
-// 2. Buat Drop-Up Menu Navigasi Ringkas (Termasuk TARGET HOME & VPS Ollama)
+// 2. Buat Drop-Up Menu Navigasi Ringkas dengan Path Dinamis (Tanpa garis miring di depan)
 let menu=document.createElement('div');
 menu.id="ALWI_DROPUP";
 menu.style.cssText="display:none;position:fixed;bottom:90px;right:15px;width:260px;background:#0a0a0a;border:2px solid #25D366;border-radius:14px;z-index:999999998;padding:8px;box-shadow:0 10px 30px rgba(37,211,102,0.3);flex-direction:column;gap:6px;max-height:70vh;overflow-y:auto;";
@@ -18,14 +22,14 @@ menu.innerHTML=`
     <span>⛑️ NAVIGASI & HOME</span>
     <span onclick="document.getElementById('ALWI_DROPUP').style.display='none'" style="cursor:pointer;color:#888;font-weight:bold;font-size:16px;">✕</span>
   </div>
-  <button onclick="goToPage('index.html')" style="padding:10px 8px;background:#25D366;color:#000;border:none;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;font-size:12px;"><strong>🏠 HOME - Halaman Utama</strong></button>
-  <button onclick="bukaIframe('http://34.170.37.50:3000/index.html')" style="padding:9px 8px;background:#0284c7;color:#fff;border:1px solid #38bdf8;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🖥️ VPS Ollama Direct (34.170.37.50)</button>
-  <button onclick="bukaIframe('pusat.html')" style="padding:9px 8px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🔴 AI ALWI PUSAT</button>
-  <button onclick="bukaIframe('index2.html')" style="padding:9px 8px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">👥 TANYA META AI</button>
-  <button onclick="bukaIframe('qa_lite.html')" style="padding:9px 8px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">❓ Q&A Lite</button>
-  <button onclick="bukaIframe('pasarGAIB.html')" style="padding:9px 8px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🛒 Pasar Gaib</button>
-  <button onclick="bukaIframe('privacy.html')" style="padding:9px 8px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🔒 Privacy Policy</button>
-  <button onclick="bukaIframe('setting/')" style="padding:9px 8px;background:#FFD700;color:#000;border:none;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">⚙️ SETTING</button>
+  <button onclick="goToPage('${prefix}index.html')" style="padding:10px 8px;background:#25D366;color:#000;border:none;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;font-size:12px;"><strong>🏠 HOME - Halaman Utama</strong></button>
+  <button onclick="bukaIframe('http://34.170.37.50:3000/index.html')" style="padding:9px 8px;background:#0284c7;color:#fff;border:1px solid #38bdf8;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🖥️ VPS Ollama Direct</button>
+  <button onclick="bukaIframe('${prefix}pusat.html')" style="padding:9px 8px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🔴 AI ALWI PUSAT</button>
+  <button onclick="bukaIframe('${prefix}index2.html')" style="padding:9px 8px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">👥 TANYA META AI</button>
+  <button onclick="bukaIframe('${prefix}qa_lite.html')" style="padding:9px 8px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">❓ Q&A Lite</button>
+  <button onclick="bukaIframe('${prefix}pasarGAIB.html')" style="padding:9px 8px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🛒 Pasar Gaib</button>
+  <button onclick="bukaIframe('${prefix}privacy.html')" style="padding:9px 8px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🔒 Privacy Policy</button>
+  <button onclick="bukaIframe('${prefix}setting/')" style="padding:9px 8px;background:#FFD700;color:#000;border:none;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">⚙️ SETTING</button>
 `;
 document.body.appendChild(menu);
 
@@ -95,7 +99,6 @@ ball.addEventListener('pointerup',e=>{
   }
 });
 
-// Event untuk menutup menu saat klik di luar
 document.addEventListener('click',e=>{
   if(!ball.contains(e.target) && !menu.contains(e.target) && open){
     open=false;
@@ -103,7 +106,6 @@ document.addEventListener('click',e=>{
   }
 });
 
-// Responsive saat window resize
 window.addEventListener('resize',()=>{
   if(x>window.innerWidth-65) x=window.innerWidth-65;
   if(y>window.innerHeight-65) y=window.innerHeight-65;
