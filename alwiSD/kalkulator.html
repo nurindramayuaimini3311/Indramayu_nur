@@ -316,6 +316,9 @@
       <button class="btn-voice" onclick="repeatLastVoice()">
         🔊 Ulangi Suara
       </button>
+      <button class="btn-voice" id="micBtn" onclick="toggleMic()" style="background:rgba(239,68,68,0.2);color:#ff6b6b;border-color:rgba(239,68,68,0.4);">
+        🎤 Mic Angka
+      </button>
     </div>
   </div>
 
@@ -515,8 +518,125 @@
     btn.appendChild(r);
     setTimeout(() => r.remove(), 400);
   }
+
+  // === FITUR MIC ANGKA - Tulis Angka dari Suara ===
+  let micRecognition = null;
+  let micActive = false;
+  const SpeechRecog = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  // Map kata Indonesia ke angka
+  const kataKeAngka = {
+    'nol':'0','kosong':'0','0':'0',
+    'satu':'1','se':'1','1':'1',
+    'dua':'2','2':'2',
+    'tiga':'3','3':'3',
+    'empat':'4','4':'4',
+    'lima':'5','5':'5',
+    'enam':'6','6':'6',
+    'tujuh':'7','7':'7',
+    'delapan':'8','8':'8',
+    'sembilan':'9','9':'9',
+    'tambah':'+','tambahkan':'+','plus':'+',
+    'kurang':'-','minus':'-','dikurangi':'-',
+    'kali':'×','dikali':'×','kali':'×','per':'×',
+    'bagi':'÷','dibagi':'÷',' bagi ':'÷',
+    'sama dengan':'=','hasil':'=','hitung':'=',
+    'hapus':'AC','clear':'AC','reset':'AC',
+    'koma':'.','titik':'.',
+    'persen':'%'
+  };
+
+  function parseAngkaDariSuara(text) {
+    text = text.toLowerCase().trim();
+    let hasil = [];
+    let kata = text.split(/\s+/);
+    
+    for (let k of kata) {
+      if (kataKeAngka[k] !== undefined) {
+        hasil.push(kataKeAngka[k]);
+      }
+    }
+    return hasil.join('');
+  }
+
+  function toggleMic() {
+    if (!SpeechRecog) {
+      speakResult('Maaf, browser tidak support microphone');
+      return;
+    }
+
+    if (micActive) {
+      micRecognition.stop();
+      micActive = false;
+      return;
+    }
+
+    micActive = true;
+    const micBtn = document.getElementById('micBtn');
+    micBtn.style.background = 'rgba(34,197,94,0.3)';
+    micBtn.style.color = '#22c55e';
+    micBtn.innerHTML = '🔴 Mendengar...';
+    speakResult('Silakan sebutkan angka atau operasi!');
+
+    micRecognition = new SpeechRecog();
+    micRecognition.continuous = true;
+    micRecognition.interimResults = false;
+    micRecognition.lang = 'id-ID';
+
+    micRecognition.onresult = function(e) {
+      let last = e.results[e.results.length - 1];
+      let text = last[0].transcript.toLowerCase().trim();
+      
+      // Tampilkan teks yang didengar
+      expr.textContent = '🎤 "' + text + '"';
+      
+      // Parse angka dari suara
+      let parsed = parseAngkaDariSuara(text);
+      
+      if (parsed) {
+        for (let char of parsed) {
+          if (char >= '0' && char <= '9') {
+            num(char, null);
+          } else if (char === '.') {
+            dot(null);
+          } else if (char === '+' || char === '-' || char === '×' || char === '÷') {
+            setOp(char, null);
+          } else if (char === '=') {
+            calc(null);
+          } else if (char === 'AC') {
+            clearAll(null);
+          } else if (char === '%') {
+            percent(null);
+          }
+        }
+        speakResult(text);
+      }
+    };
+
+    micRecognition.onend = function() {
+      if (micActive) {
+        micRecognition.start(); // Auto restart
+      } else {
+        micBtn.style.background = 'rgba(239,68,68,0.2)';
+        micBtn.style.color = '#ff6b6b';
+        micBtn.innerHTML = '🎤 Mic Angka';
+      }
+    };
+
+    micRecognition.onerror = function() {
+      micActive = false;
+      micBtn.style.background = 'rgba(239,68,68,0.2)';
+      micBtn.style.color = '#ff6b6b';
+      micBtn.innerHTML = '🎤 Mic Angka';
+      speakResult('Maaf, saya tidak dengar. Coba lagi!');
+    };
+
+    micRecognition.start();
+  }
 </script>
 <script src="alwi-grandle-core.js"></script>
+<script src="/alwi_bubble.js"></script>
+<script>poinBelajar()</script>
 </body>
 </html>
 
