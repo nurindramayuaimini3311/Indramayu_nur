@@ -34,7 +34,9 @@ canvas{display:block;background:#87CEEB;image-rendering:pixelated;max-width:100v
 @media(max-width:800px){
   #touch{display:flex}
   #controls{display:none}
-  canvas{width:100vw;height:56vh}
+  #gameWrap{margin-top:4px}
+  canvas{width:min(92vw,calc((100vh - 190px)*16/9));height:auto;max-height:none}
+  canvas{width:min(92vw,calc((100dvh - 190px)*16/9))}
 }
 </style>
 </head>

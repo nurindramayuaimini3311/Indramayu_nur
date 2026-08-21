@@ -31,6 +31,7 @@ menu.innerHTML=`
     <span>📍 NAVIGASI</span>
     <span onclick="document.getElementById('ALWI_DROPUP').style.display='none'" style="cursor:pointer;color:#888;font-weight:bold;font-size:16px;">✕</span>
   </div>
+  <button onclick="bukaIframe('${prefix}Facebook_pusat/index.html')" style="padding:9px 8px;background:linear-gradient(135deg,#b31217,#e52d27);color:#fff;border:1px solid #ffb199;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🎮 ALWI GAME CENTER</button>
   <button onclick="bukaIframe('http://34.170.37.50:3000/index.html')" style="padding:9px 8px;background:#0284c7;color:#fff;border:1px solid #38bdf8;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🖥️ VPS Ollama Direct</button>
   <button onclick="bukaIframe('${prefix}pusat.html')" style="padding:9px 8px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🔴 AI ALWI PUSAT</button>
   <button onclick="bukaIframe('${prefix}index2.html')" style="padding:9px 8px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">👥 TANYA META AI</button>

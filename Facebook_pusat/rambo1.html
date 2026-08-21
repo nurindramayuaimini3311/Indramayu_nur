@@ -7,12 +7,12 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#5C94FC;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;overflow:hidden;font-family:'Press Start 2P',monospace;}
+  body{background:#5C94FC;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;overflow-x:hidden;overflow-y:auto;padding-top:8px;font-family:'Press Start 2P',monospace;}
   #gameWrap{position:relative;width:100%;max-width:960px;aspect-ratio:16/9;background:#5C94FC;box-shadow:0 0 0 4px #000,0 12px 0 #0005;image-rendering:pixelated}
   canvas{width:100%;height:100%;display:block;image-rendering:pixelated;background:#5C94FC}
   #hud{position:absolute;top:0;left:0;right:0;height:52px;background:linear-gradient(#000 0 70%,#0000);color:#fff;display:flex;justify-content:space-between;padding:8px 14px;font-size:10px;line-height:14px;z-index:5;pointer-events:none;text-shadow:2px 2px 0 #000}
   #hud b{color:#FFD800}
-  #controls{position:absolute;bottom:6px;left:0;right:0;display:flex;justify-content:space-between;padding:6px 10px;z-index:10;touch-action:none}
+  #controls{position:relative;display:flex;justify-content:space-between;align-items:center;width:100%;max-width:960px;margin-top:10px;padding:10px 14px;z-index:10;touch-action:none;background:rgba(0,0,0,.28);border-radius:18px;border:3px solid #000}
   .dpad{display:flex;gap:6px}
   .btn{width:56px;height:56px;background:rgba(255,255,255,.9);border:3px solid #000;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;user-select:none;box-shadow:0 4px 0 #000;active:translateY(2px)}
   .btn:active{transform:translateY(3px);box-shadow:0 1px 0 #000}
@@ -34,20 +34,20 @@
     <div style="text-align:center">WORLD<br><b>1-1</b><br><span id="time" style="color:#fff">400</span></div>
     <div style="text-align:right">LIVES<br><b id="lives">♥♥♥</b><br><span style="font-size:8px">LEVEL 1</span></div>
   </div>
-  <div id="controls">
-    <div class="dpad">
-      <div class="btn" id="btnL">◀</div>
-      <div class="btn" id="btnR">▶</div>
-    </div>
-    <div class="topBtns">
-      <div class="btn" id="btnShoot">●</div>
-      <div class="btn" id="btnJump">JUMP</div>
-    </div>
-  </div>
   <div id="msg">
     <h1 id="msgTitle">ALWI LEVEL 1</h1>
     <p id="msgText">Capai PIPA HIJAU di kanan! Lompat tabrak bata dari bawah untuk hancurkan & dapat koin.<br><br>A/D atau ◀▶ gerak, W/↑ lompat, SPASI tembak!</p>
     <button id="msgBtn">MULAI MAIN!</button>
+  </div>
+</div>
+<div id="controls">
+  <div class="dpad">
+    <div class="btn" id="btnL">◀</div>
+    <div class="btn" id="btnR">▶</div>
+  </div>
+  <div class="topBtns">
+    <div class="btn" id="btnShoot">●</div>
+    <div class="btn" id="btnJump">JUMP</div>
   </div>
 </div>
 <script>
