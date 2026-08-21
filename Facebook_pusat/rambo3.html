@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;touch-action:none;user-select:none}
-body{background:#0b162c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Press Start 2P',monospace;overflow:hidden}
+body{background:#0b162c;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;min-height:100vh;font-family:'Press Start 2P',monospace;overflow-x:hidden;overflow-y:auto;padding-top:8px}
 #gameWrap{position:relative;width:100%;max-width:900px;aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center}
 canvas{width:100%;height:100%;image-rendering:pixelated;border:4px solid #ffae00;box-shadow:0 0 30px #00d5ff, inset 0 0 0 4px #000;background:linear-gradient(#3ab2ff 0%, #6ecfff 40%, #0a1a3a 70%);}
 #hud{position:absolute;top:0;left:0;width:100%;display:flex;justify-content:space-between;padding:8px 12px;color:#fff;text-shadow:2px 2px 0 #000;font-size:10px;pointer-events:none;z-index:5;line-height:14px}
@@ -15,7 +15,7 @@ canvas{width:100%;height:100%;image-rendering:pixelated;border:4px solid #ffae00
 .bossbar{position:absolute;top:42px;left:50%;transform:translateX(-50%);width:60%;height:18px;background:#000;border:2px solid #fff;z-index:5}
 .bossbar-fill{height:100%;width:100%;background:linear-gradient(90deg,#00e5ff,#0080ff);transition:width .2s}
 .bossbar span{position:absolute;top:-14px;left:50%;transform:translateX(-50%);color:#ffeb00;font-size:8px;white-space:nowrap;text-shadow:2px 2px 0 #000}
-#controls{position:absolute;bottom:0;width:100%;display:flex;justify-content:space-between;padding:8px;z-index:10;pointer-events:none}
+#controls{position:relative;width:100%;max-width:900px;display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:10px 14px;z-index:10;pointer-events:none;background:rgba(0,0,0,.35);border-radius:18px;border:3px solid #ffae00}
 .ctrl-group{display:flex;gap:8px;pointer-events:auto}
 .ctrl-btn{width:56px;height:56px;border-radius:12px;border:3px solid #fff;background:rgba(0,0,0,.45);color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;font-family:inherit;backdrop-filter:blur(2px)}
 .ctrl-btn:active{background:rgba(255,255,255,.4);transform:scale(.95)}
@@ -36,6 +36,12 @@ canvas{width:100%;height:100%;image-rendering:pixelated;border:4px solid #ffae00
 <div id="hudRight">SKOR: <span id="scoreTxt">0</span><br>ICE DODGED: <span id="dodgeTxt">0</span></div>
 </div>
 <div class="bossbar"><span>👾 LABA-LABA ROBOT ES - KRISTAL BIRU ☢</span><div id="bossFill" class="bossbar-fill"></div></div>
+<div id="centerMsg">
+<h1 id="msgTitle">LEVEL 5 BOSS FINAL</h1>
+<p id="msgBody">Kalahkan Laba-laba Robot Es! Tembak kristal biru di tengah dadanya! Hindari peluru es dari 8 tangannya!</p>
+<button id="msgBtn">MULAI TEMBAK!</button>
+</div>
+</div>
 <div id="controls">
 <div class="ctrl-group">
 <button class="ctrl-btn" id="bLeft">◀</button>
@@ -45,12 +51,6 @@ canvas{width:100%;height:100%;image-rendering:pixelated;border:4px solid #ffae00
 <div class="ctrl-group" style="align-items:flex-end">
 <button class="ctrl-btn" id="bJump">⤴</button>
 <button class="ctrl-btn shoot" id="bShoot">🔫</button>
-</div>
-</div>
-<div id="centerMsg">
-<h1 id="msgTitle">LEVEL 5 BOSS FINAL</h1>
-<p id="msgBody">Kalahkan Laba-laba Robot Es! Tembak kristal biru di tengah dadanya! Hindari peluru es dari 8 tangannya!</p>
-<button id="msgBtn">MULAI TEMBAK!</button>
 </div>
 </div>
 <script>
