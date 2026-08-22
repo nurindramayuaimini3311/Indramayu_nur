@@ -455,3 +455,105 @@ updateBallPosition=function(){
 };
 
 }();
+/* ==================== ADZAN OTOMATIS (semua halaman ber-bubble) ==================== */
+(function(){
+  if (window.__alwiAdzan) return; window.__alwiAdzan = true;
+  const AZ = { Subuh:'Adzan-Shubuh-Abu-Hazim.mp3', Dzuhur:'Adzan-Misyari-Rasyid.mp3', Ashar:'Adzan-Misyari-Rasyid.mp3', Maghrib:'Mecca-Adzan-2.mp3', Isya:'Pakistan-Adzan.mp3' };
+  const on = () => localStorage.getItem('alwiAdzan') === '1';
+  let jadwalAz = null, tglAz = '', audioAz = null;
+  const pill = document.createElement('div');
+  pill.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:2147483000;background:#0a3a5a;color:#ffd700;border:1px solid #ffd700;border-radius:99px;padding:6px 12px;font:600 11px system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4)';
+  function setPill(){ pill.textContent = on() ? '\uD83D\uDD14 Adzan ON' : '\uD83D\uDD15 Adzan OFF'; }
+  setPill();
+  pill.addEventListener('click', () => {
+    localStorage.setItem('alwiAdzan', on() ? '0' : '1');
+    if (!on() && audioAz) { audioAz.pause(); audioAz = null; } // matikan yang sedang bunyi
+    setPill();
+    if (on()) { jadwalAz = null; cek(); } // langsung cek saat diaktifkan
+  });
+  function pasang(){ (document.body || document.documentElement).appendChild(pill); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', pasang); else pasang();
+  async function ambilJadwal(){
+    const d = new Date();
+    const key = String(d.getDate()).padStart(2,'0') + '-' + String(d.getMonth()+1).padStart(2,'0');
+    if (tglAz === key && jadwalAz) return jadwalAz;
+    const r = await fetch('/api/adzan/jadwal');
+    const j = await r.json();
+    jadwalAz = j.times; tglAz = key;
+    return jadwalAz;
+  }
+  async function cek(){
+    try {
+      if (!on()) return;
+      const t = await ambilJadwal();
+      const now = new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Jakarta',hour:'2-digit',minute:'2-digit',hour12:false});
+      for (const [nama, jam] of Object.entries(t)) {
+        const kunci = tglAz + '|' + nama;
+        if (jam === now && !terkirim.has(kunci)) {
+          terkirim.add(kunci);
+          audioAz = new Audio('/ADZAN/' + AZ[nama]);
+          audioAz.play().catch(()=>{});
+        }
+      }
+      if (terkirim.size > 10) { const hariIni = [...terkirim].filter(k=>k.startsWith(tglAz)); terkirim.clear(); hariIni.forEach(k=>terkirim.add(k)); }
+    } catch(e){}
+  }
+  setInterval(cek, 15000);
+})();
+/* ================== AKHIR ADZAN OTOMATIS ==================== */
+
+/* ==================== TOMBOL NAVIGASI ==================== */
+(function(){
+  if (window.__alwiNav) return; window.__alwiNav = true;
+  function pasang(){
+    var b = document.createElement('a');
+    b.href = '/NAVIGASI.html';
+    b.style.cssText = 'position:fixed;left:12px;bottom:44px;z-index:2147483000;background:#0a3a5a;color:#ffd700;border:1px solid #ffd700;border-radius:99px;padding:6px 12px;font:600 11px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.4)';
+    b.textContent = '\uD83E\uDDED Navigasi';
+    (document.body || document.documentElement).appendChild(b);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', pasang); else pasang();
+})();
+
+
+/* ==================== POIN PENJELAJAH NUR ==================== */
+/* +5 poin per halaman baru per hari - Reset otomatis saat capai 1000 */
+(function(){
+  if (window.__alwiPoin) return; window.__alwiPoin = true;
+  var K='alwiPoin', LOG='alwiPoinLog', TOT='alwiPoinTotal';
+  var hari = new Date().toISOString().slice(0,10);
+  var p = parseInt(localStorage.getItem(K)||'0',10);
+  var tot = parseInt(localStorage.getItem(TOT)||'0',10);
+  var log = {}; try { log = JSON.parse(localStorage.getItem(LOG)||'{}'); } catch(e){}
+  for (var d in log){ if (d !== hari && new Date(d) < new Date(Date.now()-7*864e5)) delete log[d]; }
+
+  function pillBuat(){
+    var el = document.createElement('div');
+    el.style.cssText = 'position:fixed;left:12px;bottom:78px;z-index:2147483000;background:#0a3a5a;color:#ffd700;border:1px solid #ffd700;border-radius:99px;padding:6px 12px;font:700 11px system-ui,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.4)';
+    el.title = 'Poin Penjelajah NUR - total keseluruhan: '+tot;
+    return el;
+  }
+  var pill = pillBuat();
+  function gambar(){ pill.textContent = '\\uD83E\\uDE99 ' + p + ' / 1000'; }
+  function simpan(){ localStorage.setItem(K,String(p)); localStorage.setItem(TOT,String(tot)); localStorage.setItem(LOG,JSON.stringify(log)); }
+  function rayakan(){
+    var o = document.createElement('div');
+    o.style.cssText = 'position:fixed;inset:0;z-index:2147483600;background:#0a1626ee;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px';
+    o.innerHTML = '<div style="font-size:52px">\\uD83C\\uDF89</div>' +
+      '<div style="color:#ffd700;font-size:20px;font-weight:900;margin:12px 0">SELAMAT! 1000 POIN TERCAPAI!</div>' +
+      '<div style="font-size:13px;color:#eaf4ff;max-width:300px">Kamu Penjelajah Sejati NUR!<br>Total poin keseluruhanmu: <b style="color:#ffd700">'+tot+'</b></div>' +
+      '<button onclick="this.parentElement.remove()" style="margin-top:18px;background:#ffd700;border:0;border-radius:99px;padding:10px 26px;font-weight:800;cursor:pointer">Lanjut Jelajah \\u27A1</button>';
+    document.body.appendChild(o);
+  }
+  function tambah(n){
+    p += n; tot += n;
+    if (p >= 1000){ p = 0; simpan(); gambar(); setTimeout(rayakan, 400); return; }
+    simpan(); gambar();
+  }
+  // Poin kunjungan: halaman unik per hari = +5
+  if (!log[hari]) log[hari] = {};
+  if (!log[hari][location.pathname]){ log[hari][location.pathname] = 1; tambah(5); }
+  else { gambar(); }
+  function pasang(){ (document.body || document.documentElement).appendChild(pill); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', pasang); else pasang();
+})();
