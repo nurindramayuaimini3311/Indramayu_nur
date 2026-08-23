@@ -2,3 +2,8 @@
 
 .env.local
 .vercel/
+
+# sampah react lama — jangan dilacak
+meta_folder/*.bak-lama
+meta_folder/meta_index.html
+meta_folder/sever.html
