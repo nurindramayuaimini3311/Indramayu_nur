@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Template 2 — Promosi META ALWI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,Segoe UI,Roboto,sans-serif}
+body{min-height:100vh;background:linear-gradient(160deg,#e44d26,#7a1f04);color:#fff;display:flex;flex-direction:column;align-items:center;padding:24px 14px 90px}
+.kartu{background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:22px;width:100%;max-width:480px;margin-top:18px;text-align:center}
+.logo{width:74px;height:74px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.7)}
+h1{font-size:24px;margin:12px 0 4px}
+.badge{display:inline-flex;gap:8px;align-items:center;background:rgba(0,0,0,.25);padding:6px 14px;border-radius:999px;font-size:13px;margin-top:8px}
+.daftarPromo{text-align:left;line-height:1.9;font-size:15px;margin-top:12px}
+.daftarPromo li{margin-left:18px}
+.sukaWrap{display:flex;justify-content:center;margin-top:16px}
+#tombolSuka{display:inline-flex;gap:8px;align-items:center;border:none;background:#fff;color:#e44d26;font-weight:800;font-size:15px;border-radius:999px;padding:12px 26px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+#tombolSuka.aktif{background:#ffd76a;color:#7a1f04}
+#tombolSuka:active{transform:scale(.95)}
+.komen{width:100%;max-width:480px;margin-top:20px;text-align:left}
+.komen h2{font-size:16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.baris{display:flex;gap:8px;margin-bottom:10px}
+input,textarea{flex:1;border:none;border-radius:12px;padding:11px 13px;font-size:14px;outline:none;background:rgba(255,255,255,.92);color:#111}
+button.kirim{border:none;background:#fff;color:#e44d26;font-weight:700;border-radius:12px;padding:11px 18px;cursor:pointer}
+button:active{transform:scale(.97)}
+.daftar{display:flex;flex-direction:column;gap:9px;max-height:300px;overflow:auto}
+.item{background:rgba(0,0,0,.28);border-radius:12px;padding:10px 13px;font-size:14px}
+.item b{color:#ffd76a}.item small{opacity:.75;display:block;margin-top:2px}
+footer{position:fixed;bottom:0;left:0;right:0;text-align:center;padding:9px;font-size:11px;background:rgba(0,0,0,.35);backdrop-filter:blur(6px)}
+</style>
+</head>
+<body>
+<div class="kartu">
+  <img class="logo" src="img/icon-192.png" alt="ALWI">
+  <h1>Template 2 — Promosi META ALWI</h1>
+  <div class="badge">👤 <b id="nama">Member ALWI</b></div>
+  <ul class="daftarPromo">
+    <li>Promo spesial member hari ini 💥</li>
+    <li>Bagikan halaman ini lewat tombol bagikan</li>
+    <li>Tekan ❤️ kalau kamu suka promonya</li>
+    <li>Komentar tersimpan permanen di server</li>
+  </ul>
+  <div class="sukaWrap"><button id="tombolSuka">🤍 SUKA <span id="jmlSuka">0</span></button></div>
+</div>
+
+<div class="komen">
+  <h2>💬 Komentar Member <small id="hit"></small></h2>
+  <div class="baris">
+    <input id="teks" placeholder="Tulis komentar..." maxlength="500">
+    <button class="kirim" onclick="kirim()">Kirim</button>
+  </div>
+  <div class="daftar" id="daftar"><div class="item">Memuat…</div></div>
+</div>
+
+<footer>META ALWI • Indramayu • Server Memori ALWI :4000</footer>
+
+<script>
+var API="http://34.170.37.50:4000";
+var ID="template-2";
+var p=new URLSearchParams(location.search);
+var nm=(p.get("nama")||"").trim()||"Member ALWI";
+document.getElementById("nama").textContent=nm;
+document.title=nm+" • Template 2 — Promosi META ALWI";
+var dev=(localStorage.getItem("alwi-dev")||(localStorage.setItem("alwi-dev","dev-"+Date.now()),localStorage.getItem("alwi-dev")));
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function muat(){
+  fetch(API+"/api/memori").then(function(r){return r.json()}).then(function(d){
+    var arr=(d.komentar&&d.komentar[ID])||[];
+    var w=document.getElementById("daftar");
+    document.getElementById("hit").textContent="("+arr.length+")";
+    if(!arr.length){w.innerHTML='<div class="item">Belum ada komentar — jadilah yang pertama!</div>';return}
+    w.innerHTML=arr.slice().reverse().map(function(k){
+      var t=new Date(k.waktu).toLocaleString("id-ID",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+      return '<div class="item"><b>'+esc(k.nama)+'</b>: '+esc(k.teks)+'<small>'+t+'</small></div>'
+    }).join("");
+    var s=d.suka&&d.suka[ID]||{jumlah:0,penyuka:{}};
+    document.getElementById("jmlSuka").textContent=s.jumlah||0;
+    document.getElementById("tombolSuka").classList.toggle("aktif",!!s.penyuka[dev]);
+    document.getElementById("tombolSuka").firstChild.textContent=s.penyuka[dev]?"❤️ SUKA ":"🤍 SUKA ";
+  }).catch(function(){document.getElementById("daftar").innerHTML='<div class="item">Server memori tidak terjangkau.</div>'});
+}
+function kirim(){
+  var t=document.getElementById("teks");var v=t.value.trim();if(!v)return;
+  fetch(API+"/api/komentar",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({postId:ID,nama:nm+" ("+new Date().toLocaleDateString("id-ID")+")",teks:v})})
+  .then(function(r){return r.json()}).then(function(j){if(j.ok){t.value="";muat()}});
+}
+function suka(){
+  fetch(API+"/api/suka",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({postId:ID,penyuka:dev})}).then(function(){muat()});
+}
+document.getElementById("teks").addEventListener("keydown",function(e){if(e.key==="Enter")kirim()});
+document.getElementById("tombolSuka").addEventListener("click",suka);
+muat();
+</script>
+</body>
+</html>
