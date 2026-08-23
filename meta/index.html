@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>META ALWI — Pusat Halaman</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1877F2">
+<link rel="icon" href="img/icon-192.png">
+<link rel="apple-touch-icon" href="img/icon-180.png">
+<script>if("serviceWorker" in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js")});</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,Segoe UI,Roboto,sans-serif}
+html,body{height:100%;background:#18191a}
+#topbar{position:sticky;top:0;z-index:900;background:#242526;border-bottom:1px solid #3e4042;padding:8px 8px 0}
+#topbar .judul{text-align:center;color:#e4e6eb;font-weight:800;font-size:16px;padding:2px 0 8px}
+#tabBar{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+#tabBar::-webkit-scrollbar{display:none}
+.tab{flex:none;border:none;background:none;color:#b0b3b8;font-size:13px;font-weight:700;padding:10px 14px;cursor:pointer;border-radius:10px 10px 0 0;white-space:nowrap}
+.tab:hover{background:#3a3b3c}
+.tab.aktif{color:#2d88ff;background:#18191a;box-shadow:inset 0 -2px 0 #2d88ff}
+#bingkai{width:100%;height:calc(100vh - 92px);border:none;display:block;background:#18191a}
+#memuat{position:fixed;top:52%;left:50%;transform:translate(-50%,-50%);color:#b0b3b8;font-size:14px;display:none;z-index:5}
+
+/* ═══ ALWI NAVIGASI ═══ */
+#alwiNavWrap{position:fixed;bottom:14px;left:14px;z-index:999999990}
+#alwiNavBtn{display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#1d6b3a,#27ae60);color:#fff;border:2px solid #C9A84C;
+ border-radius:24px;padding:10px 18px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.45);transition:.25s}
+#alwiNavBtn:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(201,168,76,.5)}
+#alwiNavMenu{display:none;position:absolute;bottom:52px;left:0;min-width:230px;background:#0a2e1c;border:2px solid #C9A84C;border-radius:14px;
+ overflow:hidden;box-shadow:0 12px 34px rgba(0,0,0,.6)}
+#alwiNavWrap.buka #alwiNavMenu{display:block}
+.alwiNavJdl{padding:9px 14px 7px;font-size:10px;letter-spacing:2px;color:#C9A84C;font-weight:900;border-bottom:1px solid rgba(201,168,76,.25)}
+#alwiNavMenu a{display:flex;align-items:center;gap:8px;padding:11px 14px;color:#e8f5ec;text-decoration:none;font-size:12.5px;font-weight:700;transition:.15s}
+#alwiNavMenu a:hover{background:rgba(201,168,76,.18);color:#f0c040;padding-left:18px}
+@media (max-width:400px){#alwiNavBtn{font-size:11px;padding:8px 13px}}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="judul">🌐 META ALWI — PUSAT HALAMAN</div>
+  <div id="tabBar">
+    <button class="tab aktif" data-hal="alwibook.html">📘 Feed AlwiBook</button>
+    <button class="tab" data-hal="template-1.html">1️⃣ Sapaan</button>
+    <button class="tab" data-hal="template-2.html">2️⃣ Promosi</button>
+    <button class="tab" data-hal="template-3.html">3️⃣ Buku Tamu</button>
+  </div>
+</div>
+
+<iframe id="bingkai" src="alwibook.html" title="halaman"></iframe>
+<div id="memuat">Memuat…</div>
+
+<!-- ══════════ ALWI NAVIGASI ══════════ -->
+<div id="alwiNavWrap">
+  <button id="alwiNavBtn">🧭 ALWI NAVIGASI ▲</button>
+  <div id="alwiNavMenu">
+    <div class="alwiNavJdl">✦ HALAMAN PROMOSI ✦</div>
+    <a href="index.html">🏠 Pusat Halaman (ini)</a>
+    <a href="nur_promosi_gabungan.html">🎭 Promosi Gabungan + Kamera Live</a>
+    <a href="live-promosi.html">📡 Live Promosi 4 Slot</a>
+    <a href="alwibook.html" target="_blank">📘 Feed AlwiBook (penuh)</a>
+    <div class="alwiNavJdl">✦ TEMPLATE ✦</div>
+    <a href="template-1.html">📄 Template 1 — Sapaan</a>
+    <a href="template-2.html">📄 Template 2 — Promosi</a>
+    <a href="template-3.html">📄 Template 3 — Buku Tamu</a>
+    <div class="alwiNavJdl">✦ BUKU TAMU ✦</div>
+    <a href="buku-tamu1.html">📖 Buku Tamu 1</a>
+    <a href="buku-tamu2.html">📖 Buku Tamu 2</a>
+    <a href="buku-tamu3.html">📖 Buku Tamu 3</a>
+  </div>
+</div>
+
+<script>
+var bingkai=document.getElementById('bingkai'),memuat=document.getElementById('memuat');
+var terpasang={};
+
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('aktif')});
+    t.classList.add('aktif');
+    var hal=t.dataset.hal;
+    if(!terpasang[hal]){ // iframe hanya dimuat sekali per tab (biar ringan)
+      memuat.style.display='block';
+      bingkai.src=hal;
+    }else{
+      bingkai.src=hal;
+    }
+  });
+});
+
+bingkai.addEventListener('load',function(){memuat.style.display='none';terpasang[bingkai.getAttribute('src')]=1});
+
+/* dukung link ?hal=template-2.html dari luar */
+(function(){var h=new URLSearchParams(location.search).get('hal');
+ if(h){var t=document.querySelector('.tab[data-hal="'+h+'"]');if(t)t.click()}})();
+
+/* navigasi */
+(function(){var w=document.getElementById('alwiNavWrap'),b=document.getElementById('alwiNavBtn');
+ b.addEventListener('click',function(e){e.stopPropagation();w.classList.toggle('buka');
+  b.textContent=w.classList.contains('buka')?'🧭 ALWI NAVIGASI ▼':'🧭 ALWI NAVIGASI ▲'});
+ document.addEventListener('click',function(e){if(!w.contains(e.target)){w.classList.remove('buka');
+  b.textContent='🧭 ALWI NAVIGASI ▲'}})})();
+</script>
+
+<script src="/alwi_bubble.js"></script>
+
+<script src="/alwi_poin.js"></script>
+</body>
+</html>

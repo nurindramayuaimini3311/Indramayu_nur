@@ -1,0 +1,22 @@
+{
+  "name": "bot-alwi-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^7.0.0-rc13",
+    "dotenv": "^17.4.2",
+    "fluent-ffmpeg": "^2.1.3",
+    "gtts": "^0.2.1",
+    "imap": "^0.8.19",
+    "mailparser": "^3.9.14",
+    "pino": "^10.3.1"
+  }
+}
