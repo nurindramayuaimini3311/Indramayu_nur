@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis Wong Dermayu - Indramayu Club</title>
+<style>
+body{font-family:Helvetica,Arial,sans-serif;background:#f0f2f5;margin:0;padding:15px;display:flex;justify-content:center}
+.box{background:#fff;max-width:500px;width:100%;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1);overflow:hidden}
+.header{background:linear-gradient(135deg,#d32f2f,#ff6f00);color:#fff;padding:18px;text-align:center}
+.header h1{margin:0;font-size:18px} .header p{margin:4px 0 0;font-size:12px;opacity:0.9}
+.content{padding:20px}
+.q{font-weight:bold;font-size:16px;margin-bottom:15px;line-height:1.4}
+.opt{width:100%;text-align:left;padding:12px;border:1px solid #ddd;border-radius:8px;margin-bottom:8px;background:#fff;cursor:pointer;font-size:14px}
+.opt:hover{border-color:#d32f2f;background:#fff3e0}
+.opt.correct{background:#e8f5e9;border-color:#2e7d32;color:#2e7d32}
+.opt.wrong{background:#ffebee;border-color:#c62828;color:#c62828}
+.progress{height:6px;background:#eee;border-radius:10px;overflow:hidden;margin-bottom:15px}
+.bar{height:100%;background:#ff6f00;transition:0.3s}
+.footer{font-size:11px;color:#888;text-align:center;margin-top:15px;border-top:1px solid #eee;padding-top:10px}
+</style>
+</head>
+<body>
+<div class="box">
+<div class="header"><h1>🦐 WONG DERMAYU ASLI?</h1><p>Kuis budaya Indramayu - 10 soal</p></div>
+<div class="content">
+<div class="progress"><div class="bar" id="bar" style="width:10%"></div></div>
+<div id="level" style="font-size:12px;color:#888;margin-bottom:10px">Soal 1/10</div>
+<div class="q" id="q">Memuat...</div>
+<div id="opts"></div>
+<div class="footer">Indramayu Club • pakai logat Dermayu ya!</div>
+</div>
+</div>
+<script>
+const soal=[
+{q:"Julukan Indramayu sebagai Kota...?", o:["Mangga","Apel","Durian","Salak"], a:0, exp:"Indramayu = Kota Mangga, apalagi Mangga Gedong Gincu!"},
+{q:"Bahasa 'Reang' dalam bahasa Indramayu artinya...?", o:["Saya","Kamu","Kita","Dia"], a:1, exp:"Reang = Kamu, Isun = Saya. Wong Dermayu pasti apal!"},
+{q:"Sungai besar yang membelah Indramayu?", o:["Sungai Cimanuk","Bengawan Solo","Citarum","Cisadane"], a:0, exp:"Cimanuk adalah urat nadi Indramayu."},
+{q:"Makanan khas: Pedesan Entog, bahan utamanya?", o:["Entog/Bebek Mentok","Ayam","Ikan Bandeng","Udang"], a:0, exp:"Pedesan Entog pedesnya nampol!"},
+{q:"Upacara tradisional Nadran itu untuk?", o:["Syukuran Nelayan ke laut","Panen padi","Sunatan","Pernikahan"], a:0, exp:"Nadran = pesta laut nelayan Eretan, Karangsong."},
+{q:"Batik khas Indramayu yang terkenal?", o:["Batik Dermayon & Sekar Niem","Batik Mega Mendung saja","Batik Parang","Batik Sidomukti"], a:0, exp:"Dermayon = Dermayu + ION modern!"},
+{q:"Kata 'Bli' dalam bahasa Dermayu artinya?", o:["Tidak","Ya","Mungkin","Besok"], a:0, exp:"Bli = Tidak. Bli weruh = Tidak tahu."},
+{q:"Kecamatan penghasil mangga terbesar?", o:["Kroya & Haurgeulis","Balongan","Indramayu Kota","Lohbener"], a:0, exp:"Kroya - Haurgeulis sentra mangga."},
+{q:"Alat musik tradisi Dermayu?", o:["Tarling","Gamelan Bali","Sasando","Angklung Bambu saja"], a:0, exp:"Tarling = Gitar + Suling khas Dermayu!"},
+{q:"Jika kamu orang Dermayu, 'Mangan durung?' artinya?", o:["Sudah makan belum?","Mau kemana?","Siapa namamu?","Berapa hargamu?"], a:0, exp:"Wong Dermayu ramah, nanya mangan dulu!"}
+];
+let idx=0, skor=0;
+function load(){
+  const s=soal[idx];
+  document.getElementById('level').textContent=`Soal ${idx+1}/10 - Skor: ${skor}`;
+  document.getElementById('bar').style.width=((idx+1)/10*100)+'%';
+  document.getElementById('q').textContent=s.q;
+  const c=document.getElementById('opts'); c.innerHTML='';
+  s.o.forEach((t,i)=>{
+    const b=document.createElement('button'); b.className='opt'; b.textContent=t;
+    b.onclick=()=>cek(i,b); c.appendChild(b);
+  });
+}
+function cek(pilih,btn){
+  const s=soal[idx];
+  document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  if(pilih===s.a){ btn.classList.add('correct'); skor++; setTimeout(next,800); }
+  else { btn.classList.add('wrong'); document.querySelectorAll('.opt')[s.a].classList.add('correct'); setTimeout(()=>{alert('💡 '+s.exp); next();},800); }
+}
+function next(){
+  idx++; if(idx<soal.length) load(); else { alert(`🎉 Rampung! Skor kamu ${skor}/10\n${skor>=8?'WONG DERMAYU ASLI!':'Belajar maning ya, Reang!'}`); idx=0; skor=0; load(); }
+}
+load();
+</script>
+
+<script>
+(function(){
+const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
+let p=location.pathname; let i=PAGES.indexOf(p);
+if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));
+if(i<0) i=0;
+let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
+let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+L.href=prev; R.href=next;
+let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
+[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
+let sx=0;
+document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
+if(location.pathname.includes('alwiSD')){
+ let s=document.createElement('style');s.innerHTML="#alwi-rl a{animation:bob 0.7s infinite alternate} @keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-8px) scale(1.1)}}";document.head.appendChild(s);
+}
+})();
+</script>
+<script src="/alwi_bubble.js"></script>
+<script>poinBelajar()</script>
+</body>
+</html>
+

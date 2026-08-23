@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+  <meta property="og:image" content="/img/icon-512.png">
+  <title>ALWI PUSAT - Indramayu Club</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/img/icon-192.png" type="image/png">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0a; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; min-height: 100vh; }
+    .header { position: sticky; top: 0; z-index: 1000; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
+    .logo { color: #FFD700; font-weight: 900; font-size: 16px; letter-spacing: 1px; cursor: pointer; transition: all 0.3s; }
+    .logo:hover { transform: scale(1.05); }
+    .header-buttons { display: flex; gap: 10px; }
+    .btn-live, .btn-settings, .btn-home { padding: 8px 14px; border-radius: 6px; font-weight: 700; text-decoration: none; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s; }
+    .btn-live { background: #e50914; color: #fff; }
+    .btn-live:hover { background: #c20812; transform: scale(1.05); }
+    .btn-settings { background: #FFD700; color: #000; }
+    .btn-settings:hover { background: #ffc800; transform: scale(1.05); }
+    .btn-home { background: #25D366; color: #fff; }
+    .btn-home:hover { background: #1fb854; transform: scale(1.05); }
+    
+    /* Dropdown HOME */
+    .home-dropdown { position: relative; display: inline-block; }
+    .dropdown-btn { background: #25D366; color: #fff; padding: 8px 14px; border: none; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.3s; }
+    .dropdown-btn:hover { background: #1fb854; }
+    .dropdown-menu { display: none; position: absolute; top: 40px; left: 0; background: #1a1a1a; border: 2px solid #25D366; border-radius: 10px; min-width: 220px; z-index: 999; box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3); }
+    .home-dropdown.active .dropdown-menu { display: block; animation: slideDown 0.3s ease; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .dropdown-menu a { display: block; padding: 12px 16px; color: #fff; text-decoration: none; font-size: 12px; border-bottom: 1px solid #333; transition: all 0.3s; }
+    .dropdown-menu a:last-child { border-bottom: none; }
+    .dropdown-menu a:hover { background: #25D366; color: #000; padding-left: 20px; }
+    
+    .nav-dropdown { position: relative; display: inline-block; }
+    .nav-btn { background: #222; border: 2px solid #FFD700; color: #FFD700; padding: 10px 16px; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 13px; transition: all 0.3s; margin: 10px 0 0 10px; }
+    .nav-btn:hover { background: #FFD700; color: #000; }
+    .dropdown-content { display: none; position: absolute; top: 50px; left: 16px; background: #1a1a1a; border: 2px solid #FFD700; border-radius: 14px; min-width: 280px; z-index: 999; box-shadow: 0 8px 24px rgba(255, 215, 0, 0.2); }
+    .nav-dropdown.active .dropdown-content { display: block; animation: slideDown 0.3s ease; }
+    .dropdown-content a { display: block; padding: 12px 16px; color: #fff; text-decoration: none; font-size: 13px; border-bottom: 1px solid #333; transition: all 0.3s; }
+    .dropdown-content a:last-child { border-bottom: none; }
+    .dropdown-content a:hover { background: #FFD700; color: #000; padding-left: 20px; }
+    
+    .hero { padding: 40px 20px; text-align: center; background: linear-gradient(180deg, #1a1a1a, #0a0a0a); border-bottom: 1px solid #222; }
+    .hero h1 { color: #FFD700; font-size: 28px; margin-bottom: 10px; }
+    .hero p { color: #aaa; font-size: 14px; line-height: 1.6; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; padding: 20px; max-width: 900px; margin: 0 auto; }
+    .card { background: linear-gradient(135deg, #191919, #1a1a1a); border: 2px solid #2a2a2a; border-radius: 14px; padding: 16px; text-align: center; text-decoration: none; color: #fff; transition: all 0.3s; }
+    .card:hover { border-color: #FFD700; background: linear-gradient(135deg, #2a2a2a, #1a1a1a); transform: translateY(-4px); box-shadow: 0 8px 16px rgba(255, 215, 0, 0.2); }
+    .card.hot { border-color: #e50914; background: rgba(229, 9, 20, 0.12); }
+    .card.hot:hover { border-color: #e50914; box-shadow: 0 8px 16px rgba(229, 9, 20, 0.3); }
+    .card b { font-size: 13px; display: block; margin-bottom: 6px; }
+    .card span { font-size: 11px; color: #FFD700; display: block; }
+    .card-icon { font-size: 32px; margin-bottom: 8px; }
+    .section { max-width: 900px; margin: 24px auto; padding: 0 16px; }
+    .section h2 { color: #FFD700; font-size: 16px; margin: 20px 0 12px; border-left: 4px solid #FFD700; padding-left: 10px; }
+    .list { background: #191919; border: 1px solid #2a2a2a; border-radius: 12px; overflow: hidden; }
+    .list a { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; color: #fff; text-decoration: none; border-bottom: 1px solid #222; transition: all 0.3s; font-size: 13px; }
+    .list a:last-child { border-bottom: none; }
+    .list a:hover { background: #222; color: #FFD700; padding-left: 20px; }
+    .fab { position: fixed; bottom: 24px; right: 24px; background: #FFD700; color: #000; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; text-decoration: none; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3); transition: all 0.3s; cursor: pointer; z-index: 500; }
+    .fab:hover { transform: scale(1.1); box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4); }
+    @media (max-width: 768px) {
+      .logo { font-size: 14px; }
+      .hero h1 { font-size: 22px; }
+      .grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; padding: 16px; }
+      .card b { font-size: 12px; }
+      .dropdown-content { min-width: 240px; }
+      .dropdown-menu { min-width: 200px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo" onclick="window.location.href='index.html'" title="Kembali ke Home">⛑️ ALWI PUSAT</div>
+    <div class="header-buttons">
+      <div class="home-dropdown" id="homeDropdown">
+        <button class="dropdown-btn" onclick="toggleHomeMenu()">🏠 HOME ▼</button>
+        <div class="dropdown-menu">
+          <a href="index.html"><strong>🏠 HALAMAN UTAMA</strong></a>
+          <a href="index.html"><span>📍 Kembali ke Portal</span></a>
+          <a href="setting/"><span>⚙️ Setting & AI Bot</span></a>
+          <a href="pusat.html"><span>🔴 AI ALWI</span></a>
+          <a href="index2.html"><span>👥 Chat META</span></a>
+          <a href="alwi_pusat_live.html"><span>🔴 LIVE Status</span></a>
+        </div>
+      </div>
+      <a href="pusat.html" class="btn-live">🔴 AI ALWI</a>
+      <a href="setting/" class="btn-settings">⚙️ SETTING</a>
+    </div>
+  </div>
+
+  <div class="nav-dropdown" id="navDropdown">
+    <button class="nav-btn" onclick="toggleNav()">📂 FOLDER UTAMA ▼</button>
+    <div class="dropdown-content">
+      <a href="setting/">⚙️ Setting & AI Bot</a>
+      <a href="mobil/">🏁 mobil 🚗</a>
+      <a href="alwiSD/">🏫 Alwi SD & Pembelajaran</a>
+      <a href="fiturBARU/">📱 Fitur BARU & Android</a>
+      <a href="game/">🎮 Pusat Game</a>
+      <a href="kamera-hantu/">📷 Kamera Hantu</a>
+      <a href="konten/">📚 Pusat Konten</a>
+      <a href="kuis/">🧠 Kuis Alwi</a>
+      <a href="netflix/">🎬 Alwi TV / Netflix</a>
+      <a href="pencuri/">🕵️ Mode Pencuri</a>
+      <a href="peta/">🗺️ Peta AI</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <h1>🏠 Selamat Datang di ALWI PUSAT</h1>
+    <p>Portal Utama Layanan Digital & Komunitas Indramayu Club</p>
+  </div>
+
+  <div class="grid">
+    <a href="setting/" class="card hot">
+      <div class="card-icon">⚙️</div>
+      <b>SETTING & AI BOT</b>
+      <span>⭐ BARU!</span>
+    </a>
+    <a href="netflix/" class="card hot">
+      <div class="card-icon">🎬</div>
+      <b>NETFLIX & TV</b>
+      <span>Streaming</span>
+    </a>
+    <a href="game/" class="card">
+      <div class="card-icon">🎮</div>
+      <b>MINI GAMES</b>
+      <span>Hiburan</span>
+    </a>
+    <a href="kuis/" class="card">
+      <div class="card-icon">🧠</div>
+      <b>KUIS ALWI</b>
+      <span>Asah Otak</span>
+    </a>
+    <a href="konten/" class="card">
+      <div class="card-icon">📚</div>
+      <b>KONTEN & CERITA</b>
+      <span>E-Book</span>
+    </a>
+    <a href="kamera-hantu/" class="card">
+      <div class="card-icon">📷</div>
+      <b>KAMERA HANTU</b>
+      <span>Misteri</span>
+    </a>
+    <a href="mobil/" class="card hot">
+      <div class="card-icon">🏁</div>
+      <b>MOBIL</b>
+      <span>⭐ BARU!</span>
+    </a>
+  </div>
+
+  <div class="section">
+    <h2>📂 DAFTAR FOLDER UTAMA</h2>
+    <div class="list">
+      <a href="setting/"><span>⚙️ Setting & AI Bot Setting (BARU!)</span><span>→</span></a>
+      <a href="mobil/"><span>🏁 Mobil</span><span>→</span></a>
+      <a href="alwiSD/"><span>🏫 Sanggar & Pembelajaran Alwi SD</span><span>→</span></a>
+      <a href="fiturBARU/"><span>📱 Fitur BARU & Android App</span><span>→</span></a>
+      <a href="game/"><span>🎮 Pusat Game & Hiburan</span><span>→</span></a>
+      <a href="kamera-hantu/"><span>📷 Kamera Hantu & Penampakan</span><span>→</span></a>
+      <a href="kuis/"><span>🧠 Kuis & Asah Otak</span><span>→</span></a>
+      <a href="konten/"><span>📚 Pusat Konten & Cerita</span><span>→</span></a>
+      <a href="netflix/"><span>🎬 Alwi TV / Netflix & Streaming</span><span>→</span></a>
+      <a href="pencuri/"><span>🕵️ Game Pencuri Ruangan</span><span>→</span></a>
+      <a href="peta/"><span>🗺️ Peta COD & Meta AI</span><span>→</span></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>⚡ AKSES CEPAT</h2>
+    <div class="list">
+      <a href="index2.html"><span>👥 TANYA META - AI Bot Chat</span><span>→</span></a>
+      <a href="fb_streaming.html"><span>📺 FB Streaming</span><span>→</span></a>
+      <a href="index4.html"><span>📺 ALWI BUILDER</span><span>→</span></a>
+      <a href="alwi_pusat_live.html"><span>🔴 LIVE - Status Real-time</span><span>→</span></a>
+      <a href="index5.html"><span>📥 GALLERY ALWI</span><span>→</span></a>  
+      <a href="qa_lite.html"><span>❓ Q&A Lite - FAQ</span><span>→</span></a>
+    </div>
+  </div>
+
+  <a href="setting/" class="fab" title="Buka Setting">⚙️</a>
+
+  <!-- Script Navigation & Service Worker -->
+  <script>
+    function toggleNav() {
+      document.getElementById('navDropdown').classList.toggle('active');
+    }
+
+    function toggleHomeMenu() {
+      document.getElementById('homeDropdown').classList.toggle('active');
+    }
+
+    document.addEventListener('click', function(e) {
+      const navDropdown = document.getElementById('navDropdown');
+      const homeDropdown = document.getElementById('homeDropdown');
+      
+      if (!navDropdown.contains(e.target)) {
+        navDropdown.classList.remove('active');
+      }
+      
+      if (!homeDropdown.contains(e.target)) {
+        homeDropdown.classList.remove('active');
+      }
+    });
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+
+    const script = document.createElement('script');
+    script.src = '/alwi_bubble.js';
+    script.onerror = () => {};
+    document.body.appendChild(script);
+  </script>
+</body>
+</html>

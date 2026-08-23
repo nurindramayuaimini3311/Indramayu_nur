@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAME ARCADE - Indramayu_nur</title>
+<style>
+  body { background:#0f1115; color:white; font-family: Arial, sans-serif; padding:20px; }
+  h1 { text-align:center; letter-spacing:3px; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:15px; margin-top:20px; }
+  .card { background:#1c1f26; border-radius:12px; padding:12px; text-align:center; border:1px solid #2a2e38; transition:.2s; }
+  .card:hover { transform:scale(1.05); border-color:#00ff88; }
+  .card a { color:white; text-decoration:none; font-weight:bold; display:block; padding:10px 0; }
+  .badge { font-size:10px; background:#00ff88; color:black; padding:2px 6px; border-radius:4px; }
+  .retro { text-align:center; opacity:0.6; margin-bottom:20px; }
+</style>
+</head>
+<body>
+  <h1>🎮 RETRO ARCADE</h1>
+  <div class="retro">~/Indramayu_nur/game - Koleksi Game SD</div>
+
+  <div class="grid">
+    <div class="card"><a href="data:text/html;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImlkIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCwgaW5pdGlhbC1zY2FsZT0xLjAiPgo8dGl0bGU+R0FNRSBBUkNBREUgLSBJbmRyYW1heXVfbnVyPC90aXRsZT4KPHN0eWxlPgogIGJvZHkgeyBiYWNrZ3JvdW5kOiMwZjExMTU7IGNvbG9yOndoaXRlOyBmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IHBhZGRpbmc6MjBweDsgfQogIGgxIHsgdGV4dC1hbGlnbjpjZW50ZXI7IGxldHRlci1zcGFjaW5nOjNweDsgfQogIC5ncmlkIHsgZGlzcGxheTpncmlkOyBncmlkLXRlbXBsYXRlLWNvbHVtbnM6IHJlcGVhdChhdXRvLWZpbGwsIG1pbm1heCgxNjBweCwgMWZyKSk7IGdhcDoxNXB4OyBtYXJnaW4tdG9wOjIwcHg7IH0KICAuY2FyZCB7IGJhY2tncm91bmQ6IzFjMWYyNjsgYm9yZGVyLXJhZGl1czoxMnB4OyBwYWRkaW5nOjEycHg7IHRleHQtYWxpZ246Y2VudGVyOyBib3JkZXI6MXB4IHNvbGlkICMyYTJlMzg7IHRyYW5zaXRpb246LjJzOyB9CiAgLmNhcmQ6aG92ZXIgeyB0cmFuc2Zvcm06c2NhbGUoMS4wNSk7IGJvcmRlci1jb2xvcjojMDBmZjg4OyB9CiAgLmNhcmQgYSB7IGNvbG9yOndoaXRlOyB0ZXh0LWRlY29yYXRpb246bm9uZTsgZm9udC13ZWlnaHQ6Ym9sZDsgZGlzcGxheTpibG9jazsgcGFkZGluZzoxMHB4IDA7IH0KICAuYmFkZ2UgeyBmb250LXNpemU6MTBweDsgYmFja2dyb3VuZDojMDBmZjg4OyBjb2xvcjpibGFjazsgcGFkZGluZzoycHggNnB4OyBib3JkZXItcmFkaXVzOjRweDsgfQogIC5yZXRybyB7IHRleHQtYWxpZ246Y2VudGVyOyBvcGFjaXR5OjAuNjsgbWFyZ2luLWJvdHRvbToyMHB4OyB9Cjwvc3R5bGU+CjwvaGVhZD4KPGJvZHk+CiAgPGgxPvCfjq4gUkVUUk8gQVJDQURFPC9oMT4KICA8ZGl2IGNsYXNzPSJyZXRybyI+fi9JbmRyYW1heXVfbnVyL2dhbWUgLSBLb2xla3NpIEdhbWUgU0Q8L2Rpdj4KCiAgPGRpdiBjbGFzcz0iZ3JpZCI+CiAgICA8ZGl2IGNsYXNzPSJjYXJkIj48YSBocmVmPSJpbmRleC5odG1sIj7wn4+gIElOREVYIFVUQU1BPC9hPjxzcGFuIGNsYXNzPSJiYWRnZSI+TUVOVTwvc3Bhbj48L2Rpdj4KICAgIDxkaXYgY2xhc3M9ImNhcmQiPjxhIGhyZWY9ImRhZHUuaHRtbCI+8J+OsiBEYWR1PC9hPjxzcGFuIGNsYXNzPSJiYWRnZSI+RSAtIFNlbXVhIFVtdXI8L3NwYW4+PC9kaXY+CiAgICA8ZGl2IGNsYXNzPSJjYXJkIj48YSBocmVmPSJraWxhdC5odG1sIj7imqEgS2lsYXQ8L2E+PHNwYW4gY2xhc3M9ImJhZGdlIj5FIC0gU2VtdWEgVW11cjwvc3Bhbj48L2Rpdj4KICAgIDxkaXYgY2xhc3M9ImNhcmQiPjxhIGhyZWY9Imx1a2lzLmh0bWwiPvCfjqggTHVraXM8L2E+PHNwYW4gY2xhc3M9ImJhZGdlIj5FIC0gU2VtdWEgVW11cjwvc3Bhbj48L2Rpdj4KICAgIDxkaXYgY2xhc3M9ImNhcmQiPjxhIGhyZWY9ImtvbWVudGFyX21lbWJlci5odG1sIj7wn5KsIEtvbWVudGFyIE1lbWJlcjwvYT48L2Rpdj4KICAgIDxkaXYgY2xhc3M9ImNhcmQiPjxhIGhyZWY9InN0aWNrTmFnYS5odG1sIj7wn5CJIFN0aWNrIE5hZ2E8L2E+PC9kaXY+CiAgICA8ZGl2IGNsYXNzPSJjYXJkIj48YSBocmVmPSJ0YW5rMi5odG1sIj7wn6qWIFRhbmsgMjwvYT48L2Rpdj4KICAgIDxkaXYgY2xhc3M9ImNhcmQiPjxhIGhyZWY9InRhbmszLmh0bWwiPvCfqpYgVGFuayAzPC9hPjwvZGl2PgogICAgPGRpdiBjbGFzcz0iY2FyZCI+PGEgaHJlZj0idGFuazI0NC5odG1sIj7wn6qWIFRhbmsgMjQ0PC9hPjwvZGl2PgogICAgPGRpdiBjbGFzcz0iY2FyZCI+PGEgaHJlZj0icHJveWVrMS5odG1sIj7wn5OBIFByb3llayAxPC9hPjwvZGl2PgogICAgPCEtLSBHQU1FIEJBUlUgLS0+CiAgICA8ZGl2IGNsYXNzPSJjYXJkIiBzdHlsZT0iYm9yZGVyLWNvbG9yOiNmZmNjMDA7Ij48YSBocmVmPSJuYXNjYXJfcnVtYmxlLmh0bWwiPvCfj4EgTkFTQ0FSIFJ1bWJsZSAoUFMxKTwvYT48c3BhbiBjbGFzcz0iYmFkZ2UiIHN0eWxlPSJiYWNrZ3JvdW5kOiNmZmNjMDA7Ij5CQVJVIC0gRTwvc3Bhbj48L2Rpdj4KICA8L2Rpdj4KCiAgPHAgc3R5bGU9Im1hcmdpbi10b3A6MzBweDsgdGV4dC1hbGlnbjpjZW50ZXI7IG9wYWNpdHk6MC41OyBmb250LXNpemU6MTJweDsiPgogICAgQ2FyYSB0YW1iYWggZ2FtZSBiYXJ1OiBjb3B5IHNhbGFoIHNhdHUgZGl2IGNsYXNzPSJjYXJkIiBkaSBhdGFzIGRhbiBnYW50aSBocmVmICsganVkdWxueWEKICA8L3A+CjwvYm9keT4KPC9odG1sPgo=">🏠 INDEX UTAMA</a><span class="badge">MENU</span></div>
+    <div class="card"><a href="kilat.html">⚡ Kilat</a><span class="badge">E - Semua Umur</span></div>
+    <div class="card"><a href="lukis.html">🎨 Lukis</a><span class="badge">E - Semua Umur</span></div>
+    <div class="card"><a href="komentar_member.html">💬 Komentar Member</a></div>
+    <div class="card"><a href="stickNaga.html">🐉 Stick Naga</a></div>
+    <div class="card"><a href="tank2.html">🪖 Tank 2</a></div>
+    <div class="card"><a href="tank3.html">🪖 Tank 3</a></div>
+    <div class="card"><a href="tank244.html">🪖 Tank 244</a></div>
+    
+  </div>
+
+  <p style="margin-top:30px; text-align:center; opacity:0.5; font-size:12px;">
+    Cara tambah game baru: copy salah satu div class="card" di atas dan ganti href + judulnya
+  </p>
+
+
+<!-- NAV FINAL ALWI - 1x ONLY -->
+<div id="alwi-rl" style="position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:space-between;z-index:9999999;padding:0 12px;pointer-events:none"><a id="rlL" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px rgba(0,0,0,.5)">←</a><a id="rlR" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px rgba(0,0,0,.5)">→</a></div>
+<script>
+(function(){
+const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
+let p=location.pathname; let i=PAGES.indexOf(p);
+if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));
+if(i<0) i=0;
+let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
+let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+L.href=prev; R.href=next;
+let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
+[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
+let sx=0;
+document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
+if(location.pathname.includes('alwiSD')){
+ let s=document.createElement('style');s.innerHTML="#alwi-rl a{animation:bob 0.7s infinite alternate} @keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-8px) scale(1.1)}}";document.head.appendChild(s);
+}
+})();
+</script>
+<script src="/alwi_bubble.js"></script>
+<script>poinGame()</script>
+</body>
+</html>
+

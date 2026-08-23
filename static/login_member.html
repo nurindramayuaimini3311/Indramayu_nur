@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Member - Indramayu Club</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:400px;margin:20px auto;padding:15px;background:#f4f6f9}
+.box{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+h2{text-align:center;color:#0f2b26} input{width:100%;padding:10px;margin:8px 0;border:1px solid #ccc;border-radius:8px;box-sizing:border-box}
+button{width:100%;padding:12px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:8px}
+.btn-login{background:#0f2b26;color:#d4af37}
+.btn-wa{background:#25D366;color:#fff}
+.btn-kartu{background:#d4af37;color:#000}
+.status{font-size:12px;color:#666;margin-top:10px;text-align:center;background:#f9f9f9;padding:8px;border-radius:6px}
+</style>
+</head>
+<body>
+<div class="box">
+<h2>⛑️ LOGIN MEMBER IMC</h2>
+<p style="font-size:12px;text-align:center;color:#888">Masukkan ID & Nama, nanti kesimpen otomatis</p>
+
+<form id="loginForm">
+<input type="text" id="nama" placeholder="Nama Lengkap - contoh: Abdul Kohar" required>
+<input type="text" id="id_member" placeholder="ID Member - contoh: IMC-001" required>
+<input type="text" id="wa" placeholder="No WA - contoh: 62821xxxx" required>
+<button type="submit" class="btn-login">🔐 LOGIN & SIMPAN KARTU</button>
+</form>
+
+<div class="status" id="statusBox">Belum login. Data akan disimpan di HP ini.</div>
+
+<button class="btn-kartu" onclick="lihatKartu()">💳 LIHAT KARTU MEMBER SAYA</button>
+<button class="btn-wa" onclick="langgananWA()">💬 LANGGANAN / PERPANJANG VIA WA</button>
+
+<div style="margin-top:15px;font-size:11px;color:#999;line-height:1.5">
+<b>Cara kerja bebas ala app.py kamu:</b><br>
+1. Login → data kesimpen di <code>localStorage</code> HP<br>
+2. File ada di <code>konten/login_member.html</code> → kartu ada di <code>static/kartu_member.html</code><br>
+3. Karena app.py bebas, semua file bisa diakses langsung, gak perlu route /kartu
+</div>
+</div>
+
+<script>
+const WA_ADMIN = "6282147573665";
+
+document.getElementById('loginForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const nama = document.getElementById('nama').value.trim();
+  const idMember = document.getElementById('id_member').value.trim();
+  const wa = document.getElementById('wa').value.trim();
+
+  // === INI YANG KAMU TANYA - TARUH DI SINI ===
+  localStorage.setItem('imc_nama', nama);
+  localStorage.setItem('imc_id', idMember);
+  localStorage.setItem('imc_wa', wa);
+  localStorage.setItem('imc_login_at', new Date().toISOString());
+  localStorage.setItem('imc_status', 'aktif'); // bisa jadi 'belum_bayar', 'trial', 'aktif'
+
+  document.getElementById('statusBox').innerHTML = `✅ Berhasil! Halo <b>${nama}</b> (${idMember})<br>Data kesimpen di HP ini.`;
+  
+  // JANGAN pakai location.href = '/kartu' karena gak ada di app.py kamu
+  // PAKAI PATH FILE ASLI:
+  setTimeout(()=>{
+    if(confirm('Login berhasil! Lihat kartu member sekarang?')){
+      lihatKartu();
+    }
+  },500);
+});
+
+function lihatKartu(){
+  const id = localStorage.getItem('imc_id');
+  if(!id){
+    alert('Belum login! Isi form dulu ya.');
+    return;
+  }
+  // Karena app.py kamu static_folder="." , path ini bisa:
+  location.href = '/static/kartu_member.html';
+  // Alternatif jika kartu di root: '/kartu_member.html'
+  // Alternatif jika di templates: '/templates/kartu_member.html' -> tapi app.py kamu harus serve templates
+}
+
+function langgananWA(){
+  const nama = localStorage.getItem('imc_nama') || document.getElementById('nama').value || 'Calon Member';
+  const idMember = localStorage.getItem('imc_id') || document.getElementById('id_member').value || 'Belum punya ID';
+  const waUser = localStorage.getItem('imc_wa') || '';
+
+  const pesan = `Halo Alwi Admin ⛑️%0A%0AMau langganan Indramayu Club:%0A%0ANama: ${nama}%0AID: ${idMember}%0AWA: ${waUser}%0A%0APath: ${location.pathname}%0AMau upgrade member aktif ya.`;
+  
+  window.open(`https://wa.me/${WA_ADMIN}?text=${pesan}`, '_blank');
+}
+
+// Auto isi jika sudah pernah login
+window.onload = ()=>{
+  const nama = localStorage.getItem('imc_nama');
+  const id = localStorage.getItem('imc_id');
+  const wa = localStorage.getItem('imc_wa');
+  if(nama) document.getElementById('nama').value = nama;
+  if(id) document.getElementById('id_member').value = id;
+  if(wa) document.getElementById('wa').value = wa;
+  if(nama && id){
+    document.getElementById('statusBox').innerHTML = `👋 Hai <b>${nama}</b> (${id}) - sudah login di HP ini.<br>Klik "LIHAT KARTU" untuk buka kartu.`;
+  }
+}
+</script>
+<script src="/alwi_bubble.js"></script>
+
+<script>
+(function(){
+const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
+let p=location.pathname; let i=PAGES.indexOf(p);
+if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));
+if(i<0) i=0;
+let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
+let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+L.href=prev; R.href=next;
+let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
+[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
+let sx=0;
+document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
+if(location.pathname.includes('alwiSD')){
+ let s=document.createElement('style');s.innerHTML="#alwi-rl a{animation:bob 0.7s infinite alternate} @keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-8px) scale(1.1)}}";document.head.appendChild(s);
+}
+})();
+</script>
+</body>
+</html>
+

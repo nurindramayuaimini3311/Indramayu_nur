@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>INDRAMAYU NUR - Mobile Dropup</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--biru:#0d6efd;--biru-muda:#e3f2fd;--biru-tua:#0b5ed7;--putih:#fff;--text:#12315a;--border:#cfe2ff;}
+body{margin:0;background:#f8fbff;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+header{height:56px;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;padding:0 12px;flex-shrink:0}
+.logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--biru),#5ab0ff);display:grid;place-items:center;color:white;font-weight:900}
+.title{line-height:1.1}
+.title h1{margin:0;font-size:15px;color:var(--biru-tua)}
+.title p{margin:0;font-size:10px;color:#6b8ab8}
+.spacer{flex:1}
+.icon-btn{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--border);background:white;display:grid;place-items:center;font-size:18px;cursor:pointer}
+.search-wrap{flex:1;max-width:200px}
+.search{width:100%;background:#f1f7ff;border:1.5px solid var(--border);border-radius:12px;padding:8px 12px;font-size:13px;outline:none}
+
+.main{flex:1;position:relative;background:white;overflow:hidden}
+.urlbar{position:absolute;top:0;left:0;right:0;z-index:5;background:rgba(255,255,255,0.9);border-bottom:1px solid var(--border);padding:6px 10px;display:flex;gap:8px;align-items:center;font-size:11px}
+.urlbar input{flex:1;background:#f1f7ff;border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:11px;color:#2a4a7a}
+iframe{width:100%;height:100%;border:none;padding-top:36px}
+
+/* Bottom Bar */
+.bottom-bar{height:64px;background:white;border-top:2px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:0 8px;padding-bottom:env(safe-area-inset-bottom);flex-shrink:0;z-index:20}
+.b-nav{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;font-weight:700;color:#6b8ab8;cursor:pointer;padding:6px 14px;border-radius:12px}
+.b-nav.active{background:var(--biru-muda);color:var(--biru-tua)}
+.b-nav span{font-size:20px}
+
+/* Dropup Sheet */
+.backdrop{position:fixed;inset:0;background:rgba(15,53,110,0.2);backdrop-filter:blur(2px);z-index:30;opacity:0;pointer-events:none;transition:.25s}
+.backdrop.show{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:31;background:white;border-top-left-radius:24px;border-top-right-radius:24px;box-shadow:0 -10px 40px rgba(13,110,253,.18);transform:translateY(100%);transition:transform .32s cubic-bezier(.32,.72,0,1);max-height:82dvh;display:flex;flex-direction:column}
+.sheet.show{transform:translateY(0)}
+.handle{width:40px;height:5px;background:#dbeafe;border-radius:10px;margin:10px auto 6px}
+.sheet-header{padding:10px 16px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0}
+.sheet-header b{color:var(--biru-tua);font-size:13px}
+.sheet-scroll{overflow:auto;padding:12px 12px 20px;-webkit-overflow-scrolling:touch}
+.folder-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(min-width:600px){.folder-grid{grid-template-columns:1fr 1fr 1fr 1fr}}
+.folder-card{background:var(--putih);border:1.5px solid var(--border);border-radius:16px;padding:10px;cursor:pointer;transition:.15s;position:relative}
+.folder-card:active{transform:scale(.97)}
+.folder-card.active{border-color:var(--biru);background:linear-gradient(180deg,#e8f2ff,#fff);box-shadow:0 0 0 3px rgba(13,110,253,.12)}
+.folder-icon{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#dbeafe,#bfdbfe);display:grid;place-items:center;font-size:16px;margin-bottom:6px}
+.folder-name{font-weight:800;font-size:12px;color:#0f356e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.folder-path{font-size:9px;color:#6b8ab8;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{position:absolute;top:6px;right:6px;font-size:8px;padding:2px 5px;border-radius:20px;font-weight:800}
+.badge-folder{background:#e3f2fd;color:#0b5ed7}
+.badge-bot{background:#d1fae5;color:#065f46}
+
+.server-box{margin-top:14px;padding:12px;background:#f8fbff;border:1.5px solid var(--border);border-radius:14px}
+.server-box select{width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--border);background:white;color:#0f356e;font-weight:700;font-size:13px}
+
+/* Desktop: sidebar balik */
+@media(min-width:900px){
+  .bottom-bar{display:none}
+  .main{margin-left:320px}
+  .sidebar-desktop{position:fixed;left:0;top:56px;bottom:0;width:320px;background:rgba(255,255,255,0.9);border-right:1.5px solid var(--border);overflow:auto;padding:14px;display:block!important;z-index:10}
+  .sheet,.backdrop{display:none!important}
+}
+.sidebar-desktop{display:none}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">IN</div>
+  <div class="title"><h1>Indramayu_nur</h1><p id="loc">/static/ • dropup</p></div>
+  <div class="spacer"></div>
+  <div class="search-wrap"><input id="q" class="search" placeholder="🔍 Cari..." oninput="filterFolder()"></div>
+  <div class="icon-btn" onclick="toggleSheet()">📁</div>
+</header>
+
+<!-- Desktop Sidebar -->
+<aside class="sidebar-desktop" id="sideD"></aside>
+
+<div class="main">
+  <div class="urlbar">
+    <span>📍</span><input id="url" readonly value="../index.html"><span id="status" style="background:#e8f5e9;color:#2e7d32;padding:3px 8px;border-radius:20px;font-weight:700">ready</span>
+    <div class="icon-btn" style="width:32px;height:32px;font-size:14px" onclick="reloadFrame()">🔄</div>
+    <div class="icon-btn" style="width:32px;height:32px;font-size:14px" onclick="openNewTab()">↗️</div>
+  </div>
+  <iframe id="frame" src="../index.html" allow="clipboard-read; clipboard-write; autoplay; fullscreen"></iframe>
+</div>
+
+<div class="bottom-bar">
+  <div class="b-nav active" onclick="toggleSheet()"><span>📁</span>Folder</div>
+  <div class="b-nav" onclick="openFolder('../index.html')"><span>🏠</span>Root</div>
+  <div class="b-nav" onclick="openFolder('https://collected-chess-supplier-helps.trycloudflare.com/index-ollama-backup.html')"><span>🤖</span>BOT AKTIF</div>
+  <div class="b-nav" onclick="openFolder('../netflix/index.html')"><span>🎬</span>NURFLIX</div>
+  <div class="b-nav" onclick="reloadFrame()"><span>🔄</span>Reload</div>
+</div>
+
+<div class="backdrop" id="backdrop" onclick="toggleSheet(false)"></div>
+<div class="sheet" id="sheet">
+  <div class="handle"></div>
+  <div class="sheet-header">
+    <b>📁 PILIH FOLDER - TAP UNTUK BUKA</b>
+    <span style="font-size:11px;color:#6b8ab8" id="count">0 item</span>
+  </div>
+  <div class="sheet-scroll">
+    <div class="folder-grid" id="grid"></div>
+    <div class="server-box">
+      <div style="font-size:11px;font-weight:800;color:#0b5ed7;margin-bottom:8px">⚡ SERVER CEPAT</div>
+      <select id="server" onchange="loadServer(this.value)">
+        <option value="">-- Pilih Server --</option>
+        <option value="https://collected-chess-supplier-helps.trycloudflare.com/index-ollama-backup.html" selected>🤖 BOT ALLWI AKTIF (trycloudflare)</option>
+        <option value="../index.html">🏠 ROOT index.html</option>
+        <option value="../alwi_pusat_live.html">🔴 alwi_pusat_live.html</option>
+        <option value="../game/">🎮 Game Folder</option>
+        <option value="../netflix/">🎬 Netflix / NURFLIX</option>
+      </select>
+    </div>
+    <div style="margin-top:10px;text-align:center;color:#6b8ab8;font-size:10px">Geser ke bawah untuk tutup • Swipe down to close</div>
+  </div>
+</div>
+
+<script>
+const FOLDERS = [
+  {name:"ROOT", path:"../index.html", icon:"🏠", file:true},
+  {name:"BOT AKTIF", path:"https://collected-chess-supplier-helps.trycloudflare.com/index-ollama-backup.html", icon:"🤖", external:true},
+  {name:"alwiSD", path:"../alwiSD/", icon:"🎒"},
+  {name:"backup", path:"../backup/", icon:"💾"},
+  {name:"fiturBARU", path:"../fiturBARU/", icon:"✨"},
+  {name:"game", path:"../game/", icon:"🎮"},
+  {name:"img", path:"../img/", icon:"🖼️"},
+  {name:"kamera-hantu", path:"../kamera-hantu/", icon:"📸"},
+  {name:"konten", path:"../konten/", icon:"📦"},
+  {name:"kuis", path:"../kuis/", icon:"❓"},
+  {name:"netflix", path:"../netflix/", icon:"🎬"},
+  {name:"pencuri", path:"../pencuri/", icon:"🕵️"},
+  {name:"peta", path:"../peta/", icon:"🗺️"},
+  {name:"setting", path:"../setting/", icon:"⚙️"},
+  {name:"static", path:"./", icon:"📁"},
+  {name:"NURFLIX", path:"../netflix/index.html", icon:"⭐", file:true},
+];
+
+const grid=document.getElementById('grid'), sideD=document.getElementById('sideD'), frame=document.getElementById('frame'), urlInput=document.getElementById('url'), statusEl=document.getElementById('status');
+let activePath="../index.html";
+let sheetOpen=false;
+
+function cardHTML(f){
+  return `<div class="folder-card ${activePath===f.path?'active':''}" data-path="${f.path}" onclick="openFolder('${f.path}')">
+    <div class="folder-icon">${f.icon}</div>
+    <div class="folder-name">${f.name}</div>
+    <div class="folder-path">${f.path}</div>
+    <span class="badge ${f.external?'badge-bot':'badge-folder'}">${f.external?'BOT':f.file?'FILE':'FOLDER'}</span>
+  </div>`;
+}
+function render(list){
+  const html=list.map(cardHTML).join('');
+  grid.innerHTML=html;
+  sideD.innerHTML=`<div style="margin-bottom:12px"><b style="font-size:13px;color:#0b5ed7">📁 FOLDER ROOT</b><span style="float:right;font-size:11px;color:#6b8ab8">${list.length} item</span></div><div class="folder-grid" style="grid-template-columns:1fr 1fr">${html}</div>`;
+  document.getElementById('count').textContent=list.length+' item';
+}
+render(FOLDERS);
+
+function openFolder(path){
+  activePath=path;
+  frame.src=path;
+  urlInput.value=path;
+  document.getElementById('loc').textContent=path.length>28?path.slice(0,28)+'...':path;
+  statusEl.textContent="loading...";
+  statusEl.style.background="#fff3cd";
+  statusEl.style.color="#856404";
+  document.querySelectorAll('.folder-card').forEach(c=>c.classList.toggle('active',c.dataset.path===path));
+  // auto tutup sheet di HP setelah pilih
+  if(window.innerWidth<900) toggleSheet(false);
+  frame.onload=()=>{statusEl.textContent="loaded ✓";statusEl.style.background="#e8f5e9";statusEl.style.color="#2e7d32";}
+}
+function toggleSheet(force){
+  const sheet=document.getElementById('sheet'), bd=document.getElementById('backdrop');
+  sheetOpen = typeof force==='boolean'?force:!sheetOpen;
+  if(sheetOpen){sheet.classList.add('show');bd.classList.add('show');}
+  else{sheet.classList.remove('show');bd.classList.remove('show');}
+}
+function reloadFrame(){frame.src=activePath;statusEl.textContent="reloading..."}
+function openNewTab(){window.open(activePath,"_blank")}
+function loadServer(v){if(!v)return;openFolder(v)}
+function filterFolder(){
+  const q=document.getElementById('q').value.toLowerCase();
+  render(FOLDERS.filter(f=>f.name.toLowerCase().includes(q)||f.path.toLowerCase().includes(q)));
+}
+
+// swipe to close sheet
+let startY=0;
+const sheetEl=document.getElementById('sheet');
+sheetEl.addEventListener('touchstart',e=>startY=e.touches[0].clientY,{passive:true});
+sheetEl.addEventListener('touchmove',e=>{
+  let dy=e.touches[0].clientY-startY;
+  if(dy>0) sheetEl.style.transform=`translateY(${dy}px)`;
+},{passive:true});
+sheetEl.addEventListener('touchend',e=>{
+  let dy=e.changedTouches[0].clientY-startY;
+  sheetEl.style.transform='';
+  if(dy>80) toggleSheet(false);
+},{passive:true});
+</script>
+</body>
+</html>

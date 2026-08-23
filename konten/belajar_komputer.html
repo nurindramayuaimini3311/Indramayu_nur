@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alwi Belajar Komputer</title>
+<style>
+  body{background:#000;color:#eee;font-family:sans-serif;margin:0}
+  header{position:sticky;top:0;background:#111;padding:12px;text-align:center;border-bottom:2px solid #E50914;z-index:10}
+  h1{color:#E50914;font-size:1.1rem}
+  .btn{background:#E50914;color:#fff;border:none;padding:8px 14px;border-radius:20px;margin:4px;cursor:pointer}
+  img{max-width:100%;display:block;border-radius:12px;margin:auto}
+  .card{margin:12px;background:#181818;border-radius:12px;overflow:hidden;border:1px solid #333}
+  .card-body{padding:12px}
+  p{margin:8px 0;background:rgba(255,255,255,.06);padding:12px;border-radius:8px;line-height:1.6;cursor:pointer}
+  p.active{border-left:4px solid #E50914;background:rgba(229,9,20,.18)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>💻 ALWI BELAJAR KOMPUTER</h1>
+  <button class="btn" onclick="playAll()">▶️ Play Alwi</button>
+  <button class="btn" onclick="stopS()">⏹️ Stop</button>
+</header>
+
+<div class="card">
+  <img src="img/Gareng.webp">
+  <div class="card-body">
+    <h2>Bab 1 - Layar Hitam lan Terminal</h2>
+    <p onclick="s(this)">Ing sawijining dina, Alwi lungguh ing ngarep layar monitor sing wernane ireng. Ing tangane ana papan ketik lan layar nuduhake aplikasi Termux.</p>
+    <p onclick="s(this)">Gareng teka karo nggowo wedang kopi banjur takon, "Lagi sinau opo kowe Wi? Kok layare mung ana tulisan baris-baris ireng lan ijo?"</p>
+  </div>
+</div>
+
+<div class="card">
+  <img src="img/bagong.webp">
+  <div class="card-body">
+    <h2>Bab 2 - Kode lan Perintah Linux</h2>
+    <p onclick="s(this)">Alwi mesem banjur njelasake, "Iki jenenge terminal, Kang. Aku lagi sinau perintah Linux kanggo mindhah file lan nggawe web sederhana."</p>
+    <p onclick="s(this)">Bagong sing melu nonton langsung gumun, "Ooo... dadi yen ngetik perintah mv utawa ls iku kaya ngatur barang ing njero kamar ya?"</p>
+  </div>
+</div>
+
+<div class="card">
+  <img src="img/petruk.webp">
+  <div class="card-body">
+    <h2>Bab 3 - Sukses Nggawe Web PWA</h2>
+    <p onclick="s(this)">Petruk melu nimbrung lan menehi semangat. "Yen kowe tekun, teknologi komputer iki bisa kanggo mbantu kanca-kanca lan nggawe sistem sing migunani."</p>
+    <p onclick="s(this)">Alwi banjur menekan tombol Enter, lan seketika aplikasi PWA ing HP-ne mlaku kanthi lancar lan bisa ngoyak swara TTS.</p>
+  </div>
+</div>
+
+<div class="card">
+  <img src="img/rumah_joglo.webp">
+  <div class="card-body">
+    <h2>Kesimpulan</h2>
+    <p onclick="s(this)">Sinau teknologi butuh ketelitian lan kesabaran. Ora ana sing mustahil yen kita gelem nyoba lan terus sinau saben dina.</p>
+  </div>
+</div>
+
+<script>
+let syn=speechSynthesis,cur=0,playing=false;
+function gP(){return document.querySelectorAll('p')}
+function s(el){stopS();cur=[...gP()].indexOf(el);play(cur)}
+function play(i){let ps=gP();if(i>=ps.length)return;ps.forEach(p=>p.classList.remove('active'));let p=ps[i];p.classList.add('active');p.scrollIntoView({behavior:'smooth',block:'center'});let u=new SpeechSynthesisUtterance(p.innerText);u.lang='id-ID';u.rate=0.9;u.onend=()=>{if(playing)play(i+1)};syn.speak(u);cur=i+1}
+function playAll(){playing=true;play(cur)}
+function stopS(){syn.cancel();playing=false;gP().forEach(p=>p.classList.remove('active'))}
+</script>
+
+<script src="/alwi_bubble_v4_MENU.js"></script>
+<script src="/alwi_bubble.js"></script>
+<script>poinBelajar()</script>
+
+<script>
+(function(){
+const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
+let p=location.pathname; let i=PAGES.indexOf(p);
+if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));
+if(i<0) i=0;
+let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
+let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+L.href=prev; R.href=next;
+let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
+[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
+let sx=0;
+document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
+if(location.pathname.includes('alwiSD')){
+ let s=document.createElement('style');s.innerHTML="#alwi-rl a{animation:bob 0.7s infinite alternate} @keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-8px) scale(1.1)}}";document.head.appendChild(s);
+}
+})();
+</script>
+</body>
+</html>
+

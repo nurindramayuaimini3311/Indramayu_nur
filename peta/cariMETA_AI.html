@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Game Petak Umpet Peta - Indramayu Club</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+html,body{height:100%;margin:0;padding:0;background:#0f1215;color:#fff;font-family:'Segoe UI',Arial,sans-serif;overflow:hidden}
+.header{text-align:center;padding:10px;background:#161a20;border-bottom:2px solid #ffd700}
+.header h1{margin:0;font-size:18px;color:#ffd700;letter-spacing:1px}
+.header p{margin:3px 0 0 0;font-size:11px;color:#aaa}
+.stats{display:flex;gap:8px;padding:8px;background:#1c2128}
+.stat{flex:1;background:#252b33;border-radius:8px;padding:8px;text-align:center;border:1px solid #333}
+.stat b{display:block;color:#ffd700;font-size:16px}
+.stat span{font-size:10px;color:#aaa;text-transform:uppercase}
+#map{height:calc(100% - 145px);width:100%}
+.panel{position:absolute;bottom:0;left:0;right:0;background:#161a20;border-top:2px solid #333;padding:10px;z-index:1000;border-radius:16px 16px 0 0}
+.clue{font-size:13px;background:#1f242d;padding:10px;border-radius:10px;border-left:4px solid #ffd700;min-height:42px}
+.clue.hot{border-left-color:#ff3b3b;animation:shake 0.3s}
+.clue.cold{border-left-color:#00bfff}
+.clue.win{border-left-color:#25D366;background:#123a22}
+.btn-row{display:flex;gap:8px;margin-top:8px}
+.btn{flex:1;padding:12px;border:none;border-radius:10px;font-weight:bold;font-size:13px;cursor:pointer}
+.btn-gps{background:#ffd700;color:#000}
+.btn-reset{background:#2a303a;color:#fff}
+.btn-level{background:#25D366;color:#000}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.pulse{width:22px;height:22px;border-radius:50%;background:rgba(255,215,0,0.6);border:2px solid #ffd700;animation:pulse 1.5s infinite}
+@keyframes pulse{0%{transform:scale(0.8);opacity:1}100%{transform:scale(2.5);opacity:0}}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px}
+.modal.show{display:flex}
+.modal-box{background:#1c2128;border:2px solid #ffd700;border-radius:16px;padding:20px;max-width:350px;width:100%;text-align:center}
+.modal-box h2{color:#ffd700;margin:0 0 10px 0}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>🗺️ PETAK UMPET META - INDRAMAYU</h1>
+<p>Temukan 3 warga yang ngumpet di Indramayu! Tap peta untuk mencari</p>
+</div>
+<div class="stats">
+<div class="stat"><b id="found">0/3</b><span>Ditemukan</span></div>
+<div class="stat"><b id="attempt">0</b><span>Tebakan</span></div>
+<div class="stat"><b id="timer">60</b><span>Detik</span></div>
+</div>
+<div id="map"></div>
+<div class="panel">
+<div class="clue" id="clueBox">👀 Pilih level untuk mulai berburu! Petunjuk akan muncul di sini.</div>
+<div class="btn-row">
+<button class="btn btn-gps" onclick="getHint()">💡 Petunjuk (-5s)</button>
+<button class="btn btn-level" onclick="startGame()">▶️ Mulai Level</button>
+<button class="btn btn-reset" onclick="resetGame()">🔄 Reset</button>
+</div>
+</div>
+
+<div class="modal" id="modalWin">
+<div class="modal-box">
+<h2 id="modalTitle">🎉 KEREN!</h2>
+<p id="modalText"></p>
+<button class="btn btn-level" style="width:100%;margin-top:15px" onclick="nextLevel()">Lanjut Level Berikutnya ➡️</button>
+<button class="btn btn-reset" style="width:100%;margin-top:8px" onclick="closeModal()">Tutup</button>
+</div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// CENTER INDRAMAYU
+const INDRAMAYU = [-6.337, 108.32];
+const map = L.map('map',{zoomControl:false}).setView(INDRAMAYU, 12);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(map);
+L.control.zoom({position:'topright'}).addTo(map);
+
+let targets = [];
+let foundMarkers = [];
+let pulseMarkers = [];
+let attempt = 0;
+let found = 0;
+let timeLeft = 60;
+let timerInterval = null;
+let level = 1;
+let gameActive = false;
+
+const levels = [
+  { name:"Pemula - Alun-alun", count:2, radius:0.02, time:90 },
+  { name:"Siaga - Kota", count:3, radius:0.05, time:75 },
+  { name:"Pro - Se-Indramayu", count:3, radius:0.15, time:60 }
+];
+
+function randOffset(r){ return (Math.random()-0.5)*r*2 }
+
+function startGame(){
+  resetGame(false);
+  const cfg = levels[level-1];
+  timeLeft = cfg.time;
+  document.getElementById('timer').textContent = timeLeft;
+  document.getElementById('clueBox').textContent = `🎯 Level ${level}: ${cfg.name} - Ada ${cfg.count} orang ngumpet! Tap peta untuk cari.`;
+  gameActive = true;
+
+  // buat target random sekitar Indramayu
+  for(let i=0;i<cfg.count;i++){
+    targets.push({
+      lat: INDRAMAYU[0]+randOffset(cfg.radius),
+      lng: INDRAMAYU[1]+randOffset(cfg.radius),
+      found:false
+    });
+  }
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    document.getElementById('timer').textContent = timeLeft;
+    if(timeLeft<=0){
+      endGame(false);
+    }
+  },1000);
+}
+
+function resetGame(fullReset=true){
+  clearInterval(timerInterval);
+  targets=[]; found=0; attempt=0; gameActive=false;
+  document.getElementById('found').textContent='0/'+(levels[level-1]?.count||3);
+  document.getElementById('attempt').textContent='0';
+  document.getElementById('timer').textContent= levels[level-1]?.time||60;
+  foundMarkers.forEach(m=>map.removeLayer(m));
+  pulseMarkers.forEach(m=>map.removeLayer(m));
+  foundMarkers=[]; pulseMarkers=[];
+  document.getElementById('clueBox').className='clue';
+  if(fullReset){ document.getElementById('clueBox').textContent='👀 Pilih level untuk mulai berburu! Tap Mulai Level.'; }
+  closeModal();
+}
+
+map.on('click', function(e){
+  if(!gameActive){ document.getElementById('clueBox').textContent='⚠️ Tekan Mulai Level dulu!'; return; }
+  attempt++;
+  document.getElementById('attempt').textContent=attempt;
+  checkGuess(e.latlng.lat, e.latlng.lng);
+});
+
+function checkGuess(lat,lng){
+  const guess = L.latLng(lat,lng);
+  let minDist = Infinity;
+  let nearestIdx = -1;
+  targets.forEach((t,i)=>{
+    if(t.found) return;
+    const d = guess.distanceTo(L.latLng(t.lat,t.lng));
+    if(d<minDist){ minDist=d; nearestIdx=i; }
+  });
+
+  // tap marker sementara
+  const tap = L.circleMarker([lat,lng],{radius:6,color:'#fff',fillColor:'#ffd700',fillOpacity:0.8}).addTo(map);
+  setTimeout(()=>map.removeLayer(tap),1500);
+
+  if(minDist < 120){ // ketemu <120 meter
+    targets[nearestIdx].found=true;
+    found++;
+    document.getElementById('found').textContent=found+'/'+targets.length;
+    const icon = L.divIcon({html:'<div style="font-size:24px">🧒</div>',iconSize:[24,24],className:''});
+    const m = L.marker([targets[nearestIdx].lat, targets[nearestIdx].lng],{icon}).addTo(map).bindPopup(`Ketemu! Orang ke-${found}`).openPopup();
+    foundMarkers.push(m);
+
+    const box=document.getElementById('clueBox');
+    box.textContent=`🎉 KETEMU! Tinggal ${targets.length-found} lagi!`;
+    box.className='clue win';
+
+    if(found===targets.length){ endGame(true); }
+  } else {
+    let msg='';
+    let cls='clue';
+    if(minDist < 300){ msg=`🔥 PANAS BANGET! ${Math.round(minDist)}m lagi! Dikit lagi!`; cls='clue hot'; }
+    else if(minDist < 700){ msg=`🌡️ Hangat... ${Math.round(minDist)}m - kamu dekat!`; cls='clue'; }
+    else if(minDist < 1500){ msg=`❄️ Dingin... ${Math.round(minDist)}m jauh`; cls='clue cold'; }
+    else { msg=`🧊 BEKU! ${Math.round(minDist)}m - masih jauh banget`; cls='clue cold'; }
+    const box=document.getElementById('clueBox');
+    box.textContent=msg;
+    box.className=cls;
+  }
+}
+
+function getHint(){
+  if(!gameActive || targets.filter(t=>!t.found).length===0) return;
+  timeLeft = Math.max(0,timeLeft-5);
+  const remaining = targets.filter(t=>!t.found);
+  const t = remaining[Math.floor(Math.random()*remaining.length)];
+  const pulseIcon = L.divIcon({html:'<div class="pulse"></div>',iconSize:[22,22],className:''});
+  const pm = L.marker([t.lat,t.lng],{icon:pulseIcon}).addTo(map);
+  pulseMarkers.push(pm);
+  setTimeout(()=>{ map.removeLayer(pm); }, 3000);
+  document.getElementById('clueBox').textContent='💡 Petunjuk: Ada kilatan kuning 3 detik! (-5 detik)';
+}
+
+function endGame(win){
+  clearInterval(timerInterval);
+  gameActive=false;
+  const modal=document.getElementById('modalWin');
+  if(win){
+    document.getElementById('modalTitle').textContent='🎉 MENANG!';
+    document.getElementById('modalText').innerHTML=`Level ${level} selesai!<br>Ditemukan ${found} orang dalam ${attempt} tebakan<br>Sisa waktu: ${timeLeft}s`;
+  } else {
+    document.getElementById('modalTitle').textContent='⏰ WAKTU HABIS!';
+    document.getElementById('modalText').innerHTML=`Kamu baru nemu ${found}/${targets.length}<br>Coba lagi biar jadi juara petak umpet Indramayu!`;
+    // tampilkan yang belum ketemu
+    targets.filter(t=>!t.found).forEach(t=>{
+      const icon = L.divIcon({html:'<div style="font-size:24px;opacity:0.6">👻</div>',iconSize:[24,24],className:''});
+      const m = L.marker([t.lat,t.lng],{icon}).addTo(map).bindPopup('Di sini dia ngumpet!').openPopup();
+      foundMarkers.push(m);
+    });
+  }
+  modal.classList.add('show');
+}
+
+function nextLevel(){
+  closeModal();
+  if(found===targets.length && level < levels.length){
+    level++;
+    if(level>levels.length) level=1;
+  }
+  startGame();
+}
+
+function closeModal(){ document.getElementById('modalWin').classList.remove('show'); }
+
+resetGame();
+</script>
+
+<script>
+(function(){
+const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
+let p=location.pathname; let i=PAGES.indexOf(p);
+if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));
+if(i<0) i=0;
+let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
+let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+L.href=prev; R.href=next;
+let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
+[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
+let sx=0;
+document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
+if(location.pathname.includes('alwiSD')){
+ let s=document.createElement('style');s.innerHTML="#alwi-rl a{animation:bob 0.7s infinite alternate} @keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-8px) scale(1.1)}}";document.head.appendChild(s);
+}
+})();
+</script>
+</body>
+</html>
+
