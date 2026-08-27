@@ -2,7 +2,7 @@
   "name": "indramayu_nur",
   "version": "1.0.0",
   "description": "Portal Komunitas & Ecosystem Digital Indramayu Club.",
-  "main": "alwi_bubble.js",
+  "main": "alwi_bubble1.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -81,7 +81,7 @@
   <div class="container">
     <iframe 
       id="alwiFrame" 
-      src="http://34.170.37.50:3000/index.html" 
+      src="http://35.240.161.189:3000" 
       allow="clipboard-read; clipboard-write; autoplay; microphone; camera">
     </iframe>
   </div>
@@ -94,7 +94,7 @@
       badge.textContent = "CONNECTING...";
       badge.style.background = "#92400e";
       badge.style.color = "#fcd34d";
-      iframe.src = 'http://34.170.37.50:3000/index.html?t=' + Date.now();
+      iframe.src = 'http://35.240.161.189:3000?t=' + Date.now();
     }
 
     iframe.onload = () => {
@@ -103,6 +103,8 @@
       badge.style.color = "#34d399";
     };
   </script>
+
+<script src="/alwi_bubble4.js"></script>
 </body>
 </html>
 

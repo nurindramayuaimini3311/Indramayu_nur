@@ -46,6 +46,8 @@ function share(){
 let ctx;function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),gn=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);gn.gain.setValueAtTime(0.6,ctx.currentTime);gn.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(gn);gn.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
 render(files);
 </script>
+
+<script src="/alwi_bubble4.js"></script>
 </body>
 </html>
 
