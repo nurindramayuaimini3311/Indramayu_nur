@@ -169,7 +169,6 @@ async function loadKomentar(){
   el.innerHTML = list.map(k=>`<div class="comment"><b>${k.nama}</b> <span class="small">(${k.idMember}) • ${k.waktu}</span><div style="margin-top:6px">${k.teks}</div></div>`).join('');
 }
 </script>
-<script src="/alwi_bubble.js"></script>
 <script src="/alwi_bubble_v4_MENU.js"></script>
 
 <script>
@@ -191,6 +190,8 @@ if(location.pathname.includes('alwiSD')){
 }
 })();
 </script>
+
+<script src="/alwi_bubble4.js"></script>
 </body>
 </html>
 

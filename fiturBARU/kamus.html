@@ -135,7 +135,6 @@ function autoAcak(){const btn=document.getElementById('autoBtn');if(autoInterval
 function initTicker(){const data=Object.entries(kamus).slice(0,15).map(([k,v])=>({kata:k,arti:v.indonesia}));const all=[...data,...data];document.getElementById('tickerTrack').innerHTML=all.map(d=>`<div class="ticker-item">${d.kata} = ${d.arti}</div>`).join('');}
 window.onload=()=>{updateStats();renderHistory();initTicker();setTimeout(acakKata,800);};
 </script>
-<script src="/alwi_bubble.js"></script>
 <script src="/alwi_bubble_v4_MENU.js"></script>
 
 <script>
@@ -157,6 +156,8 @@ if(location.pathname.includes('alwiSD')){
 }
 })();
 </script>
+
+<script src="/alwi_bubble4.js"></script>
 </body>
 </html>
 
