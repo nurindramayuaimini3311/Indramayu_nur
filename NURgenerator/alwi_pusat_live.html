@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>LIVE KOMENTAR - VPS</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--biru:#0d6efd;--muda:#eaf4ff;--tua:#0b5ed7;--border:#cfe2ff;--text:#0f356e}
+body{margin:0;font-family:system-ui,sans-serif;background:linear-gradient(180deg,#fff,#eaf4ff);color:var(--text);height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+header{height:56px;background:#fff;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;padding:0 12px;flex-shrink:0}
+.logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--biru),#5ab0ff);display:grid;place-items:center;color:#fff;font-weight:900}
+h1{margin:0;font-size:14px;color:var(--tua)} p{margin:0;font-size:10px;color:#6b8ab8}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.video-box{height:42%;background:#000;position:relative;flex-shrink:0}
+.video-box iframe{width:100%;height:100%;border:none}
+.live-badge{position:absolute;top:10px;left:10px;background:#dc3545;color:#fff;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:900;animation:pulse 1.5s infinite}
+@keyframes pulse{0%{opacity:1}50%{opacity:.6}100%{opacity:1}}
+.viewer{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.6);color:#fff;padding:4px 8px;border-radius:20px;font-size:10px}
+.comments{flex:1;overflow:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px;background:#f8fbff}
+.msg{display:flex;gap:8px;animation:in .2s}
+@keyframes in{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+.avatar{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#dbeafe,#bfdbfe);display:grid;place-items:center;font-size:14px;flex-shrink:0;font-weight:900;color:var(--tua)}
+.bubble{background:#fff;border:1.5px solid var(--border);border-radius:14px;border-top-left-radius:4px;padding:8px 10px;max-width:78%;box-shadow:0 2px 6px rgba(13,110,253,.06)}
+.bubble b{font-size:12px;color:var(--tua)} .bubble div{font-size:13px;margin-top:2px;line-height:1.3;word-break:break-word}
+.bubble small{font-size:9px;color:#6b8ab8;display:block;margin-top:4px}
+.input-bar{height:68px;background:#fff;border-top:2px solid var(--border);display:flex;gap:8px;padding:10px;align-items:center;flex-shrink:0;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+.input-bar input{flex:1;background:#f1f7ff;border:1.5px solid var(--border);border-radius:14px;padding:12px 14px;font-size:14px;outline:none;font-weight:600}
+.input-bar input:first-child{max-width:90px}
+.btn{border:none;background:var(--biru);color:#fff;border-radius:12px;padding:12px 16px;font-weight:900;font-size:13px;cursor:pointer;box-shadow:0 4px 12px rgba(13,110,253,.25)}
+.bottom{height:56px;background:#fff;border-top:1.5px solid var(--border);display:flex;justify-content:space-around;align-items:center;flex-shrink:0}
+.bnav{font-size:10px;font-weight:800;color:#6b8ab8;text-align:center;cursor:pointer;padding:4px 10px;border-radius:10px}
+.bnav.active{background:var(--muda);color:var(--tua)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🔴</div>
+  <div><h1>LIVE KOMENTAR VPS</h1><p>collected-chess • realtime</p></div>
+  <div style="flex:1"></div>
+  <button style="border:1.5px solid var(--border);background:#fff;border-radius:10px;padding:8px 12px;font-weight:800;font-size:11px" onclick="clearChat()">🗑️ Hapus</button>
+</header>
+
+<div class="main">
+  <div class="video-box">
+    <iframe id="liveFrame" src="./LIVE1.html" allow="autoplay; fullscreen"></iframe>
+    <div class="live-badge">● LIVE</div>
+    <div class="viewer">👁️ <span id="viewerCount">12</span> penonton</div>
+  </div>
+  <div class="comments" id="comments"></div>
+  <div class="input-bar">
+    <input id="nama" placeholder="Nama" value="Anak SD" maxlength="12">
+    <input id="pesan" placeholder="Tulis komentar... (jadwal sholat jam berapa?)" onkeypress="if(event.key==='Enter')kirim()">
+    <button class="btn" onclick="kirim()">Kirim</button>
+  </div>
+</div>
+
+<div class="bottom">
+  <div class="bnav active" onclick="setSrc('./LIVE1.html')">🔴 LIVE1</div>
+  <div class="bnav" onclick="setSrc('./JADWAL_sholat.html')">🕌 Sholat</div>
+  <div class="bnav" onclick="setSrc('./adzan.html')">🔊 Adzan</div>
+  <div class="bnav" onclick="setSrc('./index-ollama-backup.html')">🤖 Bot</div>
+  <div class="bnav" onclick="window.open('https://collected-chess-supplier-helps.trycloudflare.com/','_blank')">↗️ VPS</div>
+</div>
+
+<script>
+let BASE = location.href.replace(/\/[^\/]*$/, '/');
+let comments=[];
+const avatarIcons=['😀','😎','🤩','🥳','😊','🧒','👦','👧','🎒','⚽'];
+
+function loadComments(){
+  // coba ambil dari memory-server.js kalau ada
+  fetch('./memory.json?_='+Date.now()).then(r=>r.json()).then(j=>{
+    if(j.komentar && Array.isArray(j.komentar)){comments=j.komentar; render();}
+  }).catch(()=>{
+    // fallback localStorage
+    const saved=localStorage.getItem('vps_komentar');
+    if(saved){comments=JSON.parse(saved);}
+    else{
+      comments=[
+        {nama:"Alwi", pesan:"Assalamualaikum! Selamat datang di Live VPS 🕌", jam:"08:00", icon:"⛑️"},
+        {nama:"Bu Guru", pesan:"Anak-anak jangan lupa cek jadwal sholat ya", jam:"08:01", icon:"👩‍🏫"},
+        {nama:"Budi", pesan:"Jadwal sholat hari ini jam berapa?", jam:"08:02", icon:"🧒"},
+      ];
+    }
+    render();
+  });
+}
+
+function saveComments(){
+  localStorage.setItem('vps_komentar', JSON.stringify(comments.slice(-100)));
+  // coba simpan ke server juga (kalau memory-server.js support POST)
+  fetch('./memory.json', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({komentar:comments.slice(-100)})}).catch(()=>{});
+}
+
+function render(){
+  const box=document.getElementById('comments');
+  box.innerHTML=comments.map(c=>`
+    <div class="msg">
+      <div class="avatar">${c.icon||'😀'}</div>
+      <div class="bubble"><b>${c.nama}</b><div>${escapeHtml(c.pesan)}</div><small>${c.jam} • VPS</small></div>
+    </div>
+  `).join('');
+  box.scrollTop=box.scrollHeight;
+}
+
+function escapeHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function kirim(){
+  const namaEl=document.getElementById('nama');
+  const pesanEl=document.getElementById('pesan');
+  const nama=namaEl.value.trim()||'Anon';
+  const pesan=pesanEl.value.trim();
+  if(!pesan) return;
+  const jam=new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  const icon=avatarIcons[Math.floor(Math.random()*avatarIcons.length)];
+  comments.push({nama,pesan,jam,icon});
+  saveComments();
+  render();
+  pesanEl.value='';
+  // auto reply bot kalau nanya jadwal sholat
+  if(pesan.toLowerCase().includes('sholat')||pesan.toLowerCase().includes('adzan')||pesan.toLowerCase().includes('jadwal')){
+    setTimeout(()=>{
+      comments.push({nama:"BOT ALLWI", pesan:"🕌 Jadwal sholat ada di menu 🕌 Sholat ya! Klik bawah. Adzan akan bunyi otomatis.", jam:new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}), icon:"🤖"});
+      saveComments();render();
+    },800);
+  }
+}
+
+function setSrc(src){document.getElementById('liveFrame').src=src; document.querySelectorAll('.bnav').forEach(b=>b.classList.remove('active')); event.currentTarget.classList.add('active');}
+function clearChat(){if(confirm('Hapus semua komentar?')){comments=[];saveComments();render();}}
+
+// fake viewer count naik turun
+setInterval(()=>{document.getElementById('viewerCount').textContent=Math.floor(8+Math.random()*25);},3000);
+
+// realtime polling tiap 3 detik kalau ada komentar baru di memory.json
+setInterval(loadComments,3000);
+
+loadComments();
+</script>
+
+<script src="/alwi_bubble2.js"></script>
+
+</body>
+</html>
+

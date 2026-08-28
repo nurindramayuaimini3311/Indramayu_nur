@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>📖 Al-Quran Digital — 114 Surah</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:linear-gradient(180deg,#04140f,#06381f);color:#e2e8f0;min-height:100vh;padding:16px}
+.wrap{max-width:620px;margin:0 auto}
+h1{text-align:center;font-size:20px;color:#4ade80;margin-bottom:4px}
+p.sub{text-align:center;font-size:11px;color:#94a3b8;margin-bottom:14px}
+a.home{display:block;width:max-content;margin:0 auto 14px;background:#16a34a;color:#fff;text-decoration:none;border-radius:10px;padding:8px 14px;font-weight:800;font-size:11px}
+.box{background:rgba(255,255,255,.06);border:1px solid rgba(74,222,128,.3);border-radius:14px;padding:16px}
+label{display:block;font-size:12px;font-weight:800;color:#86efac;margin-bottom:8px}
+.row{display:flex;gap:8px;margin-bottom:12px}
+select{flex:1;padding:11px;border-radius:10px;border:1px solid #365314;background:#052e16;color:#fff;font-size:13px;font-weight:700}
+.arab{font-size:26px;line-height:2;color:#fff;font-family:'Amiri','Scheherazade New','Traditional Arabic',serif;text-align:right;direction:rtl;margin:14px 0 6px}
+.id{font-size:14px;color:#d1fae5;line-height:1.7;background:rgba(2,44,20,.5);border-left:3px solid #4ade80;padding:10px 12px;border-radius:8px;white-space:pre-line}
+.info{font-size:12px;color:#86efac;margin-bottom:6px}
+audio{width:100%;height:40px;margin-top:10px}
+.load{text-align:center;color:#4ade80;font-size:13px;margin:20px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="home" href="/">🏠 Dashboard Utama</a>
+  <h1>📖 AL-QURAN DIGITAL</h1>
+  <p class="sub">114 Surah • Terjemah Indonesia + Teks Arab</p>
+  <div class="box">
+    <div class="row">
+      <select id="surahSel"></select>
+      <select id="ayatSel"></select>
+    </div>
+    <button class="home" style="width:100%;border:none;cursor:pointer" onclick="main()">▶️ PUTAR AYAT</button>
+    <div style="display:flex;gap:8px;margin:10px 0">
+      <button class="home" style="flex:1;border:none;cursor:pointer;text-align:center" onclick="salinAyat()">📋 COPY AYAT</button>
+      <button class="home" style="flex:1;border:none;cursor:pointer;text-align:center;background:#0e7490" onclick="bacaAyat()">🔊 BACAKAN</button>
+    </div>
+    <div class="info" id="info"></div>
+    <div class="arab" id="arab"></div>
+    <div class="id" id="terjemah"></div>
+    <div id="kontainer" style="display:none;position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#052e16;color:#d1fae5;border:1px solid #4ade80;border-radius:12px;padding:10px 16px;font-size:12px;font-weight:700;z-index:999;box-shadow:0 6px 20px rgba(0,0,0,.5)">✅ Ayat tersalin</div>
+    <audio id="audio" controls></audio>
+  </div>
+  <div class="load" id="load">Memuat Al-Quran...</div>
+</div>
+
+<script>
+let ARAB = null;
+let IDN = null;
+const surahSel = document.getElementById('surahSel');
+const ayatSel = document.getElementById('ayatSel');
+
+Promise.all([
+  fetch('quran_id.json').then(r=>r.json()),
+  fetch('quran_id_indonesian.json').then(r=>r.json())
+]).then(([ar, idn]) => {
+  ARAB = ar.data.surahs;
+  IDN = idn.data.surahs;
+  document.getElementById('load').style.display = 'none';
+  ARAB.forEach((s, i) => {
+    const o = document.createElement('option');
+    o.value = i;
+    o.textContent = (i+1) + '. ' + s.englishName + ' (' + s.ayahs.length + ' ayat)';
+    surahSel.appendChild(o);
+  });
+  surahSel.selectedIndex = 0;
+  muatSurah(0);
+}).catch(e => {
+  document.getElementById('load').textContent = 'Gagal memuat Al-Quran: ' + e.message;
+});
+
+function muatSurah(i) {
+  const s = ARAB[i];
+  ayatSel.innerHTML = '';
+  s.ayahs.forEach((a, j) => {
+    const o = document.createElement('option');
+    o.value = j;
+    o.textContent = 'Ayat ' + a.numberInSurah;
+    ayatSel.appendChild(o);
+  });
+  ayatSel.selectedIndex = 0;
+  tampil(i, 0);
+}
+
+surahSel.addEventListener('change', () => muatSurah(parseInt(surahSel.value, 10)));
+ayatSel.addEventListener('change', () => tampil(parseInt(surahSel.value, 10), parseInt(ayatSel.value, 10)));
+
+function tampil(si, ai) {
+  const s = ARAB[si];
+  const a = s.ayahs[ai];
+  const idnAyat = IDN[si] && IDN[si].ayahs[ai] ? IDN[si].ayahs[ai].text : '';
+  document.getElementById('info').textContent = '🕌 ' + s.englishName + ' — Ayat ' + a.numberInSurah + '/' + s.numberOfAyahs;
+  document.getElementById('arab').textContent = a.text;
+  document.getElementById('terjemah').textContent = idnAyat;
+  // audio Alafasy per surah (ayat pertama bagian yang diminta)
+  document.getElementById('audio').src = 'https://cdn.islamic.network/quran/audio/128/ar.alafasy/' + s.number + '.mp3';
+}
+
+function main() {
+  const audio = document.getElementById('audio');
+  audio.currentTime = 0;
+  audio.play();
+}
+
+function salinAyat() {
+  const ara = document.getElementById('arab').textContent;
+  const ter = document.getElementById('terjemah').textContent;
+  const teks = '🕌 ' + document.getElementById('info').textContent + '\n' + ara + (ter ? '\n\n' + ter : '');
+  (navigator.clipboard ? navigator.clipboard.writeText(teks) : Promise.reject()).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = teks;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }).finally(() => {
+    const k = document.getElementById('kontainer');
+    k.style.display = 'block';
+    setTimeout(() => k.style.display = 'none', 1800);
+  });
+}
+
+function bacaAyat() {
+  if (!('speechSynthesis' in window)) { alert('Browser tidak mendukung bacaan suara.'); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(document.getElementById('terjemah').textContent || document.getElementById('arab').textContent);
+  u.lang = 'id-ID';
+  u.rate = 0.9;
+  speechSynthesis.speak(u);
+}
+</script>
+<script src="/alwi_bubble2.js"></script>
+</body>
+</html>

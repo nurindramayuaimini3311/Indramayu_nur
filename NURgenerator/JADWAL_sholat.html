@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ALWI ADZAN - INDRAMAYU CLUB</title>
+<style>
+  body{margin:0;background:#040d08;color:#ffd700;font-family:monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh}
+ .card{background:#0a1f13;border:2px solid #ffd700;border-radius:20px;padding:20px;width:92%;max-width:420px;text-align:center;box-shadow:0 0 20px #ffd70055}
+ .count{font-size:42px;font-weight:bold;margin:10px 0;letter-spacing:2px}
+ .next{font-size:18px;background:#ffd700;color:#06140b;padding:6px 14px;border-radius:20px;display:inline-block}
+ .jadwal{margin-top:15px;display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px;text-align:left}
+ .jadwal div{border:1px solid #ffd70033;padding:6px 8px;border-radius:8px}
+ .jadwal.active{background:#ffd700;color:#000;font-weight:bold}
+  button{background:#ffd700;color:#000;border:0;padding:10px 20px;border-radius:10px;font-weight:bold;margin-top:10px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div style="font-size:50px">🕌</div>
+  <div>ALWI ADZAN SERVER 1</div>
+  <div style="font-size:12px;opacity:.7">Indramayu -6.3373, 108.3196</div>
+
+  <div style="margin-top:15px">ADZAN SELANJUTNYA</div>
+  <div id="nextName" class="next">LOADING...</div>
+  <div id="countdown" class="count">00:00:00</div>
+  <div id="status" style="font-size:12px">Klik layar 1x untuk aktifkan suara</div>
+
+  <div id="jadwalList" class="jadwal"></div>
+
+  <button onclick="testAdzan()">🔊 TEST ADZAN</button>
+  <iframe id="toaFrame" allow="autoplay" style="width:1px;height:1px;opacity:0;border:0;position:absolute"></iframe>
+</div>
+
+<script>
+const TOA_BASE = "https://oem-future-aggregate-looking.trycloudflare.com/player.html?play=";
+let jadwalToday = null;
+let sudahAdzanMenit = "";
+
+async function getJadwal(){
+  try{
+    let tgl = new Date().toISOString().split('T')[0];
+    let res = await fetch(`https://api.aladhan.com/v1/timingsByCity/${tgl}?city=Indramayu&country=Indonesia&method=20`);
+    let json = await res.json();
+    jadwalToday = json.data.timings;
+  }catch{
+    jadwalToday = {Fajr:"04:37", Dhuhr:"11:54", Asr:"15:15", Maghrib:"18:01", Isha:"19:13"};
+  }
+  renderJadwal();
+}
+
+function renderJadwal(){
+  let html="";
+  let order = [
+    {k:'Fajr', n:'Subuh'},
+    {k:'Dhuhr', n:'Dzuhur'},
+    {k:'Asr', n:'Ashar'},
+    {k:'Maghrib', n:'Maghrib'},
+    {k:'Isha', n:'Isya'}
+  ];
+  order.forEach(o=>{
+    html+=`<div id="row-${o.k}">${o.n}: ${jadwalToday[o.k]}</div>`;
+  });
+  document.getElementById('jadwalList').innerHTML = html;
+}
+
+function play(file){
+  document.getElementById('toaFrame').src = TOA_BASE + file + "&t="+Date.now();
+}
+
+function testAdzan(){
+  play("Adzan-Misyari-Rasyid.mp3");
+  document.getElementById('status').innerText = "✅ Suara AKTIF!";
+}
+
+function updateCountdown(){
+  if(!jadwalToday) return;
+  let now = new Date();
+  let next = null, nextKey = null, nextLabel = null;
+
+  let list = [
+    {k:'Fajr', n:'Subuh', f:'Adzan-Shubuh-Abu-Hazim.mp3'},
+    {k:'Dhuhr', n:'Dzuhur', f:'Adzan-Misyari-Rasyid.mp3'},
+    {k:'Asr', n:'Ashar', f:'Adzan-Misyari-Rasyid.mp3'},
+    {k:'Maghrib', n:'Maghrib', f:'Adzan-Misyari-Rasyid.mp3'},
+    {k:'Isha', n:'Isya', f:'Adzan-Misyari-Rasyid.mp3'},
+  ];
+
+  // Cari adzan selanjutnya hari ini
+  for(let item of list){
+    let [h,m] = jadwalToday[item.k].split(':');
+    let d = new Date(); d.setHours(parseInt(h), parseInt(m), 0, 0);
+    if(d > now){
+      next = d; nextKey=item.k; nextLabel=item.n;
+      next.file=item.f; break;
+    }
+  }
+  // Kalau sudah lewat Isya, next = Subuh besok
+  if(!next){
+    let item = list[0];
+    let [h,m] = jadwalToday[item.k].split(':');
+    next = new Date(); next.setDate(next.getDate()+1);
+    next.setHours(parseInt(h), parseInt(m), 0, 0);
+    nextKey=item.k; nextLabel=item.n; next.file=item.f;
+  }
+
+  // Hitung mundur
+  let diff = next - now;
+  let jam = Math.floor(diff/3600000);
+  let menit = Math.floor((diff%3600000)/60000);
+  let detik = Math.floor((diff%60000)/1000);
+  document.getElementById('countdown').innerText =
+    `${jam.toString().padStart(2,'0')}:${menit.toString().padStart(2,'0')}:${detik.toString().padStart(2,'0')}`;
+  document.getElementById('nextName').innerText = nextLabel + " - " + jadwalToday[nextKey];
+
+  // Highlight jadwal aktif
+  document.querySelectorAll('.jadwal div').forEach(el=>el.classList.remove('active'));
+  let row = document.getElementById('row-'+nextKey);
+  if(row) row.classList.add('active');
+
+  // CEK WAKTU ADZAN (pas 00 detik)
+  let jamMenitNow = now.getHours().toString().padStart(2,'0')+":"+now.getMinutes().toString().padStart(2,'0');
+  if(diff < 1000 && sudahAdzanMenit!== jamMenitNow + nextKey){
+    sudahAdzanMenit = jamMenitNow + nextKey;
+    play(next.file);
+    document.getElementById('status').innerText = "🕌 ADZAN " + nextLabel + " BERKUMANDANG!";
+    if(Notification.permission==="granted") new Notification("🕌 Adzan "+nextLabel, {body: "Waktu "+nextLabel+" telah tiba"});
+  }
+}
+
+// RUN
+getJadwal();
+setInterval(updateCountdown, 1000);
+setInterval(getJadwal, 3600000);
+Notification.requestPermission();
+document.body.addEventListener('click', ()=>{document.getElementById('status').innerText="✅ Suara AKTIF - Menunggu jadwal";},{once:true});
+</script>
+
+<script src="/alwi_bubble2.js"></script>
+
+</body>
+</html>
