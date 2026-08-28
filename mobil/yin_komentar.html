@@ -213,10 +213,10 @@ Apakah Anda ingin saya memandu Anda untuk melakukan verifikasi identitas yang be
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0f172a">
-  <meta property="og:image" content="/img/icon-512.png">
+  <meta property="og:image" content="../img/icon-512.png">
   <title>ALWI PUSAT - Indramayu Club</title>
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="/img/icon-192.png" type="image/png">
+  <link rel="manifest" href="../manifest.json">
+  <link rel="icon" href="../img/icon-192.png" type="image/png">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #0a0a0a; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; min-height: 100vh; }
@@ -409,7 +409,7 @@ Apakah Anda ingin saya memandu Anda untuk melakukan verifikasi identitas yang be
     });
 
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
+      navigator.serviceWorker.register('../sw.js').catch(() => {});
     }
 
     const script = document.createElement('script');

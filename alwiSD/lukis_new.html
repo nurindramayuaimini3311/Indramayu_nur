@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Studio Lukis Alwi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #4a3b6b;
+  --green: #2d6a4f;
+  --mint: #4ade80;
+  --cream: #7a6a4f;
+  --paper: #fffdf5;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: 'Fredoka', 'Baloo 2', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #dff1ff;
+  overscroll-behavior: none;
+}
+h1, h2 { font-family: 'Baloo 2', 'Fredoka', sans-serif; }
+
+.app {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to bottom, #FFFBE6 0%, #E6FFF2 45%, #DDF2FF 100%);
+  box-shadow: 0 20px 80px rgba(0,0,0,0.15);
+}
+
+/* dot pattern overlay */
+.dots {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.16;
+  background-image: radial-gradient(#000 1.2px, transparent 1.2px);
+  background-size: 28px 28px;
+}
+
+/* floating decorations */
+.deco { pointer-events: none; position: absolute; z-index: 1; user-select: none; }
+.animate-float { animation: floaty 3.2s ease-in-out infinite; }
+.animate-cloud { animation: cloudMove 4.5s ease-in-out infinite; }
+.animate-spark { animation: sparkle 1.8s ease-in-out infinite; }
+
+@keyframes floaty  { 0%,100% { transform: translateY(0px) rotate(-1deg); } 50% { transform: translateY(-14px) rotate(1deg); } }
+@keyframes wiggle  { 0%,100% { transform: rotate(-1.5deg) scale(1); } 25% { transform: rotate(1.5deg) scale(1.02); } 50% { transform: rotate(-1deg) scale(1.01); } 75% { transform: rotate(1deg) scale(1.02); } }
+@keyframes sparkle { 0%,100% { transform: scale(0.7) rotate(0deg); opacity:0.4; } 50% { transform: scale(1.25) rotate(18deg); opacity:1; } }
+@keyframes cloudMove { 0%,100% { transform: translateX(0px); } 50% { transform: translateX(10px); } }
+@keyframes popIn { 0% { transform: scale(0.85) translateY(10px); opacity:0; } 100% { transform: scale(1) translateY(0); opacity:1; } }
+@keyframes floatUp { 0% { transform: translateY(0); opacity:0; } 10% {opacity:1;} 100% { transform: translateY(-60vh); opacity:0; } }
+
+.pulse-dot { animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.45); }
+  50%     { box-shadow: 0 0 0 7px rgba(74,222,128,0); }
+}
+
+header {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 16px 20px 8px;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 13px;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 0 0 rgba(0,0,0,0.06);
+  white-space: nowrap;
+}
+.badge .dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--mint);
+  flex-shrink: 0;
+}
+.badge .online { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: var(--green); }
+.badge .sep { width: 1px; height: 10px; background: #e2e2e2; border-radius: 2px; }
+.badge .note { font-size: 11px; font-weight: 600; color: #5b7a6d; }
+.club-badge {
+  background: rgba(255,255,255,0.92);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cream);
+  border: 2px solid #fff;
+  box-shadow: 0 3px 0 0 rgba(0,0,0,0.05);
+  white-space: nowrap;
+}
+
+.title {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  padding: 2px 20px 6px;
+}
+.title h1 {
+  font-size: 27px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+}
+.title h1 .hi {
+  color: #f59e0b;
+  background: linear-gradient(120deg, #ff9a3c, #f59e0b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  position: relative;
+  display: inline-block;
+}
+.title h1 .hi::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 2px;
+  height: 6px;
+  background: rgba(245,158,11,0.28);
+  border-radius: 6px;
+  z-index: -1;
+}
+.title p { font-size: 12.5px; color: #8a7aa0; margin-top: 2px; }
+
+.canvas-wrap {
+  position: relative;
+  z-index: 5;
+  flex: 1;
+  margin: 10px 16px;
+  min-height: 0;
+  display: flex;
+}
+canvas {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  border-radius: 22px;
+  border: 4px solid #fff;
+  box-shadow: 0 6px 0 0 rgba(0,0,0,0.05), 0 10px 30px rgba(0,0,0,0.12);
+  touch-action: none;
+  cursor: crosshair;
+  display: block;
+}
+
+#emptyHint {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  text-align: center;
+  pointer-events: none;
+  color: #c5bcd6;
+  font-size: 15px;
+  font-weight: 600;
+  opacity: 0.9;
+  transition: opacity 0.3s;
+}
+#emptyHint .big { display:block; font-size: 46px; margin-bottom: 8px; }
+
+.toolbar {
+  position: relative;
+  z-index: 6;
+  padding: 6px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tool-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.tool-row .label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  opacity: 0.85;
+  margin-right: 2px;
+  user-select: none;
+}
+
+/* color palette */
+.palette {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.swatch {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #fff;
+  box-shadow: 0 3px 0 0 rgba(0,0,0,0.12);
+  position: relative;
+  transition: transform 0.12s ease;
+  flex-shrink: 0;
+}
+.swatch:hover { transform: scale(1.12); }
+.swatch:active { transform: scale(0.92); }
+.swatch.active { box-shadow: 0 0 0 3px #fff, 0 3px 0 0 rgba(0,0,0,0.12), 0 0 0 6px rgba(74,222,128,0.6); }
+
+/* buttons */
+.btn {
+  font-family: 'Fredoka', 'Baloo 2', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 3px solid #fff;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 0 rgba(0,0,0,0.12);
+  transition: transform 0.09s ease, box-shadow 0.09s ease;
+  user-select: none;
+  padding: 10px 14px;
+}
+.btn:active { transform: translateY(3px) scale(0.97); box-shadow: 0 1px 0 0 rgba(0,0,0,0.12); }
+
+.btn-sm { font-size: 13px; padding: 8px 11px; border-radius: 13px; }
+.btn .ico { font-size: 17px; line-height: 1; }
+
+.simple    { background: #e8e4f2; color: #5b4b85; }
+.pink      { background: #ffd6e8; color: #a43b6b; }
+.blue      { background: #cfe9ff; color: #2f6ca8; }
+.orange    { background: #ffe3c4; color: #b3662a; }
+.green     { background: #d3f5df; color: #2c7a4a; }
+.red       { background: #ffd1d1; color: #b33434; }
+
+/* brush sizes */
+.size { width: 34px; height: 34px; border-radius: 12px; border: 3px solid #fff; background: #e8e4f2; cursor: pointer; display:flex; align-items:center; justify-content:center; box-shadow: 0 3px 0 0 rgba(0,0,0,0.12); transition: transform 0.09s ease; flex-shrink:0; }
+.size:active { transform: translateY(2px) scale(0.95); box-shadow: 0 1px 0 0 rgba(0,0,0,0.12); }
+.size .dot { border-radius: 50%; background: #5b4b85; }
+.size.active { background: #d6ccf0; box-shadow: 0 0 0 3px #fff, 0 3px 0 0 rgba(0,0,0,0.12), 0 0 0 5px rgba(74,222,128,0.55); }
+
+.tool-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+footer {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  padding: 4px 0 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(74,59,107,0.55);
+  letter-spacing: 0.02em;
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- dot pattern overlay -->
+  <div class="dots"></div>
+
+  <!-- floating decorations -->
+  <div class="deco animate-cloud" style="top:74px; left:8px; font-size:42px; opacity:0.8;">☁️</div>
+  <div class="deco animate-cloud" style="top:120px; right:8px; font-size:36px; opacity:0.7; animation-delay:0.8s;">☁️</div>
+  <div class="deco animate-cloud" style="top:60%; left:14px; font-size:30px; opacity:0.55; animation-delay:1.2s;">☁️</div>
+  <div class="deco animate-float" style="top:96px; left:30%; font-size:16px;">⭐</div>
+  <div class="deco animate-float" style="top:158px; right:24%; font-size:14px; animation-delay:0.5s;">✨</div>
+  <div class="deco animate-float" style="top:52%; left:18%; font-size:12px; animation-delay:1s;">⭐</div>
+  <div class="deco animate-float" style="top:66%; right:15%; font-size:18px; animation-delay:1.4s;">💫</div>
+  <div class="deco animate-spark" style="top:22%; left:12%; font-size:20px;">✨</div>
+  <div class="deco animate-spark" style="bottom:30%; right:8%; font-size:15px; animation-delay:0.9s;">⭐</div>
+
+  <!-- header -->
+  <header>
+    <div class="badge">
+      <span class="dot pulse-dot"></span>
+      <span class="online">ONLINE</span>
+      <span class="sep"></span>
+      <span class="note">Alwi siap!</span>
+    </div>
+    <div class="club-badge">⛑️ Indramayu Club</div>
+  </header>
+
+  <!-- title -->
+  <div class="title">
+    <h1>Studio Lukis <span class="hi">Alwi</span> 🎨</h1>
+    <p>Ayo menggambar karya hebatmu, Alwi!</p>
+  </div>
+
+  <!-- canvas -->
+  <div class="canvas-wrap">
+    <canvas id="board"></canvas>
+    <div id="emptyHint"><span class="big">✏️🐼</span>Mulai menggambar di sini!</div>
+  </div>
+
+  <!-- toolbar -->
+  <div class="toolbar">
+    <div class="palette" id="palette"></div>
+
+    <div class="tool-row">
+      <span class="label">Brush</span>
+      <div class="size" data-size="small" title="Kecil"><span class="dot" style="width:5px;height:5px;"></span></div>
+      <div class="size" data-size="medium" title="Sedang"><span class="dot" style="width:9px;height:9px;"></span></div>
+      <div class="size" data-size="large" title="Besar"><span class="dot" style="width:15px;height:15px;"></span></div>
+    </div>
+
+    <div class="tool-actions">
+      <button class="btn pink  btn-sm" id="btnEraser"  type="button"><span class="ico">🧽</span>Penghapus</button>
+      <button class="btn blue  btn-sm" id="btnUndo"    type="button"><span class="ico">↩️</span>Urungkan</button>
+      <button class="btn red   btn-sm" id="btnClear"   type="button"><span class="ico">🗑️</span>Bersihkan</button>
+    </div>
+
+    <div class="tool-actions">
+      <button class="btn green" id="btnSave" type="button"><span class="ico">⬇️</span>Simpan Gambar (PNG)</button>
+    </div>
+  </div>
+
+  <footer>© Studio Lukis Alwi · Indramayu Club 🎨</footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var canvas = document.getElementById("board");
+  var ctx = canvas.getContext("2d");
+  var emptyHint = document.getElementById("emptyHint");
+  var app = document.getElementById("app");
+
+  /* ------- palette -------- */
+  var COLORS = [
+    "#222222", "#e11d48", "#f97316", "#facc15", "#22c55e",
+    "#16a34a", "#06b6d4", "#3b82f6", "#8b5cf6", "#ec4899",
+    "#f472b6", "#ef4444", "#ffffff"
+  ];
+
+  var SIZES = {
+    small: 3,
+    medium: 8,
+    large: 16
+  };
+
+  var state = {
+    color: COLORS[0],
+    size: SIZES.medium,
+    erasing: false,
+    drawing: false,
+    brushSize: "medium"
+  };
+
+  /* ---- strokes history (for undo) ---- */
+  var strokes = [];
+  var currentStroke = [];
+
+  /* ------- responsive sizing ------- */
+  function resize() {
+    var rect = canvas.getBoundingClientRect();
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    // scale context so drawing coords match CSS pixels
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    redraw();
+  }
+
+  window.addEventListener("resize", resize);
+
+  /* ------- helpers ------- */
+  function getPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+
+  function maxStrokeWidth() {
+    // biggest possible stroke so we can clear round caps properly
+    return Math.max(SIZES.small, SIZES.medium, SIZES.large) + 4;
+  }
+
+  /* ------- draw one stroke ------- */
+  function drawStroke(stroke) {
+    if (!stroke || stroke.length < 2) return;
+    var i;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = stroke.color;
+    ctx.lineWidth = stroke.size;
+    ctx.beginPath();
+    ctx.moveTo(stroke.pts[0].x, stroke.pts[0].y);
+    for (i = 1; i < stroke.pts.length; i++) {
+      // smooth using quadratic curve through midpoints
+      var mid = { x: (stroke.pts[i - 1].x + stroke.pts[i].x) / 2,
+                  y: (stroke.pts[i - 1].y + stroke.pts[i].y) / 2 };
+      ctx.quadraticCurveTo(stroke.pts[i - 1].x, stroke.pts[i - 1].y, mid.x, mid.y);
+    }
+    // draw final segment
+    var last = stroke.pts[stroke.pts.length - 1];
+    var prev = stroke.pts[stroke.pts.length - 2];
+    ctx.lineTo(last.x, last.y);
+    ctx.stroke();
+  }
+
+  function redraw() {
+    // clear full canvas with white "paper"
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+
+    // redraw all strokes, extra pass to cover rounded caps
+    var pass, i;
+    for (pass = 0; pass < 2; pass++) {
+      for (i = 0; i < strokes.length; i++) {
+        drawStroke(strokes[i]);
+      }
+    }
+  }
+
+  function updateHint() {
+    emptyHint.style.opacity = strokes.length ? "0" : "0.9";
+  }
+
+  /* ------- pointer events (touch + mouse) ------- */
+  canvas.addEventListener("pointerdown", function (e) {
+    e.preventDefault();
+    canvas.setPointerCapture(e.pointerId);
+    var p = getPos(e);
+    state.drawing = true;
+    currentStroke = {
+      color: state.erasing ? "#ffffff" : state.color,
+      size: state.erasing ? state.size * 2.5 : state.size,
+      pts: []
+    };
+    currentStroke.pts.push(p, p);
+    strokes.push(currentStroke);
+    updateHint();
+  });
+
+  canvas.addEventListener("pointermove", function (e) {
+    if (!state.drawing) return;
+    var p = getPos(e);
+    var last = currentStroke.pts[currentStroke.pts.length - 1];
+    var dx = p.x - last.x;
+    var dy = p.y - last.y;
+    if (dx * dx + dy * dy < 9) return; // skip tiny moves
+    currentStroke.pts.push(p);
+    drawStroke(currentStroke);
+  });
+
+  function endStroke() {
+    if (!state.drawing) return;
+    state.drawing = false;
+    // redraw cleanly (esp. round caps on eraser)
+    redraw();
+  }
+
+  canvas.addEventListener("pointerup", endStroke);
+  canvas.addEventListener("pointercancel", endStroke);
+  canvas.addEventListener("pointerleave", endStroke);
+
+  /* ------- palette UI ------- */
+  var paletteEl = document.getElementById("palette");
+  COLORS.forEach(function (c) {
+    var sw = document.createElement("div");
+    sw.className = "swatch" + (c === state.color ? " active" : "");
+    sw.style.background = c;
+    sw.addEventListener("pointerdown", function (e) {
+      e.preventDefault();
+      state.color = c;
+      state.erasing = false;
+      document.querySelectorAll(".swatch").forEach(function (el) { el.classList.remove("active"); });
+      sw.classList.add("active");
+      var eras = document.getElementById("btnEraser");
+      eras.style.outline = "";
+      eras.style.boxShadow = "0 4px 0 0 rgba(0,0,0,0.12)";
+    });
+    paletteEl.appendChild(sw);
+  });
+
+  /* ------- brush sizes ------- */
+  var sizeEls = document.querySelectorAll(".size");
+  sizeEls.forEach(function (el) {
+    el.addEventListener("pointerdown", function (e) {
+      e.preventDefault();
+      state.brushSize = el.dataset.size;
+      state.size = SIZES[el.dataset.size];
+      sizeEls.forEach(function (x) { x.classList.remove("active"); });
+      el.classList.add("active");
+    });
+  });
+
+  /* ------- eraser ------- */
+  var btnEraser = document.getElementById("btnEraser");
+  btnEraser.addEventListener("pointerdown", function (e) {
+    e.preventDefault();
+    state.erasing = true;
+    document.querySelectorAll(".swatch").forEach(function (el) { el.classList.remove("active"); });
+    btnEraser.style.outline = "3px solid rgba(239,68,68,0.5)";
+    btnEraser.style.boxShadow = "0 0 0 3px #fff, 0 4px 0 0 rgba(0,0,0,0.12), 0 0 0 5px rgba(239,68,68,0.35)";
+  });
+
+  /* ------- undo ------- */
+  document.getElementById("btnUndo").addEventListener("pointerdown", function (e) {
+    e.preventDefault();
+    if (strokes.length) {
+      strokes.pop();
+      redraw();
+      updateHint();
+    }
+  });
+
+  /* ------- clear ------- */
+  document.getElementById("btnClear").addEventListener("pointerdown", function (e) {
+    e.preventDefault();
+    strokes = [];
+    redraw();
+    updateHint();
+  });
+
+  /* ------- save PNG ------- */
+  document.getElementById("btnSave").addEventListener("pointerdown", function (e) {
+    e.preventDefault();
+    var link = document.createElement("a");
+    var now = new Date();
+    var dateStr = now.getFullYear() + "-" +
+      ("0" + (now.getMonth() + 1)).slice(-2) + "-" +
+      ("0" + now.getDate()).slice(-2);
+    var fname = "Lukisan_Alwi_" + dateStr + ".png";
+    link.download = fname;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+
+  /* ------- init ------- */
+  window.addEventListener("load", function () {
+    // keep default state selected visually
+    var med = document.querySelector('.size[data-size="medium"]');
+    if (med) med.classList.add("active");
+    resize();
+  });
+})(window);
+</script>
+</body>
+</html>

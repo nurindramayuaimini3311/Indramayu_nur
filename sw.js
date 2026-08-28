@@ -1,13 +1,13 @@
 // META ALWI - Service Worker v2.0
 // Offline + Auto-Update untuk Indramayu_nur + meta_folder (VPS Connect)
 const CACHE_NAME = 'meta-alwi-v2-b' + Date.now();
-const OFFLINE_URL = '/offline.html';
+const OFFLINE_URL = './offline.html';
 
 const CORE_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-512.png',
+  './',
+  './index.html',
+  './manifest.json',
+  './img/icon-512.png',
 ];
 
 self.addEventListener('install', e => {
