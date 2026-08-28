@@ -29,8 +29,6 @@ function loop(){gctx.clearRect(0,0,W,H);ectx.clearRect(0,0,W,H);if(Date.now()-la
 function cap(mx,my){const f=document.getElementById('flash');f.style.opacity=.9;setTimeout(()=>f.style.opacity=0,130);const x=mx??W/2,y=my??H/2;let hit=null;for(let e of entities)if(e.hit(x,y)) hit=e;if(hit){entities=entities.filter(o=>o!==hit);score+=100;caught++;document.getElementById('sc').textContent=score;document.getElementById('cp').textContent=caught;showMsg('KETANGKAP! '+hit.key.toUpperCase()+' 👻');if(navigator.vibrate) navigator.vibrate(80);}else showMsg('Tunggu asap dulu...');}
 document.getElementById('sh').onclick=()=>cap();game.addEventListener('click',e=>{const r=game.getBoundingClientRect();cap(e.clientX-r.left,e.clientY-r.top)});document.getElementById('night').onclick=function(){document.getElementById('wrap').classList.toggle('night')};document.getElementById('flip').onclick=()=>{facing=facing==='environment'?'user':'environment';cam(facing);};document.getElementById('go').onclick=async()=>{document.getElementById('start').style.display='none';await cam(facing);loop();};
 </script>
-<script src="/alwi_bubble_v4_MENU.js"></script>
-<script src="/alwi_bubble.js"></script>
 
 <script>
 (function(){
