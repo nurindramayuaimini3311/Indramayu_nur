@@ -25,7 +25,7 @@ let homeBtn=document.createElement('div');
 homeBtn.id="ALWI_HOME_BTN";
 homeBtn.style.cssText=`position:fixed;left:${x-5}px;top:${y-50}px;z-index:999999998;width:70px;height:36px;background:#0891b2;color:#fff;border:none;border-radius:18px;font-weight:800;font-size:11px;cursor:pointer;box-shadow:0 4px 15px rgba(0,191,255,0.4);transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:4px;`;
 homeBtn.innerHTML="🏠 HOME";
-homeBtn.onclick=function(){ window.goToPage(prefix+'index.html'); };
+homeBtn.onclick=function(){ goHome(); };
 homeBtn.onpointerdown=function(e){ e.stopPropagation(); };
 document.body.appendChild(homeBtn);
 
@@ -78,6 +78,19 @@ window.bukaIframe=function(targetUrl){
 window.tutupIframe=function(){
   modal.style.display='none';
   document.getElementById('ALWI_IFRAME').src = '';
+}
+
+// HOME selalu menuju index.html portal (bebas isRoot)
+window.goHome=function(){
+  var base = (pathParts[0]==='Indramayu_nur')
+    ? window.location.pathname.split('/').slice(0,-1).join('/')
+    : (window.location.pathname.split('/').length>1 ? window.location.pathname.split('/').slice(0,-1).join('/') : '');
+  var target = base + '/index.html';
+  if (window.location.pathname === target || pathParts.join('/')==='index.html' || pathParts.length===0) {
+    window.location.reload();
+  } else {
+    window.location.href = target;
+  }
 }
 
 // === FITUR BOLA KARTUN LUCU UNTUK ANAK SD ===
@@ -296,7 +309,20 @@ function alwiTambahPoin(tipe){
   localStorage.setItem('alwi_poin',now);
   alwiNotifPoin('+'+n+' Poin! ('+tipe+')');
   alwiUpdateBadgePoin();
+  alwiCekTarget();
   return now;
+}
+
+// Otomatis redirect ke WA saat poin mencapai target (>=1000)
+function alwiCekTarget(){
+  let p=alwiGetPoin();
+  if(p>=POIN_CFG.target){
+    if(localStorage.getItem('alwi_poin_claimed')==='1') return;
+    localStorage.setItem('alwi_poin_claimed','1');
+    let m='🎉 *SELAMAT! POIN MENCAPAI TARGET!*\n\n👤 User: '+alwiUid()+'\n💰 Poin: *'+p+'*\n🎯 Target: '+POIN_CFG.target+'\n\nSilakan klaim hadiahmu ke admin!';
+    alwiNotifPoin('🎉 Target tercapai! Arahkan ke WA...');
+    setTimeout(()=>{ window.open('https://wa.me/'+POIN_CFG.adminWA+'?text='+encodeURIComponent(m),'_blank'); },1500);
+  }
 }
 
 function alwiUpdateBadgePoin(){
@@ -326,7 +352,7 @@ poinBadge.id="ALWI_POIN_BADGE";
 poinBadge.style.cssText=`position:fixed;left:${x-5}px;top:${y-90}px;z-index:999999998;background:#00BFFF;color:#000;padding:4px 12px;border-radius:12px;font-weight:900;font-size:11px;box-shadow:0 2px 10px rgba(255,215,0,0.4);cursor:pointer;transition:all 0.3s;`;
 poinBadge.textContent='⭐ '+alwiGetPoin();
 poinBadge.onclick=function(e){e.stopPropagation();cekPoinWA();};
-if (!isRoot) document.body.appendChild(poinBadge);
+document.body.appendChild(poinBadge);
 
 // Update badge position saat bola gerak
 let _origUpdate=updateBallPosition;
@@ -419,7 +445,7 @@ function alwiBotRespond(text){
   // HOME
   else if(text.includes('home')||text.includes('halaman utama')||text.includes('kembali')){
     alwiBotSay('Kembali ke halaman utama!');
-    setTimeout(()=>{window.goToPage(prefix+'index.html');},800);
+    setTimeout(()=>{window.goHome();},800);
   }
   // GAME
   else if(text.includes('game')||text.includes('main')){
@@ -786,4 +812,45 @@ updateBallPosition=function(){
     r.onend=function(){ mic.style.boxShadow='0 4px 14px rgba(0,191,255,.5)'; };
     try{ r.start(); }catch(e){}
   };
+
+  // ===== WIDGET TEKS BERJALAN ADZAN (muncul tiap 5 menit, kecil & non-intrusif) =====
+  var adzanJam = [
+    {nama:'Subuh',jam:'04:31'},{nama:'Dzuhur',jam:'11:48'},{nama:'Ashar',jam:'15:07'},
+    {nama:'Maghrib',jam:'17:47'},{nama:'Isya',jam:'18:57'}
+  ];
+  var adzanW = document.createElement('div');
+  adzanW.id='ALWI_ADZAN_WIDGET';
+  adzanW.style.cssText="display:none;position:fixed;right:12px;bottom:78px;z-index:999999996;width:260px;background:rgba(0,0,0,.85);border:2px solid #ffd700;border-radius:10px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.5);";
+  adzanW.innerHTML='<marquee id="ALWI_ADZAN_WIDGET_MQ" scrollamount="4" style="display:block;font-size:12px;font-weight:800;color:#ffd700;padding:5px 6px;letter-spacing:.3px;">🕌 Memuat jadwal adzan...</marquee>';
+  document.body.appendChild(adzanW);
+
+  function adzanDetik(j){
+    var p=j.split(':'); return parseInt(p[0],10)*3600+parseInt(p[1],10)*60;
+  }
+  function adzanMsg(){
+    var n=new Date();
+    var ds=n.getHours()*3600+n.getMinutes()*60+n.getSeconds();
+    var next=null, menit=null;
+    for(var i=0;i<adzanJam.length;i++){
+      var d0=adzanDetik(adzanJam[i].jam);
+      if(d0>ds){ next=adzanJam[i]; menit=d0-ds; break; }
+    }
+    if(!next){ next=adzanJam[0]; menit=86400-ds+adzanDetik(next.jam); }
+    // masa adzan aktif 15 menit
+    for(var k=0;k<adzanJam.length;k++){
+      var s=adzanDetik(adzanJam[k].jam);
+      if(ds>=s && ds<=s+900) return '🔊 ADZAN '+adzanJam[k].nama.toUpperCase()+' BERKUMANDANG — HORMATI WAKTU (15 MENIT). MOHON BERHENTI SEJENAK, KEMBALI KE FITRAH. 🕌';
+    }
+    if(menit<=120) return '⏰ 2 MENIT MENUJU ADZAN '+next.nama.toUpperCase()+' ('+next.jam+') — PERSIAPKAN DIRI. 🕌 INDRAMAYU';
+    return '🕌 ADZAN '+next.nama.toUpperCase()+' ('+next.jam+') MENJELANG — INDRAMAYU. PERSIAPKAN IBADAH ANDA.';
+  }
+  function adzanTampil(){
+    document.getElementById('ALWI_ADZAN_WIDGET_MQ').textContent = adzanMsg();
+    adzanW.style.display='block';
+    setTimeout(function(){ adzanW.style.display='none'; }, 20000);
+  }
+  // muncul tiap 5 menit
+  setInterval(adzanTampil, 300000);
+  // tampil 5 detik setelah halaman load
+  setTimeout(adzanTampil, 5000);
 })();
