@@ -249,5 +249,23 @@
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function(){}); }
   </script>
   <script src="/alwi_bubble4.js"></script>
+
+  <!-- ===== INJECT AI OLLAMA http://35.240.161.189:3000 ===== -->
+  <div id="LUCU_AI_BTN" onclick="lucuAI()" title="Tanya AI Alwi"
+       style="position:fixed;right:14px;bottom:16px;z-index:99998;background:#22c55e;color:#fff;border:none;border-radius:50%;width:58px;height:58px;font-size:26px;cursor:pointer;box-shadow:0 4px 16px rgba(34,197,94,.5);display:flex;align-items:center;justify-content:center;">🤖</div>
+  <div id="LUCU_AI_BOX" style="display:none;position:fixed;right:12px;bottom:84px;z-index:99999;width:min(420px,92vw);height:min(560px,72vh);background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.4);border:2px solid #22c55e;">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#0f172a;color:#fff;font-weight:800;font-size:13px;">
+      <span>🤖 TANYA ALWI <small style="color:#94a3b8;font-weight:400">(Chat AI • 35.240.161.189:3000)</small></span>
+      <button onclick="lucuAI()" style="background:none;border:none;color:#f87171;font-size:16px;cursor:pointer;">✕</button>
+    </div>
+    <iframe id="LUCU_AI_IFRAME" src="http://35.240.161.189:3000/" style="width:100%;height:calc(100% - 40px);border:none;"></iframe>
+  </div>
+  <script>
+  function lucuAI(){
+    var b=document.getElementById('LUCU_AI_BOX');
+    if(b.style.display!=='none'){ b.style.display='none'; return; }
+    b.style.display='block';
+  }
+  </script>
 </body>
 </html>
