@@ -2,7 +2,6 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<<<<<<< HEAD
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#064e3b">
 <meta name="description" content="Kompas arah kiblat akurat menggunakan GPS &amp; sensor kompas HP, bisa dipasang sebagai aplikasi Android.">
@@ -219,80 +218,3 @@ aktifkanKompas();
 </script>
 </body>
 </html>
-=======
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#064e3b">
-<link rel="manifest" href="manifest.json">
-<title>Kompas Jam Kiblat</title>
-<style>
- body{background:#020d08;color:#ecfdf5;font-family:system-ui;display:flex;flex-direction:column;align-items:center;padding:16px;min-height:100vh}
- canvas{background:radial-gradient(#f8fafc,#e2e8f0);border-radius:50%;border:8px solid #10b981;box-shadow:0 0 20px #000}
- .reading{margin-top:12px;font-weight:800}
-</style>
-</head>
-<body>
-<h3>🧭 KOMPAS JAM KIBLAT</h3>
-<canvas id="clock" width="300" height="300"></canvas>
-<div class="reading" id="reading">Aktifkan sensor untuk membaca arah...</div>
-<div id="info" style="font-size:12px;color:#6ee7b7;margin-top:6px"></div>
-<button id="btn" style="margin-top:12px;padding:10px 16px;border-radius:20px;border:1px solid #10b981;background:#000;color:#10b981">Aktifkan Kompas</button>
-
-<script>
-// ===== KIBLAT: arah sensor, koordinat TETAP (Indramayu), tanpa GPS =====
-const QIBLA=294.8; // sudut kiblat dari utara utk Indramayu (hardcode)
-let heading=null;
-const canvas=document.getElementById('clock'), ctx=canvas.getContext('2d');
-const R=140, CX=150, CY=150;
-
-function drawClock(rel){
- ctx.clearRect(0,0,300,300);
- // jam
- ctx.beginPath(); ctx.arc(CX,CY,R,0,Math.PI*2); ctx.fillStyle="#f8fafc"; ctx.fill();
- ctx.fillStyle="#111"; ctx.font="bold 14px system-ui"; ctx.textAlign="center";
- for(let i=1;i<=12;i++){
-   let ang=i*30-90; let rad=ang*Math.PI/180;
-   let x=CX+Math.cos(rad)*(R-20), y=CY+Math.sin(rad)*(R-20)+5;
-   ctx.fillText(i,x,y);
- }
- // jarum kiblat
- ctx.save(); ctx.translate(CX,CY); ctx.rotate(rel*Math.PI/180);
- ctx.fillStyle="#dc2626"; ctx.beginPath(); ctx.moveTo(0,-R+30); ctx.lineTo(-8,0); ctx.lineTo(8,0); ctx.closePath(); ctx.fill();
- ctx.fillStyle="#10b981"; ctx.beginPath(); ctx.arc(0,0,8,0,Math.PI*2); ctx.fill();
- ctx.restore();
- // Ka'bah icon
- ctx.save(); ctx.translate(CX,CY); ctx.rotate(rel*Math.PI/180);
- ctx.font="20px serif"; ctx.fillText("🕋",0,-R+8);
- ctx.restore();
-}
-
-function update(){
- if(heading==null) return;
- let rel=QIBLA-heading;
- drawClock(rel);
- let diff=((rel+180)%360+360)%360-180;
- document.getElementById('reading').textContent=Math.abs(diff)<5?"✅ PAS KIBLAT":`Kiblat ${QIBLA.toFixed(1)}° | Belok ${diff.toFixed(0)}°`;
-}
-
-// Sensor kompas/magnetometer (HANYA arah, bukan GPS)
-function onOrient(e){
- let h=e.webkitCompassHeading ?? (e.alpha!=null?(360-e.alpha)%360:null);
- if(h!=null){ heading=h; update(); }
-}
-
-document.getElementById('btn').onclick=()=>{
- if(DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission){
-   DeviceOrientationEvent.requestPermission().then(s=>{
-     if(s==='granted'){ window.addEventListener('deviceorientation',onOrient,true); window.addEventListener('deviceorientationabsolute',onOrient,true); document.getElementById('btn').style.display='none'; }
-   });
- }else{
-   window.addEventListener('deviceorientationabsolute',onOrient,true);
-   window.addEventListener('deviceorientation',onOrient,true);
-   document.getElementById('btn').style.display='none';
- }
-};
-drawClock(0);
-</script>
-<script src="/alwi_bubble4.js"></script>
-</body>
-</html>
->>>>>>> 7df0fd5 (heli game menu di tdhel + peta kabah + kompas kiblat online + bersihkan sampah)
