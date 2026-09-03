@@ -16,3 +16,6 @@ NURgenerator/
 *.apk
 *.idsig
 version.txt
+.env
+.env.local
+node_modules/
