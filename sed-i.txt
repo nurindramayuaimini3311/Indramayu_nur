@@ -1,4 +1,0 @@
-# GANTI LINK BARU - TEMPLATE
-BARU="https://LINK-BARU-KAMU.trycloudflare.com"
-LAMA="collected-chess-supplier-helps.trycloudflare.com"
-cd ~/Indramayu_nur && sed -i "s|$LAMA|$(echo $BARU | sed 's|https://||')|g" $(grep -rl "$LAMA" . --include="*.html" --include="*.js" 2>/dev/null); echo "Ganti $LAMA -> $BARU DONE"
