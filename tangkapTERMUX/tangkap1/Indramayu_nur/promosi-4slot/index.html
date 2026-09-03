@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIVE PROMOSI — 4 Kontainer Webcam</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --emas:#d97706; --emas-terang:#f59e0b;
+  --bg-muda:#f0f7ff; --card-bg:#ffffff;
+  --border:#3b82f6; --border-sub:#cbd5e1;
+  --text-utama:#0f172a; --text-biru:#1e40af;
+  --merah:#dc2626; --hijau:#16a34a;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',sans-serif;min-height:100vh;background:linear-gradient(180deg,#ffffff 0%,#eef6ff 100%);color:var(--text-utama);overflow-x:hidden}
+#screen-live{max-width:560px;margin:0 auto;padding:16px 12px 60px}
+.badge{display:inline-block;background:linear-gradient(135deg,var(--emas),#b45309);color:#fff;font-size:10px;font-weight:900;padding:5px 16px;border-radius:20px;letter-spacing:1.5px;margin-bottom:6px}
+.header{text-align:center;margin-bottom:14px}
+.header h1{font-family:'Cinzel',serif;font-size:18px;color:var(--text-biru);font-weight:900;letter-spacing:1px}
+.header .sub{font-size:11px;color:#475569;font-weight:700;margin-top:2px}
+.g-line{width:60px;height:3px;margin:8px auto;background:linear-gradient(90deg,var(--emas),var(--border),var(--emas));border-radius:2px}
+.server-box{background:#fff;border:2px solid #bfdbfe;border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.s-dot{width:10px;height:10px;border-radius:50%;background:var(--hijau);flex-shrink:0;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.s-text{color:var(--text-biru);font-weight:800;flex:1;font-size:12px}
+.panggung-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.panggung-grid iframe{width:100%;border:none;height:230px;border-radius:14px}
+.btn-prop{background:linear-gradient(180deg,#ffffff,#f1f5f9);border:2.5px solid var(--emas-terang);color:var(--text-utama);font-size:13px;font-weight:900;padding:10px 4px;border-radius:12px;box-shadow:0 3px 8px rgba(245,158,11,0.25);cursor:pointer;text-align:center}
+.btn-prop:active{transform:scale(0.92)}
+.gift-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.log-box{background:#fff;border:2px solid var(--border-sub);border-radius:12px;padding:10px;height:110px;overflow:auto;font-size:11px;font-weight:700;margin-bottom:14px}
+.log-item{margin-bottom:4px;color:#334155}
+.log-item span{color:var(--text-biru);font-weight:900}
+.toast-box{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--text-utama);color:#fff;padding:10px 18px;border-radius:30px;font-size:12px;font-weight:900;box-shadow:0 6px 20px rgba(0,0,0,0.25);border:2px solid var(--emas-terang)}
+</style>
+</head>
+<body>
+</div>
+      <a href="../index.html" class="btn btn-biru" style="text-decoration:none">🏠 balik</a>
+    </div>
+<div id="screen-live">
+  <div class="header">
+    <div class="badge">🔴 LIVE PROMOSI • AKSES BEBAS</div>
+    <h1>👑🕌 INDRAMAYU CLUB</h1>
+    <div class="sub">Live Streaming — 4 Kontainer, Tanpa Login</div>
+    <div class="g-line"></div>
+  </div>
+
+  <div class="server-box"><div class="s-dot"></div><div class="s-text">🟢 Server Online • Akses Bebas • No Password</div></div>
+
+  <div style="font-size:11px;color:var(--text-biru);letter-spacing:1px;margin-bottom:8px;font-weight:900">🎭 PANGGUNG LIVE — 4 SLOT</div>
+  <div class="panggung-grid">
+    <iframe id="if-anda" src="slot-1-anda.html?id=anda&nama=Anda&ava=🙂&self=1"></iframe>
+    <iframe id="if-imah" src="slot-2-imah.html?id=imah&nama=Imah%20Azzah&ava=👸&self=0"></iframe>
+    <iframe id="if-nur" src="slot-3-nur.html?id=nur&nama=Nur%20Generator&ava=🤖&self=0"></iframe>
+    <iframe id="if-club" src="slot-4-club.html?id=club&nama=Indramayu%20Club&ava=🕌&self=0"></iframe>
+  </div>
+
+  <div style="font-size:11px;color:var(--text-biru);letter-spacing:1px;margin-bottom:8px;font-weight:900">🎁 LEMPAR PROPERTI</div>
+  <div class="gift-grid">
+    <div class="btn-prop" onclick="lempar('💎','#00e5ff')">💎 10</div>
+    <div class="btn-prop" onclick="lempar('🌹','#ff4d94')">🌹 5</div>
+    <div class="btn-prop" onclick="lempar('🔥','#ff9100')">🔥 15</div>
+    <div class="btn-prop" onclick="lempar('🚀','#7c4dff')">🚀 50</div>
+  </div>
+
+  <div class="log-box" id="logBox"></div>
+</div>
+
+<div class="toast-box" id="toastBox"></div>
+
+<script>
+const SLOT_IDS = ['imah', 'nur', 'club']; // target lempar = selain "anda"
+
+function addLog(t, p) {
+  const b = document.getElementById('logBox');
+  const i = document.createElement('div');
+  i.className = 'log-item';
+  i.innerHTML = `<span>[${t}]</span> ${new Date().toLocaleTimeString('id')} — ${p}`;
+  b.appendChild(i);
+  b.scrollTop = b.scrollHeight;
+}
+
+function toast(p) {
+  const b = document.getElementById('toastBox');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = p;
+  b.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+function lempar(emoji, warna) {
+  const target = SLOT_IDS[Math.floor(Math.random() * SLOT_IDS.length)];
+  const frame = document.getElementById('if-' + target);
+  frame.contentWindow.postMessage({ type: 'gift', targetId: target, emoji, warna }, '*');
+  addLog('PROPERTI', `${emoji} → ${target}`);
+  toast(`${emoji} Terkirim!`);
+}
+
+window.addEventListener('message', (e) => {
+  const d = e.data || {};
+  if (d.type === 'live-status') {
+    addLog('SYSTEM', `${d.id} sekarang ${d.live ? '🔴 LIVE' : '⚫ Standby'}`);
+  } else if (d.type === 'error') {
+    toast('❌ ' + d.message);
+  }
+});
+
+addLog('SYSTEM', '✅ Halaman live siap — akses bebas, tanpa login');
+</script><script src="../alwi_bubble4.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>

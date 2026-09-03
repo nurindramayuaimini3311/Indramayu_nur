@@ -1,0 +1,267 @@
+ <!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Berburu Hantu Real - Foto Asli & Alwi Granle</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#fff;font-family:system-ui, sans-serif;overflow:hidden;height:100vh;width:100vw}
+#wrap{position:relative;width:100vw;height:100vh;background:#080f08;overflow:hidden}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+canvas#game{position:absolute;inset:0;width:100%;height:100%;z-index:2;touch-action:none}
+#fog{position:absolute;inset:0;background:radial-gradient(circle, rgba(255,255,255,0.85) 0%, rgba(200,200,200,0.95) 70%, #fff 100%);opacity:0;z-index:15;pointer-events:none;transition:opacity 1.5s ease-in-out}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;z-index:20;pointer-events:none;transition:opacity .12s}
+#msg{position:absolute;top:28%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.92);border:1px solid #0f0;padding:12px 20px;border-radius:12px;font-weight:800;opacity:0;z-index:18;transition:.3s;pointer-events:none;text-align:center;box-shadow:0 0 20px rgba(0,255,0,.3);font-size:14px}
+#msg.show{opacity:1}
+.top{position:absolute;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:linear-gradient(to bottom,rgba(0,0,0,.9),transparent);pointer-events:none}
+.pill{background:rgba(0,255,100,.18);border:1px solid rgba(0,255,100,.5);padding:6px 10px;border-radius:20px;font-size:11px;font-weight:700;backdrop-filter:blur(6px)}
+#alwiBanner{position:absolute;top:56px;left:50%;transform:translateX(-50%);background:rgba(0,120,255,0.8);border:1px solid #0ff;padding:4px 14px;border-radius:15px;font-size:11px;font-weight:bold;z-index:5;letter-spacing:1px;box-shadow:0 0 10px rgba(0,255,255,0.5)}
+.bottom{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:14px;display:flex;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(to top,rgba(0,0,0,.95),transparent)}
+.row{display:flex;gap:12px;align-items:center}
+.btn{padding:10px 18px;border-radius:24px;border:1px solid rgba(0,255,100,.6);background:rgba(0,0,0,.6);color:#0f0;font-weight:700;font-size:12px}
+#shutter{width:70px;height:70px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,#ddd);border:4px solid #0f0;font-size:24px;box-shadow:0 0 22px rgba(0,255,0,.5)}
+#start{position:absolute;inset:0;z-index:30;background:radial-gradient(ellipse at center,#0f2e0f 0%,#000 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+#start h1{color:#0f0;text-shadow:0 0 18px #0f0;font-size:24px}
+#start p{max-width:320px;font-size:12px;opacity:.85;line-height:1.4;margin-top:10px}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <video id="vid" autoplay playsinline muted></video>
+  <canvas id="game"></canvas>
+  <div id="fog"></div>
+  <div id="flash"></div>
+  <div id="msg"></div>
+  <div id="alwiBanner">🛡️ ALWI GRANLE SIAP MELAWAN HANTU</div>
+  
+  <div class="top">
+    <div class="pill">👻 Skor: <span id="sc">0</span></div>
+    <div class="pill">⏳ Waktu: <span id="tm">0</span>s</div>
+    <div class="pill">🎯 Tangkap: <span id="cp">0</span></div>
+  </div>
+
+  <div class="bottom">
+    <div class="row">
+      <button class="btn" id="shutter">📷 TANGKAP</button>
+      <button class="btn" id="flip">🔄 KAMERA</button>
+    </div>
+    <div style="font-size:10px;opacity:.6;text-align:center">Tap foto hantu di layar / tombol shutter.<br>Tidak di-touch = hantu kabur aman (skor tidak turun)!</div>
+  </div>
+
+  <div id="start">
+    <h1>📷 KAMERA HANTU FOTO ASLI & ALWI</h1>
+    <p><b>Misi Real Time Berdasarkan Waktu:</b><br>0-15s: Pocong<br>15-30s: 2 Genderuwo<br>30-45s: Tuyul<br>45s+: Kumpulan Hantu Akhir!</p>
+    <button id="go" style="margin-top:20px;padding:14px 32px;border-radius:30px;background:#0f0;color:#000;font-weight:900;border:none;font-size:14px;box-shadow:0 0 20px #0f0">MULAI SEKARANG 🔦</button>
+  </div>
+</div>
+
+<script>
+const vid = document.getElementById('vid'), cvs = document.getElementById('game'), ctx = cvs.getContext('2d');
+let W, H, score = 0, caught = 0, facing = 'environment', stream = null;
+let ghosts = [], startTime = 0, gameActive = false, currentPhase = '';
+
+// Muat aset foto hantu asli dari file yang Anda berikan
+const ghostImages = {
+  pocong: new Image(),
+  genderuwo: new Image(),
+  tuyul: new Image(),
+  kunti: new Image()
+};
+
+// Sesuaikan nama file gambar dengan yang tersimpan di folder Anda
+ghostImages.pocong.src = '1000048832.jpg';
+ghostImages.genderuwo.src = '1000048845.jpg';
+ghostImages.tuyul.src = '1000048829.jpg';
+ghostImages.kunti.src = '1000048825.jpg';
+
+function resize() { W = cvs.width = window.innerWidth; H = cvs.height = window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+
+async function initCam(f) {
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: f }, audio: false });
+    vid.srcObject = stream;
+  } catch (e) {
+    showMsg('Kamera dibatasi - Mode simulasi aktif');
+  }
+}
+
+function showMsg(t) {
+  const m = document.getElementById('msg');
+  m.textContent = t;
+  m.classList.add('show');
+  setTimeout(() => m.classList.remove('show'), 1600);
+}
+
+// Trigger efek kabut putih tebal sebelum hantu muncul
+function triggerFogEffect(callback) {
+  const fog = document.getElementById('fog');
+  fog.style.opacity = '1';
+  setTimeout(() => {
+    if(callback) callback();
+    setTimeout(() => {
+      fog.style.opacity = '0';
+    }, 1000);
+  }, 1200);
+}
+
+class Ghost {
+  constructor(type, x, y) {
+    this.type = type;
+    this.x = x;
+    this.y = y;
+    this.width = 110;
+    this.height = 140;
+    this.born = Date.now();
+    this.life = 8000; // 8 detik di layar sebelum kabur tanpa kurangi skor
+  }
+  draw() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    
+    let img = ghostImages[this.type];
+    if (img && img.complete && img.naturalWidth !== 0) {
+      // Gambar foto asli hantu di layar
+      ctx.drawImage(img, -this.width/2, -this.height/2, this.width, this.height);
+    } else {
+      // Cadangan jika gambar belum termuat sempurna
+      ctx.fillStyle = '#444';
+      ctx.fillRect(-this.width/2, -this.height/2, this.width, this.height);
+    }
+    
+    // Efek Kerangka Hijau Kamera Pemburu di atas foto hantu
+    ctx.strokeStyle = '#00ff41'; ctx.lineWidth = 2.5;
+    ctx.strokeRect(-this.width/2, -this.height/2, this.width, this.height);
+
+    ctx.restore();
+  }
+  hit(mx, my) {
+    return (mx >= this.x - this.width/2 && mx <= this.x + this.width/2 &&
+            my >= this.y - this.height/2 && my <= this.y + this.height/2);
+  }
+}
+
+function spawnWave(elapsed) {
+  let phase = '';
+  if (elapsed < 15) phase = 'pocong';
+  else if (elapsed >= 15 && elapsed < 30) phase = 'genderuwo';
+  else if (elapsed >= 30 && elapsed < 45) phase = 'tuyul';
+  else phase = 'kumpulan';
+
+  if (phase !== currentPhase) {
+    currentPhase = phase;
+    triggerFogEffect(() => {
+      ghosts = []; 
+      if (phase === 'pocong') {
+        ghosts.push(new Ghost('pocong', W / 2, H / 2 - 30));
+        showMsg('⚠️ AWAS! POCONG MUNCUL!');
+      } else if (phase === 'genderuwo') {
+        ghosts.push(new Ghost('genderuwo', W / 3, H / 2 - 30));
+        ghosts.push(new Ghost('genderuwo', (W / 3) * 2, H / 2 - 30));
+        showMsg('⚠️ 2 GENDERUWO MUNCUL!');
+      } else if (phase === 'tuyul') {
+        ghosts.push(new Ghost('tuyul', W / 2, H / 2 - 30));
+        showMsg('⚠️ TUYUL BERKELIARAN!');
+      } else if (phase === 'kumpulan') {
+        ghosts.push(new Ghost('pocong', W / 3, H / 2 - 40));
+        ghosts.push(new Ghost('genderuwo', (W / 3) * 2, H / 2 - 40));
+        ghosts.push(new Ghost('kunti', W / 2, H / 2 + 50));
+        showMsg('🔥 FASE AKHIR: KUMPULAN HANTU!');
+      }
+    });
+  }
+}
+
+function loop() {
+  if (!gameActive) return;
+  ctx.clearRect(0, 0, W, H);
+
+  let elapsed = Math.floor((Date.now() - startTime) / 1000);
+  document.getElementById('tm').textContent = elapsed;
+
+  spawnWave(elapsed);
+
+  let now = Date.now();
+  ghosts = ghosts.filter(g => {
+    if (now - g.born > g.life) return false; // Kabur otomatis tanpa kurangi skor
+    g.draw();
+    return true;
+  });
+
+  // Teks Status Alwi Granle di Layar
+  ctx.save();
+  ctx.fillStyle = '#00ffff';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.shadowColor = '#00ffff'; ctx.shadowBlur = 8;
+  ctx.fillText('🛡️ ALWI GRANLE (AKTIF MELAWAN)', 20, H - 70);
+  ctx.restore();
+
+  requestAnimationFrame(loop);
+}
+
+function capture(mx, my) {
+  const flash = document.getElementById('flash');
+  flash.style.opacity = .9; setTimeout(() => flash.style.opacity = 0, 120);
+
+  let x = mx ?? W / 2, y = my ?? H / 2;
+  let hitIndex = -1;
+  for (let i = 0; i < ghosts.length; i++) {
+    if (ghosts[i].hit(x, y)) { hitIndex = i; break; }
+  }
+
+  if (hitIndex !== -1) {
+    ghosts.splice(hitIndex, 1);
+    score += 150; caught++;
+    document.getElementById('sc').textContent = score;
+    document.getElementById('cp').textContent = caught;
+    showMsg('✅ BERHASIL DITANGKAP OLEH ALWI GRANLE!');
+    if (navigator.vibrate) navigator.vibrate(80);
+  } else {
+    showMsg('❌ Meleset! Arahkan ke foto hantu.');
+  }
+}
+
+document.getElementById('shutter').onclick = () => capture();
+cvs.addEventListener('click', e => {
+  const r = cvs.getBoundingClientRect();
+  capture(e.clientX - r.left, e.clientY - r.top);
+});
+
+document.getElementById('flip').onclick = () => {
+  facing = facing === 'environment' ? 'user' : 'environment';
+  initCam(facing);
+};
+
+document.getElementById('go').onclick = async () => {
+  document.getElementById('start').style.display = 'none';
+  await initCam(facing);
+  startTime = Date.now();
+  gameActive = true;
+  loop();
+};
+</script>
+
+<script>
+(function(){
+const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
+let p=location.pathname; let i=PAGES.indexOf(p);
+if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));
+if(i<0) i=0;
+let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
+let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+L.href=prev; R.href=next;
+let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
+[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
+let sx=0;
+document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
+if(location.pathname.includes('alwiSD')){
+ let s=document.createElement('style');s.innerHTML="#alwi-rl a{animation:bob 0.7s infinite alternate} @keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-8px) scale(1.1)}}";document.head.appendChild(s);
+}
+})();
+</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>
+

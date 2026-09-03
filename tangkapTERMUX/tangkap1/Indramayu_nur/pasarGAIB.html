@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasar Gaib Parang Dosa - Novel Horor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=MedievalSharp&family=Spectral:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0c10;
+            --bg-card: #121620;
+            --accent-red: #8b0000;
+            --accent-glow: #ff3333;
+            --gold-accent: #c9a050;
+            --text-main: #d1d5db;
+            --text-dim: #8a93a0;
+            --border-color: #2a303c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Spectral', serif;
+            line-height: 1.8;
+            font-size: 1.15rem;
+            padding: 20px 15px;
+            background-image: 
+                radial-gradient(circle at 50% 0%, #1a0505 0%, transparent 75%),
+                radial-gradient(circle at 50% 100%, #050a12 0%, transparent 75%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            background: rgba(18, 22, 32, 0.85);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 15px rgba(139, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        header::after {
+            content: '✦ ✦ ✦';
+            position: absolute;
+            bottom: -13px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            padding: 0 15px;
+            color: var(--gold-accent);
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+        }
+
+        .tagline {
+            font-family: 'MedievalSharp', cursive;
+            color: var(--gold-accent);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            color: #f3f4f6;
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-shadow: 0 0 10px rgba(255, 51, 51, 0.4);
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        .chapter {
+            margin-bottom: 45px;
+        }
+
+        .chapter-title {
+            font-family: 'Cinzel', serif;
+            color: var(--gold-accent);
+            font-size: 1.4rem;
+            border-left: 3px solid var(--accent-red);
+            padding-left: 12px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        p {
+            margin-bottom: 18px;
+            text-align: justify;
+            text-indent: 2em;
+        }
+
+        p:first-of-type::first-letter {
+            font-family: 'Cinzel', serif;
+            font-size: 3.2rem;
+            float: left;
+            line-height: 0.8;
+            margin-right: 8px;
+            color: var(--accent-glow);
+            font-weight: 700;
+        }
+
+        blockquote {
+            background: rgba(139, 0, 0, 0.15);
+            border-left: 4px solid var(--accent-red);
+            margin: 25px 0;
+            padding: 15px 20px;
+            font-style: italic;
+            color: #f87171;
+            border-radius: 0 6px 6px 0;
+            text-indent: 0;
+        }
+
+        .dialogue {
+            color: #e5e7eb;
+        }
+
+        .jawa-phrase {
+            font-style: italic;
+            color: #f39c12;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            font-family: 'MedievalSharp', cursive;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px 18px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .chapter-title {
+                font-size: 1.2rem;
+            }
+            body {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="tagline">Kisah Horor Nusantara</div>
+            <h1>Pasar Gaib Parang Dosa</h1>
+            <div class="subtitle">Misteri Malam Jumat Kliwon & Pertemuan Tak Kasat Mata</div>
+        </header>
+
+        <article>
+            <!-- BAB 1 -->
+            <section class="chapter">
+                <h2 class="chapter-title">Bab 1: Lampion Lemah di Tengah Kabut</h2>
+                <p>Malam Jumat Kliwon di pinggiran Desa Karang Anjar selalu terasa lebih dingin dari biasanya. Kabut tebal turun dari lereng gunung, menyelimuti deretan rumah joglo tua yang kayu-kayunya sudah mulai lapuk ditelan usia.</p>
+                <p>Bagong mengusap tengkuknya yang tiba-tiba merinding. Di tangannya, sebuah lampu tempel minyak tanah berkedip-kedip pasrah, menebarkan cahaya kekuningan yang tak mampu menembus pekatnya kegelapan di hadapan mereka.</p>
+                <p class="dialogue"><span class="jawa-phrase">"Thole... kowe ngrasakake ora?"</span> bisik Bagong dengan suara gemetar, melirik ke arah Petruk yang berjalan paling depan.</p>
+                <p class="dialogue">Petruk tidak langsung menjawab. Hidung mancungnya yang khas tampak mencium udara malam yang mendadak berubah menjadi manis busuk—bau perpaduan bunga kantil mati dan kemenyan terbakar. <span class="jawa-phrase">"Mambu kembang kantil, Gong... Tapi iki dudu ing kuburan."</span></p>
+                <p class="dialogue">Di belakang mereka, Gareng memeluk erat sarungnya, kakinya yang pincang melangkah makin rapat. <span class="jawa-phrase">"Mending balik, Cuk! Iki dudu dalan menyang desa. Pos ronda sing mau ditinggal wae wis ilang!"</span></p>
+                <p>Langkah ketiganya terhenti seketika saat bayangan besar berdiri di depan pintu gerbang kayu kuno yang penuh ukiran lambang Jawa kuno. Pintu gerbang itu tidak berada di sana tadi sore. Di atasnya, tergantung papan kayu bertuliskan huruf Jawa yang berpendar merah redup.</p>
+            </section>
+
+            <!-- BAB 2 -->
+            <section class="chapter">
+                <h2 class="chapter-title">Bab 2: Transaksi Tanpa Bayangan</h2>
+                <p class="dialogue"><span class="jawa-phrase">"Sugeng rawuh ing Pasar Gaib..."</span> sebuah suara parau bergema dari balik kabut.</p>
+                <p>Sesosok figur berkulit pucat pasi seperti mayat berjalan melayang mendekati mereka. Matanya hitam pekat tanpa bagian putih, tersenyum lebar hingga melampaui batas wajarnya. Di belakang figur tersebut, samar-samar terlihat keramaian yang aneh. Lapak-lapak kayu yang menjajakan barang-barang tak lazim: pusaka berkarat yang berbisik sendiri, minyak mistik dalam botol tengkorak, hingga kuali berisi cairan hitam yang mengepulkan asap bercahaya.</p>
+                <p>Para pedagang dan pembeli di pasar itu berjalan tanpa menapak tanah, dan yang paling mengerikan: <strong>mereka tidak memiliki bayangan.</strong></p>
+                <p class="dialogue"><span class="jawa-phrase">"Piro regane keris iki, Mbah?"</span> tanya seorang pembeli berwujud bayangan hitam tinggi besar.</p>
+                <p class="dialogue"><span class="jawa-phrase">"Cukup telung tetes getihmu..."</span> jawab sang pedagang dengan tawa melengking.</p>
+                <p class="dialogue">Gareng langsung menutup mulutnya agar tidak berteriak. <span class="jawa-phrase">"Gong, Ruk... iki dudu pasar biasa. Iki Pasar Gaib! Yen kita sampai nransaksi ing kene, nyawa kita sing dadi jaminane!"</span></p>
+            </section>
+
+            <!-- BAB 3 -->
+            <section class="chapter">
+                <h2 class="chapter-title">Bab 3: Teror Pintu Gapura</h2>
+                <p>Saat ketiganya mencoba berbalik arah untuk melarikan diri, jalan setapak di belakang mereka telah lenyap, berganti menjadi tembok pagar batu tinggi tanpa ujung. Dari balik bayangan pos gapura tua, tiga sosok berwujud persis seperti Bagong, Petruk, dan Gareng berjalan keluar. Namun, wajah sosok-sosok itu hancur, tersenyum jahat dengan mata melotot merah.</p>
+                <p>Kembaran gaib itu berbisik lirik dengan suara dingin yang menusuk tulang:</p>
+                
+                <blockquote>
+                    "Gantian jaga gapura ya, Cuk..."
+                </blockquote>
+
+                <p class="dialogue">Bagong gemetar hebat, mengangkat lampu tempelnya tinggi-tinggi. <span class="jawa-phrase">"Ruk! Piye iki?! Dheweke panjaluk nyawa!"</span></p>
+                <p>Petruk memejamkan mata rapat-rapat, merogoh kantong baju batiknya dan menarik sebuah tasbih kayu tua peninggalan sang Guru. Ia mulai merapalkan doa penyembuh dan pelindung dengan suara nyaring, memecah kesunyian malam yang mencekam.</p>
+                <p><em>Pseeeetttt!</em></p>
+                <p>Cahaya putih berkilauan mendadak memancar dari tasbih tersebut, menghantam bayangan-bayangan gaib di depan mereka. Pintu gapura bergetar hebat, terdistorsi seperti pusaran air sebelum akhirnya runtuh menjadi kabut tipis.</p>
+            </section>
+
+            <!-- BAB 4 -->
+            <section class="chapter">
+                <h2 class="chapter-title">Bab 4: Fajar di Karang Anjar</h2>
+                <p><em>Kukuruyukkk!</em></p>
+                <p>Suara ayam jantan bersahut-sahutan dari kejauhan. Cahaya kemerahan fajar menyapu lereng gunung.</p>
+                <p>Bagong, Petruk, dan Gareng terbangun di atas tanah basah di bawah pohon beringin tua tepi desa. Pasar gaib, gerbang kayu, dan sosok-sosok menyeramkan tadi malam telah lenyap tanpa bekas. Hanya tertinggal aroma kemenyan tipis yang terbawa angin pagi.</p>
+                <p class="dialogue"><span class="jawa-phrase">"Selamet... kita iso bali,"</span> gumam Gareng sambil mengelus dadanya.</p>
+                <p>Namun, saat Bagong melihat ke bawah tanah, matanya melotot. Bayangan tubuh mereka bertiga di tanah pagi itu... <strong>tampak sangat tipis dan hampir tak terlihat.</strong></p>
+            </section>
+        </article>
+
+        <footer>
+            &copy; 2026 - Serial Cerita Horor Punokawan
+        </footer>
+    </div>
+
+
+
+<script>
+(function(){
+const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
+let p=location.pathname; let i=PAGES.indexOf(p);
+if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));
+if(i<0) i=0;
+let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
+let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+L.href=prev; R.href=next;
+let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
+[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
+let sx=0;
+document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
+if(location.pathname.includes('alwiSD')){
+ let s=document.createElement('style');s.innerHTML="#alwi-rl a{animation:bob 0.7s infinite alternate} @keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-8px) scale(1.1)}}";document.head.appendChild(s);
+}
+})();
+</script><script src="alwi_bubble4.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>
+

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Stick Ninja 🥷</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            background: #0a0f1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+            touch-action: none;
+            overflow: hidden;
+        }
+        .game-container {
+            background: #141c2b;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 0 40px rgba(0, 150, 255, 0.15);
+            max-width: 420px;
+            width: 100%;
+            margin: 10px;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1/1.6;
+            background: #0d1421;
+            border-radius: 16px;
+            touch-action: none;
+            cursor: pointer;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6);
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 4px 14px 4px;
+            color: #b0c7e7;
+            font-size: 15px;
+            font-weight: bold;
+        }
+        .top-bar span {
+            background: #1a2538;
+            padding: 4px 14px;
+            border-radius: 30px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .top-bar .score-label {
+            color: #facc15;
+        }
+        .level-indicator {
+            color: #7aa9ff;
+        }
+        .btn-reset {
+            background: #1e2b42;
+            border: none;
+            color: #ffb347;
+            font-size: 18px;
+            padding: 0 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 0 #0a0f1a;
+            transition: 0.1s ease;
+            touch-action: manipulation;
+        }
+        .btn-reset:active {
+            transform: scale(0.92);
+            background: #2a3a55;
+        }
+        .hint {
+            color: #5b7a9e;
+            font-size: 11px;
+            text-align: center;
+            padding-top: 12px;
+            letter-spacing: 0.5px;
+        }
+        .hint i {
+            font-style: normal;
+            display: inline-block;
+            animation: pulse 1.8s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+        .footer-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 14px;
+            gap: 8px;
+        }
+        .footer-nav a {
+            flex: 1;
+            text-align: center;
+            background: #1a2538;
+            color: #7a9bcb;
+            text-decoration: none;
+            padding: 8px 0;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: bold;
+            transition: 0.15s;
+            box-shadow: 0 2px 0 #0b111e;
+            touch-action: manipulation;
+        }
+        .footer-nav a:active {
+            transform: scale(0.94);
+            background: #253349;
+        }
+        .footer-nav .active-page {
+            background: #2a3f60;
+            color: #ffd966;
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.15);
+        }
+        /* responsive fix */
+        @media (max-width: 460px) {
+            .game-container {
+                padding: 12px;
+                border-radius: 16px;
+            }
+            .top-bar {
+                font-size: 13px;
+                padding-bottom: 10px;
+            }
+            .btn-reset {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <span class="score-label">🏆 <span id="scoreDisplay">0</span></span>
+            <span class="level-indicator">🥷 Lv.<span id="levelDisplay">1</span>/7</span>
+            <button class="btn-reset" id="resetBtn">↺</button>
+        </div>
+
+        <!-- CANVAS GAME -->
+        <canvas id="gameCanvas" width="360" height="560"></canvas>
+
+        <!-- HINT -->
+        <div class="hint">
+            <i>⬇️ Tahan & tarik untuk lempar stik • ⬆️ lepas untuk menancap</i>
+        </div>
+
+        <!-- FOOTER NAVIGASI 7 HALAMAN (LEVEL) -->
+        <div class="footer-nav" id="levelNav">
+            <a href="#" data-level="1" class="active-page">1</a>
+            <a href="#" data-level="2">2</a>
+            <a href="#" data-level="3">3</a>
+            <a href="#" data-level="4">4</a>
+            <a href="#" data-level="5">5</a>
+            <a href="#" data-level="6">6</a>
+            <a href="#" data-level="7">7</a>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  STICK NINJA — 7 LEVEL (Halaman dalam 1 HTML)
+        // ============================================================
+
+        (function() {
+            'use strict';
+
+            // ---------- DOM ----------
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const scoreSpan = document.getElementById('scoreDisplay');
+            const levelSpan = document.getElementById('levelDisplay');
+            const resetBtn = document.getElementById('resetBtn');
+            const navLinks = document.querySelectorAll('#levelNav a');
+
+            // ---------- UKURAN CANVAS ----------
+            const W = 360,
+                H = 560;
+            canvas.width = W;
+            canvas.height = H;
+
+            // ---------- STATE ----------
+            const STATE = {
+                MENU: 0,
+                AIMING: 1,
+                FLYING: 2,
+                STUCK: 3,
+                GAMEOVER: 4
+            };
+
+            let currentLevel = 1; // 1..7
+            let score = 0;
+            let gameState = STATE.MENU;
+
+            // Data tiap level
+            const levels = [
+                null, // index 0 dummy
+                { // level 1
+                    stickCount: 3,
+                    targetCount: 1,
+                    targetRadius: 36,
+                    obstacleRadius: 0,
+                    bgColor: '#0d1421',
+                    targetColor: '#facc15',
+                    wallColor: '#2a3f60'
+                },
+                { // level 2
+                    stickCount: 4,
+                    targetCount: 1,
+                    targetRadius: 30,
+                    obstacleRadius: 0,
+                    bgColor: '#111b2b',
+                    targetColor: '#f97316',
+                    wallColor: '#2d4a6a'
+                },
+                { // level 3
+                    stickCount: 4,
+                    targetCount: 2,
+                    targetRadius: 28,
+                    obstacleRadius: 22,
+                    bgColor: '#141f30',
+                    targetColor: '#22d3ee',
+                    wallColor: '#1e3a5f'
+                },
+                { // level 4
+                    stickCount: 5,
+                    targetCount: 2,
+                    targetRadius: 26,
+                    obstacleRadius: 24,
+                    bgColor: '#1a1f2e',
+                    targetColor: '#a78bfa',
+                    wallColor: '#2a3f6a'
+                },
+                { // level 5
+                    stickCount: 5,
+                    targetCount: 2,
+                    targetRadius: 24,
+                    obstacleRadius: 30,
+                    bgColor: '#0f1a24',
+                    targetColor: '#fb7185',
+                    wallColor: '#1f4460'
+                },
+                { // level 6
+                    stickCount: 6,
+                    targetCount: 3,
+                    targetRadius: 22,
+                    obstacleRadius: 28,
+                    bgColor: '#121c2b',
+                    targetColor: '#4ade80',
+                    wallColor: '#1e4a5f'
+                },
+                { // level 7
+                    stickCount: 6,
+                    targetCount: 3,
+                    targetRadius: 20,
+                    obstacleRadius: 32,
+                    bgColor: '#0a121f',
+                    targetColor: '#f472b6',
+                    wallColor: '#2a3f70'
+                }
+            ];
+
+            // ---------- OBJEK GAME ----------
+            let sticks = []; // array {x, y, angle, stuck}
+            let targets = []; // array {x, y, r, hit}
+            let obstacles = []; // array {x, y, r}
+
+            // Variabel untuk aiming
+            let aimStartX = 0,
+                aimStartY = 0;
+            let aimEndX = 0,
+                aimEndY = 0;
+            let isDragging = false;
+            let activeStick = null; // stick yang sedang terbang
+
+            // ---------- FUNGSI LEVEL ----------
+            function loadLevel(level) {
+                const data = levels[level];
+                if (!data) return;
+
+                // Reset state
+                sticks = [];
+                targets = [];
+                obstacles = [];
+                gameState = STATE.MENU;
+                isDragging = false;
+                activeStick = null;
+
+                // Buat target(s)
+                const targetR = data.targetRadius;
+                const countTarget = data.targetCount;
+                const margin = 50;
+                for (let i = 0; i < countTarget; i++) {
+                    let x, y, overlap;
+                    let attempts = 0;
+                    do {
+                        x = margin + Math.random() * (W - margin * 2);
+                        y = 80 + Math.random() * (H - 160);
+                        overlap = targets.some(t => Math.hypot(t.x - x, t.y - y) < t.r + targetR + 18);
+                        attempts++;
+                    } while (overlap && attempts < 50);
+                    targets.push({ x, y, r: targetR, hit: false });
+                }
+
+                // Buat obstacle (jika ada)
+                if (data.obstacleRadius > 0) {
+                    const obsR = data.obstacleRadius;
+                    for (let i = 0; i < countTarget + 1; i++) {
+                        let x, y, overlap;
+                        let attempts = 0;
+                        do {
+                            x = 50 + Math.random() * (W - 100);
+                            y = 70 + Math.random() * (H - 140);
+                            overlap = targets.some(t => Math.hypot(t.x - x, t.y - y) < t.r + obsR + 20);
+                            if (!overlap) {
+                                overlap = obstacles.some(o => Math.hypot(o.x - x, o.y - y) < o.r + obsR + 15);
+                            }
+                            attempts++;
+                        } while (overlap && attempts < 40);
+                        if (!overlap) {
+                            obstacles.push({ x, y, r: obsR });
+                        }
+                    }
+                }
+
+                // Buat stik awal (belum ditancapkan)
+                const stickCount = data.stickCount;
+                for (let i = 0; i < stickCount; i++) {
+                    const angle = -Math.PI / 2 + (i - (stickCount - 1) / 2) * 0.18;
+                    const startX = 70;
+                    const startY = H - 50;
+                    sticks.push({
+                        x: startX,
+                        y: startY,
+                        angle: angle,
+                        stuck: false,
+                        flying: false,
+                        len: 64,
+                        targetX: 0,
+                        targetY: 0
+                    });
+                }
+
+                // update UI
+                levelSpan.textContent = level;
+                scoreSpan.textContent = score;
+                updateNavActive(level);
+            }
+
+            // ---------- NAVIGASI LEVEL ----------
+            function updateNavActive(level) {
+                navLinks.forEach(link => {
+                    const lv = parseInt(link.dataset.level, 10);
+                    if (lv === level) {
+                        link.classList.add('active-page');
+                    } else {
+                        link.classList.remove('active-page');
+                    }
+                });
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const lv = parseInt(this.dataset.level, 10);
+                    if (lv === currentLevel) return;
+                    currentLevel = lv;
+                    score = 0; // reset skor saat ganti level
+                    loadLevel(currentLevel);
+                });
+                link.addEventListener('touchstart', function(e) {
+                    // supaya tidak double fire
+                }, { passive: true });
+            });
+
+            // ---------- RESET ----------
+            resetBtn.addEventListener('click', function() {
+                score = 0;
+                loadLevel(currentLevel);
+            });
+            resetBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                score = 0;
+                loadLevel(currentLevel);
+            }, { passive: false });
+
+            // ---------- INPUT TOUCH / MOUSE ----------
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = W / rect.width;
+                const scaleY = H / rect.height;
+                let clientX, clientY;
+                if (e.touches) {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                } else {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                }
+                const x = (clientX - rect.left) * scaleX;
+                const y = (clientY - rect.top) * scaleY;
+                return { x: Math.min(Math.max(x, 0), W), y: Math.min(Math.max(y, 0), H) };
+            }
+
+            function handleStart(e) {
+                e.preventDefault();
+                if (gameState === STATE.GAMEOVER) {
+                    // reset jika game over
+                    score = 0;
+                    loadLevel(currentLevel);
+                    return;
+                }
+                // cek stik yang belum stuck
+                const freeStick = sticks.find(s => !s.stuck && !s.flying);
+                if (!freeStick) return;
+
+                const pos = getPos(e);
+                // mulai drag dari posisi stik
+                aimStartX = freeStick.x;
+                aimStartY = freeStick.y;
+                aimEndX = pos.x;
+                aimEndY = pos.y;
+                isDragging = true;
+                gameState = STATE.AIMING;
+            }
+
+            function handleMove(e) {
+                e.preventDefault();
+                if (!isDragging || gameState !== STATE.AIMING) return;
+                const pos = getPos(e);
+                aimEndX = pos.x;
+                aimEndY = pos.y;
+            }
+
+            function handleEnd(e) {
+                e.preventDefault();
+                if (!isDragging || gameState !== STATE.AIMING) {
+                    isDragging = false;
+                    return;
+                }
+                isDragging = false;
+
+                // cari stik bebas
+                const freeStick = sticks.find(s => !s.stuck && !s.flying);
+                if (!freeStick) {
+                    gameState = STATE.MENU;
+                    return;
+                }
+
+                // hitung arah lemparan
+                const dx = aimEndX - aimStartX;
+                const dy = aimEndY - aimStartY;
+                const dist = Math.hypot(dx, dy);
+                if (dist < 10) {
+                    gameState = STATE.MENU;
+                    return;
+                }
+
+                // lempar stik
+                const angle = Math.atan2(dy, dx);
+                const power = Math.min(dist / 2.5, 120);
+                const speed = 8 + power * 0.12;
+
+                freeStick.flying = true;
+                freeStick.angle = angle;
+                freeStick.vx = Math.cos(angle) * speed;
+                freeStick.vy = Math.sin(angle) * speed;
+                activeStick = freeStick;
+                gameState = STATE.FLYING;
+            }
+
+            // Event listener
+            canvas.addEventListener('mousedown', handleStart);
+            canvas.addEventListener('mousemove', handleMove);
+            canvas.addEventListener('mouseup', handleEnd);
+            canvas.addEventListener('mouseleave', handleEnd);
+
+            canvas.addEventListener('touchstart', handleStart, { passive: false });
+            canvas.addEventListener('touchmove', handleMove, { passive: false });
+            canvas.addEventListener('touchend', handleEnd, { passive: false });
+            canvas.addEventListener('touchcancel', handleEnd, { passive: false });
+
+            // ---------- UPDATE & PHYSICS ----------
+            function updateGame() {
+                if (gameState === STATE.FLYING && activeStick) {
+                    const s = activeStick;
+                    s.x += s.vx;
+                    s.y += s.vy;
+                    // gravitasi ringan
+                    s.vy += 0.15;
+
+                    // rotasi mengikuti arah
+                    s.angle = Math.atan2(s.vy, s.vx);
+
+                    // cek tabrakan dengan target
+                    let hitTarget = false;
+                    for (let t of targets) {
+                        if (t.hit) continue;
+                        const distToTarget = Math.hypot(s.x - t.x, s.y - t.y);
+                        if (distToTarget < t.r + 6) {
+                            t.hit = true;
+                            hitTarget = true;
+                            score++;
+                            scoreSpan.textContent = score;
+                            // efek partikel (opsional)
+                            spawnParticles(t.x, t.y, t.r);
+                            break;
+                        }
+                    }
+
+                    // cek tabrakan dengan obstacle
+                    let hitObstacle = false;
+                    for (let o of obstacles) {
+                        const distToObs = Math.hypot(s.x - o.x, s.y - o.y);
+                        if (distToObs < o.r + 6) {
+                            hitObstacle = true;
+                            break;
+                        }
+                    }
+
+                    // cek batas tembok
+                    const hitWall = (s.x < 4 || s.x > W - 4 || s.y < 4 || s.y > H - 4);
+
+                    if (hitTarget || hitObstacle || hitWall) {
+                        // stik menancap / gagal
+                        s.stuck = true;
+                        s.flying = false;
+                        activeStick = null;
+
+                        if (hitTarget) {
+                            // berhasil menancap di target
+                            s.stuck = true;
+                            // lanjut
+                        } else {
+                            // gagal: stik hilang / patah
+                            // kita tandai stuck agar tidak dipakai lagi
+                            s.stuck = true;
+                        }
+
+                        // cek apakah semua target sudah terkena
+                        const allHit = targets.every(t => t.hit);
+                        if (allHit) {
+                            gameState = STATE.GAMEOVER;
+                            // tampilkan pesan menang
+                            setTimeout(() => {
+                                alert('🎉 Selamat! Level ' + currentLevel + ' selesai!');
+                                // naik level jika belum 7
+                                if (currentLevel < 7) {
+                                    currentLevel++;
+                                    score = 0;
+                                    loadLevel(currentLevel);
+                                } else {
+                                    alert('🏆 Kamu menyelesaikan semua level! Luar biasa!');
+                                    currentLevel = 1;
+                                    score = 0;
+                                    loadLevel(1);
+                                }
+                            }, 200);
+                            return;
+                        }
+
+                        // cek apakah masih ada stik tersisa
+                        const hasFreeStick = sticks.some(s => !s.stuck && !s.flying);
+                        if (!hasFreeStick) {
+                            // cek jika belum semua target kena -> game over
+                            if (!targets.every(t => t.hit)) {
+                                gameState = STATE.GAMEOVER;
+                                setTimeout(() => {
+                                    alert('💥 Stik habis! Coba lagi.');
+                                    score = 0;
+                                    loadLevel(currentLevel);
+                                }, 300);
+                            }
+                        } else {
+                            gameState = STATE.MENU;
+                        }
+                    }
+                }
+
+                // update posisi stik yang stuck di target (ikut target bergerak? tidak)
+                // stik menancap diam
+            }
+
+            // ---------- EFEK PARTIKEL ----------
+            let particles = [];
+
+            function spawnParticles(x, y, r) {
+                const colors = ['#facc15', '#ffb347', '#ff6b6b', '#22d3ee', '#a78bfa'];
+                for (let i = 0; i < 18; i++) {
+                    const angle = Math.random() * 2 * Math.PI;
+                    const speed = 1.5 + Math.random() * 4;
+                    particles.push({
+                        x,
+                        y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed - 1,
+                        life: 30 + Math.random() * 20,
+                        maxLife: 50,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        r: 2 + Math.random() * 4
+                    });
+                }
+            }
+
+            function updateParticles() {
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.05;
+                    p.life--;
+                    if (p.life <= 0) {
+                        particles.splice(i, 1);
+                    }
+                }
+            }
+
+            // ---------- DRAW ----------
+            function draw() {
+                const data = levels[currentLevel];
+                // background
+                ctx.fillStyle = data.bgColor;
+                ctx.fillRect(0, 0, W, H);
+
+                // gambar garis bantu (lantai)
+                ctx.fillStyle = '#1e2f45';
+                ctx.fillRect(0, H - 12, W, 12);
+
+                // gambar target
+                for (let t of targets) {
+                    ctx.beginPath();
+                    ctx.arc(t.x, t.y, t.r, 0, 2 * Math.PI);
+                    ctx.fillStyle = t.hit ? '#2a3f5a' : data.targetColor;
+                    ctx.fill();
+                    ctx.strokeStyle = t.hit ? '#3a5a7a' : '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    if (!t.hit) {
+                        // lingkaran dalam
+                        ctx.beginPath();
+                        ctx.arc(t.x, t.y, t.r * 0.5, 0, 2 * Math.PI);
+                        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+                        // tanda silang
+                        ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(t.x - t.r * 0.6, t.y - t.r * 0.6);
+                        ctx.lineTo(t.x + t.r * 0.6, t.y + t.r * 0.6);
+                        ctx.moveTo(t.x + t.r * 0.6, t.y - t.r * 0.6);
+                        ctx.lineTo(t.x - t.r * 0.6, t.y + t.r * 0.6);
+                        ctx.stroke();
+                    }
+                }
+
+                // gambar obstacle
+                for (let o of obstacles) {
+                    ctx.beginPath();
+                    ctx.arc(o.x, o.y, o.r, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#2a3f5a';
+                    ctx.fill();
+                    ctx.strokeStyle = '#3a5a7a';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    // pola batu
+                    ctx.fillStyle = 'rgba(255,255,255,0.05)';
+                    for (let i = 0; i < 4; i++) {
+                        const a = i * 1.2 + 0.3;
+                        ctx.beginPath();
+                        ctx.arc(o.x + Math.cos(a) * o.r * 0.4, o.y + Math.sin(a) * o.r * 0.4, o.r * 0.2, 0, 2 * Math.PI);
+                        ctx.fill();
+                    }
+                }
+
+                // gambar stik
+                for (let s of sticks) {
+                    if (s.stuck) {
+                        ctx.strokeStyle = '#4a7a9a';
+                        ctx.lineWidth = 3;
+                        ctx.shadowColor = 'rgba(200,200,255,0.1)';
+                        ctx.shadowBlur = 6;
+                    } else if (s.flying) {
+                        ctx.strokeStyle = '#ffb347';
+                        ctx.lineWidth = 4;
+                        ctx.shadowColor = '#ffb347';
+                        ctx.shadowBlur = 12;
+                    } else {
+                        ctx.strokeStyle = '#8aacd6';
+                        ctx.lineWidth = 3.5;
+                        ctx.shadowColor = 'rgba(100,150,255,0.2)';
+                        ctx.shadowBlur = 8;
+                    }
+                    ctx.beginPath();
+                    const len = s.len || 64;
+                    const ex = s.x - Math.cos(s.angle) * len;
+                    const ey = s.y - Math.sin(s.angle) * len;
+                    ctx.moveTo(s.x, s.y);
+                    ctx.lineTo(ex, ey);
+                    ctx.stroke();
+                    // ujung stik
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = s.stuck ? '#3a6a8a' : (s.flying ? '#ffb347' : '#b0ccee');
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, 3, 0, 2 * Math.PI);
+                    ctx.fill();
+
+                    // efek flying
+                    if (s.flying) {
+                        ctx.fillStyle = 'rgba(255,180,50,0.15)';
+                        ctx.beginPath();
+                        ctx.arc(s.x, s.y, 10, 0, 2 * Math.PI);
+                        ctx.fill();
+                    }
+                }
+
+                // garis aiming
+                if (isDragging && gameState === STATE.AIMING) {
+                    ctx.setLineDash([6, 8]);
+                    ctx.strokeStyle = 'rgba(255,215,0,0.35)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(aimStartX, aimStartY);
+                    ctx.lineTo(aimEndX, aimEndY);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // titik akhir
+                    ctx.fillStyle = 'rgba(255,215,0,0.2)';
+                    ctx.beginPath();
+                    ctx.arc(aimEndX, aimEndY, 6, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+
+                // partikel
+                for (let p of particles) {
+                    const alpha = p.life / p.maxLife;
+                    ctx.globalAlpha = alpha;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r * alpha, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+                ctx.globalAlpha = 1;
+                ctx.shadowBlur = 0;
+
+                // info stik tersisa
+                const remaining = sticks.filter(s => !s.stuck && !s.flying).length;
+                ctx.fillStyle = '#7a9bcb';
+                ctx.font = '11px monospace';
+                ctx.fillText('🟢 ' + remaining, 12, 24);
+
+                // jika game over
+                if (gameState === STATE.GAMEOVER) {
+                    const allHit = targets.every(t => t.hit);
+                    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+                    ctx.fillRect(0, H / 2 - 40, W, 80);
+                    ctx.fillStyle = allHit ? '#4ade80' : '#ff6b6b';
+                    ctx.font = 'bold 26px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(allHit ? '✨ LEVEL CLEAR!' : '💥 GAME OVER', W / 2, H / 2 + 10);
+                    ctx.textAlign = 'left';
+                }
+            }
+
+            // ---------- LOOP ----------
+            function gameLoop() {
+                updateGame();
+                updateParticles();
+                draw();
+                requestAnimationFrame(gameLoop);
+            }
+
+            // ---------- INIT ----------
+            loadLevel(1);
+            gameLoop();
+
+            // resize canvas tetap proporsional
+            // sudah diatur via CSS aspect-ratio
+
+        })();
+    </script><script src="../alwi_bubble4.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>

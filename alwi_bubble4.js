@@ -1,14 +1,29 @@
 !function(){
 if(window.__ALWI)return;window.__ALWI=1;
 
-// Deteksi path → semua link menuju /Indramayu_nur/
+// === ALWI LINKIFY: ubah URL di teks jadi link yang bisa diklik ===
+window.alwiLinkify = window.alwiLinkify || function(txt){
+  if(!txt) return '';
+  var esc = String(txt)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  esc = esc.replace(/(https?:\/\/[^\s<]+)/g, function(url){
+    var clean = url.replace(/[.,;:!?)]+$/,'');
+    var trail = url.slice(clean.length);
+    return '<a href="'+clean+'" target="_blank" rel="noopener" style="color:#00BFFF;text-decoration:underline;word-break:break-all;">'+clean+'</a>'+trail;
+  });
+  return esc.replace(/\n/g,'<br>');
+};
+
+
+// Deteksi path → semua link menuju root aplikasi (NURgenerator / Indramayu_nur)
+const APP_ROOT = ['NURgenerator', 'Indramayu_nur'];
 let pathParts = window.location.pathname.split('/').filter(Boolean);
 let prefix;
-let isRoot = pathParts[0] !== 'Indramayu_nur'; // true bila di root NURgenerator/index.html
-if (pathParts[0] === 'Indramayu_nur') {
+let isRoot = !APP_ROOT.includes(pathParts[0]); // true bila di root portal
+if (APP_ROOT.includes(pathParts[0])) {
   prefix = pathParts.length > 2 ? '../' : './';
 } else {
-  prefix = '/Indramayu_nur/';
+  prefix = '/NURgenerator/';
 }
 const CHAT_AI_URL = 'http://35.240.161.189:3000';
 
@@ -17,7 +32,7 @@ let isDragging=false, startX, startY, vx=0, vy=0, x=window.innerWidth-80, y=wind
 let ball=document.createElement('div');
 ball.id="ALWI_BOLA";
 ball.style.cssText=`position:fixed;left:${x}px;top:${y}px;z-index:999999999;width:60px;height:60px;background:radial-gradient(circle at 30% 30%,#7ec8ff,#0e7490);border-radius:50%;border:3px solid #00BFFF;box-shadow:0 0 20px rgba(0,191,255,0.5),0 0 40px rgba(0,191,255,0.3);font-size:32px;display:flex;align-items:center;justify-content:center;cursor:grab;user-select:none;transition:transform 0.1s;will-change:transform,left,top;`;
-      ball.innerHTML=`<img src="${prefix}img/icon-512.png" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">`;
+      ball.innerHTML=`<img src="${prefix}img/icon_512.png" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">`;
 document.body.appendChild(ball);
 
 // 1b. Tombol HOME di atas bola (index utama)
@@ -207,7 +222,7 @@ function showFunnyFace(){
     let originalSrc=img.src;
     ball.innerHTML='<span style="font-size:40px;">'+faceEmojis[Math.floor(Math.random()*faceEmojis.length)]+'</span>';
     setTimeout(()=>{
-ball.innerHTML=`<img src="${prefix}img/icon-512.png" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">`;
+ball.innerHTML=`<img src="${prefix}img/icon_512.png" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">`;
     },800);
   }
 }
@@ -422,7 +437,7 @@ function alwiBotSay(text){
 function alwiBotShowChat(text){
   let chat=document.createElement('div');
   chat.style.cssText='position:fixed;bottom:160px;right:15px;max-width:240px;background:#0891b2;color:#fff;padding:12px 16px;border-radius:16px 16px 4px 16px;font-size:12px;font-weight:600;z-index:999999997;box-shadow:0 4px 15px rgba(0,191,255,0.4);animation:alwiPopPoin .3s ease;line-height:1.5;word-wrap:break-word;';
-  chat.textContent='🤖 '+text;
+  chat.innerHTML='🤖 '+window.alwiLinkify(text);
   document.body.appendChild(chat);
   setTimeout(()=>{chat.style.opacity='0';chat.style.transition='.5s';},4000);
   setTimeout(()=>chat.remove(),4500);
@@ -703,7 +718,8 @@ updateBallPosition=function(){
 /* ================= MIC ALWI + FOLDER NAV v2 ================= */
 (function(){
   var pp = location.pathname.split('/').filter(Boolean);
-  var prefix = pp[0]==='Indramayu_nur' ? (pp.length>2?'../':'./') : '/Indramayu_nur/';
+  var APP_ROOT = ['NURgenerator', 'Indramayu_nur'];
+  var prefix = APP_ROOT.includes(pp[0]) ? (pp.length>2?'../':'./') : '/NURgenerator/';
 
   /* --- deretan tombol SEMUA FOLDER di dropup --- */
   function pasangFolder(){
@@ -768,7 +784,7 @@ updateBallPosition=function(){
     teksTerakhir=teksTanya||'';
     document.getElementById('MIC_Q').textContent=teksTanya?('\u201C'+teksTanya+'\u201D'):'';
     document.getElementById('MIC_Q').style.display=teksTanya?'block':'none';
-    document.getElementById('MIC_A').innerHTML=isi;
+    document.getElementById('MIC_A').innerHTML=window.alwiLinkify(isi);
     document.getElementById('MIC_GO').style.display=teksTanya?'block':'none';
     bal.style.display='block';
   }

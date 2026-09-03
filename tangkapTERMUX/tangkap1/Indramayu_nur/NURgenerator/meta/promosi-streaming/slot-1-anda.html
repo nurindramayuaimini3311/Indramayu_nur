@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slot Live — Kamera, Komentar & Properti</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f172a; --white:#ffffff;
+  --diamond:#00c2ff; --rose:#ff3d81; --fire:#ff8a00; --rocket:#8b5cf6;
+  --merah:#dc2626;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'Baloo 2',sans-serif;
+  background:radial-gradient(circle,#e5e7eb 1.5px,transparent 1.5px) 0 0/16px 16px,var(--white);
+  min-height:100vh;color:var(--ink);padding:10px;
+}
+.card{background:#fff;border:3px solid var(--ink);border-radius:16px;box-shadow:4px 4px 0 var(--ink);padding:10px;margin-bottom:10px}
+
+/* NAMA + IDENTITAS */
+.title{font-family:'Bangers',cursive;font-size:16px;letter-spacing:1px;text-align:center;transform:rotate(-1deg);margin-bottom:6px}
+.field-label{font-family:'Bangers',cursive;font-size:11px;letter-spacing:1px;display:block;margin-bottom:4px}
+#inputNama{width:100%;padding:8px 10px;border:2.5px solid var(--ink);border-radius:9px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:13px;outline:none}
+
+/* KAMERA */
+.avatar-tag{position:relative}
+.slot-media{width:100%;aspect-ratio:4/3;background:#f1f5f9;border:2.5px solid var(--ink);border-radius:12px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.slot-media img,.slot-media video{width:100%;height:100%;object-fit:cover}
+.avatar{font-size:40px}
+.live-tag{position:absolute;top:6px;right:6px;background:var(--merah);color:#fff;font-size:9px;padding:3px 8px;border-radius:6px;font-weight:900;display:none}
+.off-tag{position:absolute;top:6px;right:6px;background:#64748b;color:#fff;font-size:9px;padding:3px 8px;border-radius:6px;font-weight:800}
+.ctrl-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ctrl-btn{padding:9px 4px;border-radius:9px;border:2.5px solid var(--ink);font-family:'Bangers',cursive;font-size:12px;letter-spacing:0.5px;cursor:pointer;text-align:center;background:#fff}
+.ctrl-btn.on{background:var(--merah);color:#fff}
+.ctrl-btn:active{transform:translate(2px,2px)}
+
+/* KOMENTAR */
+.komentar-list{max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding:2px;margin-bottom:8px}
+.balon{background:#fff;border:2.5px solid var(--ink);border-radius:12px;padding:6px 10px;max-width:88%;align-self:flex-start;font-size:12px;font-weight:700;animation:pop .2s ease-out}
+.balon .nm{font-family:'Bangers',cursive;font-size:12px;color:var(--diamond);-webkit-text-stroke:0.4px var(--ink)}
+.balon .tx{color:var(--ink);margin-top:1px}
+.balon img,.balon video{max-width:100%;border-radius:9px;border:2px solid var(--ink);margin-top:5px;display:block}
+@keyframes pop{0%{transform:scale(0.7);opacity:0}100%{transform:scale(1);opacity:1}}
+.media-preview{display:none;align-items:center;gap:8px;border:2.5px dashed var(--ink);border-radius:9px;padding:6px 8px;margin-bottom:6px;font-size:11px;font-weight:800}
+.media-preview img,.media-preview video{width:44px;height:44px;object-fit:cover;border-radius:6px;border:2px solid var(--ink)}
+.media-preview .hapus{margin-left:auto;background:var(--merah);color:#fff;border:2px solid var(--ink);border-radius:7px;padding:3px 8px;font-size:10px;font-weight:900;cursor:pointer}
+.komentar-input-row{display:flex;gap:6px}
+#inputKomentar{flex:1;padding:8px 10px;border:2.5px solid var(--ink);border-radius:9px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12px;outline:none;min-width:0}
+.btn-media{display:flex;align-items:center;justify-content:center;width:36px;background:#fff;border:2.5px solid var(--ink);border-radius:9px;font-size:15px;cursor:pointer;flex-shrink:0}
+.btn-kirim{background:var(--ink);color:#fff;border:2.5px solid var(--ink);border-radius:9px;padding:0 12px;font-family:'Bangers',cursive;font-size:12px;letter-spacing:1px;cursor:pointer;flex-shrink:0}
+
+/* PROPERTI */
+.gift-title{font-family:'Bangers',cursive;font-size:12px;letter-spacing:1px;text-align:center;margin-bottom:6px}
+.gift-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.btn-gift{background:#fff;border:2.5px solid var(--ink);border-radius:11px;box-shadow:3px 3px 0 var(--ink);padding:8px 2px 6px;text-align:center;cursor:pointer}
+.btn-gift:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn-gift .ic{font-size:20px;display:block}
+.btn-gift .lb{font-family:'Bangers',cursive;font-size:9px;margin-top:2px;display:block}
+.btn-gift.diamond{color:var(--diamond)}.btn-gift.rose{color:var(--rose)}.btn-gift.fire{color:var(--fire)}.btn-gift.rocket{color:var(--rocket)}
+
+
+/* VIDEO CALL */
+.video-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.video-grid .vid-box{background:#0f172a;border:2.5px solid var(--ink);border-radius:12px;position:relative;overflow:hidden;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
+.video-grid .vid-box video{width:100%;height:100%;object-fit:cover}
+.video-grid .vid-box .vid-name{position:absolute;bottom:4px;left:6px;background:rgba(0,0,0,.7);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:6px}
+.video-grid .vid-box .vid-status{color:#fff;font-size:11px;font-weight:800}
+.ctrl-row-call{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px}
+.ctrl-btn-call{padding:9px 4px;border-radius:9px;border:2.5px solid var(--ink);font-family:'Bangers',cursive;font-size:11px;letter-spacing:0.5px;cursor:pointer;text-align:center;background:#fff}
+.ctrl-btn-call.on{background:var(--merah);color:#fff}
+.ctrl-btn-call.call-active{background:#16a34a;color:#fff}
+.ctrl-btn-call:active{transform:translate(2px,2px)}
+.call-status{font-size:10px;font-weight:800;text-align:center;padding:4px;margin-bottom:6px;border-radius:8px}
+.call-status.connected{background:#dcfce7;color:#16a34a}
+.call-status.connecting{background:#fef9c3;color:#ca8a04}
+.call-status.off{background:#f1f5f9;color:#64748b}
+.peer-count{font-size:10px;font-weight:800;color:var(--diamond);text-align:center;margin-bottom:4px}
+
+/* EFEK TERBANG */
+.fly{position:fixed;font-size:26px;z-index:9999;pointer-events:none;filter:drop-shadow(2px 3px 0 var(--ink))}
+@keyframes terbang{0%{transform:translate(0,0) scale(1) rotate(0deg);opacity:1}55%{transform:translate(calc(var(--tx)*0.55),calc(var(--ty)*0.55 - 50px)) scale(1.4) rotate(180deg);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0.6) rotate(360deg);opacity:0.9}}
+.fly.run{animation:terbang .9s cubic-bezier(.25,1,.5,1) forwards}
+@keyframes bursts{0%{transform:scale(0.2) rotate(0deg);opacity:1}100%{transform:scale(2) rotate(30deg);opacity:0}}
+.burst{position:fixed;z-index:9997;pointer-events:none;font-size:34px;animation:bursts .5s ease-out forwards}
+.pow{position:fixed;z-index:10000;pointer-events:none;font-family:'Bangers',cursive;font-size:14px;color:#fff;-webkit-text-stroke:1.5px var(--ink);background:var(--fire);border:2.5px solid var(--ink);border-radius:50%;padding:5px 8px;transform:translate(-50%,-50%) scale(0);animation:powpop .5s ease-out forwards}
+@keyframes powpop{0%{transform:translate(-50%,-50%) scale(0)}40%{transform:translate(-50%,-50%) scale(1.3)}100%{transform:translate(-50%,-50%) scale(1);opacity:0}}
+
+/* VOICE RECORDER */
+.btn-voice{display:flex;align-items:center;justify-content:center;width:36px;background:#fff;border:2.5px solid var(--ink);border-radius:9px;font-size:15px;cursor:pointer;flex-shrink:0;transition:all .2s}
+.btn-voice.recording{background:var(--merah);color:#fff;animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}50%{box-shadow:0 0 0 8px rgba(220,38,38,0)}}
+.rec-timer{font-size:10px;font-weight:900;color:var(--merah);display:none;align-items:center;gap:4px}
+.rec-timer.on{display:flex}
+.rec-dot{width:6px;height:6px;background:var(--merah);border-radius:50%;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.voice-msg{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#1e40af,#7c3aed);border:2px solid var(--ink);border-radius:12px;padding:8px 12px;margin-top:5px;color:#fff;min-width:200px}
+.voice-msg .play-btn{width:32px;height:32px;border-radius:50%;background:#fff;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;flex-shrink:0}
+.voice-msg .play-btn:active{transform:scale(.9)}
+.voice-msg .wave{flex:1;display:flex;align-items:center;gap:2px;height:28px}
+.voice-msg .wave span{display:block;width:3px;background:rgba(255,255,255,.7);border-radius:2px;animation:wavebar 1s ease-in-out infinite}
+.voice-msg .wave span:nth-child(1){height:8px;animation-delay:0s}
+.voice-msg .wave span:nth-child(2){height:16px;animation-delay:.1s}
+.voice-msg .wave span:nth-child(3){height:10px;animation-delay:.2s}
+.voice-msg .wave span:nth-child(4){height:20px;animation-delay:.3s}
+.voice-msg .wave span:nth-child(5){height:12px;animation-delay:.4s}
+.voice-msg .wave span:nth-child(6){height:18px;animation-delay:.15s}
+.voice-msg .wave span:nth-child(7){height:8px;animation-delay:.25s}
+.voice-msg .dur{font-size:10px;font-weight:800;margin-left:4px;white-space:nowrap}
+@keyframes wavebar{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.4)}}
+
+/* TOAST PESAN */
+#alwiToast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);max-width:92%;background:#0f172a;color:#fff;border:2.5px solid var(--diamond);border-radius:12px;padding:10px 14px;font-size:11px;font-weight:800;line-height:1.5;box-shadow:0 6px 20px rgba(15,23,42,.35);z-index:999999;display:none;text-align:center}
+#alwiToast.b-akhir{animation:toastFade .25s ease-out}
+#alwiToast b{color:var(--diamond)}
+#alwiToast .tutup{margin-left:8px;background:var(--diamond);color:#0f172a;border:none;border-radius:7px;padding:2px 8px;font-weight:900;cursor:pointer}
+@keyframes toastFade{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="title" id="judul">Slot Live</div>
+  <label class="field-label">NAMA KAMU</label>
+  <input id="inputNama" placeholder="Isi nama sendiri...">
+</div>
+
+<div class="card">
+  <div class="slot-media" id="media">
+    <div class="avatar" id="avatar">🙂</div>
+    <video id="video" autoplay muted playsinline style="display:none"></video>
+    <div class="live-tag" id="liveTag">🔴 LIVE</div>
+    <div class="off-tag" id="offTag">⚫ Standby</div>
+  </div>
+  <div class="ctrl-row">
+    <div class="ctrl-btn" id="btnCam">📷 ON</div>
+    <div class="ctrl-btn" id="btnFlip">🔄 Ganti</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="komentar-list" id="komentarList"></div>
+  <div class="media-preview" id="mediaPreview"></div>
+  <div class="komentar-input-row">
+    <input id="inputKomentar" placeholder="Tulis komentar..." maxlength="120">
+    <label class="btn-media" for="fileMedia">📎</label>
+    <input type="file" id="fileMedia" accept="image/*,video/*" style="display:none">
+    <label class="btn-voice" id="btnVoice" title="Rekam Pesan Suara">🎤</label>
+    <div class="rec-timer" id="recTimer"><span class="rec-dot"></span><span id="recDur">0:00</span></div>
+    <button class="btn-kirim" onclick="kirimKomentar()">KIRIM</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="title">📹 VIDEO CALL</div>
+  <div class="call-status off" id="callStatus">⚪ Belum terhubung</div>
+  <div class="peer-count" id="peerCount"></div>
+  <div class="video-grid" id="videoGrid"></div>
+  <div class="ctrl-row-call">
+    <div class="ctrl-btn-call" id="btnCall" onclick="isCalling?leaveCall():joinCall()">📞 JOIN CALL</div>
+    <div class="ctrl-btn-call" id="btnMuteV" onclick="toggleMuteV()">📷 ON</div>
+    <div class="ctrl-btn-call" id="btnMuteA" onclick="toggleMuteA()">🎤 ON</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="gift-title">🎁 LEMPAR PROPERTI</div>
+  <div class="gift-grid">
+    <div class="btn-gift diamond" onclick="lempar(event,'💎','Diamond','#00c2ff')"><span class="ic">💎</span><span class="lb">10</span></div>
+    <div class="btn-gift rose" onclick="lempar(event,'🌹','Rose','#ff3d81')"><span class="ic">🌹</span><span class="lb">5</span></div>
+    <div class="btn-gift fire" onclick="lempar(event,'🔥','Fire','#ff8a00')"><span class="ic">🔥</span><span class="lb">15</span></div>
+    <div class="btn-gift rocket" onclick="lempar(event,'🚀','Rocket','#8b5cf6')"><span class="ic">🚀</span><span class="lb">50</span></div>
+  </div>
+</div>
+
+<script>
+const q = new URLSearchParams(location.search);
+const ID = q.get('id') || 'slot';
+const NAMA_DEFAULT = q.get('nama') || 'Member';
+const AVA = q.get('ava') || '🙂';
+
+document.getElementById('judul').textContent = AVA + ' ' + NAMA_DEFAULT;
+document.getElementById('avatar').textContent = AVA;
+document.getElementById('inputNama').value = NAMA_DEFAULT;
+
+function namaAktif(){ return (document.getElementById('inputNama').value || '').trim() || 'Member ALWI'; }
+
+/* ===== KAMERA ===== */
+let stream = null, on = false, facing = 'user';
+async function nyalakan(){
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:false});
+    const v = document.getElementById('video');
+    v.srcObject = stream; v.style.display='block';
+    document.getElementById('avatar').style.display='none';
+    on = true;
+    document.getElementById('btnCam').textContent='⏹ OFF';
+    document.getElementById('btnCam').classList.add('on');
+    document.getElementById('liveTag').style.display='block';
+    document.getElementById('offTag').style.display='none';
+  }catch(e){ alert('❌ '+e.message); }
+}
+function matikan(){
+  if(stream) stream.getTracks().forEach(t=>t.stop());
+  document.getElementById('video').style.display='none';
+  document.getElementById('avatar').style.display='block';
+  on=false;
+  document.getElementById('btnCam').textContent='📷 ON';
+  document.getElementById('btnCam').classList.remove('on');
+  document.getElementById('liveTag').style.display='none';
+  document.getElementById('offTag').style.display='block';
+}
+document.getElementById('btnCam').onclick = () => on ? matikan() : nyalakan();
+document.getElementById('btnFlip').onclick = () => { facing = facing==='user'?'environment':'user'; if(on) nyalakan(); };
+
+/* ===== KOMENTAR + MEDIA ===== */
+let mediaFile=null, mediaURL=null, mediaType=null;
+
+document.getElementById('fileMedia').addEventListener('change', e=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  if(mediaURL) URL.revokeObjectURL(mediaURL);
+  mediaFile = f;
+  mediaURL = URL.createObjectURL(f);
+  mediaType = f.type.startsWith('video') ? 'video' : 'image';
+  const prev = document.getElementById('mediaPreview');
+  prev.style.display = 'flex';
+  prev.innerHTML = mediaType==='video'
+    ? `<video src="${mediaURL}" muted></video><span>${f.name}</span><div class="hapus" onclick="hapusMedia()">✕</div>`
+    : `<img src="${mediaURL}"><span>${f.name}</span><div class="hapus" onclick="hapusMedia()">✕</div>`;
+});
+
+function hapusMedia(){
+  if(mediaURL) URL.revokeObjectURL(mediaURL);
+  mediaFile=null; mediaURL=null; mediaType=null;
+  document.getElementById('mediaPreview').style.display='none';
+  document.getElementById('mediaPreview').innerHTML='';
+  document.getElementById('fileMedia').value='';
+}
+
+function kirimKomentar(){
+  const teks = document.getElementById('inputKomentar').value.trim();
+  if(!teks && !mediaFile) return;
+  const list = document.getElementById('komentarList');
+  const balon = document.createElement('div');
+  balon.className='balon';
+  let isi = `<div class="nm">${namaAktif()}</div>`;
+  if(teks) isi += `<div class="tx">${teks}</div>`;
+  if(mediaFile){
+    isi += mediaType==='video'
+      ? `<video src="${mediaURL}" controls playsinline></video>`
+      : `<img src="${mediaURL}">`;
+  }
+  balon.innerHTML = isi;
+  list.appendChild(balon);
+  list.scrollTop = list.scrollHeight;
+  document.getElementById('inputKomentar').value='';
+  hapusMedia();
+}
+document.getElementById('inputKomentar').addEventListener('keydown', e=>{ if(e.key==='Enter') kirimKomentar(); });
+
+
+/* ===== VIDEO CALL (WebRTC) ===== */
+let signalingWs=null, localStream=null, peers={}, isCalling=false;
+const ICE_SERVERS={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
+
+function getSignalUrl(){
+  var loc=window.location;
+  var protocol=loc.protocol==='https:'?'wss:':'ws:';
+  return protocol+'//' + loc.hostname + ':4001';
+}
+
+function joinCall(){
+  if(isCalling)return;
+  var nama=namaAktif();
+  signalingWs=new WebSocket(getSignalUrl());
+  signalingWs.onopen=function(){
+    signalingWs.send(JSON.stringify({type:'join',room:ID,nama:nama}));
+    isCalling=true;
+    document.getElementById('btnCall').textContent='📞 LEAVE';
+    document.getElementById('btnCall').classList.add('call-active');
+    document.getElementById('callStatus').textContent='🟢 Connected ke room: '+ID;
+    document.getElementById('callStatus').className='call-status connected';
+  };
+  signalingWs.onmessage=function(e){
+    var msg=JSON.parse(e.data);
+    handleSignalMsg(msg);
+  };
+  signalingWs.onclose=function(){
+    isCalling=false;
+    document.getElementById('btnCall').textContent='📞 JOIN CALL';
+    document.getElementById('btnCall').classList.remove('call-active');
+    document.getElementById('callStatus').textContent='⚪ Disconnected';
+    document.getElementById('callStatus').className='call-status off';
+    document.getElementById('peerCount').textContent='';
+  };
+  signalingWs.onerror=function(){
+    document.getElementById('callStatus').textContent='❌ Gagal koneksi signaling';
+    document.getElementById('callStatus').className='call-status off';
+  };
+}
+
+function leaveCall(){
+  if(signalingWs) signalingWs.close();
+  if(localStream) localStream.getTracks().forEach(function(t){t.stop();localStream=null;});
+  Object.keys(peers).forEach(function(nama){if(peers[nama].pc) peers[nama].pc.close();});
+  peers={};
+  document.getElementById('videoGrid').innerHTML='';
+}
+
+async function handleSignalMsg(msg){
+  switch(msg.type){
+    case 'joined':
+      document.getElementById('peerCount').textContent=msg.peers.length+' peer di room';
+      // Create local stream and send offer to each peer
+      try{
+        localStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+        addVideoBox(' Kamu (Local)',localStream,true);
+        // Create offer for each existing peer
+        for(var i=0;i<msg.peers.length;i++){
+          await createPeer(msg.peers[i],true);
+        }
+      }catch(e){
+        document.getElementById('callStatus').textContent='❌ Camera/Mic error: '+e.message;
+      }
+      break;
+    case 'peer-joined':
+      document.getElementById('peerCount').textContent=(Object.keys(peers).length+1)+' peer di room';
+      // New peer joined, we send offer to them
+      if(localStream){
+        await createPeer(msg.nama,false);
+      }
+      break;
+    case 'peer-left':
+      if(peers[msg.nama]){
+        if(peers[msg.nama].pc) peers[msg.nama].pc.close();
+        var el=document.getElementById('vid-'+msg.nama);
+        if(el) el.remove();
+        delete peers[msg.nama];
+      }
+      document.getElementById('peerCount').textContent=Math.max(0,Object.keys(peers).length)+' peer di room';
+      break;
+    case 'offer':
+      if(!localStream) break;
+      if(!peers[msg.from]) await createPeer(msg.from,false);
+      var pc=peers[msg.from].pc;
+      await pc.setRemoteDescription(new RTCSessionDescription(msg.sdp));
+      var answer=await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      signalingWs.send(JSON.stringify({type:'answer',to:msg.from,sdp:pc.localDescription}));
+      break;
+    case 'answer':
+      if(peers[msg.from]&&peers[msg.from].pc){
+        await peers[msg.from].pc.setRemoteDescription(new RTCSessionDescription(msg.sdp));
+      }
+      break;
+    case 'ice-candidate':
+      if(peers[msg.from]&&peers[msg.from].pc){
+        try{await peers[msg.from].pc.addIceCandidate(new RTCIceCandidate(msg.candidate));}catch(e){}
+      }
+      break;
+  }
+}
+
+async function createPeer(peerName,initiator){
+  var pc=new RTCPeerConnection(ICE_SERVERS);
+  peers[peerName]={pc:pc};
+  if(localStream){
+    localStream.getTracks().forEach(function(track){pc.addTrack(track,localStream);});
+  }
+  pc.ontrack=function(e){
+    addVideoBox(' '+peerName,e.streams[0],false,peerName);
+  };
+  pc.onicecandidate=function(e){
+    if(e.candidate&&signalingWs&&signalingWs.readyState===1){
+      signalingWs.send(JSON.stringify({type:'ice-candidate',to:peerName,candidate:e.candidate}));
+    }
+  };
+  pc.onconnectionstatechange=function(){
+    if(pc.connectionState==='failed'||pc.connectionState==='disconnected'){
+      var el=document.getElementById('vid-'+peerName);
+      if(el) el.remove();
+      delete peers[peerName];
+    }
+  };
+  if(initiator){
+    var offer=await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    signalingWs.send(JSON.stringify({type:'offer',to:peerName,sdp:pc.localDescription}));
+  }
+}
+
+function addVideoBox(name,stream,isLocal,peerName){
+  var grid=document.getElementById('videoGrid');
+  var id='vid-'+(peerName||'local');
+  var existing=document.getElementById(id);
+  if(existing) return;
+  var box=document.createElement('div');
+  box.className='vid-box';
+  box.id=id;
+  var video=document.createElement('video');
+  video.autoplay=true;
+  video.playsInline=true;
+  if(isLocal) video.muted=true;
+  video.srcObject=stream;
+  var label=document.createElement('div');
+  label.className='vid-name';
+  label.textContent=name;
+  box.appendChild(video);
+  box.appendChild(label);
+  grid.appendChild(box);
+}
+
+/* ===== PROPERTI TERBANG ===== */
+function lempar(e, emoji, nama, warna){
+  const btn = e.currentTarget;
+  const target = document.getElementById('komentarList');
+  const bR = btn.getBoundingClientRect(), tR = target.getBoundingClientRect();
+  const x0=bR.left+bR.width/2, y0=bR.top+bR.height/2;
+  const x1=tR.left+tR.width/2, y1=tR.top+tR.height/2;
+
+  for(let i=0;i<3;i++) setTimeout(()=>{
+    const f=document.createElement('div');
+    f.className='fly'; f.textContent=emoji;
+    f.style.left=(x0-13)+'px'; f.style.top=(y0-13)+'px';
+    f.style.setProperty('--tx',(x1-x0)+'px'); f.style.setProperty('--ty',(y1-y0)+'px');
+    document.body.appendChild(f);
+    requestAnimationFrame(()=>f.classList.add('run'));
+    setTimeout(()=>f.remove(),950);
+  }, i*140);
+
+  setTimeout(()=>{
+    const b=document.createElement('div');
+    b.className='burst'; b.textContent='✨'; b.style.left=(x1-17)+'px'; b.style.top=(y1-17)+'px'; b.style.color=warna;
+    document.body.appendChild(b); setTimeout(()=>b.remove(),550);
+
+    const p=document.createElement('div');
+    p.className='pow'; p.textContent='POW!'; p.style.left=x1+'px'; p.style.top=y1+'px'; p.style.background=warna;
+    document.body.appendChild(p); setTimeout(()=>p.remove(),550);
+
+    const balon=document.createElement('div');
+    balon.className='balon';
+    balon.innerHTML=`<div class="nm">${namaAktif()}</div><div class="tx">Ngirim ${emoji} ${nama}!</div>`;
+    target.appendChild(balon); target.scrollTop=target.scrollHeight;
+  }, 850);
+}
+
+/* ===== PESAN SUARA (TERSIMPAN) ===== */
+let mediaRecorder=null, audioChunks=[], recStart=0, recInterval=null;
+
+const btnV=document.getElementById("btnVoice");
+btnV.addEventListener("mousedown", mulaiRekam);
+btnV.addEventListener("mouseup", berhentiRekam);
+btnV.addEventListener("mouseleave", berhentiRekam);
+btnV.addEventListener("touchstart", function(e){e.preventDefault();mulaiRekam();});
+btnV.addEventListener("touchend", function(e){e.preventDefault();berhentiRekam();});
+
+async function mulaiRekam(){
+  if(!cekAmanMic())return;
+  try{
+    var stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    mediaRecorder=new MediaRecorder(stream);
+    audioChunks=[];
+    mediaRecorder.ondataavailable=function(e){if(e.data.size>0)audioChunks.push(e.data);};
+    mediaRecorder.onstop=function(){
+      stream.getTracks().forEach(function(t){t.stop();});
+      kirimVoice();
+    };
+    mediaRecorder.start();
+    recStart=Date.now();
+    btnV.classList.add("recording");
+    document.getElementById("recTimer").classList.add("on");
+    recInterval=setInterval(updateRecDur,500);
+  }catch(e){
+    if(!window.__micIzin){
+      window.__micIzin=1;
+      alwiPesan('🎤 <b>Perlu izin mikrofon.</b> Klik 🔒/ikon kamera di address bar lalu pilih "Izinkan", atau akses lewat https://',true);
+    }else{
+      alwiPesan('🔇 <b>Kamera/Mikro gagal dibuka:</b> '+e.message,true);
+    }
+  }
+}
+
+function berhentiRekam(){
+  if(mediaRecorder&&mediaRecorder.state==="recording"){
+    mediaRecorder.stop();
+    clearInterval(recInterval);
+    btnV.classList.remove("recording");
+    document.getElementById("recTimer").classList.remove("on");
+  }
+}
+
+function updateRecDur(){
+  var s=Math.floor((Date.now()-recStart)/1000);
+  var m=Math.floor(s/60);
+  document.getElementById("recDur").textContent=m+":"+String(s%60).padStart(2,"0");
+}
+
+async function kirimVoice(){
+  if(!audioChunks.length)return;
+  var blob=new Blob(audioChunks,{type:"audio/webm"});
+  var durasi=Math.floor((Date.now()-recStart)/1000);
+  var reader=new FileReader();
+  reader.onload=async function(){
+    var base64=reader.result;
+    var balon=document.createElement("div");
+    balon.className="balon";
+    balon.innerHTML='<div class="nm">'+namaAktif()+' 🔊</div><div class="voice-msg"><div class="play-btn" onclick="putarVoice(this)">▶</div><div class="wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="dur">'+durasi+'s</div></div>';
+    balon.dataset.audioSrc=base64;
+    document.getElementById("komentarList").appendChild(balon);
+    document.getElementById("komentarList").scrollTop=99999;
+
+    try{
+      var r=await fetch("/api/voice",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({slot:ID,nama:namaAktif(),audio:base64,durasi:durasi})});
+      var j=await r.json();
+      if(j.ok){balon.dataset.audioSrc=j.url;}
+    }catch(e){console.error("Gagal simpan voice:",e);}
+  };
+  reader.readAsDataURL(blob);
+}
+
+function putarVoice(btn){
+  var balon=btn.closest(".balon");
+  var src=balon.dataset.audioSrc||"";
+  var existing=btn.closest(".voice-msg").querySelector("audio");
+  if(existing){existing.pause();existing.remove();btn.textContent="▶";return;}
+  var a=new Audio(src);
+  a.play();
+  btn.textContent="⏸";
+  a.onended=function(){btn.textContent="▶";a.remove();};
+  a.onerror=function(){btn.textContent="▶";a.remove();alert("Gagal putar audio");};
+  btn.closest(".voice-msg").appendChild(a);
+}
+
+/* Load saved voices from server */
+(async function(){
+  try{
+    var r=await fetch("/api/voice?slot="+ID);
+    var list=await r.json();
+    list.slice(-20).forEach(function(v){
+      var balon=document.createElement("div");
+      balon.className="balon";
+      balon.dataset.audioSrc="/NURgenerator/meta/upload/voice/"+v.filename;
+      balon.innerHTML='<div class="nm">'+v.nama+' 🔊</div><div class="voice-msg"><div class="play-btn" onclick="putarVoice(this)">▶</div><div class="wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="dur">'+(v.durasi||0)+'s</div></div>';
+      document.getElementById("komentarList").appendChild(balon);
+    });
+  }catch(e){}
+})();
+
+</script>
+<div id="alwiToast"></div>
+<script>
+function alwiPesan(m,aduh){
+  var t=document.getElementById('alwiToast');
+  if(!t)return;
+  t.innerHTML=m;
+  t.style.display='block';
+  t.classList.add('b-akhir');
+  if(aduh){
+    var tb=document.createElement('button');
+    tb.className='tutup';tb.textContent='OK';tb.onclick=function(){t.style.display='none'};
+    t.appendChild(tb);
+  }else{
+    clearTimeout(t._t);
+    t._t=setTimeout(function(){t.style.display='none'},6000);
+  }
+}
+function cekAmanMic(){
+  var aman = (location.protocol==='https:' || location.hostname==='localhost' || location.hostname==='127.0.0.1');
+  if(aman)return true;
+  alwiPesan('🔇 <b>Mikrofon diblokir Chrome.</b> Halaman ini belum HTTPS (pakai IP HTTP).<br>Buka "https://namadomain" supaya suara bisa direkam.',true);
+  return false;
+}
+</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("../../sw.js").catch(function(){})}</script></body>
+</html>

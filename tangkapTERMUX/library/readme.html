@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IndramayuCLUB - Piramida Guard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #0f172a; 
+            color: #f8fafc;
+            margin: 0; 
+            padding: 0; 
+            overflow-x: hidden;
+        }
+
+        .purple-gradient { background: linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%); }
+        
+        /* Dashboard Styling */
+        .indramayu-dashboard { 
+            background: #1e293b; 
+            padding: 20px; 
+            border-radius: 24px; 
+            border: 1px solid #334155;
+        }
+
+        .warning-box { 
+            background: #7f1d1d; 
+            color: #fecaca; 
+            padding: 12px; 
+            border-radius: 12px; 
+            font-size: 11px; 
+            margin-bottom: 20px; 
+            border-left: 4px solid #ef4444;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .section-title { 
+            color: #a78bfa; 
+            font-size: 14px; 
+            font-weight: 800; 
+            border-left: 4px solid #8b5cf6; 
+            padding-left: 10px; 
+            margin-bottom: 15px; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Grid System */
+        .main-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+            margin-bottom: 20px;
+        }
+
+        .card { 
+            background: #334155; 
+            border-radius: 16px; 
+            padding: 15px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: 1px solid #475569;
+            text-align: center;
+        }
+
+        .card:hover { 
+            transform: translateY(-5px); 
+            background: #475569;
+            border-color: #8b5cf6;
+        }
+
+        .card:active { transform: scale(0.95); }
+        
+        .card img { 
+            width: 50px; 
+            height: 50px; 
+            margin-bottom: 10px; 
+            object-fit: cover; 
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .nur-id { font-weight: 800; font-size: 14px; color: #f8fafc; display: block; }
+        .nur-task { font-size: 9px; color: #94a3b8; font-weight: bold; text-transform: uppercase; margin-top: 4px; }
+        
+        .highlight { 
+            border: 2px solid #8b5cf6; 
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); 
+            background: #4c1d95;
+        }
+
+        /* Tirai (Curtain) Styling */
+        #curtain-container { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: #000; 
+            z-index: 10000; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            transition: all 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+
+        .curtain-open { 
+            transform: translateY(-100%); 
+            opacity: 0;
+        }
+
+        .video-box {
+            width: 90%;
+            max-width: 450px;
+            border: 3px solid #6d28d9;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(109, 40, 217, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="curtain-container">
+        <div class="video-box">
+            <div style="aspect-ratio: 9/16;">
+                <iframe width="100%" height="100%" 
+                        src="https://www.youtube.com/embed/XYFDBw0YoYg?autoplay=1&mute=0" 
+                        frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+        <button onclick="bukaTirai()" id="btn-buka" class="mt-8 bg-white text-purple-900 px-10 py-4 rounded-full font-black shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:bg-purple-200 transition-all uppercase tracking-widest">
+            BUKA GERBANG INDRAMAYU CLUB
+        </button>
+    </div>
+
+    <header class="purple-gradient text-white p-5 shadow-2xl sticky top-0 z-50 border-b border-purple-400/30">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-white p-1.5 rounded-xl rotate-3">
+                    <span class="text-purple-800 font-black text-2xl">IC</span>
+                </div>
+                <div>
+                    <h1 class="font-black text-xl leading-none">Indramayu<span class="text-purple-300">CLUB</span></h1>
+                    <p class="text-[10px] text-purple-200 font-bold uppercase tracking-tighter">Piramida Guard System</p>
+                </div>
+            </div>
+            <div id="clock" class="text-xs font-mono bg-black/40 px-4 py-2 rounded-lg border border-white/10">00:00:00</div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto p-5 space-y-6">
+
+        <div class="indramayu-dashboard shadow-2xl">
+            <div class="warning-box">
+                <strong>⚠️ PROTOKOL PIRAMIDA:</strong>
+                <p>Status: Sinkronisasi Folder A-K Aktif. Nur-Satria 01 mengawasi celengan member.</p>
+            </div>
+
+            <h3 class="section-title">Gerbang 10 Folder Utama</h3>
+
+            <div class="main-grid">
+                <div class="card" onclick="window.open('https://ai.studio/apps/379f5974-54d2-4922-9a65-4ee51bacf7fa', '_blank')">
+                    <img src="https://raw.githubusercontent.com/indramayuclubmakrifat-tech/Main_System_IndramayuClub/main/Ai_komentar.jpg" onerror="this.src='https://via.placeholder.com/50?text=Nur3'">
+                    <span class="nur-id">Folder C</span>
+                    <span class="nur-task">Admin Komentar</span>
+                </div>
+
+                <div class="card" onclick="window.open('https://ai.studio/apps/c864dc0c-a3f7-4509-878f-fd246d420f94', '_blank')">
+                    <img src="https://raw.githubusercontent.com/indramayuclubmakrifat-tech/Main_System_IndramayuClub/main/diskusi_makrifat.jpg" onerror="this.src='https://via.placeholder.com/50?text=Pusat'">
+                    <span class="nur-id">Folder B</span>
+                    <span class="nur-task">Diskusi Makrifat</span>
+                </div>
+
+                <div class="card" onclick="window.open('https://ai.studio/apps/cbafa9ed-972c-44eb-8adf-ebc7759579f2', '_blank')">
+                    <img src="https://raw.githubusercontent.com/indramayuclubmakrifat-tech/Main_System_IndramayuClub/main/Ai_kreatif.jpg" onerror="this.src='https://via.placeholder.com/50?text=Nur4'">
+                    <span class="nur-id">Folder D</span>
+                    <span class="nur-task">Kreator Konten</span>
+                </div>
+
+                <div class="card" onclick="window.open('https://ai.studio/apps/61b74539-37e7-414a-b134-c2fe33764cd8', '_blank')">
+                    <img src="https://raw.githubusercontent.com/indramayuclubmakrifat-tech/Main_System_IndramayuClub/main/systems_Indramayu.jpg" onerror="this.src='https://via.placeholder.com/50?text=Nur7'">
+                    <span class="nur-id">Folder G</span>
+                    <span class="nur-task">Komunikasi</span>
+                </div>
+
+                <div class="card highlight col-span-2" onclick="window.open('https://ai.studio/apps/fea67ee7-2e48-4dc7-9926-d9646b184ee9', '_blank')">
+                    <img src="https://raw.githubusercontent.com/indramayuclubmakrifat-tech/Main_System_IndramayuClub/main/Ai_Club.jpg" onerror="this.src='https://via.placeholder.com/50?text=Nur10'">
+                    <span class="nur-id">Folder J (Pusat)</span>
+                    <span class="nur-task">Sistem Inti Indramayu Club</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-700">
+                <button onclick="syncPiramida()" class="bg-indigo-500/10 text-indigo-400 p-4 rounded-2xl font-bold text-xs border border-indigo-500/30 hover:bg-indigo-500/20 transition">
+                    🔄 SYNC PIRAMIDA
+                </button>
+                <button onclick="resetSistem()" class="bg-red-500 text-white p-4 rounded-2xl font-bold text-xs shadow-lg shadow-red-900/20 hover:bg-red-600 transition">
+                    🛡️ RESET SYSTEM
+                </button>
+            </div>
+        </div>
+
+        <footer class="text-center pb-10">
+            <p class="text-slate-500 text-[10px] uppercase font-bold tracking-widest">© 2026 Indramayu Club Makrifat - Asia-East1 Server</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // Jam Digital Real-time
+        function updateClock() {
+            const now = new Date();
+            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID', options);
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Fungsi Tirai
+        function bukaTirai() {
+            const curtain = document.getElementById('curtain-container');
+            curtain.classList.add('curtain-open');
+            
+            // Suara efek (opsional jika ingin ditambahkan nanti)
+            console.log("Gerbang Indramayu Club Terbuka...");
+
+            setTimeout(() => { 
+                curtain.style.display = 'none'; 
+            }, 1200);
+        }
+
+        // Fungsi Tombol
+        function syncPiramida() {
+            alert("Piramida Guard: Menghubungkan 8 Akun Admin... \nSinkronisasi Folder A-K Berhasil!");
+        }
+
+        function resetSistem() {
+            if(confirm("PERINGATAN: Anda akan mereset sistem utama. Nur 8 akan melakukan backup otomatis sebelum sistem redup. Lanjutkan?")) {
+                alert("Protokol Reset Dijalankan. Tunggu 30 menit hingga running text kuning muncul.");
+            }
+        }
+    </script>
+
+<!-- SIRKUIT TOMBOL OTOMATIS BACK & NEXT -->
+<div class="sirkuit-navigasi" style="text-align: center; margin: 30px 0; padding: 10px;">
+    <button onclick="window.location.href='komentar1.html'" style="padding: 10px 20px; font-weight: bold; background-color: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">
+        ⬅️ BACK (komentar1.html)
+    </button>
+    <button onclick="window.location.href='readme2.html'" style="padding: 10px 20px; font-weight: bold; background-color: #2ecc71; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        NEXT (readme2.html) ➡️
+    </button>
+</div>
+<!-- END SIRKUIT TOMBOL OTOMATIS -->
+
+</body>
+</html>
+

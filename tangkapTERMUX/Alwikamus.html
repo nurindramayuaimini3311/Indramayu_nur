@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kamus Indramayu Club · Poin Nur Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Noto+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   RESET & VARIABEL UTAMA INDRAMAYU CLUB
+══════════════════════════════════════════ */
+:root {
+  --emas       : #c9a84c;
+  --emas-muda  : #f0d070;
+  --emas-tua   : #7a5c1e;
+  --hitam      : #0d0d0d;
+  --gelap      : #1a1408;
+  --kartu      : #1e1608;
+  --border     : #3a2c0a;
+  --teks       : #e8d5a0;
+  --teks-redup : #9a8050;
+  --hijau      : #1a6b3a;
+  
+  /* Nur Ecosystem Colors */
+  --nur-color  : #60c8e8;
+  --gif-color  : #e860a8;
+  --vou-color  : #80e860;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+  background: var(--hitam);
+  color: var(--teks);
+  padding-bottom: 40px;
+}
+
+/* ══════════════════════════════════════════
+   PANEL EKONOMI NUR (UPGRADE BARU)
+══════════════════════════════════════════ */
+.panel-ekonomi-nur {
+  max-width: 800px;
+  margin: 15px auto 5px;
+  padding: 0 15px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+@media (max-width: 600px) {
+  .panel-ekonomi-nur { grid-template-columns: 1fr; }
+}
+.dompet-nur {
+  background: linear-gradient(135deg, var(--gelap), var(--kartu));
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  transition: all 0.3s ease;
+}
+.dompet-nur::before {
+  content: ''; position: absolute; inset: 0; opacity: 0.05; pointer-events: none;
+}
+.dompet-rp { border-color: var(--nur-color); }
+.dompet-gif { border-color: var(--gif-color); }
+.dompet-vou { border-color: var(--vou-color); }
+
+.dompet-nur h4 {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+.dompet-rp h4 { color: var(--nur-color); }
+.dompet-gif h4 { color: var(--gif-color); }
+.dompet-vou h4 { color: var(--vou-color); }
+
+.angka-saldo {
+  font-family: 'Cinzel', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+/* CONTAINER EMIT LOG */
+.status-bar {
+  max-width: 770px; margin: 10px auto; background: #111;
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 12px; font-size: 12px; color: var(--emas-muda);
+  text-align: center; font-family: monospace;
+}
+
+/* HEADER KAMUS ALWI */
+.header {
+  text-align: center;
+  padding: 25px 15px 15px;
+  background: linear-gradient(to bottom, var(--gelap), transparent);
+}
+.header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.8rem;
+  color: var(--emas);
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+.header p {
+  font-size: 12px;
+  color: var(--teks-redup);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+/* LIVE TICKER */
+.ticker {
+  background: var(--gelap);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-wrap {
+  display: inline-block;
+  padding-left: 100%;
+  animation: jalanteks 25s linear infinite;
+}
+.ticker-item {
+  display: inline-block;
+  padding: 0 20px;
+  font-size: 13px;
+  color: var(--emas-muda);
+}
+@keyframes jalanteks {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-100%, 0, 0); }
+}
+
+/* CHIPS FILTER */
+.scroller-kat {
+  max-width: 800px;
+  margin: 15px auto 5px;
+  padding: 0 15px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.scroller-kat::-webkit-scrollbar { display: none; }
+
+.filter-chip {
+  background: var(--kartu);
+  border: 1px solid var(--border);
+  color: var(--teks-redup);
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.filter-chip span {
+  background: rgba(0,0,0,0.4);
+  color: var(--emas);
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: bold;
+}
+.filter-chip.active {
+  background: var(--emas-tua);
+  border-color: var(--emas);
+  color: var(--emas-muda);
+}
+
+/* MAIN LIST KAMUS */
+.kamus-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 10px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.item-card {
+  background: linear-gradient(145deg, var(--kartu), #140f05);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  position: relative;
+  transition: transform 0.2s, border-color 0.2s;
+  cursor: pointer;
+}
+.item-card:hover {
+  border-color: var(--emas);
+  transform: translateX(3px);
+}
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+.kata-indramayu {
+  font-family: 'Cinzel', serif;
+  font-size: 1.15rem;
+  color: var(--emas-muda);
+  font-weight: 700;
+}
+.badge-kat {
+  font-size: 9px;
+  background: var(--gelap);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: var(--teks-redup);
+  text-transform: uppercase;
+}
+.arti-indo {
+  font-size: 13px;
+  color: #ccc;
+  line-height: 1.4;
+}
+
+/* ANIMASI PROPERTI KAMUS TERBANG */
+.fly-prop {
+  position: fixed;
+  z-index: 9999;
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: 20px;
+  pointer-events: none;
+  animation: terbangKeDompet 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+@keyframes terbangKeDompet {
+  0% { transform: translate(0,0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0.5); opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="panel-ekonomi-nur">
+  <div class="dompet-nur dompet-rp" id="dompet-nur">
+    <h4>💠 RP NUR</h4>
+    <div class="angka-saldo" id="val-nur">Rp 0</div>
+  </div>
+  <div class="dompet-nur dompet-gif" id="dompet-gif">
+    <h4>🎁 GIF NUR</h4>
+    <div class="angka-saldo" id="val-gif">0 GIFT</div>
+  </div>
+  <div class="dompet-nur dompet-vou" id="dompet-vou">
+    <h4>🎟️ VOUCHER NUR</h4>
+    <div class="angka-saldo" id="val-vou">0 Pcs</div>
+  </div>
+</div>
+
+<div class="status-bar" id="statusBar">Menunggu manifestasi kata Alwi...</div>
+
+<div class="header">
+  <h1>Kamus Indramayu</h1>
+  <p>Agent Alwi & Poin Nur Integration</p>
+</div>
+
+<div class="ticker">
+  <div class="ticker-wrap" id="tickerBox">
+    </div>
+</div>
+
+<div class="scroller-kat" id="filterRow">
+  <div class="filter-chip active" id="chipAll" onclick="filterKat('Semua', this)">
+    📖 Semua <span id="totalChip">0</span>
+  </div>
+</div>
+
+<div class="kamus-container" id="kamusList">
+  </div>
+
+<script>
+// DATA UTAMA KAMUS ALWI
+const kamus = {
+  'reang':     { indo: 'Saya / Aku', kat: 'Kata Ganti' },
+  'ira':       { indo: 'Kamu / Anda', kat: 'Kata Ganti' },
+  'sira':      { indo: 'Kamu (lebih kasual)', kat: 'Kata Ganti' },
+  'deweke':    { indo: 'Dia', kat: 'Kata Ganti' },
+  'kita':      { indo: 'Kami / Kita', kat: 'Kata Ganti' },
+  'pira':      { indo: 'Berapa', kat: 'Kata Tanya' },
+  'sapa':      { indo: 'Siapa', kat: 'Kata Tanya' },
+  'apa':       { indo: 'Apa', kat: 'Kata Tanya' },
+  'mending':   { indo: 'Lebih baik', kat: 'Kata Sifat' },
+  'mengkonon': { indo: 'Begitu / Seperti itu', kat: 'Penunjuk' },
+  'mene':      { indo: 'Ke sini / Sini', kat: 'Penunjuk' },
+  'mana':      { indo: 'Ke sana / Sana', kat: 'Penunjuk' },
+  'mangan':    { indo: 'Makan', kat: 'Kata Kerja' },
+  'turu':      { indo: 'Tidur', kat: 'Kata Kerja' },
+  'mlaku':     { indo: 'Berjalan', kat: 'Kata Kerja' },
+  'balik':     { indo: 'Pulang / Kembali', kat: 'Kata Kerja' },
+  'teka':      { indo: 'Datang / Tiba', kat: 'Kata Kerja' },
+  'angger':    { indo: 'Setiap / Selalu', kat: 'Waktu' },
+  'bengen':    { indo: 'Dahulu / Dulu kala', kat: 'Waktu' },
+  'sekien':    { indo: 'Sekarang', kat: 'Waktu' },
+  'maning':    { indo: 'Lagi', kat: 'Partikel' },
+  'baen':      { indo: 'Saja', kat: 'Partikel' },
+  'bokat':     { indo: 'Barangkali / Siapa tahu', kat: 'Umum' },
+  'doyan':     { indo: 'Suka / Gemar (biasanya makanan)', kat: 'Kata Sifat' }
+};
+
+// INITIAL LOAD SALDO DARI LOCALSTORAGE (OFFLINE OPTIMIZED VIVO Y03T)
+let saldoNur = parseInt(localStorage.getItem('ic_saldo_nur')) || 0;
+let saldoGif = parseInt(localStorage.getItem('ic_saldo_gif')) || 0;
+let saldoVou = parseInt(localStorage.getItem('ic_saldo_vou')) || 0;
+
+function updateDisplaySaldo() {
+  document.getElementById('val-nur').textContent = `Rp ${saldoNur.toLocaleString('id-ID')}`;
+  document.getElementById('val-gif').textContent = `${saldoGif} GIFT`;
+  document.getElementById('val-vou').textContent = `${saldoVou} Pcs`;
+  
+  localStorage.setItem('ic_saldo_nur', saldoNur);
+  localStorage.setItem('ic_saldo_gif', saldoGif);
+  localStorage.setItem('ic_saldo_vou', saldoVou);
+}
+
+// FORMAT TICKER MARQUEE RUNNING TEXT
+function initTicker() {
+  const box = document.getElementById('tickerBox');
+  let gabung = "";
+  Object.entries(kamus).slice(0, 10).forEach(([k, v]) => {
+    gabung += `<span class="ticker-item">✦ <b>${k}</b>: ${v.indo}</span>`;
+  });
+  box.innerHTML = gabung + gabung; // diduplikasi biar nyambung terus
+}
+
+// GENERATE DYNAMIC LIST DAN EVENT KLIK TERBANG POIN
+let katAktif = 'Semua';
+
+function renderKamus() {
+  const container = document.getElementById('kamusList');
+  container.innerHTML = "";
+
+  Object.entries(kamus).forEach(([jawa, data]) => {
+    if (katAktif !== 'Semua' && data.kat !== katAktif) return;
+
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="kata-indramayu">${jawa}</div>
+        <div class="badge-kat">${data.kat}</div>
+      </div>
+      <div class="arti-indo">${data.indo}</div>
+    `;
+
+    // Ambil trigger klik untuk menerbangkan properti poin Nur
+    card.onclick = (e) => triggerTerbangPoin(e, jawa, data.kat);
+    container.appendChild(card);
+  });
+}
+
+// CORE ENGINE: PROPERTI TERBANG KE DOMPET SALDO
+function triggerTerbangPoin(event, kata, kategori) {
+  // Tentukan acak jenis bonus poin yang terbang
+  const tipeArray = ['nur', 'gif', 'vou'];
+  const tipeAcak = tipeArray[Math.floor(Math.random() * tipeArray.length)];
+  
+  let emoji = "💠";
+  let targetId = "dompet-nur";
+  let penambahan = 0;
+  let pesanStatus = "";
+
+  if (tipeAcak === 'nur') {
+    emoji = "💠 Rp NUR";
+    targetId = "dompet-nur";
+    penambahan = 15000;
+    saldoNur += penambahan;
+    pesanStatus = `Manifestasi '${kata}' memicu bonus +Rp 15.000 NUR!`;
+  } else if (tipeAcak === 'gif') {
+    emoji = "🎁 GIFNUR";
+    targetId = "dompet-gif";
+    penambahan = 1;
+    saldoGif += penambahan;
+    pesanStatus = `Kosakata '${kata}' berhasil dikonversi menjadi +1 GIFNUR!`;
+  } else {
+    emoji = "🎟️ VOUCHER";
+    targetId = "dompet-vou";
+    penambahan = 1;
+    saldoVou += penambahan;
+    pesanStatus = `Sandi Alwi '${kata}' mengaktifkan +1 VOUCHER NUR!`;
+  }
+
+  // Animasi terbang koordinat presisi ke panel atas
+  const targetEl = document.getElementById(targetId);
+  const tRect = targetEl.getBoundingClientRect();
+
+  const fly = document.createElement('div');
+  fly.className = 'fly-prop';
+  fly.textContent = emoji;
+  fly.style.color = (tipeAcak === 'nur') ? 'var(--nur-color)' : (tipeAcak === 'gif') ? 'var(--gif-color)' : 'var(--vou-color)';
+  fly.style.left = event.clientX + 'px';
+  fly.style.top = event.clientY + 'px';
+
+  const deltaX = (tRect.left + tRect.width / 2) - event.clientX;
+  const deltaY = (tRect.top + tRect.height / 2) - event.clientY;
+
+  fly.style.setProperty('--dx', deltaX + 'px');
+  fly.style.setProperty('--dy', deltaY + 'px');
+
+  document.body.appendChild(fly);
+
+  // Bersihkan elemen & update hitungan
+  setTimeout(() => {
+    fly.remove();
+    updateDisplaySaldo();
+    document.getElementById('statusBar').textContent = `[ONLINE FIX] ${pesanStatus}`;
+  }, 750);
+}
+
+// CHIPS FILTER GENERATOR BASED ON EXISITING KATEGORI
+function initFilter() {
+  const stats = {};
+  const iconMap = {
+    'Kata Ganti':'👤','Kata Tanya':'❓','Penunjuk':'👉',
+    'Kata Kerja':'🏃','Kata Sifat':'🎨','Waktu':'🕐','Umum':'📖','Partikel':'💬'
+  };
+
+  Object.values(kamus).forEach(v => { stats[v.kat] = (stats[v.kat] || 0) + 1; });
+  document.getElementById('totalChip').textContent = Object.keys(kamus).length;
+
+  const row = document.getElementById('filterRow');
+  Object.entries(stats).forEach(([k, n]) => {
+    const icon = iconMap[k] || '📝';
+    const div = document.createElement('div');
+    div.className = 'filter-chip';
+    div.innerHTML = `${icon} ${k} <span>${n}</span>`;
+    div.onclick = () => filterKat(k, div);
+    row.appendChild(div);
+  });
+}
+
+function filterKat(kategori, element) {
+  katAktif = kategori;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  element.classList.add('active');
+  renderKamus();
+}
+
+// RUNTIME INITIALIZATION
+window.onload = () => {
+  updateDisplaySaldo();
+  initTicker();
+  initFilter();
+  renderKamus();
+};
+</script>
+</body>
+</html>
+

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>INDRAMAYU DIRECT DASHBOARD</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0d6efd; /* Warna background saat loading */
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    /* Frame Konten Utama */
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background-color: #ffffff;
+    }
+
+    /* Indikator Loading saat Web VPS dimuat */
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #0d6efd, #0b5ed7);
+      color: #ffffff;
+      z-index: -1;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 12px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Loader -->
+  <div class="loading-screen">
+    <div class="spinner"></div>
+    <b style="font-size: 14px;">Memuat VPS Dashboard...</b>
+    <span style="font-size: 10px; opacity: 0.8; margin-top: 4px;">Indramayu Digital Ecosystem</span>
+  </div>
+
+  <!-- Embed Iframe ke Web Server VPS -->
+  <iframe
+    id="vpsFrame"
+    src="https://frequent-james-easy-last.trycloudflare.com/ADZAN/DASHBOARD.html"
+    title="VPS Direct Dashboard"
+    allow="microphone; camera; clipboard-read; clipboard-write; autoplay; display-capture"
+    loading="eager">
+  </iframe><script src="alwi_bubble4.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>
+
+

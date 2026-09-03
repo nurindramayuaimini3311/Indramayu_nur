@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yin Yang Spin Demo</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background:#0a0a0f; min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-family: -apple-system, 'Segoe UI', sans-serif;
+    color:#eee; padding:24px; gap:18px;
+  }
+  h1 { font-size:18px; font-weight:600; text-align:center; }
+  #speedLabel { color:#0ff; font-weight:bold; font-size:14px; }
+  canvas { border-radius:50%; box-shadow:0 0 30px rgba(0,255,255,0.15); }
+  .controls {
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    width:280px;
+  }
+  input[type=range] {
+    width:100%; accent-color:#0ff;
+  }
+  .row { display:flex; gap:10px; }
+  button {
+    background:#1a1a24; color:#0ff; border:1px solid #0ff;
+    padding:8px 16px; border-radius:6px; font-size:13px; cursor:pointer;
+  }
+  button:active { background:#0ff; color:#000; }
+  .hint { font-size:12px; color:#888; text-align:center; max-width:280px; }
+</style>
+</head>
+<body>
+  <h1>Kenapa Yin Yang keliatan seperti bola berputar saat spin cepat?</h1>
+  <canvas id="c" width="280" height="280"></canvas>
+  <div class="controls">
+    <div id="speedLabel">Kecepatan: 36.7°/frame</div>
+    <input type="range" id="speed" min="1" max="90" value="36.7" step="0.1">
+    <div class="row">
+      <button id="toggle">⏸ Pause</button>
+      <button id="reverse">↔ Balik Arah</button>
+    </div>
+  </div>
+  <div class="hint">Coba geser slider dari lambat ke cepat — di kecepatan rendah kelihatan jelas ini gambar 2D diputar biasa, tapi di kecepatan tinggi otak mulai "menipu diri sendiri" jadi kelihatan seperti bola 3D memantul.</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const cx = W/2, cy = H/2, r = W/2 - 4;
+
+let angle = 0;
+let dir = 1;
+let running = true;
+let degPerFrame = 36.7;
+
+const speedInput = document.getElementById('speed');
+const speedLabel = document.getElementById('speedLabel');
+speedInput.addEventListener('input', () => {
+  degPerFrame = parseFloat(speedInput.value);
+  speedLabel.textContent = `Kecepatan: ${degPerFrame.toFixed(1)}°/frame`;
+});
+
+document.getElementById('toggle').addEventListener('click', (e) => {
+  running = !running;
+  e.target.textContent = running ? '⏸ Pause' : '▶ Play';
+  if (running) requestAnimationFrame(draw);
+});
+document.getElementById('reverse').addEventListener('click', () => { dir *= -1; });
+
+function drawYinYang() {
+  // lingkaran luar putih
+  ctx.beginPath();
+  ctx.fillStyle = '#fff';
+  ctx.arc(0, 0, r, 0, Math.PI*2);
+  ctx.fill();
+
+  // separuh hitam (bentuk S)
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.arc(0, 0, r, Math.PI/2, -Math.PI/2, false);
+  ctx.arc(0, -r/2, r/2, -Math.PI/2, Math.PI/2, true);
+  ctx.arc(0, r/2, r/2, -Math.PI/2, Math.PI/2, false);
+  ctx.closePath();
+  ctx.fill();
+
+  // titik kecil putih di area hitam
+  ctx.beginPath();
+  ctx.fillStyle = '#fff';
+  ctx.arc(0, -r/2, r/6, 0, Math.PI*2);
+  ctx.fill();
+
+  // titik kecil hitam di area putih
+  ctx.beginPath();
+  ctx.fillStyle = '#000';
+  ctx.arc(0, r/2, r/6, 0, Math.PI*2);
+  ctx.fill();
+
+  // outline tipis
+  ctx.beginPath();
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = 1;
+  ctx.arc(0, 0, r, 0, Math.PI*2);
+  ctx.stroke();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(angle);
+  drawYinYang();
+  ctx.restore();
+
+  angle += (degPerFrame * Math.PI/180) * dir;
+
+  if (running) requestAnimationFrame(draw);
+}
+
+draw();
+</script><script src="../alwi_bubble4.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>
+

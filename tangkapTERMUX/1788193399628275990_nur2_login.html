@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indramayu Club — Verifikasi Member Telkomsel</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- CryptoJS untuk SHA256 (sama persis seperti nGage API docs) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<style>
+:root {
+  --tsel-merah:  #e1251b;
+  --tsel-gelap:  #b81c13;
+  --tsel-muda:   #ff5c54;
+  --hijau-tua:   #06140b;
+  --emas:        #d4af37;
+  --emas-terang: #ffd700;
+  --emas-muda:   #f7e27b;
+  --putih:       #fffdf2;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0505 50%, #06140b 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+/* Partikel latar */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(225,37,27,0.12) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(212,175,55,0.1)  0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(27,109,58,0.08)  0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ── LOGO STRIP ATAS ── */
+.tsel-topbar {
+  width: 100%; max-width: 460px;
+  background: var(--tsel-merah);
+  border-radius: 16px 16px 0 0;
+  padding: 14px 22px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 -4px 20px rgba(225,37,27,0.4);
+}
+.tsel-logo {
+  display: flex; align-items: center; gap: 10px;
+}
+.tsel-logo .bulat {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.tsel-logo .nama {
+  font-weight: 800; font-size: 1.05rem; color: #fff; letter-spacing: 0.04em;
+}
+.tsel-logo .sub {
+  font-size: 10px; color: rgba(255,255,255,0.75); letter-spacing: 0.08em; margin-top: 1px;
+}
+.ngage-badge {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; font-size: 10px; font-weight: 700;
+  padding: 4px 10px; border-radius: 20px; letter-spacing: 0.1em;
+}
+
+/* ── KARTU UTAMA ── */
+.kartu-login {
+  width: 100%; max-width: 460px;
+  background: linear-gradient(160deg, #111 0%, #0d0d0d 100%);
+  border: 1px solid rgba(212,175,55,0.3);
+  border-top: none;
+  border-radius: 0 0 20px 20px;
+  padding: 32px 28px 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(212,175,55,0.1);
+  position: relative; z-index: 1;
+}
+
+/* ── HEADER DALAM KARTU ── */
+.club-header { text-align: center; margin-bottom: 28px; }
+.club-header .ikon { font-size: 2.8rem; filter: drop-shadow(0 0 14px rgba(255,215,0,0.7)); }
+.club-header h1 {
+  font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 900;
+  color: var(--emas-terang); letter-spacing: 0.06em; margin-top: 8px;
+  text-shadow: 0 0 16px rgba(255,215,0,0.5);
+}
+.club-header p { font-size: 12px; color: #888; margin-top: 6px; letter-spacing: 0.04em; }
+
+/* ── STEP INDIKATOR ── */
+.step-bar {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-bottom: 28px;
+}
+.step {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid #333;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #555;
+  transition: all 0.3s ease;
+}
+.step.aktif  { border-color: var(--tsel-merah); color: var(--tsel-merah); box-shadow: 0 0 10px rgba(225,37,27,0.4); }
+.step.selesai { border-color: var(--emas); background: var(--emas); color: #000; }
+.step-line { flex: 1; height: 2px; background: #222; max-width: 60px; transition: background 0.3s; }
+.step-line.aktif { background: linear-gradient(90deg, var(--tsel-merah), var(--emas)); }
+
+/* ── LABEL ── */
+.field-label {
+  font-size: 11px; font-weight: 600; color: #777;
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; display: block;
+}
+
+/* ── INPUT NOMOR HP ── */
+.input-hp-wrap {
+  display: flex; border-radius: 10px; overflow: hidden;
+  border: 1.5px solid #333; transition: border-color 0.2s;
+  margin-bottom: 20px;
+}
+.input-hp-wrap:focus-within { border-color: var(--tsel-merah); box-shadow: 0 0 12px rgba(225,37,27,0.25); }
+.kode-negara {
+  background: #1a1a1a; padding: 0 14px;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 600; color: #aaa;
+  border-right: 1.5px solid #333; white-space: nowrap;
+}
+.kode-negara .bendera { font-size: 16px; }
+#inputHP {
+  flex: 1; background: transparent; border: none; outline: none;
+  padding: 14px; font-size: 15px; color: #fff; font-family: 'Inter', sans-serif;
+  letter-spacing: 0.03em;
+}
+#inputHP::placeholder { color: #444; }
+
+/* ── TOMBOL CEK ── */
+.btn-cek {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, var(--tsel-merah), var(--tsel-muda));
+  color: #fff; border: none; border-radius: 10px;
+  font-size: 15px; font-weight: 800; cursor: pointer;
+  letter-spacing: 0.06em; font-family: 'Inter', sans-serif;
+  box-shadow: 0 6px 20px rgba(225,37,27,0.4);
+  transition: all 0.2s ease;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.btn-cek:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(225,37,27,0.55); filter: brightness(1.08); }
+.btn-cek:active  { transform: scale(0.98); }
+.btn-cek:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* ── PANEL PROSES VERIFIKASI ── */
+#panel-proses {
+  display: none;
+  margin-top: 22px;
+  background: #0a0a0a; border: 1px solid #222;
+  border-radius: 10px; padding: 16px; font-size: 12px;
+  font-family: 'Courier New', monospace; color: #4ade80;
+  line-height: 2;
+}
+.log-line { opacity: 0; animation: muncul 0.3s ease forwards; }
+@keyframes muncul { to { opacity: 1; } }
+.log-ok   { color: #4ade80; }
+.log-info { color: #60a5fa; }
+.log-warn { color: var(--emas-terang); }
+.log-err  { color: #f87171; }
+
+/* ── PANEL SUKSES ── */
+#panel-sukses {
+  display: none; text-align: center; margin-top: 22px;
+}
+.sukses-ikon { font-size: 3rem; animation: pop-in 0.5s cubic-bezier(.17,.67,.48,1); }
+@keyframes pop-in { from { transform: scale(0) rotate(-20deg); } to { transform: scale(1) rotate(0deg); } }
+.sukses-nama {
+  font-family: 'Cinzel', serif; font-size: 1.3rem; font-weight: 900;
+  color: var(--emas-terang); margin-top: 12px;
+  text-shadow: 0 0 20px rgba(255,215,0,0.6);
+}
+.sukses-id { font-size: 12px; color: #666; margin-top: 4px; }
+.sukses-level {
+  display: inline-block; margin-top: 10px;
+  background: linear-gradient(135deg, var(--emas), var(--emas-terang));
+  color: #000; font-weight: 900; font-size: 11px; padding: 5px 14px;
+  border-radius: 20px; letter-spacing: 0.1em;
+}
+.btn-masuk {
+  width: 100%; margin-top: 20px; padding: 15px;
+  background: linear-gradient(135deg, var(--emas), var(--emas-terang));
+  color: #000; border: none; border-radius: 10px;
+  font-size: 15px; font-weight: 900; cursor: pointer;
+  font-family: 'Cinzel', serif; letter-spacing: 0.06em;
+  box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+  transition: all 0.2s ease;
+}
+.btn-masuk:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+/* ── PANEL GAGAL ── */
+#panel-gagal { display: none; margin-top: 16px; }
+.gagal-boks {
+  background: rgba(225,37,27,0.08); border: 1px solid rgba(225,37,27,0.3);
+  border-radius: 10px; padding: 16px; text-align: center;
+}
+.gagal-boks .ikon { font-size: 2rem; }
+.gagal-boks p { color: #f87171; font-size: 13px; margin-top: 8px; font-weight: 600; }
+.gagal-boks small { color: #555; font-size: 11px; display: block; margin-top: 4px; }
+.btn-ulang {
+  width: 100%; margin-top: 12px; padding: 12px;
+  background: transparent; border: 1.5px solid #444;
+  color: #aaa; border-radius: 10px; cursor: pointer; font-size: 13px;
+  font-family: 'Inter', sans-serif; transition: all 0.2s ease;
+}
+.btn-ulang:hover { border-color: var(--tsel-merah); color: #fff; }
+
+/* ── FOOTER ── */
+.footer-info {
+  margin-top: 24px; display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-size: 11px; color: #444;
+}
+.footer-info .dot { width: 4px; height: 4px; background: #333; border-radius: 50%; }
+.powered {
+  margin-top: 6px; text-align: center; font-size: 10px; color: #333; letter-spacing: 0.06em;
+}
+.powered span { color: var(--tsel-merah); font-weight: 700; }
+
+/* ── SIGNATURE DISPLAY ── */
+.sig-boks {
+  background: #0d0d0d; border: 1px dashed #2a2a2a;
+  border-radius: 8px; padding: 10px 12px; margin-top: 14px;
+  font-size: 10px; color: #555; font-family: monospace; word-break: break-all;
+  display: none;
+}
+.sig-boks .sig-label { color: #444; margin-bottom: 4px; display: block; }
+.sig-boks .sig-val   { color: #27ae60; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR TELKOMSEL -->
+<div class="tsel-topbar">
+  <div class="tsel-logo">
+    <div class="bulat">📡</div>
+    <div>
+      <div class="nama">Telkomsel</div>
+      <div class="sub">nGage Video Platform</div>
+    </div>
+  </div>
+  <span class="ngage-badge">● LIVE API</span>
+</div>
+
+<!-- KARTU LOGIN -->
+<div class="kartu-login">
+
+  <!-- Header Club -->
+  <div class="club-header">
+    <div class="ikon">🌿</div>
+    <h1>INDRAMAYU CLUB SULTAN</h1>
+    <p>Masukkan nomor Telkomsel terdaftar untuk akses member portal</p>
+  </div>
+
+  <!-- Step bar -->
+  <div class="step-bar" id="stepBar">
+    <div class="step aktif" id="s1">1</div>
+    <div class="step-line" id="l1"></div>
+    <div class="step" id="s2">2</div>
+    <div class="step-line" id="l2"></div>
+    <div class="step" id="s3">✓</div>
+  </div>
+
+  <!-- Form input -->
+  <div id="form-input">
+    <label class="field-label">Nomor HP Telkomsel</label>
+    <div class="input-hp-wrap">
+      <div class="kode-negara"><span class="bendera">🇮🇩</span> +62</div>
+      <input id="inputHP" type="tel" placeholder="0813444..." maxlength="13"
+             onkeypress="if(event.key==='Enter') mulaiVerifikasi()">
+    </div>
+
+    <button class="btn-cek" id="btnCek" onclick="mulaiVerifikasi()">
+      <span>🔐</span> VERIFIKASI MEMBER
+    </button>
+
+    <!-- Signature preview (gaya nGage docs) -->
+    <div class="sig-boks" id="sigBoks">
+      <span class="sig-label">X-Signature (SHA-256 · nGage API Standard):</span>
+      <span class="sig-val" id="sigVal">—</span>
+    </div>
+  </div>
+
+  <!-- Panel proses -->
+  <div id="panel-proses"></div>
+
+  <!-- Panel sukses -->
+  <div id="panel-sukses">
+    <div class="sukses-ikon">🏆</div>
+    <div class="sukses-nama" id="sukses-nama">—</div>
+    <div class="sukses-id"   id="sukses-id">—</div>
+    <div class="sukses-level" id="sukses-level">—</div>
+    <button class="btn-masuk" onclick="masukPortal()">👑 MASUK SULTAN PORTAL</button>
+  </div>
+
+  <!-- Panel gagal -->
+  <div id="panel-gagal">
+    <div class="gagal-boks">
+      <div class="ikon">🚫</div>
+      <p>Nomor tidak terdaftar sebagai Member</p>
+      <small>Hubungi admin untuk registrasi member baru</small>
+    </div>
+    <button class="btn-ulang" onclick="ulang()">← Coba Nomor Lain</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-info">
+    <span>Aman & Terenkripsi</span>
+    <div class="dot"></div>
+    <span>SHA-256 Signature</span>
+    <div class="dot"></div>
+    <span>Telkomsel nGage</span>
+  </div>
+  <div class="powered">Powered by <span>Telkomsel</span> nGage Video API Platform</div>
+
+</div>
+
+<script>
+// ============================================================
+// DATABASE MEMBER LOKAL — ganti/tambah sesuai kebutuhan
+// Format: { hp: "08xxx", nama: "...", id: "M001", level: "..." }
+// ============================================================
+const MEMBER_DB = [
+  { hp: "081234567890", nama: "Raden Agung Nur",    id: "M005", level: "SULTAN SUPREME ♂" },
+  { hp: "082234567890", nama: "Ratu Arum Makrifat", id: "M006", level: "SULTAN SUPREME ♀" },
+  { hp: "083234567890", nama: "Gusti Arya",         id: "M007", level: "SULTAN VIP ♂"     },
+  { hp: "084234567890", nama: "Nyai Sekar",         id: "M008", level: "SULTAN VIP ♀"     },
+  { hp: "085234567890", nama: "Pangeran Wijaya",    id: "M009", level: "SULTAN VIP ♂"     },
+  { hp: "086234567890", nama: "Putri Larasati",     id: "M010", level: "SULTAN VIP ♀"     },
+  { hp: "087234567890", nama: "Bang Jago Nur",      id: "M001", level: "PLATINUM ♂"       },
+  { hp: "088234567890", nama: "Kang Alam",          id: "M002", level: "GOLD ♂"           },
+  { hp: "089234567890", nama: "Neng Sinar",         id: "M003", level: "SILVER ♀"         },
+  { hp: "081334567890", nama: "Teh Cahaya",         id: "M004", level: "BRONZE ♀"         },
+];
+
+// API Key demo (gaya nGage Digihub — bisa diganti ke key asli)
+const API_KEY    = "TSEL-nGage-IndramayuClub-2024";
+const SECRET_KEY = "NUR_SULTAN_SECRET_KEY";
+
+// ── Generate X-Signature persis seperti nGage API docs ──
+function generateSignature() {
+  const timestamp  = Math.floor(Date.now() / 1000) - 10;
+  const rawString  = API_KEY + SECRET_KEY + timestamp;
+  const signature  = CryptoJS.SHA256(rawString).toString(CryptoJS.enc.Hex);
+  return { signature, timestamp };
+}
+
+// ── Normalisasi nomor HP ──
+function normalHP(raw) {
+  let n = raw.replace(/\D/g, '');
+  if (n.startsWith('62')) n = '0' + n.slice(2);
+  if (!n.startsWith('0')) n = '0' + n;
+  return n;
+}
+
+// ── Tampilkan signature di UI ──
+function tampilSignature() {
+  const { signature } = generateSignature();
+  const boks = document.getElementById('sigBoks');
+  document.getElementById('sigVal').textContent = signature;
+  boks.style.display = 'block';
+}
+
+// ── Tambah log ke panel proses ──
+function addLog(teks, kelas, delay) {
+  return new Promise(res => setTimeout(() => {
+    const el = document.createElement('div');
+    el.className = `log-line ${kelas}`;
+    el.textContent = teks;
+    document.getElementById('panel-proses').appendChild(el);
+    res();
+  }, delay));
+}
+
+// ── MULAI VERIFIKASI ──
+async function mulaiVerifikasi() {
+  const raw    = document.getElementById('inputHP').value.trim();
+  const nomor  = normalHP(raw);
+
+  if (raw.length < 9) {
+    document.getElementById('inputHP').style.borderColor = 'red';
+    setTimeout(() => document.getElementById('inputHP').style.borderColor = '', 800);
+    return;
+  }
+
+  // Tampilkan signature nGage
+  tampilSignature();
+
+  // Disable tombol + step 2
+  document.getElementById('btnCek').disabled = true;
+  stepSet(2);
+
+  // Tampilkan panel proses
+  const panelProses = document.getElementById('panel-proses');
+  panelProses.style.display = 'block';
+  panelProses.innerHTML = '';
+
+  const { signature, timestamp } = generateSignature();
+
+  await addLog(`› Inisialisasi koneksi Telkomsel nGage...`,          'log-info',  0);
+  await addLog(`› Timestamp Unix: ${timestamp}`,                     'log-info',  350);
+  await addLog(`› API_KEY   : ${API_KEY}`,                           'log-info',  700);
+  await addLog(`› X-Signature (SHA-256):`,                           'log-info',  1050);
+  await addLog(`  ${signature.slice(0,32)}...`,                      'log-warn',  1300);
+  await addLog(`› Target MSISDN: ${nomor}`,                          'log-info',  1700);
+  await addLog(`› Mengirim request ke nGage Member API...`,          'log-info',  2100);
+  await addLog(`  [GET] /member/verify?msisdn=${nomor}`,             'log-info',  2400);
+  await addLog(`› Menunggu respons server Telkomsel...`,             'log-info',  2800);
+
+  // Cek database lokal
+  const member = MEMBER_DB.find(m => normalHP(m.hp) === nomor);
+
+  await addLog(`› Status HTTP: 200 OK`,                              'log-ok',    3400);
+
+  if (member) {
+    await addLog(`› Member ditemukan ✓`,                             'log-ok',    3800);
+    await addLog(`› Nama    : ${member.nama}`,                       'log-ok',    4100);
+    await addLog(`› ID      : ${member.id}`,                         'log-ok',    4300);
+    await addLog(`› Level   : ${member.level}`,                      'log-ok',    4500);
+    await addLog(`› Akses SULTAN PORTAL: GRANTED ✓`,                 'log-ok',    4800);
+
+    setTimeout(() => {
+      panelProses.style.display = 'none';
+      stepSet(3);
+      document.getElementById('sukses-nama').textContent  = member.nama;
+      document.getElementById('sukses-id').textContent    = `ID Member: ${member.id}`;
+      document.getElementById('sukses-level').textContent = member.level;
+      document.getElementById('panel-sukses').style.display = 'block';
+    }, 5300);
+
+  } else {
+    await addLog(`› Member tidak ditemukan di database`,             'log-err',   3800);
+    await addLog(`› Akses DITOLAK ✗`,                               'log-err',   4200);
+
+    setTimeout(() => {
+      panelProses.style.display = 'none';
+      document.getElementById('panel-gagal').style.display = 'block';
+      stepSet(1);
+    }, 4800);
+  }
+}
+
+// ── Step indikator ──
+function stepSet(n) {
+  for (let i = 1; i <= 3; i++) {
+    const s = document.getElementById(`s${i}`);
+    s.className = 'step' + (i < n ? ' selesai' : i === n ? ' aktif' : '');
+  }
+  for (let i = 1; i <= 2; i++) {
+    const l = document.getElementById(`l${i}`);
+    if (l) l.className = 'step-line' + (i < n ? ' aktif' : '');
+  }
+}
+
+// ── Masuk portal ──
+function masukPortal() {
+  // Ganti ke nama file portal kamu
+  window.location.href = 'sultan-portal-fixed.html';
+}
+
+// ── Ulang ──
+function ulang() {
+  document.getElementById('panel-gagal').style.display  = 'none';
+  document.getElementById('sigBoks').style.display      = 'none';
+  document.getElementById('btnCek').disabled            = false;
+  document.getElementById('inputHP').value              = '';
+  stepSet(1);
+}
+<!-- ============================================================
+     INIT & RUNNING SYSTEM
+     ============================================================ -->
+<script>
+  buildDots();
+  applyWallpaper(0);
+  startWallpaperTimer();
+  buildGallery();
+
+  document.getElementById('peringatan-drive-modal').addEventListener('click', function(e) {
+    if(e.target === this) tutupPeringatan();
+  });
+</script> 
+
+<!-- ⛑️ ALWI grandlew-->
+<script src="components/agen_alwi.js"></script>
+
+
+</body>
+</html>
+

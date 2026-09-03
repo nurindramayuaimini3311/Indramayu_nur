@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>META ALWI — Pusat Halaman</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f59e0b">
+<link rel="icon" href="img/icon-192.png">
+<link rel="apple-touch-icon" href="img/icon-180.png">
+<script>if("serviceWorker" in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js")});</script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --emas:#d97706; --emas-terang:#f59e0b;
+  --border:#3b82f6; --border-sub:#cbd5e1;
+  --text-utama:#0f172a; --text-biru:#1e40af; --hijau:#16a34a;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,Segoe UI,Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:linear-gradient(180deg,#ffffff 0%,#eef6ff 100%);color:var(--text-utama)}
+#topbar{position:sticky;top:0;z-index:900;background:#fff;border-bottom:2px solid var(--border-sub);padding:8px 8px 0}
+#topbar .judul{text-align:center;color:var(--text-biru);font-family:'Cinzel',serif;font-weight:900;font-size:16px;padding:2px 0 8px}
+#tabBar{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+#tabBar::-webkit-scrollbar{display:none}
+.tab{flex:none;border:none;background:none;color:#64748b;font-size:13px;font-weight:800;padding:10px 14px;cursor:pointer;border-radius:10px 10px 0 0;white-space:nowrap;transition:.15s}
+.tab:hover{background:#eff6ff;color:var(--text-biru)}
+.tab.aktif{color:var(--text-biru);background:#fff;box-shadow:inset 0 -3px 0 var(--border)}
+#bingkai{width:100%;height:calc(100vh - 92px);border:none;display:block;background:#fff}
+#memuat{position:fixed;top:52%;left:50%;transform:translate(-50%,-50%);color:#64748b;font-size:14px;display:none;z-index:5}
+
+/* ═══ ALWI NAVIGASI ═══ */
+#alwiNavWrap{position:fixed;bottom:14px;left:14px;z-index:999999990}
+#alwiNavBtn{display:flex;align-items:center;gap:6px;background:var(--emas-terang);color:#fff;border:2px solid var(--emas);
+ border-radius:24px;padding:10px 18px;font-weight:900;font-size:13px;cursor:pointer;box-shadow:0 4px 12px rgba(245,158,11,.35);transition:.25s}
+#alwiNavBtn:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(245,158,11,.45)}
+#alwiNavMenu{display:none;position:absolute;bottom:52px;left:0;min-width:230px;background:#fff;border:2px solid var(--border-sub);border-radius:14px;
+ overflow:hidden;box-shadow:0 12px 30px rgba(15,23,42,.18)}
+#alwiNavWrap.buka #alwiNavMenu{display:block}
+.alwiNavJdl{padding:9px 14px 7px;font-size:10px;letter-spacing:2px;color:var(--emas);font-weight:900;border-bottom:1px solid #fde68a;background:#fffbeb}
+#alwiNavMenu a{display:flex;align-items:center;gap:8px;padding:11px 14px;color:var(--text-utama);text-decoration:none;font-size:12.5px;font-weight:700;transition:.15s}
+#alwiNavMenu a:hover{background:#fff7ed;color:var(--emas);padding-left:18px}
+@media (max-width:400px){#alwiNavBtn{font-size:11px;padding:8px 13px}}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="judul">🌐 META ALWI — PUSAT HALAMAN</div>
+  <div id="tabBar">
+    <button class="tab aktif" data-hal="alwibook.html">📘 Feed AlwiBook</button>
+    <button class="tab" data-hal="template-komentar.html">💬 Komentar & Properti</button>
+    <button class="tab" data-hal="gambar-streaming/index.html">🖼️ Gambar Streaming</button>
+    <button class="tab" data-hal="promosi-streaming/index.html">📺 Promosi Streaming</button>
+  </div>
+</div>
+
+<iframe id="bingkai" src="alwibook.html" title="halaman"></iframe>
+<div id="memuat">Memuat…</div>
+
+<!-- ══════════ ALWI NAVIGASI ══════════ -->
+<div id="alwiNavWrap">
+  <button id="alwiNavBtn">🧭 ALWI NAVIGASI ▲</button>
+  <div id="alwiNavMenu">
+    <div class="alwiNavJdl">✦ HALAMAN UTAMA ✦</div>
+    <a href="index.html">🏠 Pusat Halaman (ini)</a>
+    <a href="alwibook.html" target="_blank">📘 Feed AlwiBook (penuh)</a>
+    <div class="alwiNavJdl">✦ STREAMING ✦</div>
+    <a href="template-komentar.html">💬 Komentar & Properti Terbang</a>
+    <a href="gambar-streaming/index.html">🖼️ Gambar Streaming — 4 Slot</a>
+    <a href="promosi-streaming/index.html">📺 Promosi Streaming — 4 Slot</a>
+    <div class="alwiNavJdl">✦ LAINNYA ✦</div>
+    <a href="video-drive.html">🎬 Video Drive</a>
+  </div>
+</div>
+
+<script>
+var bingkai=document.getElementById('bingkai'),memuat=document.getElementById('memuat');
+var terpasang={};
+
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('aktif')});
+    t.classList.add('aktif');
+    var hal=t.dataset.hal;
+    if(!terpasang[hal]){ // iframe hanya dimuat sekali per tab (biar ringan)
+      memuat.style.display='block';
+      bingkai.src=hal;
+    }else{
+      bingkai.src=hal;
+    }
+  });
+});
+
+bingkai.addEventListener('load',function(){memuat.style.display='none';terpasang[bingkai.getAttribute('src')]=1});
+
+/* dukung link ?hal=template-2.html dari luar */
+(function(){var h=new URLSearchParams(location.search).get('hal');
+ if(h){var t=document.querySelector('.tab[data-hal="'+h+'"]');if(t)t.click()}})();
+
+/* navigasi */
+(function(){var w=document.getElementById('alwiNavWrap'),b=document.getElementById('alwiNavBtn');
+ b.addEventListener('click',function(e){e.stopPropagation();w.classList.toggle('buka');
+  b.textContent=w.classList.contains('buka')?'🧭 ALWI NAVIGASI ▼':'🧭 ALWI NAVIGASI ▲'});
+ document.addEventListener('click',function(e){if(!w.contains(e.target)){w.classList.remove('buka');
+  b.textContent='🧭 ALWI NAVIGASI ▲'}})})();
+</script>
+
+
+<!-- ===== VIDEO YOUTUBE ===== -->
+<div id="ytBox" style="max-width:480px;margin:16px auto;background:#fff;border:2px solid #fecaca;border-radius:14px;padding:12px;font-family:'Inter',sans-serif">
+  <div style="font-size:.75rem;font-weight:900;color:#dc2626;margin-bottom:8px">▶️ VIDEO YOUTUBE <span style="color:#94a3b8;font-weight:400">• pilih dan putar</span></div>
+  <div style="display:flex;gap:6px;margin-bottom:8px">
+    <input id="ytSearch" placeholder="Cari video / tempel link YouTube..."
+      style="flex:1;padding:10px;border-radius:9px;border:1.5px solid var(--border-sub);background:#f8fafc;color:var(--text-utama);font-size:.85rem;outline:none">
+    <button onclick="ytBuka()" style="padding:10px 14px;border:none;border-radius:9px;background:#dc2626;color:#fff;font-weight:900;cursor:pointer">PUTAR</button>
+  </div>
+  <div id="ytFrame" style="display:none;margin-top:8px">
+    <div contenteditable="false" style="position:relative;padding-top:56.25%">
+      <iframe id="ytIframe" style="position:absolute;inset:0;width:100%;height:100%;border-radius:9px" src="" title="YouTube" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+  <div id="ytAuto" style="margin-top:8px"></div>
+</div>
+<script>
+function ytId(u){
+  u=String(u||'').trim();
+  var m=u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  if(m)return m[1];
+  return null;
+}
+function ytPutar(baru){
+  var f=document.getElementById('ytFrame'),i=document.getElementById('ytIframe');
+  f.style.display='block';
+  i.src='https://www.youtube.com/embed/'+baru+'?autoplay=1&rel=0';
+  f.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function ytBuka(){
+  var v=document.getElementById('ytSearch').value.trim();
+  var id=ytId(v);
+  if(!id){alert('Tempel link YouTube yang valid (mengandung ID video).');return;}
+  ytPutar(id);
+}
+document.getElementById('ytSearch').addEventListener('keydown',function(e){if(e.key==='Enter')ytBuka();});
+(function(){
+  var quick=[
+    {n:'🎥 Contoh 1 — Big Buck Bunny',u:'https://www.youtube.com/watch?v=aqz-KE-bpKQ'},
+    {n:'🎬 Contoh 2 — Sintel',u:'https://www.youtube.com/watch?v=eRsGyueVLvQ'},
+    {n:'📺 Contoh 3 — Tears of Steel',u:'https://www.youtube.com/watch?v=R6MlUcmOul8'}
+  ];
+  var w='',auto=document.getElementById('ytAuto');
+  quick.forEach(function(q){w+='<button onclick="ytPutar(\''+ytId(q.u)+'\')" style="display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--border-sub);border-left:4px solid #dc2626;border-radius:8px;padding:9px 11px;margin-bottom:6px;cursor:pointer;font-size:.82rem;font-weight:700;color:#1e40af">'+q.n+'</button>'});
+  auto.innerHTML=w;
+  var id=ytId(new URLSearchParams(location.search).get('v'));
+  if(id)ytPutar(id);
+})();
+</script><script src="../../alwi_bubble2.js"></script>
+</body>
+</html>

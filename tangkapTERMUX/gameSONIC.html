@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sega Retro Zone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-luar:   #1a1c23;
+      --bg-card:   #242631;
+      --teks-main: #ffffff;
+      --teks-sub:  #9ca3af;
+      --sega-blue: #0054a6;
+      --border:    #374151;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-luar);
+      color: var(--teks-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+    }
+
+    .game-container {
+      width: 100%;
+      max-width: 420px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .game-header {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .game-judul {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      color: var(--teks-main);
+      text-transform: uppercase;
+    }
+    .game-sub {
+      font-size: 10px;
+      color: var(--teks-sub);
+      margin-top: 2px;
+    }
+
+    .iframe-wrapper {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      background-color: #000;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid var(--sega-blue);
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* KONTROL STIK VIRTUAL DI BAWAH */
+    .virtual-pad {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    /* D-Pad (Arah) */
+    .dpad {
+      display: grid;
+      grid-template-columns: repeat(3, 40px);
+      grid-template-rows: repeat(3, 40px);
+      gap: 3px;
+    }
+    .d-btn {
+      background: #334155;
+      color: white;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .d-btn:active { background: var(--sega-blue); }
+    
+    .btn-up    { grid-column: 2; grid-row: 1; }
+    .btn-left  { grid-column: 1; grid-row: 2; }
+    .btn-right { grid-column: 3; grid-row: 2; }
+    .btn-down  { grid-column: 2; grid-row: 3; }
+
+    /* Tombol Aksi (A, B, C) */
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+    .a-btn {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      border: none;
+      font-weight: bold;
+      font-size: 14px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-user-select: none;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+    .a-btn:active { filter: brightness(1.2); transform: scale(0.95); }
+    .btn-a { background: #e11d48; } /* Merah */
+    .btn-b { background: #2563eb; } /* Biru */
+    .btn-c { background: #16a34a; } /* Hijau */
+
+    .petunjuk {
+      margin-top: 10px;
+      font-size: 10px;
+      color: var(--teks-sub);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="game-container">
+  
+  <div class="game-header">
+    <h1 class="game-judul">🎮 Retro Arcade</h1>
+    <p class="game-sub">Sonic the Hedgehog (1991) — Sega Genesis</p>
+  </div>
+
+  <div class="iframe-wrapper">
+    <iframe 
+      id="gameFrame"
+      src="https://archive.org/embed/sg_Sonic_the_Hedgehog_1991_Sega_US" 
+      allowfullscreen="true" 
+      allow="autoplay; gamepad; keyboard; fullscreen">
+    </iframe>
+  </div>
+
+  <!-- STIK VIRTUAL TAMBAHAN -->
+  <div class="virtual-pad">
+    <!-- Tombol Arah -->
+    <div class="dpad">
+      <button class="d-btn btn-up" ontouchstart="pressKey('ArrowUp')" ontouchend="releaseKey('ArrowUp')" onmousedown="pressKey('ArrowUp')" onmouseup="releaseKey('ArrowUp')">▲</button>
+      <button class="d-btn btn-left" ontouchstart="pressKey('ArrowLeft')" ontouchend="releaseKey('ArrowLeft')" onmousedown="pressKey('ArrowLeft')" onmouseup="releaseKey('ArrowLeft')">◄</button>
+      <button class="d-btn btn-right" ontouchstart="pressKey('ArrowRight')" ontouchend="releaseKey('ArrowRight')" onmousedown="pressKey('ArrowRight')" onmouseup="releaseKey('ArrowRight')">►</button>
+      <button class="d-btn btn-down" ontouchstart="pressKey('ArrowDown')" ontouchend="releaseKey('ArrowDown')" onmousedown="pressKey('ArrowDown')" onmouseup="releaseKey('ArrowDown')">▼</button>
+    </div>
+
+    <!-- Tombol Aksi Sega (Z = A, X = B, C = C) -->
+    <div class="action-buttons">
+      <button class="a-btn btn-c" ontouchstart="pressKey('KeyC')" ontouchend="releaseKey('KeyC')" onmousedown="pressKey('KeyC')" onmouseup="releaseKey('KeyC')">C</button>
+      <button class="a-btn btn-b" ontouchstart="pressKey('KeyX')" ontouchend="releaseKey('KeyX')" onmousedown="pressKey('KeyX')" onmouseup="releaseKey('KeyX')">B</button>
+      <button class="a-btn btn-a" ontouchstart="pressKey('KeyZ')" ontouchend="releaseKey('KeyZ')" onmousedown="pressKey('KeyZ')" onmouseup="releaseKey('KeyZ')">A</button>
+    </div>
+  </div>
+
+  <div class="petunjuk">
+    Gunakan stik virtual di atas untuk mengontrol game Sonic langsung dari HP!
+  </div>
+
+</div>
+
+<script>
+  // Skrip pengantar tombol virtual ke dalam iframe game
+  function pressKey(code) {
+    const iframe = document.getElementById('gameFrame');
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.dispatchEvent(new KeyboardEvent('keydown', { code: code, bubbles: true }));
+    }
+  }
+
+  function releaseKey(code) {
+    const iframe = document.getElementById('gameFrame');
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.dispatchEvent(new KeyboardEvent('keyup', { code: code, bubbles: true }));
+    }
+  }
+</script>
+
+</body>
+</html>
+

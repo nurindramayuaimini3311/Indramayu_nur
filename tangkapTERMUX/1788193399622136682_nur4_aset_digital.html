@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Nur 4 - Aset Digital VVIP</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --latar: #ffffff;
+  --teks-utama: #000000;
+  --teks-sekunder: #444444;
+  --border-garis: #dddddd;
+  --abu-ringan: #f9f9f9;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--latar);
+  color: var(--teks-utama);
+  padding: 15px;
+  min-height: 100vh;
+}
+
+/* ===== TOPNAV MINIMALIS ===== */
+.topnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--latar);
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 2px solid var(--teks-utama);
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.nav-left-zone {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-logo {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--teks-utama);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.hamburger {
+  background: var(--abu-ringan);
+  border: 1.5px solid var(--teks-utama);
+  color: var(--teks-utama);
+  font-size: 1.3rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-search {
+  flex: 0.4;
+  padding: 8px 12px;
+  background: var(--abu-ringan);
+  border: 1.5px solid var(--teks-utama);
+  border-radius: 6px;
+  color: var(--teks-utama);
+  font-size: 0.9rem;
+  min-width: 120px;
+}
+
+/* DROPDOWN NAV-LINKS */
+.nav-links {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--latar);
+  border: 2px solid var(--teks-utama);
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 5px;
+  gap: 8px;
+  z-index: 100;
+}
+
+.nav-links.active { display: flex; }
+
+.nav-link {
+  padding: 10px 15px;
+  color: var(--teks-utama);
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  border: 1px solid var(--border-garis);
+}
+
+.nav-link:hover, .nav-link.active {
+  background: var(--teks-utama);
+  color: var(--latar);
+  font-weight: bold;
+}
+
+.nav-right { display: flex; gap: 8px; }
+.nav-btn {
+  padding: 8px 12px;
+  background: var(--abu-ringan);
+  border: 1px solid var(--teks-utama);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+/* ===== HEADER UTAMA ===== */
+header {
+  text-align: center;
+  padding: 25px 10px;
+  border: 2px solid var(--teks-utama);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  background: var(--abu-ringan);
+}
+
+header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  color: var(--teks-utama);
+  letter-spacing: 0.05em;
+}
+
+header p {
+  color: var(--teks-sekunder);
+  font-size: 0.8rem;
+  margin-top: 5px;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+/* POP-UP MODAL RCLONE */
+.modal-backup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+}
+.modal-backup.buka { display: flex; }
+.modal-box {
+  background: #0a2e1c;
+  border: 2px solid #C9A84C;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 460px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 30px rgba(201, 168, 76, 0.3);
+}
+.modal-head {
+  padding: 12px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-head h3 { color: #C9A84C; font-size: 13px; font-family: monospace; letter-spacing: 1px; }
+.btn-close-modal { background: none; border: none; color: #ff3b3b; font-size: 18px; cursor: pointer; font-weight: bold; }
+.modal-body { padding: 12px; overflow-y: auto; font-family: monospace; font-size: 11px; }
+.rclone-stats { background: #000; border-left: 3px solid #C9A84C; padding: 8px; margin-bottom: 12px; font-size: 10px; color: #4ade80; }
+
+/* LIST REPOSITORI FOLDER */
+.folder-cloud-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(201,168,76,0.15);
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+.folder-cloud-item:hover { border-color: #C9A84C; }
+.f-meta { font-size: 9px; opacity: 0.5; text-align: right; }
+
+
+/* ===== 4 KONTAINER PROPERTI KOSONG ===== */
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  margin: 20px 0 10px;
+  border-left: 4px solid var(--teks-utama);
+  padding-left: 8px;
+}
+
+.properti-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+@media (min-width: 600px) {
+  .properti-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.kontainer-kosong {
+  background: var(--latar);
+  border: 2px dashed #888888; /* Efek garis putus-putus tanda siap diisi */
+  border-radius: 10px;
+  padding: 30px 15px;
+  text-align: center;
+  color: #666666;
+  font-size: 0.9rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+}
+
+.kontainer-kosong span {
+  display: block;
+  font-size: 1.3rem;
+  color: var(--teks-utama);
+  margin-bottom: 5px;
+  font-family: 'Cinzel', serif;
+}
+
+.kontainer-kosong:hover {
+  border-color: var(--teks-utama);
+  background: var(--abu-ringan);
+}
+
+/* ===== MENU TOMBOL AKSI JALUR CEPAT ===== */
+.menu-sultan-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 600px) {
+  .menu-sultan-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
+}
+
+.btn-menu-sultan {
+  background: var(--abu-ringan);
+  border: 2px solid var(--teks-utama);
+  border-radius: 8px;
+  padding: 15px 10px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-menu-sultan:hover {
+  background: var(--teks-utama);
+  color: var(--latar);
+}
+
+/* ===== FOOTER NAVIGASI ===== */
+.footer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 25px;
+  padding: 15px;
+  border: 2px solid var(--teks-utama);
+  border-radius: 8px;
+}
+
+.btn-footer {
+  flex: 1;
+  padding: 12px;
+  background: var(--latar);
+  color: var(--teks-utama);
+  text-align: center;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.9rem;
+  border: 1px solid var(--teks-utama);
+}
+
+.btn-footer:hover {
+  background: var(--teks-utama);
+  color: var(--latar);
+}
+
+/* RESPONSIVE LAYOUT DESKTOP */
+@media (min-width: 768px) {
+  .hamburger { display: none; }
+  .nav-links {
+    display: flex;
+    flex-direction: row;
+    position: static;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 580px) {
+  .topnav { flex-wrap: wrap; gap: 12px; }
+  .nav-search { order: 3; width: 100%; flex: unset; }
+}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="nav-left-zone">
+    <button class="hamburger" id="navToggle">☰</button>
+    <div class="nav-logo">
+      INDRAMAYU CLUB (IMC)
+    </div>
+  </div>
+
+  <div class="nav-links" id="navLinksMenu">
+    <a href="DASHBOARD.html" class="nav-link active">Dashboard</a>
+    <a href="kamus.html" class="nav-link">Kamus Alwi</a>
+    <a href="live_member.html" class="nav-link">Live Member</a>
+    <a href="contact.html" class="nav-link">Admin Jodoh</a>
+  </div>
+
+  <input class="nav-search" placeholder="🔍 Cari...">
+  <div class="nav-right">
+    <div class="nav-btn">💬</div>
+    <div class="nav-btn">🔔</div>
+  </div>
+</div>
+
+<header>
+  <h1>INDRAMAYU CLUB (IMC)</h1>
+  <p>PORTAL UTAMA KENDALI EMAS SULTAN MAKRIFAT</p>
+</header>
+
+<div class="section-title">📦 LAB KENDALIAN PROPERTI SULTAN</div>
+<div class="properti-grid">
+<!-- TOMBOL UTAMA UNTUK MEMBUKA POP-UP -->
+<div style="margin: 0 12px 12px; text-align: center;">
+  <button onclick="bukaRcloneModal()" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #0a2e1c, #000); border: 1px solid #C9A84C; color: #C9A84C; border-radius: 8px; font-family: monospace; font-size: 11px; font-weight: bold; cursor: pointer; letter-spacing: 1px;">                                     ⚡ INSPEKSI REPOSITORI RCLONE (CLOUD STORAGE)
+  </button>
+</div>
+
+<!-- STRUKTUR POP-UP MODAL -->
+<div class="modal-backup" id="rcloneModal" onclick="tutupRcloneModalOuter(event)">
+  <div class="modal-box">                                           <div class="modal-head">
+      <h3>📁 REPOSITORI DATA ABADI — ENGINES CLOUD</h3>
+      <button class="btn-close-modal" onclick="tutupRcloneModal()">×</button>                                                       </div>                                                          <div class="modal-body">
+
+      <!-- Ringkasan Log Rclone agar Terasa Besar -->                 <div class="rclone-stats">                                        🤖 STATUS: SYNCED VIA RCLONE v1.65<br>                          📦 TOTAL KAPASITAS: 4.2 TB / Unlimited Cloud<br>
+        ⏳ LAST SYNC: Otomatis via Nur 8 Backup                       </div>
+      <!-- Item Daftar Folder Sesuai Gambar Drive Anda -->
+      <div class="folder-cloud-item">
+        <div>📁 03_CELENGAN_MEMBER</div>
+        <div class="f-meta">1,420 Files<br><span style="color:#4ade80;">Secure Crypto</span></div>                                    </div>
+
+      <div class="folder-cloud-item">                                   <div> 📁 FOLDER C1</div>
+        <div class="f-meta">850 Items<br>Master Keuangan</div>        </div>
+
+      <div class="folder-cloud-item">
+        <div>📁 FOLDER C2</div>                                         <div class="f-meta">2,340 Items<br>Arsip Log Core</div>
+      </div>
+      <div class="folder-cloud-item">                                   <div> 📁 FOLDER C3</div>                                         <div class="f-meta">5,110 Files<br>Database Sultan</div>      </div>
+
+      <div class="folder-cloud-item">                                   <div> 📁 FOLDER C4</div>                                         <div class="f-meta">920 Items<br>Jantung Cadangan</div>
+      </div>
+
+      <div class="folder-cloud-item">
+        <div>📁 FOLDER tab C</div>
+        <div class="f-meta">120 Items<br>Sistem Jalur Cepat</div>
+      </div>
+      <div class="folder-cloud-item">
+        <div>📁 nur1</div>                                              <div class="f-meta">Akses Aktif<br><span style="color:#C9A84C;">Pusat Kendali 1</span></div>                                  </div>
+
+      <div class="folder-cloud-item">
+        <div>📁 nur2</div>                                              <div class="f-meta">Akses Aktif<br><span style="color:#C9A84C;">Pusat Kendali 2</span></div>                                  </div>
+
+    </div>                                                        </div>                                                        </div>
+
+  <div class="kontainer-kosong" id="kontainer-gif-nur">
+    <span>GIF NUR</span>
+    [ Ruang Properti Kosong — Siap Disuntik Komponen ]
+  </div>
+  <div class="kontainer-kosong" id="kontainer-voucher-nur">
+    <span>VOUCHER NUR</span>                                        [ Ruang Properti Kosong — Siap Disuntik Komponen ]            </div>
+
+  <div class="kontainer-kosong" id="kontainer-kara-nur">            <span>KARA NUR</span>
+    [ Ruang Properti Kosong — Siap Disuntik Komponen ]
+  </div>
+
+  <div class="kontainer-kosong" id="kontainer-rpnur">               <span>RPNUR</span>
+    [ Ruang Properti Kosong — Siap Disuntik Komponen ]
+  </div>
+</div>
+<div class="section-title">⚡ SISTEM JALUR CEPAT MALINGPAA</div><div class="menu-sultan-grid">
+  <div class="btn-menu-sultan" onclick="location.href='kamus.html'">📖 KAMUS INDRAMAYU</div>
+  <div class="btn-menu-sultan" onclick="location.href='live_member.html'">👥 LIVE MEMBER</div>
+  <div class="btn-menu-sultan" onclick="location.href='Live_vvip.html'">👑 LIVE VVIP</div>
+  <div class="btn-menu-sultan" onclick="location.href='KALKULATOR.html'">🧮 KALKULATOR</div>
+</div>
+<div class="footer-nav">                                          <a href="DASHBOARD.html" class="btn-footer">📊 REFRESH DASHBOARD</a>
+  <a href="contact.html" class="btn-footer">👤 BACKEND ADMIN JODOH</a>                                                          </div>
+
+<script>
+// Logika Pengendali Pop-up Modal Rclone                        function bukaRcloneModal() {
+    document.getElementById('rcloneModal').classList.add('buka');
+}
+function tutupRcloneModal() {
+    document.getElementById('rcloneModal').classList.remove('buka');
+}
+
+function tutupRcloneModalOuter(event) {
+    // Menutup pop-up jika user klik area hitam di luar kotak modal
+    if (event.target.id === 'rcloneModal') {                            tutupRcloneModal();
+    }
+}
+
+  const navToggle = document.getElementById('navToggle');         const navLinksMenu = document.getElementById('navLinksMenu');
+
+  navToggle.addEventListener('click', (e) => {
+    navLinksMenu.classList.toggle('active');                        e.stopPropagation();                                          });
+  document.addEventListener('click', () => {
+    if(navLinksMenu.classList.contains('active')) {
+      navLinksMenu.classList.remove('active');                      }                                                             });
+
+<!-- ============================================================
+     INIT & RUNNING SYSTEM
+     ============================================================ -->
+<script>
+  buildDots();
+  applyWallpaper(0);
+  startWallpaperTimer();
+  buildGallery();
+
+  document.getElementById('peringatan-drive-modal').addEventListener('click', function(e) {
+    if(e.target === this) tutupPeringatan();
+  });
+</script> 
+
+<!-- ⛑️ ALWI grandlew-->
+<script src="components/agen_alwi.js"></script>
+
+
+</body>
+</html>

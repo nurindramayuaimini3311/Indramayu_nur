@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alwi SD - Belajar & Bermain</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f7f9fc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        /* Canvas Background / Animasi */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .container {
+            width: 100%;
+            max-width: 480px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 1;
+        }
+        /* Header / Sapaan ala UI sebelumnya */
+        .header-card {
+            background: white;
+            border-radius: 20px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 3px solid #ffcc00;
+        }
+        .avatar {
+            width: 50px;
+            height: 50px;
+            background: #ffe680;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        .speech-bubble {
+            font-size: 14px;
+            color: #333;
+            font-weight: bold;
+        }
+        /* Tombol Menu */
+        .menu-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-radius: 16px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.1s ease;
+        }
+        .menu-btn:active {
+            transform: scale(0.97);
+        }
+        .menu-content {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .arrow-badge {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        /* Warna-warni Menu */
+        .bg-green { background-color: #4CAF50; }
+        .bg-orange { background-color: #FF9800; }
+        .bg-blue { background-color: #03A9F4; }
+        .bg-purple { background-color: #9C27B0; }
+        .bg-yellow { background-color: #FFEB3B; color: #333 !important; }
+        .bg-pink { background-color: #E91E63; }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas untuk latar belakang animasi partikel / bintang interaktif -->
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="container">
+        <!-- Header Info -->
+        <div class="header-card">
+            <div class="avatar">👦🏽</div>
+            <div class="speech-bubble">Halo Alwi! Mau main atau belajar apa hari ini?</div>
+        </div>
+
+        <!-- Daftar Menu sesuai direktori file Anda -->
+        <a href="matematika.html" class="menu-btn bg-green">
+            <div class="menu-content">
+                <div class="menu-icon">📐</div>
+                <span>Matematika</span>
+            </div>
+            <div class="arrow-badge">→</div>
+        </a>
+       <a href="kalkulator.html" class="menu-btn bg-green">
+            <div class="menu-content">
+                <div class="menu-icon">💻</div>
+                <span>mari berhitung kalkulator</span>
+            </div>
+            <div class="arrow-badge">→</div>
+        </a>
+
+        <a href="matematika2.html" class="menu-btn bg-orange">
+            <div class="menu-content">
+                <div class="menu-icon">🔢</div>
+                <span>Matematika 2</span>
+            </div>
+            <div class="arrow-badge">→</div>
+        </a>
+
+        <a href="bot_novel.html" class="menu-btn bg-blue">
+            <div class="menu-content">
+                <div class="menu-icon">🤖</div>
+                <span>Bot Novel</span>
+            </div>
+            <div class="arrow-badge">→</div>
+        </a>
+
+        <a href="novelalwi2.html" class="menu-btn bg-purple">
+            <div class="menu-content">
+                <div class="menu-icon">📖</div>
+                <span>Novel Alwi 2</span>
+            </div>
+            <div class="arrow-badge">→</div>
+        </a>
+
+        <a href="lukis.html" class="menu-btn bg-yellow">
+            <div class="menu-content">
+                <div class="menu-icon">🎨</div>
+                <span>Lukis</span>
+            </div>
+            <div class="arrow-badge">→</div>
+        </a>
+
+        <a href="sanggarLUKIS.html" class="menu-btn bg-pink">
+            <div class="menu-content">
+                <div class="menu-icon">🖌️</div>
+                <span>Sanggar Lukis</span>
+            </div>
+            <div class="arrow-badge">→</div>
+        </a>
+    </div>
+
+    <script>
+        // Skrip Sederhana untuk Animasi Latar Belakang Canvas (Efek Bola / Bintang Bergerak)
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const particles = [];
+        const colors = ['#ffcc00', '#4CAF50', '#03A9F4', '#FF9800', '#E91E63'];
+
+        for (let i = 0; i < 20; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 15 + 5,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                speedY: Math.random() * 1 - 0.5,
+                speedX: Math.random() * 1 - 0.5
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = 0.2; // Semi transparan agar tidak mengganggu tombol
+                ctx.fill();
+
+                p.x += p.speedX;
+                p.y += p.speedY;
+
+                if (p.x < 0) p.x = canvas.width;
+                if (p.x > canvas.width) p.x = 0;
+                if (p.y < 0) p.y = canvas.height;
+                if (p.y > canvas.height) p.y = 0;
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+<script>poinBelajar()</script><script src="../alwi_bubble4.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>
+

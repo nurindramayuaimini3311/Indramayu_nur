@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alwi V3 — Pusat Pencarian & AI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;height:100%;background:#f8fafc;font-family:'Inter',sans-serif;color:#1e293b;overflow:hidden}
+  .wrap{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh;padding:12px;max-width:850px;margin:0 auto}
+
+  .header-box{display:flex;align-items:center;justify-content:space-between;background:#ffffff;padding:10px 16px;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,0.04);border:1px solid #e2e8f0;margin-bottom:8px}
+  h3{font-size:1rem;font-weight:700;margin:0;color:#0f172a}
+  #stat{font-size:.7rem;font-weight:600;color:#059669;background:#ecfdf5;padding:3px 8px;border-radius:20px;border:1px solid #a7f3d0}
+
+  #chat{flex:1;overflow-y:auto;border:1px solid #e2e8f0;border-radius:14px;padding:12px;background:#ffffff;box-shadow:inset 0 2px 4px rgba(0,0,0,0.02)}
+  .msg-wrap{display:flex;flex-direction:column;margin:8px 0}
+  .msg-wrap.user{align-items:flex-end}
+  .msg-wrap.bot{align-items:flex-start}
+  .msg{padding:10px 14px;border-radius:14px;max-width:85%;white-space:pre-wrap;line-height:1.4;font-size:.9rem}
+  .user .msg{background:#2563eb;color:#ffffff;border-bottom-right-radius:2px}
+  .bot .msg{background:#f1f5f9;color:#0f172a;border:1px solid #e2e8f0;border-bottom-left-radius:2px}
+  .msg-time{font-size:9px;color:#94a3b8;margin-top:3px;padding:0 2px}
+
+  .inputRow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;position:relative}
+  input{flex:1 1 140px;min-width:0;padding:12px 14px;border-radius:12px;border:1.5px solid #cbd5e1;background:#ffffff;color:#0f172a;font-size:0.9rem;outline:none}
+  input:focus{border-color:#2563eb}
+
+  button{padding:10px 14px;border-radius:12px;border:none;background:#2563eb;color:#ffffff;font-weight:600;cursor:pointer;font-size:0.85rem;flex:0 0 auto}
+
+  @media (max-width:420px){
+    #inp{flex:1 1 100%;order:-1}
+  }
+  .btn-tool{background:#f1f5f9;color:#334155;border:1px solid #cbd5e1}
+  .btn-tool:hover{background:#e2e8f0}
+  .danger{background:#ef4444;color:#ffffff}
+
+  .dropup-menu {
+    display: none;
+    position: absolute;
+    bottom: 55px;
+    left: 0;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    padding: 8px;
+    z-index: 100;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 240px;
+  }
+  .dropup-menu.show { display: flex; }
+  .dropup-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    text-align: left;
+    color: #334155;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dropup-item:hover { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .modal-card h4 { margin: 0; color: #0f172a; font-size: 1rem; }
+  .modal-card input { width: 100%; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header-box">
+    <h3>🤖 Alwi V3 — Modular AI</h3>
+    <span id="stat">Online ✅</span>
+  </div>
+
+  <div id="chat"></div>
+
+  <div class="inputRow">
+    <div id="dropupMenu" class="dropup-menu">
+      <div class="dropup-item" onclick="askQuick('Jam berapa dan hari apa sekarang?')">🕒 Cek Jam & Hari (Server)</div>
+      <div class="dropup-item" onclick="openSearchModal('berita')">📰 Cari Berita Terbaru</div>
+      <div class="dropup-item" onclick="openSearchModal('url')">🔗 Masukkan Link Web (URL)</div>
+      <div class="dropup-item" onclick="askQuick('Belajar matematika perkalian')">🧮 Fitur Matematika</div>
+    </div>
+
+    <button type="button" class="btn-tool" onclick="toggleMenu()">🔍 Fitur & Search</button>
+
+    <input id="inp" placeholder="Tanya atau masukkan perintah..." onkeydown="if(event.key==='Enter') send()">
+    <button onclick="send()">Kirim</button>
+    <button class="btn-tool" title="Dengar Jawaban Terakhir" onclick="speakLast()">🔊</button>
+    <button class="danger" title="Hapus Memori" onclick="clearMem()">🗑️</button>
+  </div>
+</div>
+
+<div id="searchModal" class="modal-overlay">
+  <div class="modal-card">
+    <h4 id="modalTitle">Pencarian Web</h4>
+    <input id="modalInput" placeholder="Masukkan kata kunci / URL...">
+    <div class="modal-actions">
+      <button class="btn-tool" onclick="closeModal()">Batal</button>
+      <button onclick="submitModalSearch()">Proses via Ollama</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentModalType = '';
+
+  function toggleMenu() {
+    document.getElementById('dropupMenu').classList.toggle('show');
+  }
+
+  function askQuick(text) {
+    document.getElementById('inp').value = text;
+    document.getElementById('dropupMenu').classList.remove('show');
+    send();
+  }
+
+  function openSearchModal(type) {
+    currentModalType = type;
+    document.getElementById('dropupMenu').classList.remove('show');
+    const modal = document.getElementById('searchModal');
+    const title = document.getElementById('modalTitle');
+    const inp = document.getElementById('modalInput');
+
+    if (type === 'url') {
+      title.innerText = '🔗 Masukkan URL / Link Web';
+      inp.placeholder = 'https://contoh.com/artikel...';
+    } else {
+      title.innerText = '📰 Cari Berita / Info Terbaru';
+      inp.placeholder = 'Ketik topik berita (misal: berita sepakbola hari ini)...';
+    }
+    inp.value = '';
+    modal.classList.add('active');
+    inp.focus();
+  }
+
+  function closeModal() {
+    document.getElementById('searchModal').classList.remove('active');
+  }
+
+  function submitModalSearch() {
+    const val = document.getElementById('modalInput').value.trim();
+    if (!val) return;
+
+    closeModal();
+    const chatInput = document.getElementById('inp');
+
+    if (currentModalType === 'url') {
+      chatInput.value = `Bacakan dan rangkum isi dari link ini: ${val}`;
+    } else {
+      chatInput.value = `Cari berita tentang: ${val}`;
+    }
+    send();
+  }
+
+  document.addEventListener('click', function(e) {
+    const menu = document.getElementById('dropupMenu');
+    const btn = document.querySelector('.btn-tool');
+    if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+      menu.classList.remove('show');
+    }
+  });
+</script>
+<script type="module" src="/js/main.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("../sw.js").catch(function(){})}</script></body>
+</html>
+

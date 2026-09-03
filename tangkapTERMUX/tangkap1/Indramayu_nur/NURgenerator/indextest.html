@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alwi V3 — Pusat Pencarian & AI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;height:100%;background:#f8fafc;font-family:'Inter',sans-serif;color:#1e293b;overflow:hidden}
+  .wrap{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh;padding:12px;max-width:850px;margin:0 auto}
+
+  .header-box{display:flex;align-items:center;justify-content:space-between;background:#ffffff;padding:10px 16px;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,0.04);border:1px solid #e2e8f0;margin-bottom:8px}
+  h3{font-size:1rem;font-weight:700;margin:0;color:#0f172a}
+  #stat{font-size:.7rem;font-weight:600;color:#059669;background:#ecfdf5;padding:3px 8px;border-radius:20px;border:1px solid #a7f3d0}
+
+  #chat{flex:1;overflow-y:auto;border:1px solid #e2e8f0;border-radius:14px;padding:12px;background:#ffffff;box-shadow:inset 0 2px 4px rgba(0,0,0,0.02)}
+  .msg-wrap{display:flex;flex-direction:column;margin:8px 0}
+  .msg-wrap.user{align-items:flex-end}
+  .msg-wrap.bot{align-items:flex-start}
+  .msg{padding:10px 14px;border-radius:14px;max-width:85%;white-space:pre-wrap;line-height:1.4;font-size:.9rem}
+  .user .msg{background:#2563eb;color:#ffffff;border-bottom-right-radius:2px}
+  .bot .msg{background:#f1f5f9;color:#0f172a;border:1px solid #e2e8f0;border-bottom-left-radius:2px}
+  .msg-time{font-size:9px;color:#94a3b8;margin-top:3px;padding:0 2px}
+
+  .inputRow{display:flex;gap:6px;margin-top:8px;position:relative}
+  input{flex:1;padding:12px 14px;border-radius:12px;border:1.5px solid #cbd5e1;background:#ffffff;color:#0f172a;font-size:0.9rem;outline:none}
+  input:focus{border-color:#2563eb}
+
+  button{padding:10px 14px;border-radius:12px;border:none;background:#2563eb;color:#ffffff;font-weight:600;cursor:pointer;font-size:0.85rem}
+  .btn-tool{background:#f1f5f9;color:#334155;border:1px solid #cbd5e1}
+  .btn-tool:hover{background:#e2e8f0}
+  .danger{background:#ef4444;color:#ffffff}
+
+  .dropup-menu {
+    display: none;
+    position: absolute;
+    bottom: 55px;
+    left: 0;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    padding: 8px;
+    z-index: 100;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 240px;
+  }
+  .dropup-menu.show { display: flex; }
+  .dropup-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    text-align: left;
+    color: #334155;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dropup-item:hover { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .modal-card h4 { margin: 0; color: #0f172a; font-size: 1rem; }
+  .modal-card input { width: 100%; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header-box">
+    <h3>🤖 Alwi V3 — Modular AI</h3>
+    <span id="stat">Online ✅</span>
+  </div>
+
+  <div id="chat"></div>
+
+  <div class="inputRow">
+    <div id="dropupMenu" class="dropup-menu">
+      <div class="dropup-item" onclick="askQuick('Jam berapa dan hari apa sekarang?')">🕒 Cek Jam & Hari (Server)</div>
+      <div class="dropup-item" onclick="openSearchModal('berita')">📰 Cari Berita Terbaru</div>
+      <div class="dropup-item" onclick="openSearchModal('url')">🔗 Masukkan Link Web (URL)</div>
+      <div class="dropup-item" onclick="askQuick('Berapa 125 x 4?')">🧮 Fitur Matematika</div>
+    </div>
+
+    <button type="button" class="btn-tool" onclick="toggleMenu()">🔍 Fitur & Search</button>
+
+    <input id="inp" placeholder="Tanya atau masukkan perintah..." onkeydown="if(event.key==='Enter') send()">
+    <button onclick="send()">Kirim</button>
+    <button class="btn-tool" title="Dengar Jawaban Terakhir" onclick="speakLast()">🔊</button>
+    <button class="danger" title="Hapus Memori" onclick="clearMem()">🗑️</button>
+  </div>
+</div>
+
+<div id="searchModal" class="modal-overlay">
+  <div class="modal-card">
+    <h4 id="modalTitle">Pencarian Web</h4>
+    <input id="modalInput" placeholder="Masukkan kata kunci / URL...">
+    <div class="modal-actions">
+      <button class="btn-tool" onclick="closeModal()">Batal</button>
+      <button onclick="submitModalSearch()">Proses via Ollama</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentModalType = '';
+  const $ = id => document.getElementById(id);
+  const chat = () => $('chat');
+
+  // ==== SEMUA LEWAT PORT 8080 (tidak campur port 3000) ====
+  function API8080(){
+    return (location.protocol==='file:'?'http:':location.protocol)+'//'+(location.hostname||'35.240.161.189')+':3000';
+  }
+
+  function tampil(pengirim, teks) {
+    const w = document.createElement('div');
+    w.className = 'msg-wrap ' + pengirim;
+    const m = document.createElement('div');
+    m.className = 'msg';
+    m.textContent = teks;
+    const t = document.createElement('div');
+    t.className = 'msg-time';
+    t.textContent = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+    w.appendChild(m); w.appendChild(t);
+    chat().appendChild(w);
+    chat().scrollTop = chat().scrollHeight;
+    return m;
+  }
+
+  let jawabanTerakhir = '';
+  let sedangProses = false;
+
+  function setJawab(g, teks) { g.textContent = teks; jawabanTerakhir = teks; }
+
+  async function postAPI(jalur, isi) {
+    const r = await fetch(API8080()+jalur, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(isi)
+    });
+    if (!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  }
+
+  // ---- HELPER TERAKHIR: OLLAMA (dipanggil hanya jika kalkulator & pencarian tidak menangani) ----
+  async function tanyaOllama(prompt, maks) {
+    const d = await postAPI('/api/chat', { message: prompt });
+    return (d.reply || (d.message && d.message.content) || d.response || d.jawaban || '').trim();
+  }
+
+  // ==== PRIORITAS 1: KALKULATOR (tanpa AI) ====
+  function deteksiMatematika(teks) {
+    let s = String(teks||'').toLowerCase().trim();
+    s = s.replace(/^apa(kah)?\s*(hasil)?\s*(dari)?\s*/,'')
+         .replace(/\bberapa\b|\bhitung(kan|lah)?\b|\bberapakah\b/g,'')
+         .replace(/\bditambah\b|\btambah\b|\bplus\b/g,'+')
+         .replace(/\bdikurangi\b|\bdikurang\b|\bkurang\b|\bminus\b/g,'-')
+         .replace(/\bdikali\b|\bkali\b/g,'*')
+         .replace(/\bdibagi\b|\bbagi\b/g,'/')
+         .replace(/\bpangkat\b/g,'**')
+         .replace(/[×✕✖]/g,'*').replace(/[÷]/g,'/').replace(/[–—−]/g,'-')
+         .replace(/(\d)\s*[x]\s*(\d)/g,'$1*$2')
+         .replace(/[=?]/g,'').trim();
+    if (!/\d/.test(s)) return null;
+    if (!/[+\-*/%]/.test(s)) return null;
+    if (!/^[\d\s+\-*/().,%]+$/.test(s)) return null;
+    return s;
+  }
+
+  async function jalurKalkulator(teks, g) {
+    const soal = deteksiMatematika(teks);
+    if (!soal) return false;
+    try {
+      const d = await postAPI('/api/kalkulator', { soal: soal });
+      if (d.ok) { setJawab(g, '🧮 ' + soal + ' = ' + d.hasil); return true; }
+    } catch (e) { /* lanjut ke jalur lain */ }
+    return false;
+  }
+
+  // ==== PRIORITAS 2: PENCARIAN WEB & BACA URL ====
+  async function jalurPencarian(teks, g) {
+    let m = teks.match(/^(?:cari(?:kan)?\s*)?berita\s+(?:tentang|soal)\s*:?\s*(.+)$/i);
+    if (m) {
+      setJawab(g, '📰 Mencari berita "' + m[1] + '"...');
+      const d = await postAPI('/api/search', { query: m[1] });
+      const hasil = (d.result || '').slice(0, 4000);
+      try {
+        const ai = await tanyaOllama('Ringkas berita berikut dalam poin-poin singkat Bahasa Indonesia:\n\n' + hasil, 500);
+        if (ai) { setJawab(g, '📰 Hasil pencarian "' + m[1] + '":\n\n' + ai); return true; }
+      } catch (e) { /* tampilkan mentahan */ }
+      setJawab(g, '📰 Hasil pencarian "' + m[1] + '":\n\n' + (hasil || '(kosong)'));
+      return true;
+    }
+    m = teks.match(/^(?:bacakan\s*(?:dan)?\s*rangkum\s*isi\s*dari\s*link(?:\s*ini)?\s*:?\s*)(https?:\/\/\S+)$/i);
+    if (m) {
+      setJawab(g, '🔗 Membaca ' + m[1] + '...');
+      const d = await postAPI('/api/fetch-url', { url: m[1] });
+      const isi = (d.content || '').slice(0, 6000);
+      try {
+        const ai = await tanyaOllama('Rangkum isi artikel berikut dalam Bahasa Indonesia yang padat:\n\n' + isi, 500);
+        if (ai) { setJawab(g, '🔗 Rangkuman ' + m[1] + ':\n\n' + ai); return true; }
+      } catch (e) {}
+      setJawab(g, '🔗 Isi ' + m[1] + ':\n\n' + (isi || '(kosong)'));
+      return true;
+    }
+    return false;
+  }
+
+  // ==== JAM & HARI (lokal, instan) ====
+  function jalurWaktu(teks, g) {
+    if (/jam.*hari|hari.*jam|cek jam|jam berapa/i.test(teks)) {
+      const kini = new Date();
+      const hari = kini.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+      const jam = kini.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      setJawab(g, '🕒 ' + hari + '\n⏰ Pukul ' + jam);
+      return true;
+    }
+    return false;
+  }
+
+  async function proses(teks) {
+    const g = tampil('bot', '⏳ Alwi sedang memproses...');
+    try {
+      if (jalurWaktu(teks, g)) return;
+      if (await jalurKalkulator(teks, g)) return;   // 1. kalkulator dulu
+      if (await jalurPencarian(teks, g)) return;    // 2. lalu pencarian web
+      // 3. terakhir: helper AI Ollama
+      const ai = await tanyaOllama(teks);
+      setJawab(g, ai || '(jawaban kosong)');
+    } catch (e) {
+      g.textContent = '⚠️ Gagal terhubung ke server Alwi (:3000) — ' + e.message;
+    }
+  }
+
+  function send() {
+    const inp = $('inp');
+    const teks = inp.value.trim();
+    if (!teks || sedangProses) return;
+    inp.value = '';
+    toggleMenu(false);
+    tampil('user', teks);
+    sedangProses = true;
+    proses(teks).finally(() => { sedangProses = false; });
+  }
+
+  function askQuick(text) {
+    $('inp').value = text;
+    send();
+  }
+
+  function speakLast() {
+    if (!jawabanTerakhir) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(jawabanTerakhir);
+    u.lang = 'id-ID';
+    speechSynthesis.speak(u);
+  }
+
+  function clearMem() {
+    chat().innerHTML = '';
+    jawabanTerakhir = '';
+    tampil('bot', '🧹 Memori obrolan di layar sudah dibersihkan.');
+  }
+
+  function toggleMenu(paksa) {
+    const menu = $('dropupMenu');
+    if (typeof paksa === 'boolean') menu.classList.toggle('show', paksa);
+    else menu.classList.toggle('show');
+  }
+
+  function openSearchModal(type) {
+    currentModalType = type;
+    toggleMenu(false);
+    const title = $('modalTitle');
+    const inp = $('modalInput');
+
+    if (type === 'url') {
+      title.innerText = '🔗 Masukkan URL / Link Web';
+      inp.placeholder = 'https://contoh.com/artikel...';
+    } else {
+      title.innerText = '📰 Cari Berita / Info Terbaru';
+      inp.placeholder = 'Ketik topik berita (misal: berita sepakbola hari ini)...';
+    }
+    inp.value = '';
+    $('searchModal').classList.add('active');
+    inp.focus();
+  }
+
+  function closeModal() {
+    $('searchModal').classList.remove('active');
+  }
+
+  function submitModalSearch() {
+    const val = $('modalInput').value.trim();
+    if (!val) return;
+
+    closeModal();
+
+    if (currentModalType === 'url') {
+      askQuick(`Bacakan dan rangkum isi dari link ini: ${val}`);
+    } else {
+      askQuick(`Cari berita tentang: ${val}`);
+    }
+  }
+
+  document.addEventListener('click', function(e) {
+    const menu = $('dropupMenu');
+    const btn = document.querySelector('.btn-tool'); // tombol toggle pertama di halaman
+    if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+      menu.classList.remove('show');
+    }
+  });
+
+  tampil('bot', 'Halo! Saya Alwi 🤖\nUrutan kerjaku: 1) 🧮 hitung matematika, 2) 📰 cari berita/baca link, 3) baru aku jawab sendiri sisanya.');
+</script><script src="../alwi_bubble2.js"></script>
+<script>
+(function(){var q=new URLSearchParams(location.search).get("q");
+if(q&&typeof askQuick==="function"){setTimeout(function(){askQuick(decodeURIComponent(q));},800);}})();
+</script>
+
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>
+

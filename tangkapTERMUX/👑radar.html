@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RADAR CLOUDFLARED | AGEN ALWI</title>
+<style>
+body { background:#06140b; color:#ffd700; font-family:'Inter',sans-serif; text-align:center; padding:20px; }
+.box { border:2px solid #c9a84c; border-radius:16px; padding:20px; max-width:400px; margin:40px auto; background:#0a2e1c; }
+button { background:linear-gradient(135deg,#c9a84c,#ffd700); border:none; padding:12px 20px; border-radius:10px; font-weight:900; color:#06140b; cursor:pointer; width:100%; margin-top:10px; }
+.status { font-size:18px; margin-top:15px; }
+.link-box { margin-top:12px; padding:10px; background:#06140b; border:1px solid #c9a84c; border-radius:8px; }
+.link { word-break:break-all; font-size:12px; color:#ffd700; text-decoration:none; }
+.timestamp { font-size:10px; color:rgba(201,168,76,0.6); margin-top:10px; }
+.badge-online { color:#39ff14; }
+.badge-offline { color:#ff3131; }
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>📡 RADAR CLOUDFLARED</h2>
+  <div id="status" class="status">⏳ Mengecek...</div>
+  <div class="link-box" id="linkBox" style="display:none;">
+    <a id="link" class="link" href="#" target="_blank"></a>
+  </div>
+  <div class="timestamp" id="timestamp"></div>
+  <button onclick="cekSinyal()">🔄 ISI ULANG SINYAL</button>
+</div>
+
+<script>
+// Backend radar jalan di port 8899, terpisah dari server utama (8890)
+// supaya cek status ini tetap bisa jalan walau server utama mati.
+const RADAR_API = 'http://localhost:8899/status';
+
+async function cekSinyal() {
+  const statusEl = document.getElementById('status');
+  const linkBox = document.getElementById('linkBox');
+  const linkEl = document.getElementById('link');
+  const timeEl = document.getElementById('timestamp');
+
+  statusEl.innerHTML = '⏳ Mengecek...';
+
+  try {
+    const res = await fetch(RADAR_API, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Backend radar tidak merespons normal');
+    const data = await res.json();
+
+    if (data.online) {
+      statusEl.innerHTML = '<span class="badge-online">✅ TUNNEL AKTIF</span> | Port ' + data.port + ' Online';
+    } else {
+      statusEl.innerHTML = '<span class="badge-offline">🔴 SERVER MATI</span> | Port ' + data.port + ' Down (cloudflared bisa saja hidup, tapi originnya mati)';
+    }
+
+    if (data.link) {
+      linkBox.style.display = 'block';
+      linkEl.href = data.link;
+      linkEl.textContent = data.link;
+    } else {
+      linkBox.style.display = 'block';
+      linkEl.removeAttribute('href');
+      linkEl.textContent = '⚠️ Link belum ditemukan di log. Cek path log di radar_backend.js';
+    }
+
+    timeEl.textContent = 'Terakhir dicek: ' + new Date(data.dicekPada).toLocaleTimeString('id-ID');
+
+  } catch (e) {
+    statusEl.innerHTML = '<span class="badge-offline">⚠️ RADAR BACKEND TIDAK JALAN</span>';
+    linkBox.style.display = 'block';
+    linkEl.removeAttribute('href');
+    linkEl.textContent = 'Jalankan dulu: node radar_backend.js (port 8899)';
+    timeEl.textContent = '';
+  }
+}
+
+// Auto cek pas buka halaman, lalu ulang tiap 15 detik otomatis
+cekSinyal();
+setInterval(cekSinyal, 15000);
+</script>
+</body>
+</html>
+

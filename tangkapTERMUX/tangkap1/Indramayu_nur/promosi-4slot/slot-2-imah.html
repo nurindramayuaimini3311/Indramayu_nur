@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slot Live</title>
+<style>
+:root{
+  --emas:#d97706; --emas-terang:#f59e0b;
+  --border:#3b82f6; --border-sub:#cbd5e1;
+  --text-utama:#0f172a; --text-biru:#1e40af;
+  --merah:#dc2626; --hijau:#16a34a;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',Arial,sans-serif;background:transparent}
+.slot-card{background:#fff;border:2px solid #cbd5e1;border-radius:14px;overflow:hidden;position:relative;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.slot-card.saya{border-color:var(--emas-terang);border-width:3px;box-shadow:0 0 15px rgba(245,158,11,0.3)}
+.slot-card.saya::before{content:'ANDA';position:absolute;top:6px;left:6px;background:var(--emas-terang);color:#fff;font-size:9px;padding:3px 8px;border-radius:6px;font-weight:900;z-index:10}
+.slot-media{width:100%;aspect-ratio:4/3;background:#f1f5f9;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;border-bottom:2px solid #e2e8f0}
+.slot-media img,.slot-media video{width:100%;height:100%;object-fit:cover}
+.live-tag{position:absolute;top:6px;right:6px;background:var(--merah);color:#fff;font-size:9px;padding:3px 8px;border-radius:6px;font-weight:900;display:none}
+.off-tag{position:absolute;top:6px;right:6px;background:#64748b;color:#fff;font-size:9px;padding:3px 8px;border-radius:6px;font-weight:800}
+.slot-info{padding:8px 10px;background:#fff}
+.slot-name{font-size:12px;font-weight:900;color:var(--text-utama)}
+.slot-status{font-size:10px;font-weight:800;color:#64748b;margin-top:2px}
+.avatar{font-size:36px}
+.ctrl-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px}
+.ctrl-btn{padding:9px 4px;border-radius:8px;border:2px solid var(--border);font-size:11px;font-weight:900;cursor:pointer;text-align:center;background:#fff;color:var(--text-biru)}
+.ctrl-btn.on{background:var(--merah);color:#fff;border-color:var(--merah)}
+@keyframes hit{0%{transform:translate(-50%,-50%) scale(0.3);opacity:0}40%{transform:translate(-50%,-50%) scale(2);opacity:1}100%{transform:translate(-50%,-50%) scale(1);opacity:0}}
+.hit-fx{position:absolute;top:50%;left:50%;font-size:44px;z-index:50;animation:hit 0.7s ease-out forwards;pointer-events:none;text-shadow:0 0 8px #fff,0 0 24px var(--fx,#FFD700),0 0 52px var(--fx,#FFD700)}
+</style>
+</head>
+<body>
+<div class="slot-card" id="card">
+  <div class="slot-media" id="media">
+    <div class="avatar" id="avatar">🙂</div>
+    <video id="video" autoplay muted playsinline style="display:none"></video>
+    <div class="live-tag" id="liveTag">🔴 LIVE</div>
+    <div class="off-tag" id="offTag">⚫ Standby</div>
+  </div>
+  <div class="slot-info">
+    <div class="slot-name" id="nama">Member</div>
+    <div class="slot-status" id="status">⚫ Standby</div>
+  </div>
+  <div class="ctrl-row" id="ctrlRow" style="display:none">
+    <div class="ctrl-btn off" id="btnCam">📷 ON</div>
+    <div class="ctrl-btn off" id="btnFlip">🔄 Ganti</div>
+  </div>
+</div>
+
+<script>
+const q = new URLSearchParams(location.search);
+const ID = q.get('id') || 'slot';
+const NAMA = q.get('nama') || 'Member';
+const AVA = q.get('ava') || '🙂';
+const SELF = q.get('self') === '1';
+
+document.getElementById('nama').textContent = NAMA;
+document.getElementById('avatar').textContent = AVA;
+
+let stream = null, on = false, facing = 'user';
+const card = document.getElementById('card');
+if (SELF) {
+  card.classList.add('saya');
+  document.getElementById('ctrlRow').style.display = 'grid';
+}
+
+function setLive(live) {
+  document.getElementById('liveTag').style.display = live ? 'block' : 'none';
+  document.getElementById('offTag').style.display = live ? 'none' : 'block';
+  document.getElementById('status').textContent = live ? '🔴 LIVE' : (SELF ? 'ANDA • Siap LIVE' : '⚫ Standby');
+  document.getElementById('avatar').style.display = live ? 'none' : 'block';
+  document.getElementById('video').style.display = live ? 'block' : 'none';
+  parent.postMessage({ type: 'live-status', id: ID, live }, '*');
+}
+
+async function nyalakan() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing }, audio: false });
+    const v = document.getElementById('video');
+    v.srcObject = stream;
+    on = true;
+    document.getElementById('btnCam').textContent = '⏹ OFF';
+    document.getElementById('btnCam').classList.add('on');
+    setLive(true);
+  } catch (e) {
+    parent.postMessage({ type: 'error', id: ID, message: e.message }, '*');
+  }
+}
+
+function matikan() {
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  on = false;
+  document.getElementById('btnCam').textContent = '📷 ON';
+  document.getElementById('btnCam').classList.remove('on');
+  setLive(false);
+}
+
+if (SELF) {
+  document.getElementById('btnCam').onclick = () => on ? matikan() : nyalakan();
+  document.getElementById('btnFlip').onclick = () => { facing = facing === 'user' ? 'environment' : 'user'; if (on) nyalakan(); };
+}
+
+// Terima efek lempar properti dari halaman utama, tampilkan ledakan lokal di slot ini
+window.addEventListener('message', (e) => {
+  const d = e.data || {};
+  if (d.type === 'gift' && d.targetId === ID) {
+    const h = document.createElement('div');
+    h.className = 'hit-fx';
+    h.textContent = d.emoji;
+    h.style.setProperty('--fx', d.warna || '#FFD700');
+    document.getElementById('media').appendChild(h);
+    setTimeout(() => h.remove(), 750);
+  }
+});
+
+setLive(false);
+</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>

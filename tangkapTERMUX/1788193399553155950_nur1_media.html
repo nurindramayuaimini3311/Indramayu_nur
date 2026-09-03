@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indramayu Club Makrifat - Beranda</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+  /* ===== BACKGROUND: Hijau Sultan hanya di background ===== */
+  body {
+    color: #1a1a1a;
+    overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
+    background: #ffffff;
+  }
+
+  /* Layer wallpaper di belakang — hijau sultan */
+  #wallpaper-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: opacity 1.5s ease-in-out;
+  }
+  /* Overlay hijau sultan semi-transparan */
+  #wallpaper-layer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(10, 40, 20, 0.82) 0%,
+      rgba(5, 60, 25, 0.75) 50%,
+      rgba(8, 35, 15, 0.85) 100%
+    );
+  }
+
+  /* Semua konten di atas wallpaper */
+  .main-container { position: relative; z-index: 1; }
+
+  :root {
+    --sultan-green:      #0a6b2e;
+    --sultan-green-dark: #064d20;
+    --sultan-green-mid:  #0d8038;
+    --sultan-green-light:#12a348;
+    --sultan-green-dim:  rgba(10,107,46,0.12);
+    --gold:              #a87e2e;
+    --gold-light:        #c9a84c;
+    --gold-dim:          rgba(168,126,46,0.15);
+    /* Card & UI — putih bersih */
+    --bg-card:    rgba(255,255,255,0.97);
+    --bg-card-2:  rgba(248,252,249,0.98);
+    --border:     rgba(10,107,46,0.15);
+    --border-soft:rgba(0,0,0,0.07);
+    --text-main:  #1c2b22;
+    --text-muted: #5a7060;
+    --online:     #1a8c42;
+    --shadow:     0 4px 24px rgba(10,107,46,0.10);
+  }
+
+  /* Custom scrollbar hijau */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: #f0f5f2; }
+  ::-webkit-scrollbar-thumb { background: rgba(10,107,46,0.25); border-radius: 4px; }
+
+  /* ===== GLASS CARD — putih bersih ===== */
+  .glass-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+  }
+
+  /* LAYOUT 3 KOLOM */
+  .main-container {
+    display: grid;
+    grid-template-columns: 268px 1fr 308px;
+    gap: 18px;
+    max-width: 1320px;
+    margin: 18px auto;
+    padding: 0 14px;
+  }
+
+  /* ===== KOLOM KIRI ===== */
+  .left-column { display: flex; flex-direction: column; gap: 14px; position: sticky; top: 18px; height: fit-content; }
+
+  .logo-area {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .logo-img {
+    width: 38px; height: 38px; border-radius: 8px;
+    object-fit: contain;
+    background: var(--sultan-green-dim);
+    border: 1px solid rgba(10,107,46,0.3);
+  }
+  .logo-title { font-size: 12px; font-weight: 700; color: var(--sultan-green); line-height: 1.3; }
+  .logo-sub { font-size: 9px; color: var(--text-muted); }
+
+  .profile-section { text-align: center; padding: 8px 0 4px; }
+  .profile-avatar-wrapper { position: relative; display: inline-block; width: 78px; height: 78px; }
+  .profile-img {
+    width: 100%; height: 100%; border-radius: 50%;
+    border: 2px solid var(--sultan-green); background: #e8f5ec;
+  }
+  .badge-platinum {
+    background: linear-gradient(135deg, var(--sultan-green), var(--sultan-green-dark));
+    color: #fff;
+    font-size: 8.5px; font-weight: 800; letter-spacing: 0.5px;
+    padding: 2px 8px; border-radius: 10px;
+    position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
+    border: 1.5px solid rgba(255,255,255,0.4); white-space: nowrap;
+  }
+  .stats-box {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    margin-top: 18px; padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .stats-item { font-size: 10px; color: var(--text-muted); text-align: center; }
+  .stats-item span { display: block; font-size: 14px; font-weight: 700; color: var(--sultan-green); margin-bottom: 2px; }
+
+  .menu-list { list-style: none; margin-top: 4px; }
+  .menu-list li {
+    padding: 10px 12px; border-radius: 9px; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-muted);
+  }
+  .menu-list li:hover, .menu-list li.active {
+    background: var(--sultan-green-dim); color: var(--sultan-green); transform: translateX(3px);
+    font-weight: 600;
+  }
+
+  .mini-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .mini-card {
+    padding: 9px 5px; border-radius: 9px; text-align: center;
+    font-size: 10px; color: var(--text-muted);
+    background: #f4faf6; border: 1px solid var(--border);
+  }
+  .mini-card strong { display: block; margin-top: 3px; font-size: 11px; }
+
+  /* ===== WALLPAPER INDICATOR ===== */
+  .wallpaper-indicator {
+    position: fixed;
+    bottom: 14px; right: 14px;
+    z-index: 100;
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid rgba(10,107,46,0.25);
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 10px;
+    color: var(--sultan-green);
+    box-shadow: 0 2px 12px rgba(10,107,46,0.12);
+  }
+  .wp-dots { display: flex; gap: 4px; }
+  .wp-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(10,107,46,0.2); transition: background 0.3s;
+    cursor: pointer;
+  }
+  .wp-dot.active { background: var(--sultan-green); }
+  .wp-timer-ring { width: 18px; height: 18px; position: relative; flex-shrink: 0; }
+  .wp-timer-ring svg { transform: rotate(-90deg); }
+  .wp-ring-track { fill: none; stroke: rgba(10,107,46,0.15); stroke-width: 2.5; }
+  .wp-ring-fill {
+    fill: none; stroke: var(--sultan-green); stroke-width: 2.5;
+    stroke-dasharray: 44; stroke-dashoffset: 44;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear;
+  }
+
+  /* ===== KOLOM TENGAH ===== */
+  .center-column { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+  /* Story Bar */
+  .story-bar {
+    display: flex; gap: 9px; overflow-x: auto; padding-bottom: 6px;
+    scrollbar-width: none; touch-action: pan-x;
+  }
+  .story-bar::-webkit-scrollbar { display: none; }
+  .story-item {
+    min-width: 88px; height: 140px; border-radius: 11px;
+    position: relative; overflow: hidden; cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s; flex-shrink: 0;
+    border: 1px solid rgba(10,107,46,0.2);
+  }
+  .story-item:hover { transform: scale(1.04); box-shadow: 0 8px 20px rgba(10,107,46,0.2); }
+  .story-item:active { transform: scale(0.93); }
+  .story-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 20px 6px 6px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.75));
+    text-align: center; font-size: 9.5px; color: #fff;
+    font-weight: 600; letter-spacing: 0.3px;
+  }
+  .story-add {
+    min-width: 88px; height: 140px; border-radius: 11px; flex-shrink: 0;
+    background: #f0faf4; border: 1.5px dashed rgba(10,107,46,0.3);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--sultan-green); font-size: 24px; gap: 5px;
+    transition: background 0.2s;
+  }
+  .story-add:hover { background: #e0f5e8; }
+  .story-add span { font-size: 10px; color: var(--text-muted); }
+
+  /* Composer */
+  .composer { display: flex; flex-direction: column; gap: 10px; }
+  .composer input[type="text"] {
+    flex: 1; padding: 10px 15px;
+    background: #f7faf8;
+    border: 1px solid var(--border); border-radius: 22px;
+    color: var(--text-main); outline: none; font-size: 13px; transition: border 0.2s;
+  }
+  .composer input[type="text"]:focus { border-color: var(--sultan-green); }
+
+  .upload-drop-zone {
+    border: 1.5px dashed rgba(10,107,46,0.25);
+    border-radius: 10px; padding: 12px;
+    text-align: center; cursor: pointer;
+    transition: background 0.2s;
+    background: #f5fbf7;
+  }
+  .upload-drop-zone:hover { background: #e8f5ed; }
+  .upload-drop-zone p { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  .upload-progress-wrap { display: none; flex-direction: column; gap: 5px; }
+  .upload-progress-wrap.show { display: flex; }
+  .progress-bar-bg { background: #e8f5ed; border-radius: 6px; height: 4px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--sultan-green); border-radius: 6px; width: 0%; transition: width 0.25s; }
+  .upload-status-text { font-size: 10.5px; color: var(--sultan-green); }
+
+  /* Post */
+  .post-card { display: flex; flex-direction: column; gap: 12px; }
+  .post-img { width: 100%; max-height: 320px; object-fit: cover; border-radius: 9px; border: 1px solid var(--border-soft); }
+  .post-actions {
+    display: flex; gap: 16px; padding-top: 9px;
+    border-top: 1px solid var(--border-soft); position: relative;
+  }
+  .react-btn { cursor: pointer; color: var(--text-muted); font-size: 13px; position: relative; }
+  .react-btn:hover { color: var(--sultan-green); }
+  .react-btn:hover .react-popup { display: flex; }
+  .react-popup {
+    display: none; position: absolute; bottom: 30px; left: 0;
+    background: #fff; padding: 8px 12px; border-radius: 22px; gap: 8px;
+    box-shadow: 0 8px 28px rgba(10,107,46,0.18); z-index: 50;
+    border: 1px solid var(--border);
+  }
+  .react-popup span { font-size: 19px; transition: transform 0.12s; cursor: pointer; display: inline-block; }
+  .react-popup span:hover { transform: scale(1.35) translateY(-3px); }
+
+  /* === VOUCHER REACT POPUP: NUR items === */
+  .react-popup .nur-voucher {
+    font-size: 13px; font-weight: 700;
+    padding: 3px 8px; border-radius: 8px; cursor: pointer;
+    transition: all 0.15s; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px;
+  }
+  .react-popup .nur-voucher:hover { transform: scale(1.1) translateY(-2px); }
+  .react-popup .voucher-nur  { background: #fff8e1; color: #a87e2e; border: 1px solid #c9a84c55; }
+  .react-popup .gif-nur      { background: #e8f5e9; color: #0a6b2e; border: 1px solid #0a6b2e44; }
+  .react-popup .ro-nur       { background: #fce4ec; color: #c62828; border: 1px solid #e5393588; }
+
+  /* Reaction counter display */
+  .reaction-display {
+    display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+    margin-top: 4px; font-size: 11px; color: var(--text-muted);
+  }
+  .react-count-chip {
+    display: inline-flex; align-items: center; gap: 3px;
+    background: #f4faf6; border: 1px solid var(--border);
+    border-radius: 10px; padding: 2px 8px;
+    font-size: 11px; font-weight: 600;
+  }
+
+  .comment-section { margin-top: 6px; }
+  .comment-item { padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 12px; color: var(--text-muted); }
+  .comment-item strong { color: var(--sultan-green); }
+
+  /* ===== KOLOM KANAN ===== */
+  .right-column { display: flex; flex-direction: column; gap: 14px; position: sticky; top: 18px; height: fit-content; }
+  .member-online-list { display: flex; flex-direction: column; gap: 10px; margin-top: 9px; }
+  .member-item { display: flex; align-items: center; gap: 9px; font-size: 12px; color: var(--text-main); }
+  .avatar-container { position: relative; width: 34px; height: 34px; flex-shrink: 0; }
+  .avatar-mini { width: 100%; height: 100%; border-radius: 50%; background: #e8f5ec; border: 1px solid var(--border); }
+  .dot-online { width: 9px; height: 9px; background: var(--online); border-radius: 50%; position: absolute; bottom: 0; right: 0; border: 2px solid #fff; box-shadow: 0 0 6px var(--online); }
+  .level-badge { background: var(--sultan-green-dim); color: var(--sultan-green); font-size: 9px; padding: 1px 5px; border-radius: 4px; margin-left: auto; border: 1px solid rgba(10,107,46,0.2); }
+
+  .hashtag-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
+  .hashtag-item { font-size: 11px; color: var(--sultan-green); cursor: pointer; background: #f0faf4; padding: 3px 9px; border-radius: 16px; border: 1px solid var(--border); transition: all 0.2s; }
+  .hashtag-item:hover { background: var(--sultan-green-dim); }
+
+  /* Tombol */
+  .btn-gold { background: var(--sultan-green); color: #fff; border: none; padding: 8px 18px; border-radius: 18px; font-size: 11.5px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+  .btn-gold:hover { background: var(--sultan-green-mid); }
+  .btn-ghost { background: #f4faf6; color: var(--text-muted); border: 1px solid var(--border); padding: 7px 14px; border-radius: 18px; font-size: 11px; cursor: pointer; }
+  .btn-ghost:hover { background: #e8f5ed; color: var(--sultan-green); }
+
+  /* Modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,40,15,0.65); z-index: 9999; backdrop-filter: blur(10px); align-items: center; justify-content: center; padding: 18px; }
+  .modal-overlay.show { display: flex; }
+  .modal-box { width: 100%; max-width: 380px; background: #fff; border: 1px solid rgba(10,107,46,0.3); padding: 22px; text-align: center; border-radius: 16px; box-shadow: 0 14px 40px rgba(10,107,46,0.18); }
+
+  /* ===== GALLERY NUR SECTION ===== */
+  .gallery-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 0;
+  }
+  .gallery-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .gallery-title {
+    font-size: 14px; font-weight: 700; color: var(--sultan-green);
+    display: flex; align-items: center; gap: 7px;
+  }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .nur-thumb {
+    aspect-ratio: 1;
+    border-radius: 9px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    background: #f0faf4;
+  }
+  .nur-thumb:hover { border-color: var(--sultan-green); transform: scale(1.04); box-shadow: 0 4px 14px rgba(10,107,46,0.18); }
+  .nur-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .nur-thumb .nur-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(10,50,25,0.80));
+    color: #fff; font-size: 9px; font-weight: 700;
+    text-align: center; padding: 10px 4px 4px;
+    letter-spacing: 0.5px;
+  }
+  .nur-thumb .nur-loading {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: var(--text-muted); flex-direction: column; gap: 4px;
+  }
+
+  /* Nur lightbox */
+  .nur-lightbox {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,30,12,0.88); z-index: 9000;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(8px);
+  }
+  .nur-lightbox.show { display: flex; }
+  .nur-lb-inner {
+    background: #fff; border-radius: 14px;
+    padding: 16px; max-width: 640px; width: 95%;
+    box-shadow: 0 20px 60px rgba(10,107,46,0.25);
+    border: 1px solid var(--border);
+  }
+  .nur-lb-inner img { width: 100%; border-radius: 9px; max-height: 420px; object-fit: contain; }
+  .nur-lb-title { font-size: 13px; font-weight: 700; color: var(--sultan-green); margin: 10px 0 4px; }
+  .nur-lb-close {
+    float: right; cursor: pointer; font-size: 20px;
+    color: var(--text-muted); line-height: 1;
+  }
+  .nur-lb-close:hover { color: #c0392b; }
+  .nur-lb-nav { display: flex; gap: 8px; margin-top: 10px; }
+  .nur-lb-nav button { flex: 1; padding: 8px; border-radius: 9px; border: 1px solid var(--border); background: #f4faf6; color: var(--sultan-green); font-weight: 600; cursor: pointer; font-size: 12px; }
+  .nur-lb-nav button:hover { background: var(--sultan-green); color: #fff; }
+
+  /* HTML5 Publish folder badge */
+  .html5-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: linear-gradient(135deg, #e8440a, #ff6b35);
+    color: #fff; font-size: 9px; font-weight: 800;
+    padding: 2px 8px; border-radius: 8px; letter-spacing: 0.5px;
+  }
+
+  @media (max-width: 1080px) {
+    .main-container { grid-template-columns: 1fr; max-width: 640px; }
+    .left-column, .right-column { display: none; }
+  }
+  @keyframes fadeSlideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+</style>
+</head>
+<body>
+
+<!-- ===== WALLPAPER BACKGROUND LAYER (hijau sultan) ===== -->
+<div id="wallpaper-layer"></div>
+
+<!-- ===== WALLPAPER TIMER INDICATOR ===== -->
+<div class="wallpaper-indicator">
+  <div class="wp-timer-ring">
+    <svg viewBox="0 0 18 18" width="18" height="18">
+      <circle class="wp-ring-track" cx="9" cy="9" r="7"/>
+      <circle class="wp-ring-fill" id="wp-ring" cx="9" cy="9" r="7"/>
+    </svg>
+  </div>
+  <div class="wp-dots" id="wp-dots"></div>
+  <span id="wp-timer-label" style="min-width:24px;">5:00</span>
+</div>
+
+<!-- NUR LIGHTBOX -->
+<div class="nur-lightbox" id="nurLightbox" onclick="closeLightbox(event)">
+  <div class="nur-lb-inner">
+    <span class="nur-lb-close" onclick="closeLightboxDirect()">✕</span>
+    <img id="lb-img" src="" alt="">
+    <div class="nur-lb-title" id="lb-title">Nur 1</div>
+    <div class="nur-lb-nav">
+      <button onclick="lbNav(-1)">◀ Sebelumnya</button>
+      <button onclick="lbNav(1)">Berikutnya ▶</button>
+    </div>
+  </div>
+</div>
+
+<div class="main-container">
+
+  <!-- ===== KOLOM KIRI ===== -->
+  <div class="left-column">
+    <div class="glass-card">
+      <div class="logo-area">
+        <img
+          id="logo-club"
+          src="https://lh3.googleusercontent.com/d/GANTI_ID_LOGO_DISINI"
+          class="logo-img"
+          onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex';"
+          alt="Logo Indramayu Club"
+        >
+        <div id="logo-fallback" style="width:38px;height:38px;border-radius:8px;background:var(--sultan-green-dim);border:1px solid rgba(10,107,46,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;">🕌</div>
+        <div>
+          <div class="logo-title">INDRAMAYU CLUB</div>
+          <div class="logo-sub">Makrifat Digital</div>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <div class="profile-avatar-wrapper">
+          <div class="profile-img"></div>
+          <span class="badge-platinum">SULTAN</span>
+        </div>
+        <h3 style="margin-top:16px; font-size:15px; color:var(--text-main);">Pak Jamhari</h3>
+        <p style="font-size:9.5px; color:var(--text-muted); margin-top:3px;">Admin Utama · Indramayu Club</p>
+        <div class="stats-box">
+          <div class="stats-item"><span>248</span>member</div>
+          <div class="stats-item"><span>37</span>post</div>
+          <div class="stats-item"><span>12</span>online</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card" style="padding:8px;">
+      <ul class="menu-list">
+        <li class="active">🏠 Beranda</li>
+        <li>👥 Anggota</li>
+        <li>🖼️ Galeri Nur</li>
+        <li>🛍️ Toko</li>
+        <li>🏦 Bank Makrifat</li>
+        <li>🤖 Nur AI</li>
+        <li>📊 Laporan</li>
+      </ul>
+    </div>
+
+    <div class="mini-cards">
+      <div class="glass-card mini-card">💰 Kas<br><strong style="color:var(--sultan-green);">Rp 2.4M</strong></div>
+      <div class="glass-card mini-card">📈 Aktif<br><strong style="color:var(--sultan-green);">185</strong></div>
+      <div class="glass-card mini-card">🤖 AI<br><strong style="color:var(--online);">READY</strong></div>
+    </div>
+
+    <!-- HTML5 Publish Folder aktif -->
+    <div class="glass-card" style="text-align:center;padding:12px;">
+      <div style="font-size:12px;font-weight:700;color:var(--sultan-green);margin-bottom:8px;">📁 Folder Publish</div>
+      <span class="html5-badge">◉ HTML5 AKTIF</span>
+      <p style="font-size:10px;color:var(--text-muted);margin-top:8px;line-height:1.5;">
+        Gallery Nur 1–19 siap dipublish ke GAS endpoint.<br>
+        <span style="color:var(--sultan-green);font-weight:600;">Folder: /Gallery/Nur</span>
+      </p>
+      <button class="btn-gold" style="margin-top:8px;width:100%;font-size:11px;" onclick="window.open('https://script.google.com/macros/s/AKfycbxr8oyZdzh0C_QgO-9Zx1U98iwqLK-_Enxab9WWy9HfIWnYO1Y3XBZpZC6lzt1O8-0f/exec?page=Nur1','_blank')">
+        🚀 Publish Nur 1
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== KOLOM TENGAH ===== -->
+  <div class="center-column">
+
+    <!-- Story Bar -->
+    <div class="story-bar" id="storyBar">
+      <div class="story-add" onclick="triggerUploadFile()">＋<span>Story</span></div>
+      <div class="story-item" style="background:linear-gradient(160deg,#0a2800,#1a4800);"><div class="story-label">🏛️ Budaya</div></div>
+      <div class="story-item" style="background:linear-gradient(160deg,#001a0d,#003020);"><div class="story-label">🕌 Makrifat</div></div>
+      <div class="story-item" style="background:linear-gradient(160deg,#0a1a00,#1a3300);"><div class="story-label">🌾 Dermayu</div></div>
+      <div class="story-item" style="background:linear-gradient(160deg,#1a0020,#2d0040);"><div class="story-label">🤖 Nur AI</div></div>
+      <div class="story-item" style="background:linear-gradient(160deg,#1a0a00,#2d1600);"><div class="story-label">🎨 Batik</div></div>
+      <div class="story-item" style="background:linear-gradient(160deg,#001a1a,#00302d);"><div class="story-label">🏦 Bank</div></div>
+      <div class="story-item" style="background:linear-gradient(160deg,#1a1200,#332200);"><div class="story-label">🎮 Game</div></div>
+      <div class="story-item" style="background:linear-gradient(160deg,#0d0d1a,#1a1a33);"><div class="story-label">📅 Event</div></div>
+      <div class="story-item" style="background:linear-gradient(160deg,#1a0005,#33000d);"><div class="story-label">❤️ Member</div></div>
+      <div class="story-item" style="background:linear-gradient(160deg,#0a0a00,#1f1f00);"><div class="story-label">✨ Kreator</div></div>
+      <div class="story-item" style="background:linear-gradient(160deg,#001400,#002600);"><div class="story-label">🌿 Alam</div></div>
+      <div class="story-item" style="background:linear-gradient(160deg,#0d0000,#200000);"><div class="story-label">📢 Promo</div></div>
+    </div>
+
+    <!-- Composer -->
+    <div class="glass-card composer">
+      <div style="display:flex;gap:10px;align-items:center;">
+        <div style="width:34px;height:34px;border-radius:50%;background:#e8f5ec;border:2px solid var(--sultan-green);flex-shrink:0;"></div>
+        <input type="text" id="post-text-input" placeholder="Apa yang ingin dibagikan hari ini, Pak Jamhari?">
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;background:#f5fbf7;padding:8px 12px;border-radius:10px;border:1px dashed rgba(10,107,46,0.22);">
+        <span style="font-size:13px;">🔗</span>
+        <input type="text" id="post-media-url" placeholder="Paste link Google Drive di sini..." style="flex:1;background:none;border:none;color:var(--sultan-green);outline:none;font-size:12px;padding:2px 0;">
+      </div>
+      <div class="upload-drop-zone" onclick="triggerUploadFile()">
+        <div style="font-size:20px;">📁</div>
+        <p>Klik pilih foto/video dari HP<br>
+          <span style="font-size:10px;color:rgba(10,107,46,0.5);">Otomatis masuk ke komposer</span>
+        </p>
+      </div>
+      <input type="file" id="hidden-file-input" accept="image/*,video/*" style="display:none;" onchange="prosesUploadFile(this)">
+      <div class="upload-progress-wrap" id="upload-progress-wrap">
+        <div class="upload-status-text" id="upload-status-text">⬆️ Mengupload...</div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar-fill"></div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px;">
+        <button class="btn-ghost" onclick="bukaGerbangDrive()">☁️ Drive Folder</button>
+        <button class="btn-gold" onclick="terbitkanPostingan()">Kirim Post 🚀</button>
+      </div>
+    </div>
+
+    <!-- ===== GALLERY NUR 1–19 ===== -->
+    <div class="gallery-section">
+      <div class="gallery-header">
+        <div class="gallery-title">
+          🖼️ Gallery Nur
+          <span class="html5-badge">HTML5 ◉</span>
+        </div>
+        <span style="font-size:11px;color:var(--text-muted);">Nur 1 – Nur 19</span>
+      </div>
+      <div class="gallery-grid" id="nurGalleryGrid">
+        <!-- Diisi JS -->
+      </div>
+    </div>
+
+    <!-- Feed -->
+    <div id="feed-container" style="display:flex;flex-direction:column;gap:14px;">
+      <div class="glass-card post-card">
+        <div style="display:flex;gap:9px;align-items:center;">
+          <div style="width:38px;height:38px;border-radius:50%;background:#e8f5ec;border:2px solid var(--sultan-green);flex-shrink:0;"></div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text-main);">Indramayu Club Official</div>
+            <div style="font-size:10px;color:var(--text-muted);">Baru saja · 📌 Disematkan</div>
+          </div>
+          <span style="margin-left:auto;font-size:9px;color:#fff;background:var(--sultan-green);padding:2px 8px;border-radius:5px;">SULTAN</span>
+        </div>
+        <p style="font-size:13px;line-height:1.55;color:var(--text-main);">Sistem koordinasi otomatis infrastruktur digital via gateway sinkronisasi sukses di-deploy ke local host. Alhamdulillah! 🙏</p>
+        <div class="post-img" style="background:#f0faf4;height:190px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:12px;border-radius:9px;">[ Asset Gambar Utama ]</div>
+
+        <!-- REACTION DISPLAY -->
+        <div class="reaction-display" id="react-display-1">
+          <span class="react-count-chip" id="rc-voucher-1">🎟️ 0</span>
+          <span class="react-count-chip" id="rc-gif-1">🎁 0</span>
+          <span class="react-count-chip" id="rc-ro-1">💎 0</span>
+        </div>
+
+        <div class="post-actions">
+          <!-- VOUCHER NUR -->
+          <div class="react-btn" id="reactBtn-1">
+            🎟️ Voucher Nur
+            <div class="react-popup">
+              <span class="nur-voucher voucher-nur" onclick="giveReact(1,'voucher')">🎟️ Voucher Nur</span>
+              <span class="nur-voucher gif-nur"     onclick="giveReact(1,'gif')">🎁 GIF Nur</span>
+              <span class="nur-voucher ro-nur"      onclick="giveReact(1,'ro')">💎 RoNur</span>
+            </div>
+          </div>
+          <span style="color:var(--text-muted);font-size:13px;cursor:pointer;">💬 Komentar</span>
+          <span style="color:var(--text-muted);font-size:13px;cursor:pointer;margin-left:auto;">↗️ Bagikan</span>
+        </div>
+        <div class="comment-section">
+          <div class="comment-item"><strong>Nur 1:</strong> Sistem berjalan optimal di port 1717.</div>
+          <div class="comment-item"><strong>Member_05:</strong> Wallpaper otomatis ganti-nya keren!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== KOLOM KANAN ===== -->
+  <div class="right-column">
+    <div class="glass-card">
+      <div style="font-size:13px;font-weight:700;color:var(--sultan-green);">🟢 Pop Yoo Card · Online</div>
+      <div class="member-online-list">
+        <div class="member-item"><div class="avatar-container"><div class="avatar-mini"></div><div class="dot-online"></div></div><span>Nur Admin 1</span><span class="level-badge">LV 99</span></div>
+        <div class="member-item"><div class="avatar-container"><div class="avatar-mini"></div><div class="dot-online"></div></div><span>Alwi Digital</span><span class="level-badge">LV 15</span></div>
+        <div class="member-item"><div class="avatar-container"><div class="avatar-mini"></div><div class="dot-online"></div></div><span>Member_VVIP</span><span class="level-badge">LV 40</span></div>
+        <div class="member-item"><div class="avatar-container"><div class="avatar-mini"></div><div class="dot-online"></div></div><span>Pak Budi</span><span class="level-badge">LV 22</span></div>
+        <div class="member-item">
+          <div class="avatar-container">
+            <div class="avatar-mini"></div>
+            <div style="width:9px;height:9px;background:#ccc;border-radius:50%;position:absolute;bottom:0;right:0;border:2px solid #fff;"></div>
+          </div>
+          <span style="color:var(--text-muted);">Siti Rahayu</span><span class="level-badge" style="opacity:0.4;">LV 8</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOUCHER NUR CARD di sidebar kanan -->
+    <div class="glass-card" style="background:linear-gradient(135deg,#f4faf6,#e8f5ec);border-color:rgba(10,107,46,0.2);border-style:dashed;">
+      <div style="font-size:12px;font-weight:700;color:var(--sultan-green);margin-bottom:8px;">🎟️ Voucher Nur System</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="background:#fff8e1;border:1px solid #c9a84c44;border-radius:8px;padding:7px 10px;font-size:11px;">
+          <span style="font-weight:700;color:#a87e2e;">🎟️ Voucher Nur</span>
+          <span style="color:var(--text-muted);font-size:10px;display:block;margin-top:2px;">Diskon 5% di Bank Makrifat</span>
+        </div>
+        <div style="background:#e8f5e9;border:1px solid #0a6b2e44;border-radius:8px;padding:7px 10px;font-size:11px;">
+          <span style="font-weight:700;color:var(--sultan-green);">🎁 GIF Nur</span>
+          <span style="color:var(--text-muted);font-size:10px;display:block;margin-top:2px;">Hadiah digital komunitas</span>
+        </div>
+        <div style="background:#fce4ec;border:1px solid #e5393544;border-radius:8px;padding:7px 10px;font-size:11px;">
+          <span style="font-weight:700;color:#c62828;">💎 RoNur</span>
+          <span style="color:var(--text-muted);font-size:10px;display:block;margin-top:2px;">Reward point premium</span>
+        </div>
+      </div>
+      <button class="btn-gold" style="margin-top:10px;width:100%;font-size:11px;">Klaim Sekarang</button>
+    </div>
+
+    <div class="glass-card">
+      <div style="font-size:13px;font-weight:700;color:var(--sultan-green);margin-bottom:8px;"># Trending</div>
+      <div class="hashtag-list">
+        <span class="hashtag-item">#NurAI</span>
+        <span class="hashtag-item">#BankMakrifat</span>
+        <span class="hashtag-item">#IndramayuClub</span>
+        <span class="hashtag-item">#GalleryNur</span>
+        <span class="hashtag-item">#VoucherNur</span>
+        <span class="hashtag-item">#AgentAlwi</span>
+        <span class="hashtag-item">#Makrifat2026</span>
+      </div>
+    </div>
+
+    <!-- Wallpaper Control Card -->
+    <div class="glass-card">
+      <div style="font-size:12px;font-weight:700;color:var(--sultan-green);margin-bottom:10px;">🖼️ Wallpaper Otomatis</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Berganti setiap 5 menit. Klik dot untuk lompat.</div>
+      <div style="display:flex;justify-content:center;gap:5px;flex-wrap:wrap;" id="wp-dots-panel"></div>
+      <div style="display:flex;gap:7px;margin-top:10px;">
+        <button class="btn-ghost" style="flex:1;font-size:10px;" onclick="prevWallpaper()">◀ Prev</button>
+        <button class="btn-ghost" style="flex:1;font-size:10px;" onclick="nextWallpaper()">Next ▶</button>
+      </div>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:8px;text-align:center;" id="wp-name-label">Memuat wallpaper...</div>
+    </div>
+
+    <!-- Gallery Nur Links - Publish Panel -->
+    <div class="glass-card">
+      <div style="font-size:12px;font-weight:700;color:var(--sultan-green);margin-bottom:8px;">
+        📁 Push ke Gallery Nur
+        <span class="html5-badge" style="margin-left:4px;">HTML5</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;max-height:200px;overflow-y:auto;" id="nurLinkList">
+        <!-- Diisi JS -->
+      </div>
+    </div>
+
+    <div class="glass-card" style="font-size:11px;color:var(--text-muted);">
+      <div style="color:var(--sultan-green);font-size:12px;font-weight:600;margin-bottom:6px;">📊 Aktivitas Hari Ini</div>
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <div style="display:flex;justify-content:space-between;"><span>Post baru</span><span style="color:var(--text-main);">7</span></div>
+        <div style="display:flex;justify-content:space-between;"><span>Transaksi</span><span style="color:var(--text-main);">Rp 450k</span></div>
+        <div style="display:flex;justify-content:space-between;"><span>Anggota baru</span><span style="color:var(--online);">+3</span></div>
+        <div style="display:flex;justify-content:space-between;"><span>Sesi Nur AI</span><span style="color:var(--text-main);">14</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL DRIVE -->
+<div id="peringatan-drive-modal" class="modal-overlay">
+  <div class="modal-box">
+    <span style="font-size:34px;">☁️</span>
+    <h3 style="color:var(--sultan-green);margin-top:8px;font-size:15px;">Folder Drive Indramayu Club</h3>
+    <div style="background:#f4faf6;border-radius:8px;padding:10px;margin-top:12px;text-align:left;font-size:11px;color:var(--text-muted);line-height:1.6;border:1px solid var(--border);">
+      📌 <b style="color:var(--sultan-green);">Panduan:</b><br>
+      1. Klik <b style="color:var(--sultan-green);">"Masuk Folder"</b> di bawah.<br>
+      2. Upload berkas ke Google Drive pusat.<br>
+      3. Klik kanan berkas → <b style="color:var(--sultan-green);">Salin Tautan.</b><br>
+      4. Paste tautan di kolom komposer.
+    </div>
+    <div style="display:flex;gap:9px;margin-top:16px;">
+      <button class="btn-ghost" style="flex:1;" onclick="tutupPeringatan()">Batal</button>
+      <button class="btn-gold" style="flex:1.5;" onclick="prosesKeDrive()">Masuk Folder 🔗</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// GALLERY NUR 1–19 DENGAN GAS ENDPOINT
+// ============================================================
+const GAS_BASE = 'https://script.google.com/macros/s/AKfycbxr8oyZdzh0C_QgO-9Zx1U98iwqLK-_Enxab9WWy9HfIWnYO1Y3XBZpZC6lzt1O8-0f/exec';
+const NUR_TOTAL = 19;
+let currentLbIndex = 1;
+
+// Buat array Nur 1..19
+const NUR_PAGES = Array.from({length: NUR_TOTAL}, (_, i) => ({
+  id: i + 1,
+  label: `Nur ${i + 1}`,
+  url: `${GAS_BASE}?page=Nur${i + 1}`,
+}));
+
+// Render grid gallery
+function buildGallery() {
+  const grid = document.getElementById('nurGalleryGrid');
+  grid.innerHTML = '';
+  NUR_PAGES.forEach(n => {
+    const thumb = document.createElement('div');
+    thumb.className = 'nur-thumb';
+    thumb.id = `nur-thumb-${n.id}`;
+    thumb.innerHTML = `
+      <div class="nur-loading">
+        <span style="font-size:18px;">🖼️</span>
+        <span>Nur ${n.id}</span>
+      </div>
+      <div class="nur-label">Nur ${n.id}</div>
+    `;
+    thumb.onclick = () => openLightbox(n.id);
+    grid.appendChild(thumb);
+  });
+
+  // Build link list di sidebar kanan
+  const linkList = document.getElementById('nurLinkList');
+  linkList.innerHTML = '';
+  NUR_PAGES.forEach(n => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:7px;background:#f4faf6;border:1px solid var(--border);';
+    row.innerHTML = `
+      <span style="font-size:11px;font-weight:700;color:var(--sultan-green);flex:1;">🖼️ Nur ${n.id}</span>
+      <button onclick="window.open('${n.url}','_blank')"
+        style="background:var(--sultan-green);color:#fff;border:none;border-radius:6px;padding:3px 9px;font-size:10px;font-weight:700;cursor:pointer;">
+        Buka ↗
+      </button>
+    `;
+    linkList.appendChild(row);
+  });
+}
+
+// Lightbox
+function openLightbox(id) {
+  currentLbIndex = id;
+  document.getElementById('lb-img').src = NUR_PAGES[id-1].url;
+  document.getElementById('lb-title').textContent = `Gallery · Nur ${id}`;
+  document.getElementById('nurLightbox').classList.add('show');
+}
+function closeLightboxDirect() {
+  document.getElementById('nurLightbox').classList.remove('show');
+}
+function closeLightbox(e) {
+  if(e.target === document.getElementById('nurLightbox')) closeLightboxDirect();
+}
+function lbNav(dir) {
+  let next = currentLbIndex + dir;
+  if(next < 1) next = NUR_TOTAL;
+  if(next > NUR_TOTAL) next = 1;
+  openLightbox(next);
+}
+
+// ============================================================
+// REACTION SYSTEM — VOUCHER NUR / GIF NUR / RONUR
+// ============================================================
+const reactState = {}; // { postId: { voucher: n, gif: n, ro: n } }
+
+function giveReact(postId, type) {
+  if(!reactState[postId]) reactState[postId] = {voucher:0, gif:0, ro:0};
+  reactState[postId][type]++;
+
+  const icons = { voucher:'🎟️', gif:'🎁', ro:'💎' };
+  const labels = { voucher:'Voucher Nur', gif:'GIF Nur', ro:'RoNur' };
+  const colors = { voucher:'#a87e2e', gif:'var(--sultan-green)', ro:'#c62828' };
+
+  // Update counter chip
+  const chipEl = document.getElementById(`rc-${type}-${postId}`);
+  if(chipEl) {
+    chipEl.style.borderColor = colors[type];
+    chipEl.style.color = colors[type];
+    chipEl.innerHTML = `${icons[type]} ${reactState[postId][type]}`;
+  }
+
+  // Animasi floating
+  const btn = document.getElementById(`reactBtn-${postId}`);
+  if(btn) {
+    const float = document.createElement('span');
+    float.textContent = `${icons[type]} +${labels[type]}`;
+    float.style.cssText = `
+      position:absolute; bottom:32px; left:0;
+      font-size:11px; font-weight:700; color:${colors[type]};
+      background:#fff; border:1px solid currentColor;
+      padding:2px 8px; border-radius:10px;
+      animation: floatUp 1.2s ease forwards;
+      pointer-events:none; z-index:99; white-space:nowrap;
+    `;
+    btn.style.position = 'relative';
+    btn.appendChild(float);
+    setTimeout(() => float.remove(), 1200);
+  }
+}
+
+// CSS animasi float
+const style = document.createElement('style');
+style.textContent = `@keyframes floatUp { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(-32px)} }`;
+document.head.appendChild(style);
+
+// Buat react button saat post baru dibuat (patch terbitkanPostingan)
+let postCounter = 2;
+
+// ============================================================
+// WALLPAPER SYSTEM
+// ============================================================
+const WALLPAPERS = [
+  { name:"Hijau Sultan", css:"linear-gradient(135deg, #031a08 0%, #064d20 40%, #021208 100%)" },
+  { name:"Makrifat Malam", css:"linear-gradient(135deg, #030612 0%, #07113a 40%, #020510 100%)" },
+  { name:"Dermayu Hijau", css:"linear-gradient(135deg, #020c02 0%, #0a2010 40%, #030b03 100%)" },
+  { name:"Nur AI Ungu", css:"linear-gradient(135deg, #0a0014 0%, #1a0030 40%, #060008 100%)" },
+  { name:"Bank Makrifat", css:"linear-gradient(135deg, #001414 0%, #002828 40%, #000e0e 100%)" },
+  { name:"Piramida Guard", css:"linear-gradient(135deg, #0e0c00 0%, #28240a 40%, #080700 100%)" },
+  { name:"Merah Sakral", css:"linear-gradient(135deg, #0e0000 0%, #280008 40%, #080000 100%)" },
+  { name:"Galaksi", css:"radial-gradient(ellipse at 20% 50%, #0d0020 0%, #030010 50%, #010008 100%)" },
+];
+
+const INTERVAL_MS = 5 * 60 * 1000;
+let currentWP = 0, timerSeconds = INTERVAL_MS / 1000, timerInterval = null;
+const CIRCUMFERENCE = 2 * Math.PI * 7;
+
+function applyWallpaper(index) {
+  const wp = WALLPAPERS[index];
+  const layer = document.getElementById('wallpaper-layer');
+  layer.style.opacity = '0';
+  setTimeout(() => {
+    layer.style.background = wp.url ? `url('${wp.url}') center/cover no-repeat, ${wp.css}` : wp.css;
+    layer.style.opacity = '1';
+  }, 700);
+  document.getElementById('wp-name-label').textContent = `🖼️ ${wp.name}`;
+  document.querySelectorAll('.wp-dot, .wp-dot-panel').forEach((d, i) => d.classList.toggle('active', i === index));
+}
+
+function buildDots() {
+  ['wp-dots','wp-dots-panel'].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.innerHTML = '';
+    WALLPAPERS.forEach((wp, i) => {
+      const d = document.createElement('div');
+      d.className = 'wp-dot' + (id === 'wp-dots-panel' ? ' wp-dot-panel' : '');
+      if(i === 0) d.classList.add('active');
+      d.title = wp.name;
+      d.style.cssText = 'width:6px;height:6px;border-radius:50%;background:rgba(10,107,46,0.25);cursor:pointer;transition:background 0.3s;';
+      d.addEventListener('click', () => jumpWallpaper(i));
+      el.appendChild(d);
+    });
+  });
+}
+
+function jumpWallpaper(index) { currentWP = index; timerSeconds = INTERVAL_MS/1000; applyWallpaper(currentWP); }
+function nextWallpaper() { jumpWallpaper((currentWP + 1) % WALLPAPERS.length); }
+function prevWallpaper() { jumpWallpaper((currentWP - 1 + WALLPAPERS.length) % WALLPAPERS.length); }
+
+function startWallpaperTimer() {
+  clearInterval(timerInterval);
+  timerSeconds = INTERVAL_MS / 1000;
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    const ring = document.getElementById('wp-ring');
+    if(ring) {
+      const ratio = timerSeconds / (INTERVAL_MS / 1000);
+      ring.style.strokeDashoffset = CIRCUMFERENCE - (CIRCUMFERENCE * (1 - ratio));
+    }
+    const m = Math.floor(timerSeconds / 60).toString();
+    const s = (timerSeconds % 60).toString().padStart(2,'0');
+    const lbl = document.getElementById('wp-timer-label');
+    if(lbl) lbl.textContent = `${m}:${s}`;
+    if(timerSeconds <= 0) { currentWP = (currentWP + 1) % WALLPAPERS.length; applyWallpaper(currentWP); timerSeconds = INTERVAL_MS/1000; }
+  }, 1000);
+}
+
+// ============================================================
+// DRIVE & UPLOAD SYSTEM
+// ============================================================
+const GOOGLE_DRIVE_FOLDER_URL = "https://drive.google.com/drive/folders/1S4zZBfhYD7f0i4amQDu56I5T7DsHMcEy";
+
+function bukaGerbangDrive() { document.getElementById('peringatan-drive-modal').classList.add('show'); }
+function tutupPeringatan() { document.getElementById('peringatan-drive-modal').classList.remove('show'); }
+function prosesKeDrive() { window.open(GOOGLE_DRIVE_FOLDER_URL, '_blank'); tutupPeringatan(); document.getElementById('post-media-url').focus(); }
+function triggerUploadFile() { document.getElementById('hidden-file-input').click(); }
+
+function prosesUploadFile(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const wrap = document.getElementById('upload-progress-wrap');
+  const bar  = document.getElementById('progress-bar-fill');
+  const statusText = document.getElementById('upload-status-text');
+  wrap.classList.add('show');
+  statusText.textContent = `⬆️ Mengupload "${file.name}"...`;
+  bar.style.width = '0%';
+  bar.style.background = 'var(--sultan-green)';
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 20 + 6;
+    if(progress >= 100) {
+      progress = 100;
+      clearInterval(interval);
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('post-media-url').value = e.target.result;
+        statusText.textContent = `✅ "${file.name}" siap diposting!`;
+        bar.style.background = 'var(--sultan-green-light)';
+        if(!document.getElementById('post-text-input').value)
+          document.getElementById('post-text-input').value = '📸 Momen Indramayu Club!';
+        setTimeout(() => { wrap.classList.remove('show'); bar.style.width='0%'; bar.style.background='var(--sultan-green)'; }, 2500);
+      };
+      reader.readAsDataURL(file);
+    }
+    bar.style.width = Math.min(progress, 100) + '%';
+  }, 160);
+  input.value = '';
+}
+
+function terbitkanPostingan() {
+  const textContent = document.getElementById('post-text-input').value.trim();
+  const mediaUrl    = document.getElementById('post-media-url').value.trim();
+  const feed        = document.getElementById('feed-container');
+  if(!textContent && !mediaUrl) { alert("Tulis pesan atau pilih media dulu!"); return; }
+
+  let renderedMedia = '';
+  if(mediaUrl) {
+    if(mediaUrl.startsWith('data:image')) {
+      renderedMedia = `<img src="${mediaUrl}" class="post-img">`;
+    } else if(mediaUrl.includes('drive.google.com')) {
+      const fileId = mediaUrl.split('/d/')[1]?.split('/')[0] || mediaUrl.split('id=')[1]?.split('&')[0];
+      if(fileId) renderedMedia = `<img src="https://lh3.googleusercontent.com/u/0/d/${fileId}" class="post-img" onerror="this.src='https://picsum.photos/600/300?random=99';this.onerror=null;">`;
+    } else {
+      renderedMedia = `<img src="${mediaUrl}" class="post-img">`;
+    }
+  }
+
+  const pid = ++postCounter;
+  const waktu = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+  const newPost = document.createElement('div');
+  newPost.className = 'glass-card post-card';
+  newPost.style.animation = 'fadeSlideIn 0.3s ease';
+  newPost.innerHTML = `
+    <div style="display:flex;gap:9px;align-items:center;">
+      <div style="width:36px;height:36px;border-radius:50%;background:#e8f5ec;border:2px solid var(--sultan-green);flex-shrink:0;"></div>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--text-main);">Pak Jamhari</div>
+        <div style="font-size:10px;color:var(--text-muted);">Baru · ${waktu} · 🌐</div>
+      </div>
+      <span style="margin-left:auto;font-size:9px;color:#fff;background:var(--sultan-green);padding:2px 7px;border-radius:5px;">SULTAN</span>
+    </div>
+    ${textContent ? `<p style="font-size:13px;line-height:1.55;color:var(--text-main);">${textContent}</p>` : ''}
+    ${renderedMedia}
+    <div class="reaction-display" id="react-display-${pid}">
+      <span class="react-count-chip" id="rc-voucher-${pid}">🎟️ 0</span>
+      <span class="react-count-chip" id="rc-gif-${pid}">🎁 0</span>
+      <span class="react-count-chip" id="rc-ro-${pid}">💎 0</span>
+    </div>
+    <div class="post-actions">
+      <div class="react-btn" id="reactBtn-${pid}">
+        🎟️ Voucher Nur
+        <div class="react-popup">
+          <span class="nur-voucher voucher-nur" onclick="giveReact(${pid},'voucher')">🎟️ Voucher Nur</span>
+          <span class="nur-voucher gif-nur"     onclick="giveReact(${pid},'gif')">🎁 GIF Nur</span>
+          <span class="nur-voucher ro-nur"      onclick="giveReact(${pid},'ro')">💎 RoNur</span>
+        </div>
+      </div>
+      <span style="color:var(--text-muted);font-size:13px;cursor:pointer;">💬 Komentar</span>
+      <span style="color:var(--text-muted);font-size:13px;cursor:pointer;margin-left:auto;">↗️ Bagikan</span>
+    </div>
+  `;
+  feed.insertBefore(newPost, feed.firstChild);
+  document.getElementById('post-text-input').value = "";
+  document.getElementById('post-media-url').value = "";
+}
+
+document.getElementById('peringatan-drive-modal').addEventListener('click', function(e) {
+  if(e.target === this) tutupPeringatan();
+});
+
+// ============================================================
+// INIT
+// ============================================================
+buildDots();
+applyWallpaper(0);
+startWallpaperTimer();
+buildGallery();
+
+// ============================================================
+// INIT
+// ============================================================
+buildDots();
+applyWallpaper(0);
+startWallpaperTimer();
+buildGallery();
+<!-- ============================================================
+     INIT & RUNNING SYSTEM
+     ============================================================ -->
+<script>
+  buildDots();
+  applyWallpaper(0);
+  startWallpaperTimer();
+  buildGallery();
+
+  document.getElementById('peringatan-drive-modal').addEventListener('click', function(e) {
+    if(e.target === this) tutupPeringatan();
+  });
+</script> 
+
+<!-- ⛑️ ALWI grandlew-->
+<script src="components/agen_alwi.js"></script>
+
+</body>
+</html>
+
+
+

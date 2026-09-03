@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>META CENTER — NURgenerator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',sans-serif;background:linear-gradient(180deg,#ffffff,#eef6ff);color:#0f172a;min-height:100vh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#fff;border-bottom:2px solid #cbd5e1;position:sticky;top:0;z-index:5}
+.logo{font-family:'Cinzel',serif;font-weight:900;font-size:15px;color:#1e40af}
+.sub{font-size:10px;color:#64748b;margin-top:2px}
+.home{margin-left:auto;background:#16a34a;color:#fff;text-decoration:none;border-radius:10px;padding:9px 13px;font-weight:800;font-size:11px;white-space:nowrap}
+main{flex:1;width:100%;max-width:920px;margin:0 auto;padding:18px 14px}
+h2.sec{font-size:11px;letter-spacing:2px;color:#b45309;font-weight:800;margin:14px 0 10px;border-bottom:1px dashed #f59e0b;padding-bottom:5px}
+h2.sec:first-child{margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.card{display:flex;flex-direction:column;align-items:center;gap:5px;background:#fff;border:2px solid #f59e0b;border-radius:14px;padding:14px 8px;text-decoration:none;color:#1e40af;font-weight:800;font-size:12px;text-align:center;box-shadow:0 2px 8px rgba(245,158,11,.15);transition:.15s}
+.card:hover{transform:translateY(-2px);box-shadow:0 5px 14px rgba(245,158,11,.3)}
+.card .ico{font-size:27px;line-height:1}
+.card small{color:#64748b;font-weight:400;font-size:9.5px;line-height:1.35}
+.card.utama{background:linear-gradient(135deg,#dc2626,#f59e0b);border-color:#dc2626;color:#fff}
+.card.utama small{color:#fee2e2}
+.foot{text-align:center;color:#94a3b8;font-size:10.5px;padding:12px}
+</style>
+</head>
+<body>
+<div class="top">
+  <div>
+    <div class="logo">🧩 META CENTER</div>
+    <div class="sub">NURgenerator / meta</div>
+  </div>
+  <a class="home" href="/">🏠 Dashboard</a>
+</div>
+
+<main>
+  <h2 class="sec">⭐ HALAMAN UTAMA</h2>
+  <div class="grid">
+    <a class="card" href="/meta/promosi-streaming/"><span class="ico"> _</span>an>Promosi Streaming     bec</a>/a>   
+    <a class="card" href="/meta/gambar-streaming/"><span class="ico"> </span>/span>komentar dulu</a>ng</a>
+   <a class="card utama" href="/meta/hub.html"><span class="ico">🔴</span>ALWI HUB<small>Web Statis (:8080) &amp; Ollama AI (:8080)</small></a>
+    <a class="card" href="/meta/alwibook.html"><span class="ico">📖</span>Alwi Book<small>Bacaan digital</small></a>
+    <a class="card" href="/meta/nantidulu.html"><span class="ico">⏳</span>Nanti Dulu<small>Halaman tunggu</small></a>
+    <a class="card" href="/meta/video-drive.html"><span class="ico">🎬</span>Video Drive<small>Pemutar video drive</small></a>
+    <a class="card" href="/meta/template-komentar.html"><span class="ico">💬</span>Template Komentar<small>Papan komentar</small></a>
+  </div>
+
+  <h2 class="sec">📁 FOLDER MEDIA</h2>
+  <div class="grid">
+    <a class="card" href="/meta/gallery_video/"><span class="ico">🎞️</span>Gallery Video</a>
+    <a class="card" href="/meta/komentar/"><span class="ico">🗨️</span>Komentbeckup  ar     </a>
+    <a class="card" href="/meta/member_img/"><span class="ico">👤</span>Member Im beckupg</a>
+    <a class="card" href="/meta/mp3_member/"><span class="ico">🎵</span>MP3 Member     beckup</a>
+    <a class="card" href="/meta/upload/"><span class="ico">⬆️</span>Upload</a>
+  </div>
+</main>
+
+<div class="foot">META CENTER • NURgenerator • Indramayu 🛰️</div><script src="../../alwi_bubble2.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>

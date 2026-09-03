@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>📖 Artikel Belajar NASA — Indramayu Club</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#070b18;color:#e2e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+.wrap{max-width:720px;margin:0 auto;padding:14px}
+.header{text-align:center;padding:20px 0 8px}
+.header h1{font-size:1.4rem;background:linear-gradient(90deg,#38bdf8,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{font-size:.75rem;color:#64748b;margin-top:4px}
+a.kembali{display:inline-block;margin-top:8px;font-size:.78rem;color:#38bdf8;text-decoration:none;border:1px solid #334155;padding:7px 14px;border-radius:10px}
+.artikel-list{margin-top:16px}
+.card{background:#0d1528;border:1px solid #1e293b;border-radius:16px;padding:14px;margin-bottom:12px;cursor:pointer;transition:.2s}
+.card:hover{border-color:#38bdf8}
+.hero{height:110px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:52px;margin-bottom:10px}
+.h1{background:linear-gradient(135deg,#0c2440,#065f46)}
+.h2{background:linear-gradient(135deg,#1e1b4b,#4c1d95)}
+.h3{background:linear-gradient(135deg,#312e81,#0c4a6e)}
+.card h2{font-size:1rem;margin-bottom:4px}
+.card .meta{font-size:.68rem;color:#64748b;margin-bottom:6px}
+.card p.sum{font-size:.82rem;color:#94a3b8;line-height:1.5}
+.badge{display:inline-block;font-size:.62rem;background:#059669;color:#fff;padding:3px 9px;border-radius:99px;margin-right:6px}
+.badge.b{background:#2563eb}.badge.c{background:#7c3aed}
+/* pembaca artikel */
+#reader{display:none}
+#reader.on{display:block}
+#r-hero{height:150px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:64px;margin-bottom:14px}
+#r-judul{font-size:1.25rem;line-height:1.35}
+#r-meta{font-size:.72rem;color:#64748b;margin:6px 0 14px}
+#r-isi{font-size:.92rem;line-height:1.75;color:#cbd5e1;text-align:justify}
+#r-isi p{margin-bottom:12px}
+#r-isi b{color:#fff}
+img.r-img{width:100%;border-radius:12px;margin:10px 0;display:block}
+.btn-kembali{padding:10px 18px;border:none;border-radius:10px;background:#2563eb;color:#fff;font-weight:700;font-size:.83rem;cursor:pointer;margin-bottom:14px}
+.footer{text-align:center;font-size:.66rem;color:#475569;padding:14px 0}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>📖 ARTIKEL BELAJAR NASA</h1>
+    <p>Ilmu antariksa untuk Indramayu Club ⛑️</p>
+    <a class="kembali" href="nasa-peta.html">← Kembali ke Dashboard</a>
+  </div>
+
+  <!-- ===== DAFTAR ARTIKEL ===== -->
+  <div id="list" class="artikel-list"></div>
+
+  <!-- ===== PEMBACA ARTIKEL ===== -->
+  <div id="reader">
+    <button class="btn-kembali" onclick="tutupArtikel()">← Daftar Artikel</button>
+    <div id="r-hero"></div>
+    <h1 id="r-judul"></h1>
+    <div id="r-meta"></div>
+    <div id="r-isi"></div>
+  </div>
+
+  <div class="footer">NASA APOD (DEMO_KEY) • Indramayu Club ⛑️</div>
+</div>
+
+<script>
+/* ================================================================
+   CARA MENAMBAH ARTIKEL BARU:
+   Salin blok { ... } di bawah, ubah:
+   id      : angka unik
+   emoji   : ikon besar artikel
+   warna   : 'h1' | 'h2' | 'h3' (warna banner)
+   badge   : label kecil, teks: judul, tgl: tanggal, sum: ringkasan
+   isi     : isi artikel, boleh <b> <i> <p> <img>
+   ================================================================ */
+var ARTIKEL=[
+{
+  id:1, emoji:'🛰️', warna:'h1',
+  badge:'ISS', teks:'Rumah Manusia di Antariksa', tgl:'Indramayu Club • Belajar NASA',
+  sum:'Mengenal Stasiun Antariksa Internasional — laboratorium raksasa yang terbang mengelilingi Bumi 16 kali sehari.',
+  isi:'<p><b>ISS (International Space Station)</b> adalah stasiun luar angkasa terbesar yang pernah dibangun manusia. Ukurannya sepadan lapangan sepak bola, dengan berat ±420 ton, melayang di ketinggian ±400 kilometer di atas kepala kita.</p>'+
+      '<p>Kecepatannya luar biasa: <b>±28.000 km/jam</b>! Karena itu ISS menyelesaikan satu putaran Bumi hanya dalam <b>90 menit</b> — awak di dalamnya bisa melihat 16 kali matahari terbit setiap hari.</p>'+
+      '<p>Astronot di ISS melakukan penelitian yang tak bisa dilakukan di Bumi: obat baru, pertanian tanpa tanah, hingga mempelajari cairan di kondisi tanpa gravitasi. Coba buka tab <b>Peta</b> di dashboard dan klik 🛰️ POSISI ISS — kamu bisa melihat di mana ISS berada <i>sekarang juga!</i></p>'
+},
+{
+  id:2, emoji:'🪐', warna:'h2',
+  badge:'PLANET', teks:'Saturnus & Misi Cassini', tgl:'Indramayu Club • Belajar NASA',
+  sum:'Kisah pesawat Cassini yang berenang di antara cincin Saturnus selama 13 tahun.',
+  sum2:'',
+  isi:'<p><b>Saturnus</b> adalah raja cincin tata surya. Cincinnya terbuat dari miliaran bongkah es dan batu — dari sekecil butir pasir sampai sebesar gunung!</p>'+
+      '<p>Tahun 2004, pesawat <b>Cassini</b> milik NASA tiba di Saturnus setelah menempuh perjalanan 7 tahun. Selama 13 tahun ia memotret planet ini dari dekat, bahkan <b>menyelam di celah antara planet dan cincinnya</b> — sesuatu yang belum pernah dilakukan.</p>'+
+      '<p>Fakta keren: Saturnus begitu ringan (massa jenis lebih kecil dari air). Kalau ada lautan raksasa, Saturnus akan <b>mengapung</b>! Penemuan Cassini termasuk danau-danau metana cair di bulan Titan dan semburan air dari bulan Enceladus — dua tempat yang mungkin bisa menampung kehidupan.</p>'
+},
+{
+  id:3, emoji:'🔭', warna:'h3',
+  badge:'TELESKOP', teks:'James Webb — Mata Terjauh Umat Manusia', tgl:'Indramayu Club • Belajar NASA',
+  sum:'Teleskop paling canggih yang pernah dibuat, melihat cahaya berusia 13 miliar tahun.',
+  isi:'<p><b>Teleskop James Webb (JWST)</b> diluncurkan tahun 2021 dan kini berteduh 1,5 juta km dari Bumi — 4 kali lebih jauh dari Bulan!</p>'+
+      '<p>Cermin emasnya selebar 6,5 meter terdiri dari 18 heksagon. Ia mendeteksi <b>cahaya inframerah</b>, sehingga bisa menembus debu antarbintang dan melihat galaksi-galaksi pertama yang terbentuk <b>13 miliar tahun lalu</b> — bayangan masa kecil alam semesta.</p>'+
+      '<p>JWST juga menganalisis atmosfer planet-planet di luar tata surya, mencari jejak <b>air, metana, dan oksigen</b> — petunjuk adanya kehidupan di tempat lain. Siapa tahu generasimu yang menjawab pertanyaan: apakah kita sendirian?</p>'
+}
+];
+
+var list=document.getElementById('list');
+ARTIKEL.forEach(function(a){
+  var d=document.createElement('div');
+  d.className='card';
+  d.innerHTML='<div class="hero '+a.warna+'">'+a.emoji+'</div>'+
+    '<span class="badge">'+a.badge+'</span><h2>'+a.teks+'</h2>'+
+    '<div class="meta">'+a.tgl+'</div><p class="sum">'+a.sum+'</p>';
+  d.onclick=function(){bukaArtikel(a)};
+  list.appendChild(d);
+});
+
+/* ===== kartu APOD dinamis ===== */
+fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY')
+ .then(function(r){return r.json()})
+ .then(function(d){
+   var c=document.createElement('div');
+   c.className='card';
+   var thumb = d.media_type==='image' ? '<img class="r-img" src="'+d.url+'" style="margin:0">' : '<div class="hero h3">🎬</div>';
+   c.innerHTML=thumb+
+     '<span class="badge b">APOD HARI INI</span><h2>'+(d.title||'Foto Astronomi')+'</h2>'+
+     '<div class="meta">'+(d.date||'')+' • sumber api.nasa.gov (DEMO_KEY)</div>'+
+     '<p class="sum">Foto/videonya astronomi resmi dari NASA untuk hari ini. Klik untuk membaca penjelasannya.</p>';
+   c.onclick=function(){
+     bukaArtikel({emoji:d.media_type==='video'?'🎬':'🌌',warna:'h3',badge:'NASA APOD',
+       teks:d.title,tgl:d.date+' • © '+(d.copyright||'NASA'),
+       isi:(d.media_type==='video'?'<iframe src="'+d.url+'" width="100%" height="220" style="border:0;border-radius:12px" allowfullscreen></iframe><br><br>':'<img class="r-img" src="'+(d.hdurl||d.url)+'">')+
+           '<p>'+d.explanation+'</p>'});
+     window.scrollTo(0,0);
+   };
+   list.insertBefore(c,list.firstChild);
+ })
+ .catch(function(){console.log('APOD gagal (mungkin limit DEMO_KEY)')});
+
+function bukaArtikel(a){
+  document.getElementById('list').classList.add('hidden');
+  document.getElementById('reader').classList.add('on');
+  document.getElementById('r-hero').className='hero '+a.warna;
+  document.getElementById('r-hero').textContent=a.emoji;
+  document.getElementById('r-judul').textContent=a.teks;
+  document.getElementById('r-meta').textContent=(a.badge?'['+a.badge+'] ':'')+a.tgl;
+  document.getElementById('r-isi').innerHTML=a.isi;
+}
+function tutupArtikel(){
+  document.getElementById('reader').classList.remove('on');
+  document.getElementById('list').classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+</script><script src="../alwi_bubble4.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("../sw.js").catch(function(){})}</script></body>
+</html>

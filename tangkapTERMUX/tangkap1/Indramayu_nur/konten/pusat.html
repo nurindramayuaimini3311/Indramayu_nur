@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PUSAT 4 MENU - Indramayu Club</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#fff;font-family:sans-serif;height:100vh;overflow:hidden}
+.top{position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;gap:5px;padding:8px;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);border-bottom:2px solid #FFD700;overflow-x:auto}
+.top button{padding:8px 12px;background:#222;color:#FFD700;border:1px solid #444;border-radius:20px;font-weight:800;font-size:11px;white-space:nowrap;cursor:pointer}
+.top button.active{background:#FFD700;color:#000}
+.showBtn{position:fixed;top:10px;left:10px;z-index:9998;background:#FFD700;color:#000;padding:6px 12px;border-radius:20px;font-weight:900;font-size:11px;display:none}
+.showBtn.show{display:block}
+iframe{width:100%;height:100vh;border:none;background:#0a0a0a}
+</style>
+</head><body>
+<div class="showBtn" id="showBtn" onclick="document.getElementById('top').style.transform='translateY(0)'; this.classList.remove('show')">☰ MENU</div>
+<div class="top" id="top">
+<button onclick="load(0)" class="active" id="b0">🏠 PUSAT</button>
+<button onclick="load(1)" id="b1">📚 NUR 1</button>
+<button onclick="load(2)" id="b2">📚 NUR 2</button>
+<button onclick="load(3)" id="b3">📚 NUR 3</button>
+<button onclick="load(4)" id="b4">🌍 NUR 4</button>
+<button onclick="load(5)" id="b5">🌍 NUR 5</button>
+<button onclick="load(6)" id="b6">🌍 NUR 6</button>
+<button onclick="load(7)" id="b7">👑 NUR 7</button>
+<button onclick="load(8)" id="b8">👑 NUR 8</button>
+<button onclick="load(9)" id="b9">👑 NUR 9</button>
+<button onclick="load(10)" id="b10">👑 NUR 10</button>
+<button onclick="load(11)" id="b11">🎬 FLIX</button>
+<button onclick="hide()" style="background:#444;color:#fff">✕ Hide</button>
+</div>
+<iframe id="frm" src="/netflix/index.html"></iframe>
+<script>
+let pages=["/netflix/index.html","/netflix/nur1.html","/netflix/nur2.html","/netflix/nur3.html","/netflix/nur4.html","/netflix/nur5.html","/netflix/nur6.html","/netflix/nur7.html","/netflix/nur8.html","/netflix/nur9.html","/netflix/nur10.html","/netflix/index.html"];
+function load(i){
+ document.querySelectorAll('.top button').forEach(b=>b.classList.remove('active'));
+ document.getElementById('b'+i).classList.add('active');
+ document.getElementById('frm').src=pages[i]+'?v='+Date.now();
+ setTimeout(hide,600);
+}
+function hide(){document.getElementById('top').style.transform='translateY(-100%)'; document.getElementById('showBtn').classList.add('show');}
+</script>
+
+<script>
+(function(){
+const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
+let p=location.pathname; let i=PAGES.indexOf(p);
+if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));
+if(i<0) i=0;
+let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
+let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+L.href=prev; R.href=next;
+let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
+[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
+let sx=0;
+document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
+if(location.pathname.includes('alwiSD')){
+ let s=document.createElement('style');s.innerHTML="#alwi-rl a{animation:bob 0.7s infinite alternate} @keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-8px) scale(1.1)}}";document.head.appendChild(s);
+}
+})();
+</script><script src="../alwi_bubble4.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body></html>

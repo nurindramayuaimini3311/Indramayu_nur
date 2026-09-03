@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="owner"        content="Jamhari Dulkohar">
+<meta name="owner-id"     content="IMC-001">
+<meta name="organization" content="Indramayu Club Makrifat">
+<meta name="bot"          content="NUR Digital Guardian">
+<meta name="engine"       content="Alwi Output Engine">
+<meta name="system"       content="PiramidaGuard v3.2">
+<meta name="region"       content="Indramayu, Jawa Barat, Indonesia">
+<meta name="language"     content="id, jv, map-ind">
+<meta name="signature"    content="NUR-IMC-001-2026">
+<meta name="author"       content="Jamhari Dulkohar — indramayuclubmakrifat@gmail.com">
+<meta name="generator"    content="NUR Digital Guardian · PiramidaGuard">
+
+<meta property="og:title"       content="✦ NUR - DIGITAL GUARDIAN ✦">
+<meta property="og:description" content="Indramayu Club Makrifat | IMC-001 | 248 Member | PiramidaGuard v3.2">
+<meta property="og:image"       content="https://indramayuclubmakrifat-tech.github.io/NEWindramayuClub/img/nur.png">
+<meta property="og:url"         content="https://aimininurindramayu-cell.github.io/NEWindramayuClub/"
+<meta property="og:type"        content="website">
+<meta name="theme-color"        content="#C9A84C">
+<!-- ══ TANDA TANGAN FACEBOOK ══ -->
+<meta property="fb:app_id" content="https://m.facebook.com/jenk.kelin.9400/"> 
+<meta name="facebook-domain-verification" content="KODE_VERIFIKASI_FB" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Indramayu Club Makrifat",
+  "founder": "Jamhari Dulkohar",
+  "foundingLocation": "Indramayu, Jawa Barat, Indonesia",
+  "description": "Komunitas digital berbasis budaya Indramayu, spiritualitas Islam, dan teknologi digital",
+  "memberOf": {
+    "@type": "Person",
+    "name": "Jamhari Dulkohar",
+    "identifier": "IMC-001",
+    "jobTitle": "Admin Utama"
+  }
+}
+</script>
+
+<script type="application/json" id="nur-identity">
+{
+  "tanda_tangan": "NUR-IMC-001-2026",
+  "pemilik": {
+    "nama": "Jamhari Dulkohar",
+    "panggilan": "Pak Dulkohar",
+    "id": "IMC-001",
+    "jabatan": "Admin Utama",
+    "email": "indramayuclubmakrifat@gmail.com",
+    "wa": "628xxxxxxxxxx",
+    "asal": "Indramayu, Jawa Barat, Indonesia"
+  },
+  "sistem": {
+    "nama": "PiramidaGuard",
+    "versi": "3.2",
+    "bot": "NUR Digital Guardian",
+    "engine": "Alwi Output Engine",
+    "port": 5000
+  },
+  "organisasi": {
+    "nama": "Indramayu Club Makrifat",
+    "member": 248,
+    "divisi": 9,
+    "render": 1,
+    "poin": ["KARA", "Rp NUR", "GIFNUR", "VOUCHER NUR"]
+  },
+  "divisi_list": [
+    "INDRAMAYU_CLUB",
+    "DISKUSI",
+    "ADMINISTRASI",
+    "KREATOR_DIGITAL",
+    "GAME_ARISAN",
+    "BANK_GAME",
+    "GAME_INDRAMAYU",
+    "KOMUNIKASI",
+    "BACKUP",
+    "RENDER_ALWI"
+  ],
+  "tahun": 2026,
+  "simbol": "[✦] NUR - DIGITAL GUARDIAN"
+}
+</script>
+
+<title>NUR Digital Guardian — Indramayu Club Makrifat</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #061F14; color: #FFFFFF; font-family: monospace;
+  min-height: 100vh; padding: 24px 16px 48px;
+  display: flex; align-items: center; justify-content: center;
+}
+.wrap { max-width: 520px; width: 100%; }
+.ascii-box {
+  border: 1px solid #C9A84C; border-radius: 12px; padding: 24px 20px; margin-bottom: 20px;
+  text-align: center;
+}
+.ascii-art {
+  font-size: 10px; line-height: 1.3; color: #C9A84C; white-space: pre; margin-bottom: 16px;
+  display: inline-block; text-align: left;
+}
+.nur-label {
+  font-size: 13px; color: #C9A84C; letter-spacing: 3px; font-weight: 700;
+  border-top: 1px solid #C9A84C; border-bottom: 1px solid #C9A84C; padding: 6px 0; margin-bottom: 16px;
+}
+.id-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.id-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  border: 1px solid rgba(201,168,76,0.3); border-radius: 8px; padding: 10px 12px; font-size: 12px;
+}
+.id-key { color: #C9A84C; font-weight: 700; min-width: 100px; flex-shrink: 0; letter-spacing: 1px; font-size: 10px; }
+.id-val { color: #FFFFFF; opacity: 0.85; line-height: 1.5; }
+.poin-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; justify-content: center; }
+.poin-tag {
+  border: 1px solid #C9A84C; border-radius: 20px; padding: 4px 12px; font-size: 10px;
+  color: #C9A84C; letter-spacing: 1px; font-weight: 700;
+}
+
+/* DIVISI GRID */
+.divisi-box { margin-bottom: 16px; text-align: left; }
+.divisi-title { font-size: 11px; color: #C9A84C; font-weight: 700; margin-bottom: 8px; letter-spacing: 2px; text-align: center; }
+.divisi-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.divisi-item {
+  border: 1px dashed rgba(201,168,76,0.4); border-radius: 6px; padding: 6px 8px;
+  font-size: 9px; color: #FFFFFF; opacity: 0.8; text-align: center;
+}
+
+.ttd-box { border: 1px solid #C9A84C; border-radius: 10px; padding: 14px; text-align: center; margin-bottom: 16px; }
+.ttd-label { font-size: 9px; color: #FFFFFF; opacity: 0.4; letter-spacing: 2px; margin-bottom: 6px; text-transform: uppercase; }
+.ttd-kode { font-size: 16px; color: #C9A84C; font-weight: 700; letter-spacing: 3px; }
+
+/* TOMBOL GROUP */
+.btn-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+.btn {
+  width: 100%; padding: 12px; border: none; border-radius: 10px;
+  font-size: 13px; font-weight: 700; cursor: pointer; letter-spacing: 1px; transition: opacity 0.2s;
+}
+.btn-cek { background: #C9A84C; color: #061F14; }
+.btn-wa { background: transparent; border: 1px solid #C9A84C; color: #C9A84C; }
+.btn:active { opacity: 0.7; }
+
+.output-box {
+  border: 1px solid rgba(201,168,76,0.4); border-radius: 10px; padding: 14px; font-size: 11px;
+  color: #FFFFFF; opacity: 0.8; line-height: 1.8; display: none; white-space: pre-wrap; font-family: monospace;
+}
+.output-box.aktif { display: block; }
+
+.footer {
+  text-align: center; margin-top: 20px; font-size: 9px; color: #FFFFFF; opacity: 0.3; letter-spacing: 1px;
+}
+.footer b { color: #C9A84C; opacity: 1; }
+
+/* PULSE DOT */
+.live {
+  display: inline-block; width: 7px; height: 7px; background: #C9A84C;
+  border-radius: 50%; margin-right: 6px; animation: blink 2s infinite; vertical-align: middle;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="ascii-box">
+    <pre class="ascii-art">     ___           ___     
+    /__/\         /__/\    
+    \  \:\        \  \:\   
+     \  \:\        \  \:\  
+ _____\__\:\   _____\__\:\ 
+/__/::::::::\ /__/::::::::\
+\  \:\~~\~~\/ \  \:\~~\~~\/
+ \  \:\  ~~~   \  \:\  ~~~ 
+  \  \:\        \  \:\     
+   \  \:\        \  \:\    
+    \__\/         \__\/    </pre>
+
+    <div class="nur-label">✦ &nbsp; NUR — DIGITAL GUARDIAN &nbsp; ✦</div>
+
+    <div class="id-grid">
+      <div class="id-row">
+        <div class="id-key">PEMILIK</div>
+        <div class="id-val">Jamhari Dulkohar (Pak Dulkohar)</div>
+      </div>
+      <div class="id-row">
+        <div class="id-key">ID SISTEM</div>
+        <div class="id-val"><span class="live"></span>IMC-001 · Admin Utama</div>
+      </div>
+      <div class="id-row">
+        <div class="id-key">ORGANISASI</div>
+        <div class="id-val">Indramayu Club Makrifat · 248 Member</div>
+      </div>
+      <div class="id-row">
+        <div class="id-key">ENGINE</div>
+        <div class="id-val">Alwi Output Engine</div>
+      </div>
+      <div class="id-row">
+        <div class="id-key">SISTEM</div>
+        <div class="id-val">PiramidaGuard v3.2 · Port 5000</div>
+      </div>
+      <div class="id-row">
+        <div class="id-key">ASAL</div>
+        <div class="id-val">Indramayu, Jawa Barat, Indonesia</div>
+      </div>
+    </div>
+
+    <div class="poin-row">
+      <span class="poin-tag">🟡 KARA</span>
+      <span class="poin-tag">💠 Rp NUR</span>
+      <span class="poin-tag">🎁 GIFNUR</span>
+      <span class="poin-tag">🎟️ VOUCHER NUR</span>
+    </div>
+
+    <div class="divisi-box">
+      <div class="divisi-title">💼 DAFTAR DIVISI INTERNAL</div>
+      <div class="divisi-list">
+        <div class="divisi-item">01. INDRAMAYU_CLUB</div>
+        <div class="divisi-item">02. DISKUSI</div>
+        <div class="divisi-item">03. ADMINISTRASI</div>
+        <div class="divisi-item">04. KREATOR_DIGITAL</div>
+        <div class="divisi-item">05. GAME_ARISAN</div>
+        <div class="divisi-item">06. BANK_GAME</div>
+        <div class="divisi-item">07. GAME_INDRAMAYU</div>
+        <div class="divisi-item">08. KOMUNIKASI</div>
+        <div class="divisi-item">09. BACKUP</div>
+        <div class="divisi-item">🛠️ RENDER_ALWI</div>
+      </div>
+    </div>
+
+    <div class="ttd-box">
+      <div class="ttd-label">Tanda Tangan Digital</div>
+      <div class="ttd-kode" id="ttd-kode">NUR-IMC-001-2026</div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-cek" onclick="cekIdentitas()">🔍 CEK IDENTITAS SISTEM</button>
+      <button class="btn btn-wa" onclick="hubungiAdmin()">💬 HUBUNGI ADMIN UTAMA</button>
+    </div>
+
+    <div class="output-box" id="output-box"></div>
+  </div>
+
+  <div class="footer">
+    <b>✦ INDRAMAYU CLUB MAKRIFAT ✦</b><br>
+    Ekosistem mandiri · NUR Digital Guardian · 2026<br>
+    File ini mengandung tanda tangan digital pemilik sistem
+  </div>
+
+</div>
+
+<script>
+function bacaIdentitas() {
+  try {
+    const raw = document.getElementById('nur-identity').textContent;
+    return JSON.parse(raw);
+  } catch(e) {
+    return null;
+  }
+}
+
+function cekIdentitas() {
+  const data   = bacaIdentitas();
+  const output = document.getElementById('output-box');
+
+  if (!data) {
+    output.textContent = '[ERROR] Tanda tangan digital tidak ditemukan.';
+    output.classList.add('aktif');
+    return;
+  }
+
+  const teks = `
+╔══════════════════════════════════════╗
+║   [✦] VERIFIKASI IDENTITAS SISTEM   ║
+╚══════════════════════════════════════╝
+
+TANDA TANGAN : ${data.tanda_tangan}
+PEMILIK      : ${data.pemilik.nama}
+PANGGILAN    : ${data.pemilik.panggilan}
+ID           : ${data.pemilik.id}
+JABATAN      : ${data.pemilik.jabatan}
+EMAIL        : ${data.pemilik.email}
+ASAL         : ${data.pemilik.asal}
+
+SISTEM       : ${data.sistem.nama} v${data.sistem.versi}
+BOT          : ${data.sistem.bot}
+ENGINE       : ${data.sistem.engine}
+PORT         : ${data.sistem.port}
+
+ORGANISASI   : ${data.organisasi.nama}
+MEMBER       : ${data.organisasi.member} orang
+DIVISI       : ${data.organisasi.divisi} divisi + ${data.organisasi.render} render
+POIN         : ${data.organisasi.poin.join(' · ')}
+
+STATUS       : ✅ IDENTITAS TERVERIFIKASI
+TAHUN        : ${data.tahun}
+
+"Sistem ini milik ${data.pemilik.nama}
+ dari Indramayu Club Makrifat."
+`.trim();
+
+  output.textContent = teks;
+  output.classList.add('aktif');
+
+  if ('speechSynthesis' in window) {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(
+      `Sistem ini milik ${data.pemilik.nama}, Admin Utama Indramayu Club Makrifat. Tanda tangan digital terverifikasi.`
+    );
+    u.lang  = 'id-ID';
+    u.rate  = 0.95;
+    speechSynthesis.speak(u);
+  }
+}
+
+function hubungiAdmin() {
+  const data = bacaIdentitas();
+  if(data && data.pemilik.wa) {
+    window.open(`https://wa.me/${data.pemilik.wa}`, '_blank');
+  } else {
+    alert('Nomor WhatsApp admin tidak dikonfigurasi.');
+  }
+}
+
+window.nurIdentity = bacaIdentitas();
+console.log('%c[✦] NUR DIGITAL GUARDIAN', 'color:#C9A84C; font-size:14px; font-weight:bold;');
+</script>
+
+<!-- SIRKUIT TOMBOL OTOMATIS BACK & NEXT -->
+<div class="sirkuit-navigasi" style="text-align: center; margin: 30px 0; padding: 10px;">
+    <button onclick="window.location.href='readme.html'" style="padding: 10px 20px; font-weight: bold; background-color: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">
+        ⬅️ BACK (readme.html)
+    </button>
+    <button onclick="window.location.href='DASHBOARD.html'" style="padding: 10px 20px; font-weight: bold; background-color: #2ecc71; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        NEXT (DASHBOARD.html) ➡️
+    </button>
+</div>
+<!-- END SIRKUIT TOMBOL OTOMATIS -->
+
+</body>
+</html>
+

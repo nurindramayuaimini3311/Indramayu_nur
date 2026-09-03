@@ -1,0 +1,260 @@
+ <!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA Indramayu - Portal Galeri &amp; Astronomi</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+      /* Styling Khusus Navigasi Alwi */
+      .alwi-nav-container {
+          background: linear-gradient(135deg, #0d0d16, #1a1a2e);
+          border: 1px solid rgba(201, 162, 75, 0.4);
+          border-radius: 8px;
+          padding: 10px 15px;
+          margin: 15px auto;
+          max-width: 900px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      }
+      .alwi-badge {
+          font-family: 'Cinzel', serif;
+          font-size: 0.85rem;
+          font-weight: bold;
+          color: #f2d17d;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          border-right: 1px solid rgba(201, 162, 75, 0.3);
+          padding-right: 15px;
+      }
+      .alwi-menu {
+          list-style: none;
+          display: flex;
+          gap: 12px;
+          flex-wrap: wrap;
+          margin: 0;
+          padding: 0;
+      }
+      .alwi-menu li a {
+          color: #e8e1cf;
+          text-decoration: none;
+          font-size: 0.9rem;
+          padding: 6px 10px;
+          border-radius: 4px;
+          transition: all 0.2s ease;
+          background: rgba(255, 255, 255, 0.03);
+      }
+      .alwi-menu li a:hover {
+          background: rgba(201, 162, 75, 0.2);
+          color: #f2d17d;
+      }
+      @media (max-width: 768px) {
+          .alwi-nav-container {
+              flex-direction: column;
+              align-items: stretch;
+              gap: 10px;
+          }
+          .alwi-badge {
+              border-right: none;
+              border-bottom: 1px solid rgba(201, 162, 75, 0.3);
+              padding-right: 0;
+              padding-bottom: 8px;
+              text-align: center;
+          }
+          .alwi-menu {
+              justify-content: center;
+          }
+      }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>🚀 NASA INDRAMAYU</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#gallery">Galeri</a></li>
+                <li><a href="#satelit">Satelit</a></li>
+                <li><a href="#astronomi">Astronomi</a></li>
+                <li><a href="#peta-bintang">Peta Bintang</a></li>
+                <li><a href="#upload">Upload</a></li>
+                <li><a href="#members">Member</a></li>
+                <li><a href="#about">Tentang</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Navigasi Alwi ⛑️ -->
+    <div class="container">
+        <div class="alwi-nav-container">
+            <div class="alwi-badge">⛑️ Stasiun Alwi</div>
+            <ul class="alwi-menu">
+                <li><a href="#home">🏠 Beranda</a></li>
+                <li><a href="#gallery">🖼️ Galeri</a></li>
+                <li><a href="#satelit">🛰️ Satelit</a></li>
+                <li><a href="langit3d.html">🌌 Langit 3D</a></li>
+                <li><a href="#peta-bintang">✨ Peta Bintang</a></li>
+                <li><a href="#members">👥 Komunitas</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Selamat Datang di NASA Indramayu</h2>
+                <p>Portal komunitas untuk berbagi foto dan informasi tentang luar angkasa</p>
+                <a href="#upload" class="btn btn-primary">Mulai Upload Foto</a>
+                <a href="langit3d.html" class="nav-link">🌌 Observatorium 3D</a>   
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section id="upload" class="upload-section">
+        <div class="container">
+            <h2>📸 Upload Foto Anda</h2>
+            <div class="upload-form">
+                <form id="uploadForm">
+                    <div class="form-group">
+                        <label for="memberName">Nama Member:</label>
+                        <input type="text" id="memberName" name="memberName" placeholder="Masukkan nama Anda" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Deskripsi Foto:</label>
+                        <textarea id="description" name="description" placeholder="Deskripsikan foto Anda..." rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="photo">Pilih Foto:</label>
+                        <input type="file" id="photo" name="photo" accept="image/*" required>
+                        <small>Format: JPG, PNG, GIF (Max 5MB)</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Upload Foto</button>
+                </form>
+                <div id="uploadStatus"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery-section">
+        <div class="container">
+            <h2>🖼️ Galeri Foto</h2>
+            <div id="galleryContainer" class="gallery-grid">
+                <!-- Foto akan dimuat di sini via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Satellite Observation Section -->
+    <section id="satelit" class="satelit-section">
+        <div class="container">
+            <h2>🛰️ Observasi Satelit Indramayu</h2>
+            <div id="satelitContainer" class="satelit-grid">
+                <p>Memuat data pengamatan satelit terkini...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Astronomy / Virtual Observatory Section -->
+    <section id="astronomi" class="satelit-section" style="background-color: #f0f4f8;">
+        <div class="container">
+            <h2>✨ Virtual Observatory & Astronomi</h2>
+            <div id="astronomiContainer" class="satelit-grid">
+                <p>Memuat katalog bintang dan data astronomi publik...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Star Map / Constellations Section (VirtualSky) -->
+    <section id="peta-bintang" class="satelit-section">
+        <div class="container">
+            <h2>🌌 Peta Bintang &amp; Rasi Bintang</h2>
+            <p class="starmap-caption">Langit malam saat ini dilihat dari Indramayu — rasi bintang, garis konstelasi, dan posisi planet, disediakan oleh <strong>VirtualSky</strong> (Las Cumbres Observatory), layanan publik gratis tanpa API key.</p>
+            <div class="starmap-frame">
+                <iframe
+                    src="https://slowe.github.io/VirtualSky/embed?latitude=-6.3262&longitude=108.3200&projection=stereo&constellations=true&constellationlabels=true&showstarlabels=true&meteorshowers=true&live=true&az=180"
+                    loading="lazy"
+                    title="Peta bintang langit Indramayu"
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Members Section -->
+    <section id="members" class="members-section">
+        <div class="container">
+            <h2>👥 Daftar Member</h2>
+            
+            <div class="member-form">
+                <h3>Bergabunglah dengan Komunitas</h3>
+                <form id="memberForm">
+                    <div class="form-group">
+                        <label for="memberNameInput">Nama:</label>
+                        <input type="text" id="memberNameInput" name="name" placeholder="Masukkan nama Anda" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="memberEmail">Email:</label>
+                        <input type="email" id="memberEmail" name="email" placeholder="Masukkan email Anda" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Daftar Member</button>
+                </form>
+                <div id="memberStatus"></div>
+            </div>
+
+            <div class="member-list">
+                <h3>Member Terdaftar</h3>
+                <ul id="membersList">
+                    <!-- Member list akan dimuat di sini -->
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2>ℹ️ Tentang NASA Indramayu</h2>
+            <div class="about-content">
+                <p>
+                    NASA Indramayu adalah portal komunitas yang didedikasikan untuk berbagi pengetahuan, foto, dan informasi 
+                    tentang eksplorasi luar angkasa. Portal ini memungkinkan member untuk mengunggah dan berbagi foto mereka 
+                    dengan komunitas yang tertarik pada NASA dan astronomi.
+                </p>
+                <h3>Fitur Utama:</h3>
+                <ul>
+                    <li>📸 Upload dan bagikan foto dengan mudah</li>
+                    <li>👥 Bergabung dengan komunitas member</li>
+                    <li>🖼️ Galeri foto interaktif</li>
+                    <li>🚀 Informasi terkini tentang NASA</li>
+                    <li>💬 Berbagi pengalaman dengan member lain</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 NASA Indramayu. Semua hak dilindungi.</p>
+            <p>Dikembangkan dengan ❤️ untuk komunitas</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+

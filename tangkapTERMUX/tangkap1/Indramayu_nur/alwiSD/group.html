@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GROUP ALWISD - 10 Avatar</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#080c08;color:#dfffe8;font-family:system-ui;padding:12px}
+.top{position:sticky;top:0;z-index:9;background:#0f1a0f;border:2px solid #145a32;border-radius:14px;padding:10px;display:flex;gap:8px;align-items:center}
+.top b{color:#ffd700} .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+@media(min-width:600px){.grid{grid-template-columns:repeat(5,1fr)}}
+.card{background:#121a12;border:1px solid #1e3a1e;border-radius:16px;padding:8px;text-align:center;position:relative}
+.card img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;border:2px solid #204a20}
+.dot{position:absolute;top:14px;right:14px;width:12px;height:12px;background:#00ff66;border:2px solid #000;border-radius:50%}
+.card b{font-size:11px;color:#ffd700;display:block;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{padding:10px 14px;border-radius:12px;border:1px solid #145a32;background:#0a1a0a;color:#2ecc71;font-weight:800}
+.btn-gold{background:#ffd700;color:#000;border-color:#000}
+</style></head><body>
+<div class="top">
+<b>👥 GROUP ALWISD</b><span id="info" style="font-size:11px;color:#7fbf8f">10 avatar • 76KB</span>
+<button class="btn" onclick="location.href='index22.html'" style="margin-left:auto">← Game</button>
+</div>
+
+<div class="grid" id="g"></div>
+
+<div style="display:flex;gap:8px;margin-top:14px">
+<button class="btn btn-gold" style="flex:1" onclick="share()">📤 Share ke Meta Group</button>
+<button class="btn" style="flex:1" onclick="shuffle()">🔀 Shuffle</button>
+<button class="btn" onclick="tuk()">🔊 TUK</button>
+</div>
+
+<script>
+const files=["M001.webp","M002.webp","M003.webp","M004.webp","M005.webp","M006.webp","M007.webp","M008.webp","M009.webp","M010.webp"];
+const names=["Gareng","Bagong","Guru Nur","Hantu1","Hantu2","Hantu3","Hantu4","Petruk","Nur1","Wali"];
+const g=document.getElementById('g');
+function render(list){
+ g.innerHTML='';
+ list.forEach((f,i)=>{
+  const d=document.createElement('div');d.className='card';
+  d.innerHTML=`<div class=dot></div><img src="avatars/${f}" onerror="this.src='avatars/M001.webp'"><b>${names[i]||f}</b><span style="font-size:10px;color:#7fbf8f">online • ${Math.floor(Math.random()*9)+1}m</span>`;
+  d.onclick=()=>{tuk();location.href='index22.html#'+f};
+  g.appendChild(d);
+ });
+}
+function shuffle(){files.sort(()=>Math.random()-0.5);render(files);tuk()}
+function share(){
+ if(navigator.share){navigator.share({title:'Group AlwiSD',text:'10 avatar AlwiSD 76KB - ringan buat Meta Group',url:location.href})}
+ else{prompt('Copy link Group untuk share ke Meta / FB:',location.href)}
+}
+let ctx;function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),gn=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);gn.gain.setValueAtTime(0.6,ctx.currentTime);gn.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(gn);gn.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
+render(files);
+</script><script src="../alwi_bubble4.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>
+

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TANK RUMPUT — Battle 1990</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000000;
+    --panel:#0d0d1a;
+    --panel-line:#2a2a44;
+    --brick:#b0522c;
+    --brick-dark:#6e3018;
+    --steel:#aab0b8;
+    --steel-dark:#5c626c;
+    --grass:#2e9e3a;
+    --grass-dark:#1f7028;
+    --water:#2a5cd0;
+    --water-light:#5486f0;
+    --player:#e8d840;
+    --gold:#f4c430;
+    --red:#e04030;
+  }
+  *{box-sizing:border-box;}
+  html,body{ height:100%; margin:0; }
+  body{
+    background: var(--bg);
+    color:#e8e8f0;
+    font-family: 'Press Start 2P', monospace;
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content:flex-start;
+    min-height:100%;
+    padding: 10px 8px;
+    overflow-x: hidden;
+  }
+  .arcade{
+    display:flex;
+    flex-direction:column-reverse;
+    align-items:center;
+    gap:8px;
+    background:#050508;
+    padding:10px;
+    border-radius:10px;
+    border: 3px solid #232336;
+    box-shadow: 0 0 0 2px #000, 0 8px 30px rgba(0,0,0,0.6);
+  }
+  #gameCanvas{
+    background: var(--bg);
+    image-rendering: pixelated;
+    display:block;
+    max-width: 100%;
+    height: auto;
+  }
+  .hud{
+    width: 100%;
+    max-width: 416px;
+    background: var(--panel);
+    border: 2px solid var(--panel-line);
+    border-radius: 6px;
+    padding: 8px;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
+    font-size: 8px;
+    line-height:1.4;
+    gap: 6px;
+  }
+  .hud .label{ color:#9090b0; margin-bottom:2px; }
+  .hud .val{ color: var(--gold); font-size:10px; }
+  .hud .val.red{ color: var(--red); }
+  .musuh-row{ display:flex; flex-wrap:wrap; gap:3px; }
+  .musuh-icon{ width:8px; height:8px; background: var(--steel); border-radius:1px; }
+  .musuh-icon.habis{ background:#1a1a24; }
+  .nyawa-row{ display:flex; gap:3px; }
+  .nyawa-icon{ width:10px; height:10px; background: var(--player); border-radius:1px; }
+  .divider{ display:none; }
+
+  #overlay{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,0.85);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:18px;
+    text-align:center;
+    padding: 20px;
+    z-index: 10;
+  }
+  #overlay.show{ display:flex; }
+  #overlay h1{ font-size: clamp(16px,5vw,26px); color: var(--gold); }
+  #overlay p{ font-size:10px; color:#c8c8d8; max-width:280px; line-height:1.8; }
+  #btnMulai, #btnUlang{
+    font-family:'Press Start 2P', monospace;
+    background: var(--player);
+    color:#1a1206;
+    border:none;
+    padding: 12px 20px;
+    font-size:11px;
+    border-radius:6px;
+    cursor:pointer;
+  }
+  #btnMulai:hover, #btnUlang:hover{ filter:brightness(1.1); }
+  .kontrol-info{ font-size:8px; color:#8888a0; margin-top:4px; }
+
+  /* ===== Kontrol Sentuh di Bawah ===== */
+  #touchControls{
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    width:100%;
+    max-width:416px;
+    margin-top:10px;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+  .dpad{
+    display:grid;
+    grid-template-columns: repeat(3, 52px);
+    grid-template-rows: repeat(3, 52px);
+    gap:4px;
+  }
+  .dpad button{
+    background: var(--panel);
+    border: 2px solid var(--panel-line);
+    border-radius:8px;
+    color: var(--gold);
+    font-size:18px;
+    touch-action: none;
+  }
+  .dpad button:active{ background: var(--panel-line); }
+  #dUp{ grid-column:2; grid-row:1; }
+  #dLeft{ grid-column:1; grid-row:2; }
+  #dRight{ grid-column:3; grid-row:2; }
+  #dDown{ grid-column:2; grid-row:3; }
+  #btnTembak{
+    width:84px; height:84px;
+    border-radius:50%;
+    background: var(--red);
+    border: 3px solid #7a2018;
+    color:#fff;
+    font-family:'Press Start 2P', monospace;
+    font-size:10px;
+    touch-action: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  }
+  #btnTembak:active{ filter:brightness(1.2); }
+</style>
+</head>
+<body>
+
+<div id="overlay" class="show">
+  <h1>TANK RUMPUT</h1>
+  <p>Kendalikan tank kuning, lindungi markas ⛑ di bawah, dan hancurkan semua tank musuh. Bata bisa dihancurkan peluru, baja tidak. Sembunyi di rumput biar musuh susah lihat kamu!</p>
+  <button id="btnMulai">MULAI</button>
+  <div class="kontrol-info">Gunakan tombol sentuh di bawah untuk mengontrol tank.</div>
+</div>
+
+<div class="arcade">
+  <div class="hud">
+    <div>
+      <div class="label">STAGE</div>
+      <div class="val" id="hudStage">1</div>
+    </div>
+    <div>
+      <div class="label">NYAWA</div>
+      <div class="nyawa-row" id="hudNyawa"></div>
+    </div>
+    <div>
+      <div class="label">MUSUH</div>
+      <div class="musuh-row" id="hudMusuh"></div>
+    </div>
+    <div>
+      <div class="label">SKOR</div>
+      <div class="val" id="hudSkor">0</div>
+    </div>
+  </div>
+  <canvas id="gameCanvas" width="416" height="416"></canvas>
+</div>
+
+<div id="touchControls">
+  <div class="dpad">
+    <button id="dUp">▲</button>
+    <button id="dLeft">◀</button>
+    <button id="dRight">▶</button>
+    <button id="dDown">▼</button>
+  </div>
+  <button id="btnTembak">TEMBAK</button>
+</div>
+
+<script>
+// ================= KONFIGURASI DASAR =================
+const TILE = 32;
+const COLS = 13;
+const ROWS = 13;
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+const EMPTY=0, BRICK=1, STEEL=2, WATER=3, GRASS=4, BASE=5;
+
+const PETA_MENTAH = [
+"#############",
+"#...........#",
+"#.###.#.###.#",
+"#...........#",
+"#.#.#####.#.#",
+"#.#.......#.#",
+"#.#.%***%.#.#",
+"#.#.......#.#",
+"#.#.#####.#.#",
+"#...........#",
+"#.###.#.###.#",
+"#...........#",
+"######E######"
+];
+const SIMBOL = {'.':EMPTY,'#':BRICK,'%':STEEL,'~':WATER,'*':GRASS,'E':BASE};
+
+let grid = [];
+function muatPeta(){
+  grid = PETA_MENTAH.map(baris => baris.split('').map(c => SIMBOL[c] ?? EMPTY));
+}
+
+// ================= STATE PERMAINAN =================
+const ARAH = { UP:{dx:0,dy:-1}, DOWN:{dx:0,dy:1}, LEFT:{dx:-1,dy:0}, RIGHT:{dx:1,dy:0} };
+let player, musuhList, peluruList, skor, nyawa, stage, basisHancur, gameOver, jedaSpawn, totalMusuhStage, musuhSpawned;
+const MAX_ENEMY_ONSCREEN = 3;
+const TOTAL_ENEMY_PER_STAGE = 8;
+
+function buatTank(x, y, arah, kecepatan, warna, tipe){
+  return { x, y, arah, kecepatan, warna, tipe, hidup:true, cooldownTembak:0, gantiArahTimer: 60+Math.random()*60 };
+}
+
+function resetPermainan(){
+  muatPeta();
+  player = buatTank(6*TILE, 11*TILE, 'UP', 1.6, '#e8d840', 'PLAYER');
+  musuhList = [];
+  peluruList = [];
+  skor = 0;
+  nyawa = 3;
+  stage = 1;
+  basisHancur = false;
+  gameOver = false;
+  musuhSpawned = 0;
+  totalMusuhStage = TOTAL_ENEMY_PER_STAGE;
+  jedaSpawn = 0;
+  perbaruiHud();
+}
+
+function spawnMusuh(){
+  if(musuhSpawned >= totalMusuhStage) return;
+  if(musuhList.length >= MAX_ENEMY_ONSCREEN) return;
+  const titikSpawn = [ {x:0,y:0}, {x:6,y:0}, {x:12,y:0} ];
+  const titik = titikSpawn[Math.floor(Math.random()*titikSpawn.length)];
+  const tipeAcak = Math.random();
+  let warna = '#aab0b8', kecepatan = 1.0, tipe='BASIC';
+  if(tipeAcak > 0.8){ warna='#40c0e0'; kecepatan=1.9; tipe='CEPAT'; }
+  else if(tipeAcak > 0.6){ warna='#e05050'; kecepatan=1.1; tipe='KUAT'; }
+  musuhList.push(buatTank(titik.x*TILE, titik.y*TILE, 'DOWN', kecepatan, warna, tipe));
+  musuhSpawned++;
+}
+
+function bisaLewat(px, py){
+  const sudut = [ [px+2,py+2], [px+TILE-2,py+2], [px+2,py+TILE-2], [px+TILE-2,py+TILE-2] ];
+  for(const [sx,sy] of sudut){
+    const tx = Math.floor(sx/TILE), ty = Math.floor(sy/TILE);
+    if(tx<0||ty<0||tx>=COLS||ty>=ROWS) return false;
+    const jenis = grid[ty][tx];
+    if(jenis===BRICK||jenis===STEEL||jenis===WATER||jenis===BASE) return false;
+  }
+  return true;
+}
+
+function gerakkanTank(tank, arahKey, luasArea){
+  const a = ARAH[arahKey];
+  tank.arah = arahKey;
+  const nx = tank.x + a.dx*tank.kecepatan;
+  const ny = tank.y + a.dy*tank.kecepatan;
+  if(bisaLewat(nx, ny)){
+    tank.x = Math.max(0, Math.min(nx, luasArea));
+    tank.y = Math.max(0, Math.min(ny, luasArea));
+    return true;
+  }
+  return false;
+}
+
+function tembak(tank){
+  if(tank.cooldownTembak > 0) return;
+  const a = ARAH[tank.arah];
+  const cx = tank.x + TILE/2 - 3;
+  const cy = tank.y + TILE/2 - 3;
+  peluruList.push({
+    x: cx, y: cy, dx: a.dx, dy: a.dy,
+    dariPlayer: tank===player,
+    kecepatan: 5,
+    hidup: true
+  });
+  tank.cooldownTembak = tank===player ? 22 : 50;
+}
+
+function updatePeluru(){
+  for(const p of peluruList){
+    if(!p.hidup) continue;
+    p.x += p.dx*p.kecepatan;
+    p.y += p.dy*p.kecepatan;
+
+    if(p.x<0||p.y<0||p.x>canvas.width||p.y>canvas.height){ p.hidup=false; continue; }
+
+    const tx = Math.floor((p.x+3)/TILE), ty = Math.floor((p.y+3)/TILE);
+    if(tx>=0&&ty>=0&&tx<COLS&&ty<ROWS){
+      const jenis = grid[ty][tx];
+      if(jenis===BRICK){ grid[ty][tx]=EMPTY; p.hidup=false; continue; }
+      if(jenis===STEEL){ p.hidup=false; continue; }
+      if(jenis===BASE){ grid[ty][tx]=EMPTY; p.hidup=false; basisHancur=true; continue; }
+    }
+
+    if(p.dariPlayer){
+      for(const m of musuhList){
+        if(m.hidup && tabrakanTankPeluru(m,p)){
+          m.hidup=false; p.hidup=false; skor+=100;
+        }
+      }
+    } else {
+      if(player.hidup && tabrakanTankPeluru(player,p)){
+        p.hidup=false;
+        kenaPlayer();
+      }
+      for(const m of musuhList){
+        if(m.hidup && tabrakanTankPeluru(m,p)){ p.hidup=false; }
+      }
+    }
+  }
+  peluruList = peluruList.filter(p=>p.hidup);
+  musuhList = musuhList.filter(m=>m.hidup);
+}
+
+function tabrakanTankPeluru(tank, p){
+  return p.x > tank.x && p.x < tank.x+TILE && p.y > tank.y && p.y < tank.y+TILE;
+}
+
+function kenaPlayer(){
+  nyawa--;
+  perbaruiHud();
+  if(nyawa <= 0){
+    player.hidup = false;
+    akhirPermainan(false);
+  } else {
+    player.x = 6*TILE; player.y = 11*TILE; player.arah='UP';
+  }
+}
+
+function updateMusuh(){
+  for(const m of musuhList){
+    m.gantiArahTimer--;
+    if(m.gantiArahTimer <= 0 || Math.random() < 0.01){
+      const arahList = Object.keys(ARAH);
+      m.arah = arahList[Math.floor(Math.random()*arahList.length)];
+      m.gantiArahTimer = 40 + Math.random()*80;
+    }
+    const berhasil = gerakkanTank(m, m.arah, canvas.width-TILE);
+    if(!berhasil) m.gantiArahTimer = 0;
+
+    if(m.cooldownTembak>0) m.cooldownTembak--;
+    if(Math.random() < 0.02) tembak(m);
+  }
+}
+
+const tombolAktif = {};
+window.addEventListener('keydown', e=>{
+  tombolAktif[e.code] = true;
+  if(e.code==='Space') e.preventDefault();
+});
+window.addEventListener('keyup', e=>{ tombolAktif[e.code] = false; });
+
+function pasangTombolSentuh(id, kode){
+  const el = document.getElementById(id);
+  const tekan = (e) => { e.preventDefault(); tombolAktif[kode] = true; };
+  const lepas = (e) => { e.preventDefault(); tombolAktif[kode] = false; };
+  el.addEventListener('touchstart', tekan, {passive:false});
+  el.addEventListener('touchend', lepas, {passive:false});
+  el.addEventListener('touchcancel', lepas, {passive:false});
+  el.addEventListener('mousedown', tekan);
+  el.addEventListener('mouseup', lepas);
+  el.addEventListener('mouseleave', lepas);
+}
+pasangTombolSentuh('dUp','ArrowUp');
+pasangTombolSentuh('dDown','ArrowDown');
+pasangTombolSentuh('dLeft','ArrowLeft');
+pasangTombolSentuh('dRight','ArrowRight');
+pasangTombolSentuh('btnTembak','Space');
+
+function updatePlayer(){
+  if(!player.hidup) return;
+  if(player.cooldownTembak>0) player.cooldownTembak--;
+
+  if(tombolAktif['ArrowUp']||tombolAktif['KeyW']) gerakkanTank(player,'UP',canvas.width-TILE);
+  else if(tombolAktif['ArrowDown']||tombolAktif['KeyS']) gerakkanTank(player,'DOWN',canvas.width-TILE);
+  else if(tombolAktif['ArrowLeft']||tombolAktif['KeyA']) gerakkanTank(player,'LEFT',canvas.width-TILE);
+  else if(tombolAktif['ArrowRight']||tombolAktif['KeyD']) gerakkanTank(player,'RIGHT',canvas.width-TILE);
+
+  if(tombolAktif['Space']) tembak(player);
+}
+
+function gambarTile(x,y,jenis){
+  const px=x*TILE, py=y*TILE;
+  if(jenis===BRICK){
+    ctx.fillStyle = '#b0522c';
+    ctx.fillRect(px,py,TILE,TILE);
+    ctx.strokeStyle = '#6e3018';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(px+1,py+1,TILE/2-2,TILE/2-2);
+    ctx.strokeRect(px+TILE/2+1,py+1,TILE/2-2,TILE/2-2);
+    ctx.strokeRect(px+1,py+TILE/2+1,TILE/2-2,TILE/2-2);
+    ctx.strokeRect(px+TILE/2+1,py+TILE/2+1,TILE/2-2,TILE/2-2);
+  } else if(jenis===STEEL){
+    ctx.fillStyle = '#aab0b8';
+    ctx.fillRect(px,py,TILE,TILE);
+    ctx.fillStyle = '#5c626c';
+    ctx.fillRect(px+2,py+2,10,10);
+    ctx.fillRect(px+TILE-12,py+2,10,10);
+    ctx.fillRect(px+2,py+TILE-12,10,10);
+    ctx.fillRect(px+TILE-12,py+TILE-12,10,10);
+  } else if(jenis===WATER){
+    ctx.fillStyle = '#2a5cd0';
+    ctx.fillRect(px,py,TILE,TILE);
+    ctx.strokeStyle = '#5486f0';
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(px+4,py+10); ctx.quadraticCurveTo(px+16,py+4,px+28,py+10);
+    ctx.moveTo(px+4,py+22); ctx.quadraticCurveTo(px+16,py+16,px+28,py+22);
+    ctx.stroke();
+  } else if(jenis===BASE){
+    ctx.fillStyle = '#0d0d1a';
+    ctx.fillRect(px,py,TILE,TILE);
+    ctx.fillStyle = '#f4c430';
+    ctx.beginPath();
+    ctx.moveTo(px+16,py+4);
+    ctx.lineTo(px+28,py+28);
+    ctx.lineTo(px+16,py+20);
+    ctx.lineTo(px+4,py+28);
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+function gambarGrassLayer(){
+  for(let y=0;y<ROWS;y++){
+    for(let x=0;x<COLS;x++){
+      if(grid[y][x]===GRASS){
+        const px=x*TILE, py=y*TILE;
+        ctx.fillStyle = '#2e9e3a';
+        ctx.fillRect(px,py,TILE,TILE);
+        ctx.fillStyle = '#1f7028';
+        for(let i=0;i<6;i++){
+          const bx = px+4+(i%3)*10;
+          const by = py+6+Math.floor(i/3)*14;
+          ctx.fillRect(bx,by,4,10);
+        }
+      }
+    }
+  }
+}
+
+function gambarTank(tank){
+  if(!tank.hidup) return;
+  const px = tank.x, py = tank.y;
+  ctx.save();
+  ctx.translate(px+TILE/2, py+TILE/2);
+  const rot = { UP:0, RIGHT:Math.PI/2, DOWN:Math.PI, LEFT:-Math.PI/2 }[tank.arah];
+  ctx.rotate(rot);
+  ctx.fillStyle = tank.warna;
+  ctx.fillRect(-11,-13,22,26);
+  ctx.fillStyle = '#00000055';
+  ctx.fillRect(-11,-13,22,4);
+  ctx.fillStyle = tank.warna;
+  ctx.beginPath(); ctx.arc(0,0,8,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#00000080';
+  ctx.fillRect(-2,-15,4,10);
+  ctx.fillStyle = '#00000040';
+  ctx.fillRect(-13,-13,3,26);
+  ctx.fillRect(10,-13,3,26);
+  ctx.restore();
+}
+
+function gambarPeluru(){
+  ctx.fillStyle = '#fff2a0';
+  for(const p of peluruList){
+    ctx.fillRect(p.x,p.y,6,6);
+  }
+}
+
+function gambar(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  for(let y=0;y<ROWS;y++){
+    for(let x=0;x<COLS;x++){
+      const jenis = grid[y][x];
+      if(jenis!==EMPTY && jenis!==GRASS) gambarTile(x,y,jenis);
+    }
+  }
+
+  gambarTank(player);
+  for(const m of musuhList) gambarTank(m);
+  gambarPeluru();
+  gambarGrassLayer();
+}
+
+function perbaruiHud(){
+  document.getElementById('hudStage').textContent = stage;
+  document.getElementById('hudSkor').textContent = skor;
+
+  const nyawaBox = document.getElementById('hudNyawa');
+  nyawaBox.innerHTML = '';
+  for(let i=0;i<Math.max(nyawa,0);i++){
+    const d = document.createElement('div'); d.className='nyawa-icon'; nyawaBox.appendChild(d);
+  }
+
+  const musuhBox = document.getElementById('hudMusuh');
+  musuhBox.innerHTML = '';
+  for(let i=0;i<totalMusuhStage;i++){
+    const d = document.createElement('div');
+    d.className = 'musuh-icon' + (i < (totalMusuhStage - hitungSisaMusuh()) ? ' habis' : '');
+    musuhBox.appendChild(d);
+  }
+}
+function hitungSisaMusuh(){
+  return (totalMusuhStage - musuhSpawned) + musuhList.length;
+}
+
+function akhirPermainan(menang){
+  gameOver = true;
+  const overlay = document.getElementById('overlay');
+  overlay.classList.add('show');
+  overlay.innerHTML = `
+    <h1 style="color:${menang?'#f4c430':'#e04030'}">${menang ? 'STAGE SELESAI!' : 'GAME OVER'}</h1>
+    <p>Skor akhir kamu: ${skor}</p>
+    <button id="btnUlang">MAIN LAGI</button>
+  `;
+  document.getElementById('btnUlang').onclick = () => {
+    overlay.classList.remove('show');
+    resetPermainan();
+    loop();
+  };
+}
+
+function loop(){
+  if(gameOver) return;
+
+  updatePlayer();
+  updateMusuh();
+  updatePeluru();
+
+  jedaSpawn++;
+  if(jedaSpawn > 90){ spawnMusuh(); jedaSpawn = 0; }
+
+  perbaruiHud();
+  gambar();
+
+  if(basisHancur){ akhirPermainan(false); return; }
+  if(musuhSpawned>=totalMusuhStage && musuhList.length===0 && player.hidup){
+    akhirPermainan(true); return;
+  }
+
+  requestAnimationFrame(loop);
+}
+
+document.getElementById('btnMulai').onclick = () => {
+  document.getElementById('overlay').classList.remove('show');
+  resetPermainan();
+  loop();
+};
+
+resetPermainan();
+gambar();
+</script>
+
+<script>
+(function(){
+const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
+let p=location.pathname; let i=PAGES.indexOf(p);
+if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));
+if(i<0) i=0;
+let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
+let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+L.href=prev; R.href=next;
+let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
+[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
+let sx=0;
+document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
+if(location.pathname.includes('alwiSD')){
+ let s=document.createElement('style');s.innerHTML="#alwi-rl a{animation:bob 0.7s infinite alternate} @keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-8px) scale(1.1)}}";document.head.appendChild(s);
+}
+})();
+</script>
+<script>poinGame()</script><script src="../alwi_bubble4.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>
+

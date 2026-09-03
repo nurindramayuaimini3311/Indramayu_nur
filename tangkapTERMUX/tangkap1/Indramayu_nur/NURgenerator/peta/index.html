@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indramayu Peta - Index</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0f1215;color:#e0e0e0;min-height:100vh}
+header{background:linear-gradient(135deg,#1a1f29,#0f1215);border-bottom:2px solid #ffd700;padding:25px 15px;text-align:center}
+header h1{color:#ffd700;font-size:22px;letter-spacing:1px}
+header p{color:#888;font-size:12px;margin-top:6px}
+.container{max-width:600px;margin:20px auto;padding:0 15px}
+.card{background:#1c2128;border:1px solid #2a303a;border-radius:12px;padding:16px;margin-bottom:12px;display:flex;gap:14px;align-items:center;text-decoration:none;color:#fff;transition:0.2s}
+.card:hover{border-color:#ffd700;transform:translateY(-2px);box-shadow:0 4px 15px rgba(255,215,0,0.15)}
+.card .icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.card h3{font-size:14px;margin-bottom:3px}
+.card span{font-size:11px;color:#888}
+.badge{margin-left:auto;background:#252b33;border-radius:6px;padding:4px 8px;font-size:10px;color:#ffd700;border:1px solid #333}
+.card.game{border:1.5px solid #ffd700;background:linear-gradient(135deg,#1c2128,#25220a)}
+.card.game .icon{background:#ffd700;color:#000}
+.card.cod .icon{background:#25D366;color:#000}
+.card.peta .icon{background:#00bfff;color:#000}
+.card.nasa .icon{background:#7c3aed;color:#fff}
+.card.artikel .icon{background:#2563eb;color:#fff}
+.card.petunjuk{border-style:dashed;cursor:default}
+.card.petunjuk .icon{background:#ffd700;color:#000}
+.section-title{font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;margin:18px 0 10px 4px}
+.footer{text-align:center;font-size:11px;color:#555;margin:30px 0 20px 0;line-height:1.6}
+code{background:#252b33;padding:2px 6px;border-radius:4px;font-size:11px;color:#ffd700}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🗺️ INDRAMAYU_NUR / PETA</h1>
+  <p>~/Indramayu_nur/peta/ • Menu Navigasi Peta & Game</p>
+</header>
+
+<div class="container">
+
+  <div class="section-title">🔥 Game Interaktif</div>
+  <a class="card game" href="cariMETA_AI.html">
+    <div class="icon">🎮</div>
+    <div>
+      <h3>Game Petak ALWI Meta</h3>
+      <span>Cari warga ngumpet di peta Indramayu ???lue Panas ??Dingin</span>
+    </div>
+    <div class="badge">GAME</div>
+  </a>
+
+  <div class="section-title">📍 File Peta</div>
+  <a class="card cod" href="peta-cod.html">
+    <div class="icon">📦</div>
+    <div>
+      <h3>peta-cod.html</h3>
+      <span>Peta Titik COD - Integrasi GPS & WhatsApp</span>
+    </div>
+    <div class="badge">COD</div>
+  </a>
+
+  <a class="card peta" href="peta.html">
+    <div class="icon">🗺️</div>
+    <div>
+      <h3>peta.html</h3>
+      <span>Peta Utama Indramayu Club</span>
+    </div>
+    <div class="badge">UTAMA</div>
+  </a>
+
+  <div class="section-title">🚀 Belajar NASA — Baru!</div>
+  <a class="card nasa" href="nasa-peta.html">
+    <div class="icon">🚀</div>
+    <div>
+      <h3>YUKKK !! Belajar NASA × Peta</h3>
+      <span>Foto astronomi hari ini • ISS live • Peta Indramayu interaktif</span>
+    </div>
+    <div class="badge">NASA</div>
+  </a>
+
+  <a class="card artikel" href="artikel.html">
+    <div class="icon">📖</div>
+    <div>
+      <h3>Artikel Belajar NASA</h3>
+      <span>ISS • Saturnus • James Webb + artikel otomatis APOD</span>
+    </div>
+    <div class="badge">BARU</div>
+  </a>
+
+  <div class="section-title">📋 Petunjuk Penggunaan</div>
+  <div style="background:#1c2128;border-radius:10px;padding:14px;font-size:12px;color:#aaa;line-height:1.7;border:1px dashed #333">
+    🚀 <b style="color:#ffd700">Dashboard NASA:</b> tab NASA = foto/videonya astronomi hari ini + tombol ACAK; posisi ISS update tiap 5 detik. Tab PETA = klik marker biru, tombol 📍 LOKASI SAYA (perlu izin GPS), tombol 🛰️ POSISI ISS untuk terbang ke satelit.<br><br>
+    ✍️ <b style="color:#ffd700">Tambah artikel sendiri:</b> edit file <code>artikel.html</code> → cari tulisan <code>var ARTIKEL=[...]</code> → salin satu blok <code>{ ... }</code> → ganti <code>emoji</code>, <code>badge</code> (label kecil), <code>teks</code> (judul), <code>sum</code> (ringkasan), <code>isi</code> (boleh &lt;b&gt; &lt;p&gt; &lt;img&gt;) → simpan, langsung muncul.<br><br>
+    🔑 <b style="color:#ffd700">API key:</b> semua pakai <code>DEMO_KEY</code> gratis (batas ±30 request/jam). Kalau kena limit, daftar key sendiri gratis di <code>api.nasa.gov</code> lalu ganti kata DEMO_KEY di <code>nasa-peta.html</code> &amp; <code>artikel.html</code>.<br><br>
+    ⛑️ Semua halaman sudah terhubung bola navigasi Alwi.
+  </div>
+
+   <div class="footer">
+    Indramayu Club Platform<br>
+    Leaflet.js & OpenStreetMap Engine
+  </div>
+</script><script src="../../alwi_bubble4.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("../sw.js").catch(function(){})}</script></body>
+</html>
+
+</div>
+
+
+<script>
+(function(){
+const PAGES=["/","/pengaturan/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
+let p=location.pathname; let i=PAGES.indexOf(p);
+if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));
+if(i<0) i=0;
+let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
+let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+L.href=prev; R.href=next;
+let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
+[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
+let sx=0;
+document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
+if(location.pathname.includes('alwiSD')){
+ let s=document.createElement('style');s.innerHTML="#alwi-rl a{animation:bob 0.7s infinite alternate} @keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-8px) scale(1.1)}}";document.head.appendChild(s);
+}
+})();
+
+</html>
+

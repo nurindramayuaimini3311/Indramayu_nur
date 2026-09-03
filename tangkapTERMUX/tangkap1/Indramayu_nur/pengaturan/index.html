@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚙️ Setting - ALWI PUSAT</title>
+<link rel="manifest" href="../manifest.json">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#050505;color:#fff;font-family:system-ui;padding:0 0 90px}
+.header{background:#111;padding:18px;border-bottom:2px solid #FFD700;position:sticky;top:0;z-index:10}
+.header h1{margin:0;color:#FFD700;font-size:22px}
+.small{color:#888;font-size:12px}
+.container{padding:14px}
+.card{background:#151515;border:1px solid #222;border-radius:18px;padding:16px;margin-bottom:14px}
+.card b{display:block;margin-bottom:8px;font-size:15px}
+.btn{width:100%;padding:13px;border:none;border-radius:12px;font-weight:800;margin-top:10px;font-size:14px}
+.red{background:#ff2a2a;color:#fff}.yellow{background:#FFD700;color:#000}
+.green{background:#1aff8c;color:#000}.gray{background:#222;color:#fff;border:1px solid #333}
+.blue{background:#1a8cff;color:#fff}
+.badge{display:inline-block;background:#222;border:1px solid #333;border-radius:20px;padding:5px 12px;font-size:11px;margin-top:6px}
+select,input{width:100%;padding:12px;border-radius:10px;background:#0a0a0a;border:1px solid #333;color:#fff;margin-top:8px}
+.chatbox{background:#000;border:1px solid #333;border-radius:12px;padding:10px;height:120px;overflow:auto;font-size:13px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>⚙️ Setting</h1>
+<div class="small">ALWI PUSAT INDRAMAYU CLUB - Kelola HP biar gak penuh</div>
+<div id="statusCache" class="badge">Cache: bersih ringan</div>
+<div id="onlineStatus" class="badge">🟢 Online - AI bisa</div>
+</div>
+
+<div class="container">
+<!-- PENYIMPANAN -->
+<div class="card">
+<b>📦 Penyimpanan</b>
+<div class="small" id="infoCache">Cache aktif: 0 buah<br>Nama: kosong - ringan!</div>
+<div class="small" id="infoStorage" style="margin-top:6px"></div>
+<button class="btn red" onclick="hapusCache()">🗑️ Hapus Cache (Bikin Ringan)</button>
+<button class="btn yellow" onclick="hapusData()">🧹 Hapus XP & Skor Lokal</button>
+<button class="btn gray" onclick="location.reload(true)">🔄 Reload Aplikasi</button>
+</div>
+
+<!-- AI BOT SETTING - BARU! -->
+<div class="card" style="border-color:#FFD700">
+<b>⛑️ AI Bot Setting - ALWI</b>
+<div class="small">Atur AI Bot kamu disini - bisa offline!</div>
+
+<label class="small">Mode AI:</label>
+<select id="aiMode">
+<option value="auto">Auto - Online Meta AI, Offline Lite</option>
+<option value="offline">Force Offline Lite (Hemat Kuota)</option>
+<option value="online">Force Online (Meta AI Pinter)</option>
+</select>
+
+<label class="small">Nama Bot:</label>
+<input id="aiName" placeholder="Alwi Bot" value="Alwi Bot">
+
+<div class="chatbox" id="aiChat">🤖 Alwi: Halo! Saya siap. Mode: <span id="aiModeText">auto</span><br>Coba ketik: matematika, indramayu, wayang</div>
+<input id="aiInput" placeholder="Tanya AI disini... (bisa offline)">
+<button class="btn blue" onclick="tanyaAI()">💬 Tanya AI Bot</button>
+<button class="btn gray" onclick="hapusAIChat()">🗑️ Hapus Chat AI</button>
+</div>
+
+<!-- MODE APLIKASI -->
+<div class="card">
+<b>🌐 Mode Aplikasi</b>
+<div class="small">
+• Core (Home, Icon) → Offline tipis &lt;1MB<br>
+• Game SD, Kuis, Kamera Hantu → Bisa offline setelah dibuka 1x<br>
+• AI Bot Meta, Live Streaming → Wajib online
+</div>
+</div>
+
+<!-- INFO -->
+<div class="card">
+<b>📱 Info</b>
+<div class="small">
+App: ALWI PUSAT<br>Versi: v5-AI-Setting<br>Folder: setting/ + AI Bot<br>Total folder: 18<br>Dibuat: Indramayu Club
+</div>
+<button class="btn green" onclick="location.href='../index.html'">🏠 Kembali ke Home</button>
+</div>
+</div>
+
+<script>
+// --- OFFLINE DB ---
+const DB_OFFLINE = {
+"halo":"Halo! Saya Alwi offline. Tetap bisa bantu tanpa internet!",
+"matematika":"2+3=5, 10-4=6, 3x4=12. Mau soal apa?",
+"indramayu":"Indramayu kota mangga! Pantai Karangsong & budaya Dermayon!",
+"wayang":"Gareng, Petruk, Bagong ada di folder img kamu!",
+"siapa alwi":"Alwi anak Indramayu jago matematika & petualang sawah!",
+"offline":"Ya saya mode offline lite. Kalau online jadi pinter kayak Meta AI!"
+};
+function tanyaOffline(q){
+ q=q.toLowerCase();
+ for(let k in DB_OFFLINE) if(q.includes(k)) return DB_OFFLINE[k];
+ return "Mode offline lite: coba tanya 'matematika', 'indramayu', 'wayang', 'halo'";
+}
+function tanyaAI(){
+ let q=document.getElementById('aiInput').value;
+ if(!q) return;
+ let mode=document.getElementById('aiMode').value;
+ let box=document.getElementById('aiChat');
+ box.innerHTML+=`<br>👤 Kamu: ${q}`;
+ let jawaban;
+ if(mode==='offline' ||!navigator.onLine){
+   jawaban=tanyaOffline(q)+" (offline)";
+ } else {
+   // online - coba panggil alwi_bubble / qa_lite kalau ada, fallback offline
+   if(window.tanyaAlwiOffline) jawaban=window.tanyaAlwiOffline(q)+" (online fallback)";
+   else jawaban="(Online) Jawaban Meta AI: "+tanyaOffline(q);
+ }
+ box.innerHTML+=`<br>🤖 ${document.getElementById('aiName').value}: ${jawaban}`;
+ box.scrollTop=box.scrollHeight;
+ document.getElementById('aiInput').value="";
+ localStorage.setItem('alwi_chat',box.innerHTML);
+}
+function hapusAIChat(){document.getElementById('aiChat').innerHTML='🤖 Alwi: Chat bersih!';localStorage.removeItem('alwi_chat');}
+function hapusCache(){caches.keys().then(k=>Promise.all(k.map(x=>caches.delete(x)))).then(()=>{alert('✅ Cache bersih ringan!');location.reload();});}
+function hapusData(){if(confirm('Hapus XP & Skor?')){localStorage.clear();alert('✅ Bersih!');}}
+document.getElementById('aiMode').addEventListener('change',e=>{localStorage.setItem('aiMode',e.target.value);document.getElementById('aiModeText').innerText=e.target.value;});
+document.getElementById('aiName').addEventListener('change',e=>localStorage.setItem('aiName',e.target.value));
+// load
+(function(){
+ let m=localStorage.getItem('aiMode'); if(m){document.getElementById('aiMode').value=m;document.getElementById('aiModeText').innerText=m;}
+ let n=localStorage.getItem('aiName'); if(n) document.getElementById('aiName').value=n;
+ let c=localStorage.getItem('alwi_chat'); if(c) document.getElementById('aiChat').innerHTML=c;
+ if('caches' in window){caches.keys().then(keys=>{document.getElementById('infoCache').innerHTML=`Cache aktif: ${keys.length} buah<br>Nama: ${keys.join(', ')||'kosong - ringan!'}`;});}
+ if(navigator.storage&&navigator.storage.estimate){navigator.storage.estimate().then(e=>{document.getElementById('infoStorage').innerText=`Dipakai: ${(e.usage/1024/1024).toFixed(2)} MB / ${(e.quota/1024/1024).toFixed(0)} MB`;});}
+ document.getElementById('onlineStatus').innerText=navigator.onLine?'🟢 Online - AI bisa':'🔴 Offline - AI lite';
+})();
+</script>
+
+
+<!-- NAV FINAL ALWI - 1x ONLY -->
+<div id="alwi-rl" style="position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:space-between;z-index:9999999;padding:0 12px;pointer-events:none"><a id="rlL" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px rgba(0,0,0,.5)">←</a><a id="rlR" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px rgba(0,0,0,.5)">→</a></div>
+<script>
+(function(){
+const PAGES=["/","/pengaturan/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
+let p=location.pathname; let i=PAGES.indexOf(p);
+if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));
+if(i<0) i=0;
+let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
+let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+L.href=prev; R.href=next;
+let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
+[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
+let sx=0;
+document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
+if(location.pathname.includes('alwiSD')){
+ let s=document.createElement('style');s.innerHTML="#alwi-rl a{animation:bob 0.7s infinite alternate} @keyframes bob{0%{transform:translateY(0)}100%{transform:translateY(-8px) scale(1.1)}}";document.head.appendChild(s);
+}
+})();
+</script><script src="../alwi_bubble4.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>

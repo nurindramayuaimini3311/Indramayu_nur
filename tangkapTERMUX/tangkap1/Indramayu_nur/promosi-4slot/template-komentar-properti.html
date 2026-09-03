@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Komentar & Properti — Comic</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f172a;
+  --white:#ffffff;
+  --diamond:#00c2ff;
+  --rose:#ff3d81;
+  --fire:#ff8a00;
+  --rocket:#8b5cf6;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'Baloo 2',sans-serif;
+  background:
+    radial-gradient(circle, #e5e7eb 1.5px, transparent 1.5px) 0 0/16px 16px,
+    var(--white);
+  min-height:100vh;
+  color:var(--ink);
+  overflow-x:hidden;
+}
+.wrap{max-width:480px;margin:0 auto;padding:16px 12px 40px}
+
+.comic-title{
+  font-family:'Bangers',cursive;
+  font-size:28px;
+  text-align:center;
+  letter-spacing:2px;
+  color:var(--ink);
+  -webkit-text-stroke:1.5px var(--ink);
+  transform:rotate(-2deg);
+  margin-bottom:4px;
+}
+.sub{text-align:center;font-size:11px;font-weight:800;color:#475569;margin-bottom:16px}
+
+/* KARTU NAMA */
+.kartu{
+  background:var(--white);
+  border:3px solid var(--ink);
+  border-radius:16px;
+  box-shadow:5px 5px 0 var(--ink);
+  padding:14px 16px;
+  margin-bottom:16px;
+}
+.field-label{font-family:'Bangers',cursive;font-size:13px;letter-spacing:1px;color:var(--ink);margin-bottom:6px;display:block}
+#inputNama{
+  width:100%;padding:10px 12px;border:2.5px solid var(--ink);border-radius:10px;
+  font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14px;color:var(--ink);
+  background:#fff;outline:none;
+}
+#inputNama:focus{box-shadow:3px 3px 0 var(--diamond)}
+
+/* PANEL KOMENTAR — GAYA BALON KOMIK */
+.komentar-box{
+  background:var(--white);
+  border:3px solid var(--ink);
+  border-radius:16px;
+  box-shadow:5px 5px 0 var(--ink);
+  padding:12px;
+  margin-bottom:14px;
+}
+.komentar-list{max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px}
+.balon{
+  position:relative;
+  background:#fff;
+  border:2.5px solid var(--ink);
+  border-radius:14px;
+  padding:8px 12px;
+  max-width:85%;
+  align-self:flex-start;
+  font-size:13px;
+  font-weight:700;
+  animation:pop .25s ease-out;
+}
+.balon .nm{font-family:'Bangers',cursive;font-size:13px;letter-spacing:0.5px;color:var(--diamond);-webkit-text-stroke:0.4px var(--ink)}
+.balon .tx{margin-top:2px;color:var(--ink)}
+@keyframes pop{0%{transform:scale(0.7);opacity:0}100%{transform:scale(1);opacity:1}}
+
+.komentar-input-row{display:flex;gap:8px;margin-top:10px}
+#inputKomentar{
+  flex:1;padding:10px 12px;border:2.5px solid var(--ink);border-radius:10px;
+  font-family:'Baloo 2',sans-serif;font-weight:700;font-size:13px;outline:none;
+}
+.btn-kirim{
+  background:var(--ink);color:#fff;border:2.5px solid var(--ink);border-radius:10px;
+  padding:0 16px;font-family:'Bangers',cursive;font-size:14px;letter-spacing:1px;cursor:pointer;
+}
+.btn-kirim:active{transform:translate(2px,2px)}
+
+/* TOMBOL PROPERTI — COMIC POP ART */
+.gift-title{font-family:'Bangers',cursive;font-size:15px;letter-spacing:1px;margin:6px 0 8px;text-align:center}
+.gift-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.btn-gift{
+  position:relative;
+  background:var(--white);
+  border:3px solid var(--ink);
+  border-radius:14px;
+  box-shadow:4px 4px 0 var(--ink);
+  padding:12px 4px 8px;
+  text-align:center;
+  cursor:pointer;
+  user-select:none;
+}
+.btn-gift:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn-gift .ic{font-size:26px;display:block;filter:drop-shadow(1px 2px 0 var(--ink))}
+.btn-gift .lb{font-family:'Bangers',cursive;font-size:11px;letter-spacing:0.5px;margin-top:4px;display:block}
+.btn-gift.diamond{color:var(--diamond)}
+.btn-gift.rose{color:var(--rose)}
+.btn-gift.fire{color:var(--fire)}
+.btn-gift.rocket{color:var(--rocket)}
+
+/* EFEK TERBANG */
+.fly{
+  position:fixed;
+  font-size:34px;
+  z-index:9999;
+  pointer-events:none;
+  filter:drop-shadow(2px 3px 0 var(--ink));
+}
+@keyframes terbang{
+  0%{transform:translate(0,0) scale(1) rotate(0deg);opacity:1}
+  55%{transform:translate(calc(var(--tx)*0.55),calc(var(--ty)*0.55 - 70px)) scale(1.5) rotate(180deg);opacity:1}
+  100%{transform:translate(var(--tx),var(--ty)) scale(0.6) rotate(360deg);opacity:0.9}
+}
+.fly.run{animation:terbang .95s cubic-bezier(.25,1,.5,1) forwards}
+
+.pop-star{
+  position:fixed;z-index:9999;pointer-events:none;
+  font-family:'Bangers',cursive;font-size:0;
+}
+.bintang{
+  position:fixed;z-index:9998;pointer-events:none;
+  width:0;height:0;
+}
+@keyframes bursts{0%{transform:scale(0.2) rotate(0deg);opacity:1}100%{transform:scale(2.4) rotate(40deg);opacity:0}}
+.burst{
+  position:fixed;z-index:9997;pointer-events:none;
+  font-size:46px;
+  animation:bursts .5s ease-out forwards;
+  filter:drop-shadow(2px 3px 0 var(--ink));
+}
+
+.pow{
+  position:fixed;z-index:10000;pointer-events:none;
+  font-family:'Bangers',cursive;font-size:20px;color:#fff;
+  -webkit-text-stroke:2px var(--ink);
+  background:var(--fire);
+  border:3px solid var(--ink);
+  border-radius:50%;
+  padding:8px 10px;
+  transform:translate(-50%,-50%) scale(0);
+  animation:powpop .6s ease-out forwards;
+}
+@keyframes powpop{0%{transform:translate(-50%,-50%) scale(0) rotate(-10deg)}40%{transform:translate(-50%,-50%) scale(1.3) rotate(6deg)}100%{transform:translate(-50%,-50%) scale(1) rotate(0deg);opacity:0}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="comic-title">💬 KOMENTAR &amp; PROPERTI</div>
+  <div class="sub">Tulis nama, kirim komentar, lempar properti — POW!</div>
+
+  <div class="kartu">
+    <label class="field-label">NAMA KAMU</label>
+    <input id="inputNama" placeholder="Contoh: Kang Alwi" maxlength="24">
+  </div>
+
+  <div class="komentar-box">
+    <div class="komentar-list" id="komentarList"></div>
+    <div class="komentar-input-row">
+      <input id="inputKomentar" placeholder="Tulis komentar..." maxlength="80">
+      <button class="btn-kirim" id="targetKomentar" onclick="kirimKomentar()">KIRIM</button>
+    </div>
+  </div>
+
+  <div class="gift-title">🎁 LEMPAR PROPERTI</div>
+  <div class="gift-grid" id="giftGrid">
+    <div class="btn-gift diamond" onclick="lempar(event,'💎','Diamond','#00c2ff')"><span class="ic">💎</span><span class="lb">10</span></div>
+    <div class="btn-gift rose" onclick="lempar(event,'🌹','Rose','#ff3d81')"><span class="ic">🌹</span><span class="lb">5</span></div>
+    <div class="btn-gift fire" onclick="lempar(event,'🔥','Fire','#ff8a00')"><span class="ic">🔥</span><span class="lb">15</span></div>
+    <div class="btn-gift rocket" onclick="lempar(event,'🚀','Rocket','#8b5cf6')"><span class="ic">🚀</span><span class="lb">50</span></div>
+  </div>
+</div>
+
+<script>
+function namaAktif(){
+  return (document.getElementById('inputNama').value || '').trim() || 'Member ALWI';
+}
+
+function kirimKomentar(){
+  const teks = document.getElementById('inputKomentar').value.trim();
+  if(!teks) return;
+  const list = document.getElementById('komentarList');
+  const balon = document.createElement('div');
+  balon.className = 'balon';
+  balon.innerHTML = `<div class="nm">${namaAktif()}</div><div class="tx">${teks}</div>`;
+  list.appendChild(balon);
+  list.scrollTop = list.scrollHeight;
+  document.getElementById('inputKomentar').value = '';
+}
+document.getElementById('inputKomentar').addEventListener('keydown', e=>{ if(e.key==='Enter') kirimKomentar(); });
+
+// TARGET terbang: ke kotak komentar (bisa diganti ke elemen lain, mis. panggung slot)
+function targetTerbang(){
+  return document.getElementById('komentarList');
+}
+
+function lempar(e, emoji, nama, warna){
+  const btn = e.currentTarget;
+  const target = targetTerbang();
+  const bR = btn.getBoundingClientRect();
+  const tR = target.getBoundingClientRect();
+  const x0 = bR.left + bR.width/2, y0 = bR.top + bR.height/2;
+  const x1 = tR.left + tR.width/2, y1 = tR.top + tR.height/2;
+
+  for(let i=0;i<3;i++) setTimeout(()=>{
+    const f = document.createElement('div');
+    f.className='fly';
+    f.textContent = emoji;
+    f.style.left = (x0-17)+'px';
+    f.style.top = (y0-17)+'px';
+    f.style.setProperty('--tx', (x1-x0)+'px');
+    f.style.setProperty('--ty', (y1-y0)+'px');
+    document.body.appendChild(f);
+    requestAnimationFrame(()=> f.classList.add('run'));
+    setTimeout(()=> f.remove(), 1000);
+  }, i*150);
+
+  setTimeout(()=>{
+    const b = document.createElement('div');
+    b.className='burst';
+    b.textContent = '✨';
+    b.style.left = (x1-23)+'px';
+    b.style.top = (y1-23)+'px';
+    b.style.color = warna;
+    document.body.appendChild(b);
+    setTimeout(()=> b.remove(), 550);
+
+    const p = document.createElement('div');
+    p.className='pow';
+    p.textContent = 'POW!';
+    p.style.left = x1+'px';
+    p.style.top = y1+'px';
+    p.style.background = warna;
+    document.body.appendChild(p);
+    setTimeout(()=> p.remove(), 650);
+
+    const balon = document.createElement('div');
+    balon.className = 'balon';
+    balon.innerHTML = `<div class="nm">${namaAktif()}</div><div class="tx">Ngirim ${emoji} ${nama}!</div>`;
+    target.appendChild(balon);
+    target.scrollTop = target.scrollHeight;
+  }, 900);
+}
+</script><script src="../alwi_bubble4.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>ALWI ADZAN SERVER 1</title></head>
+<body style="margin:0;background:#06140b;color:#ffd700;font-family:monospace;display:flex;align-items:center;justify-content:center;height:100vh">
+<div style="text-align:center">
+<div style="font-size:40px">🕌</div>
+<div id="info">ALWI ADZAN SERVER 1 READY</div>
+<audio id="toa" controls autoplay style="width:300px;margin-top:10px"></audio>
+</div>
+<script>
+const FILES = {
+  subuh: "Adzan-Shubuh-Abu-Hazim.mp3",
+  default: "Adzan-Misyari-Rasyid.mp3",
+  mekkah: "mecca_56_22.mp3",
+  mesir: "athan_egypt.mp3",
+  fajr: "fajr_128_44.mp3"
+};
+function getFile(){
+  const p = new URLSearchParams(location.search).get('play');
+  if(p) return p;
+  const h = new Date().getHours();
+  if(h>=3 && h<5) return FILES.subuh;
+  return FILES.default;
+}
+const audio = document.getElementById('toa');
+const info = document.getElementById('info');
+function playAdzan(file){
+  audio.src = file;
+  info.textContent = "🔊 " + file;
+  audio.play().catch(e=>{ info.textContent="Klik play dulu: "+file; });
+}
+playAdzan(getFile());
+
+// Bisa dipanggil AI lain & parent iframe
+window.addEventListener('message', (e)=>{
+  if(e.data==='adzan!') audio.play();
+  if(e.data.startsWith('play:')) playAdzan(e.data.split('play:')[1]);
+});
+</script>
+
+
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("../sw.js").catch(function(){})}</script></body>
+</html>

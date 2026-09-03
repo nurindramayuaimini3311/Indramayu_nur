@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Branded Poin — Indramayu Club Makrifat</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;600;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #061F14; /* Hijau Tua Sultan */
+  color: #FFFFFF; /* Putih */
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  padding: 24px 16px 48px;
+}
+
+.wrap { position: relative; max-width: 480px; margin: 0 auto; }
+
+/* ── HEADER ── */
+.header { text-align: center; margin-bottom: 32px; }
+.header .eye { font-size: 36px; margin-bottom: 8px; text-shadow: 0 0 10px #C9A84C; }
+.header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  color: #C9A84C; /* Emas */
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+.header .sub {
+  font-size: 11px; letter-spacing: 3px;
+  color: #FFFFFF; opacity: 0.8; margin-top: 6px;
+  text-transform: uppercase;
+}
+.g-line {
+  width: 100px; height: 1px; margin: 12px auto;
+  background: linear-gradient(90deg, transparent, #C9A84C, transparent);
+}
+
+/* ── MEMBER CARD ── */
+.member-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #C9A84C;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 24px;
+  display: flex; align-items: center; gap: 16px;
+}
+.member-avatar {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: #061F14;
+  border: 2px solid #C9A84C;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; flex-shrink: 0;
+}
+.member-info .name {
+  font-family: 'Cinzel', serif;
+  font-size: 14px; color: #FFFFFF; font-weight: 700;
+}
+.member-info .id {
+  font-size: 11px; color: #FFFFFF; opacity: 0.7; margin-top: 3px;
+  display: flex; align-items: center;
+}
+.member-info .tier {
+  display: inline-block; margin-top: 8px;
+  background: rgba(201, 168, 76, 0.2);
+  border: 1px solid #C9A84C;
+  border-radius: 20px; padding: 2px 12px;
+  font-size: 9px; color: #C9A84C; letter-spacing: 2px;
+  font-weight: 600;
+}
+
+/* ── SECTION LABEL ── */
+.s-label {
+  font-size: 10px; letter-spacing: 4px;
+  color: #C9A84C; text-transform: uppercase;
+  text-align: center; margin: 0 0 14px;
+  font-weight: 600;
+}
+
+/* ── ALWI RENDER ENGINE ── */
+.render-engine {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.render-engine .re-title {
+  font-size: 10px; letter-spacing: 4px;
+  color: #C9A84C; margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.render-engine .re-name {
+  font-family: 'Cinzel', serif;
+  font-size: 15px; color: #FFFFFF; font-weight: 700;
+}
+.render-engine .re-email {
+  font-size: 11px; color: #FFFFFF; opacity: 0.6; margin-top: 4px;
+}
+.render-engine .re-flow {
+  display: flex; justify-content: center;
+  gap: 8px; margin-top: 14px; flex-wrap: wrap;
+}
+.re-tag {
+  font-size: 9px; padding: 4px 10px; border-radius: 20px;
+  font-weight: 600; background: rgba(201, 168, 76, 0.15);
+  color: #FFFFFF; border: 1px solid #C9A84C;
+}
+
+/* ── POIN GRID ── */
+.poin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.poin-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  border-radius: 16px;
+  padding: 18px 14px;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.poin-card:hover {
+  border-color: #C9A84C;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(201, 168, 76, 0.1);
+}
+.poin-card:active { transform: scale(0.97); }
+
+.poin-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+.poin-name {
+  font-family: 'Cinzel', serif;
+  font-size: 12px; font-weight: 700;
+  color: #C9A84C; letter-spacing: 1px; margin-bottom: 6px;
+}
+.poin-value { font-size: 24px; font-weight: 700; color: #FFFFFF; }
+.poin-unit { font-size: 10px; color: #FFFFFF; opacity: 0.6; }
+.poin-badge {
+  position: absolute; top: 12px; right: 12px;
+  font-size: 8px; padding: 2px 8px; border-radius: 20px;
+  background: rgba(201, 168, 76, 0.2); color: #C9A84C; font-weight: 600;
+}
+
+/* ── TRANSAKSI ── */
+.tx-section { margin-bottom: 28px; }
+.tx-title {
+  font-size: 11px; letter-spacing: 2px; color: #C9A84C;
+  text-transform: uppercase; margin-bottom: 12px;
+}
+.tx-item {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  border-radius: 12px; padding: 12px 14px; margin-bottom: 8px;
+}
+.tx-dot { width: 8px; height: 8px; border-radius: 50%; background: #C9A84C; }
+.tx-info { flex: 1; }
+.tx-info .tx-desc { font-size: 12px; color: #FFFFFF; font-weight: 500; }
+.tx-info .tx-time { font-size: 10px; color: #FFFFFF; opacity: 0.6; margin-top: 3px; }
+.tx-amount { font-size: 13px; font-weight: 700; color: #C9A84C; }
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center; padding-top: 20px;
+  border-top: 1px solid rgba(201, 168, 76, 0.2);
+}
+.footer p { font-size: 10px; color: #FFFFFF; opacity: 0.6; }
+.footer .brand {
+  font-family: 'Cinzel', serif;
+  font-size: 11px; color: #C9A84C; margin-top: 6px;
+}
+
+.live-dot {
+  display: inline-block; width: 6px; height: 6px;
+  background: #C9A84C; border-radius: 50%; margin-right: 6px;
+}
+
+/* ── MODAL WINDOW ── */
+.modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(6, 31, 20, 0.9); z-index: 100;
+  align-items: center; justify-content: center; padding: 20px;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: #061F14;
+  border: 2px solid #C9A84C;
+  border-radius: 20px; padding: 24px;
+  width: 100%; max-width: 360px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.modal-icon { font-size: 40px; text-align: center; margin-bottom: 12px; }
+.modal-title {
+  font-family: 'Cinzel', serif;
+  font-size: 18px; text-align: center;
+  color: #C9A84C; margin-bottom: 4px;
+}
+.modal-sub { font-size: 11px; color: #FFFFFF; opacity: 0.7; text-align: center; margin-bottom: 20px; }
+.modal-val { font-size: 36px; font-weight: 700; text-align: center; color: #FFFFFF; margin-bottom: 4px; }
+.modal-unit { font-size: 12px; text-align: center; color: #C9A84C; margin-bottom: 20px; font-weight: 600; }
+.modal-desc {
+  font-size: 12px; color: #FFFFFF; line-height: 1.6;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 12px; padding: 14px; margin-bottom: 20px;
+}
+.modal-close {
+  width: 100%; padding: 12px;
+  background: rgba(201, 168, 76, 0.1); border: 1px solid #C9A84C;
+  border-radius: 12px; color: #FFFFFF; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: background 0.2s;
+}
+.modal-close:hover { background: rgba(201, 168, 76, 0.25); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="eye">🌙</div>
+    <h1>SISTEM POIN NUR</h1>
+    <div class="g-line"></div>
+    <p class="sub">Ekosistem Mandiri · Indramayu Club Makrifat</p>
+  </div>
+
+  <!-- MEMBER CARD -->
+  <div class="member-card">
+    <div class="member-avatar">👤</div>
+    <div class="member-info">
+      <div class="name">Pak Jamhari Dulkohar</div>
+      <div class="id"><span class="live-dot"></span>ID: IMC-001 · Admin Utama</div>
+      <div class="tier">⭐ VVIP · PiramidaGuard</div>
+    </div>
+  </div>
+
+  <!-- ALWI RENDER ENGINE -->
+  <div class="s-label">Mesin Render</div>
+  <div class="render-engine">
+    <div class="re-title">⚡ Alwi Output Engine</div>
+    <div class="re-name">ALWI · Render Poin</div>
+    <div class="re-email">alwi.indramayuclub@gmail.com</div>
+    <div class="re-flow">
+      <span class="re-tag">KARA</span>
+      <span class="re-tag">Rp NUR</span>
+      <span class="re-tag">GIFNUR</span>
+      <span class="re-tag">VOUCHER NUR</span>
+    </div>
+  </div>
+
+  <!-- POIN GRID -->
+  <div class="s-label" style="margin-top:24px;">Saldo Poin Anda</div>
+  <div class="poin-grid">
+
+    <!-- KARA -->
+    <div class="poin-card" onclick="openModal('kara')">
+      <span class="poin-badge">AKTIF</span>
+      <span class="poin-icon">🟡</span>
+      <div class="poin-name">KARA</div>
+      <div class="poin-value">1.250</div>
+      <div class="poin-unit">KARA POIN</div>
+    </div>
+
+    <!-- Rp NUR -->
+    <div class="poin-card" onclick="openModal('nur')">
+      <span class="poin-badge">AKTIF</span>
+      <span class="poin-icon">💠</span>
+      <div class="poin-name">Rp NUR</div>
+      <div class="poin-value">87.500</div>
+      <div class="poin-unit">RUPIAH NUR</div>
+    </div>
+
+    <!-- GIFNUR -->
+    <div class="poin-card" onclick="openModal('gif')">
+      <span class="poin-badge">AKTIF</span>
+      <span class="poin-icon">🎁</span>
+      <div class="poin-name">GIFNUR</div>
+      <div class="poin-value">3</div>
+      <div class="poin-unit">GIFT NUR</div>
+    </div>
+
+    <!-- VOUCHER NUR -->
+    <div class="poin-card" onclick="openModal('vou')">
+      <span class="poin-badge">AKTIF</span>
+      <span class="poin-icon">🎟️</span>
+      <div class="poin-name">VOUCHER NUR</div>
+      <div class="poin-value">2</div>
+      <div class="poin-unit">VOUCHER</div>
+    </div>
+
+  </div>
+
+  <!-- RIWAYAT TRANSAKSI -->
+  <div class="tx-section">
+    <div class="tx-title">📜 Riwayat Transaksi</div>
+
+    <div class="tx-item">
+      <div class="tx-dot"></div>
+      <div class="tx-info">
+        <div class="tx-desc">Render Alwi — Kontribusi Diskusi</div>
+        <div class="tx-time">Hari ini · 14:30</div>
+      </div>
+      <div class="tx-amount">+250 KARA</div>
+    </div>
+
+    <div class="tx-item">
+      <div class="tx-dot"></div>
+      <div class="tx-info">
+        <div class="tx-desc">Konversi KARA → Rp NUR</div>
+        <div class="tx-time">Kemarin · 09:15</div>
+      </div>
+      <div class="tx-amount">+17.500 Rp NUR</div>
+    </div>
+
+    <div class="tx-item">
+      <div class="tx-dot"></div>
+      <div class="tx-info">
+        <div class="tx-desc">GIFNUR — Reward Member Aktif</div>
+        <div class="tx-time">3 hari lalu</div>
+      </div>
+      <div class="tx-amount">+1 GIFNUR</div>
+    </div>
+
+    <div class="tx-item">
+      <div class="tx-dot"></div>
+      <div class="tx-info">
+        <div class="tx-desc">Voucher Nur — Redeem Kreator</div>
+        <div class="tx-time">5 hari lalu</div>
+      </div>
+      <div class="tx-amount">−1 VOUCHER</div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="g-line"></div>
+    <p>Ekosistem mandiri tanpa ketergantungan pihak ke-3</p>
+    <div class="brand">✦ INDRAMAYU CLUB MAKRIFAT · 248 Member ✦</div>
+  </div>
+
+</div>
+
+<!-- MODAL WINDOW -->
+<div class="modal-bg" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-icon" id="m-icon">🟡</div>
+    <div class="modal-title" id="m-title">KARA</div>
+    <div class="modal-sub" id="m-sub">Mata uang utama</div>
+    <div class="modal-val" id="m-val">1.250</div>
+    <div class="modal-unit" id="m-unit">KARA POIN</div>
+    <div class="modal-desc" id="m-desc">Deskripsi poin.</div>
+    <button class="modal-close" onclick="closeModal()">✕ Tutup</button>
+  </div>
+</div>
+
+<script>
+const poins = {
+  kara: {
+    icon: '🟡', title: 'KARA', sub: 'Mata Uang Utama Ekosistem',
+    val: '1.250', unit: 'KARA POIN',
+    desc: 'KARA adalah mata uang utama Indramayu Club Makrifat. Diperoleh dari kontribusi aktif di divisi ekosistem yang dirender oleh Alwi Output Engine secara otomatis tanpa ketergantungan pihak ketiga.'
+  },
+  nur: {
+    icon: '💠', title: 'Rp NUR', sub: 'Nilai Rupiah Internal',
+    val: '87.500', unit: 'RUPIAH NUR',
+    desc: 'Rp NUR adalah representasi nilai rupiah internal ekosistem IMC. Dikonversi dari KARA oleh sistem Alwi dan dapat digunakan untuk transaksi internal atau potongan operasional game sebesar 5%.'
+  },
+  gif: {
+    icon: '🎁', title: 'GIFNUR', sub: 'Hadiah & Reward Member',
+    val: '3', unit: 'GIFT NUR',
+    desc: 'GIFNUR adalah poin hadiah khusus spiritual dan apresiasi komunitas. Diberikan kepada member aktif atas kontribusi puitis, diskusi bermakna, atau pencapaian spiritual tertentu.'
+  },
+  vou: {
+    icon: '🎟️', title: 'VOUCHER NUR', sub: 'Voucher Redeem & Akses Otomatis',
+    val: '2', unit: 'VOUCHER',
+    desc: 'Voucher Nur adalah tiket digital untuk pendaftaran otomatis, penyesuaian lencana umur/gender sejak awal, serta klaim benefit eksklusif di dalam sistem administrasi IMC.'
+  }
+};
+
+function openModal(type) {
+  const p = poins[type];
+  document.getElementById('m-icon').textContent = p.icon;
+  document.getElementById('m-title').textContent = p.title;
+  document.getElementById('m-sub').textContent = p.sub;
+  document.getElementById('m-val').textContent = p.val;
+  document.getElementById('m-unit').textContent = p.unit;
+  document.getElementById('m-desc').textContent = p.desc;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal') || e.target.tagName === 'BUTTON') {
+    document.getElementById('modal').classList.remove('open');
+  }
+}
+</script>
+</body>
+</html>
+

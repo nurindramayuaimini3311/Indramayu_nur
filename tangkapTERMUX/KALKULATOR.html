@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KALKULATOR.html</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+
+  :root {
+    --gold:    #c8922a;
+    --gold2:   #f0c96b;
+    --dark:    #1a0f02;
+    --brown:   #3b1f05;
+    --cream:   #f5ead6;
+    --accent:  #7a2d00;
+    --shadow:  rgba(200,146,42,0.35);
+  }
+
+
+
+  body {
+    min-height: 100vh;
+    background: var(--dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Lora', serif;
+    padding: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Batik-like background pattern */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(ellipse at 20% 30%, rgba(200,146,42,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(122,45,0,0.12) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8922a' fill-opacity='0.04'%3E%3Cpath d='M30 0 L60 30 L30 60 L0 30Z'/%3E%3Ccircle cx='30' cy='30' r='8'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 380px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .header .ornament {
+    color: var(--gold);
+    font-size: 1.4rem;
+    letter-spacing: 8px;
+    opacity: 0.7;
+  }
+
+  .header h1 {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 1.15rem;
+    color: var(--gold2);
+    text-shadow: 0 0 20px var(--shadow), 0 2px 4px #000;
+    line-height: 1.4;
+    margin: 4px 0;
+  }
+
+  .header .sub {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 0.78rem;
+    color: var(--gold);
+    opacity: 0.8;
+    letter-spacing: 2px;
+  }
+
+  /* Calculator body */
+  .calc {
+    background: linear-gradient(160deg, #2e1804 0%, #1a0f02 60%, #251002 100%);
+    border: 2px solid var(--gold);
+    border-radius: 20px;
+    padding: 24px 20px 20px;
+    box-shadow:
+      0 0 0 1px rgba(200,146,42,0.2),
+      0 0 40px rgba(200,146,42,0.15),
+      0 20px 60px rgba(0,0,0,0.8),
+      inset 0 1px 0 rgba(240,201,107,0.2);
+    animation: fadeUp 0.8s ease both 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .calc::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold2), transparent);
+  }
+
+  /* Corner ornaments */
+  .corner {
+    position: absolute;
+    width: 22px; height: 22px;
+    border-color: var(--gold);
+    border-style: solid;
+    opacity: 0.6;
+  }
+  .corner.tl { top: 8px; left: 8px; border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
+  .corner.tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; border-radius: 0 4px 0 0; }
+  .corner.bl { bottom: 8px; left: 8px; border-width: 0 0 2px 2px; border-radius: 0 0 0 4px; }
+  .corner.br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; border-radius: 0 0 4px 0; }
+
+  /* Display */
+  .display {
+    background: linear-gradient(180deg, #0e0700 0%, #150c00 100%);
+    border: 1.5px solid rgba(200,146,42,0.4);
+    border-radius: 10px;
+    padding: 14px 16px 10px;
+    margin-bottom: 18px;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    box-shadow: inset 0 2px 12px rgba(0,0,0,0.6), 0 0 12px rgba(200,146,42,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .display::before {
+    content: '✦ MAKRIFAT ✦';
+    position: absolute;
+    top: 8px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.55rem;
+    letter-spacing: 4px;
+    color: rgba(200,146,42,0.25);
+    font-family: 'Cinzel Decorative', cursive;
+    white-space: nowrap;
+  }
+
+  .display .expr {
+    font-size: 0.78rem;
+    color: rgba(200,146,42,0.5);
+    min-height: 18px;
+    font-style: italic;
+    word-break: break-all;
+    text-align: right;
+    transition: color 0.2s;
+  }
+
+  .display .result {
+    font-family: 'Lora', serif;
+    font-size: 2.4rem;
+    font-weight: 600;
+    color: var(--gold2);
+    text-shadow: 0 0 20px rgba(240,201,107,0.4);
+    word-break: break-all;
+    text-align: right;
+    line-height: 1.2;
+    transition: all 0.15s;
+  }
+
+  .display .result.big { font-size: 1.9rem; }
+  .display .result.bigger { font-size: 1.4rem; }
+
+  /* Button grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 9px;
+  }
+
+  button {
+    font-family: 'Lora', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 0;
+    height: 58px;
+    transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.5px;
+  }
+
+  button::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 50%);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  button:active { transform: scale(0.93); }
+
+  /* Number buttons */
+  .btn-num {
+    background: linear-gradient(160deg, #3d2008 0%, #2a1404 100%);
+    color: var(--cream);
+    border: 1px solid rgba(200,146,42,0.25);
+    box-shadow: 0 4px 0 #150a00, 0 5px 12px rgba(0,0,0,0.4);
+  }
+  .btn-num:hover { background: linear-gradient(160deg, #4e2a0a 0%, #331905 100%); }
+  .btn-num:active { box-shadow: 0 1px 0 #150a00, 0 2px 6px rgba(0,0,0,0.4); transform: scale(0.93) translateY(3px); }
+
+  /* Operator buttons */
+  .btn-op {
+    background: linear-gradient(160deg, #7a3800 0%, #5a2600 100%);
+    color: var(--gold2);
+    border: 1px solid rgba(200,146,42,0.5);
+    box-shadow: 0 4px 0 #2a0e00, 0 5px 12px rgba(0,0,0,0.4);
+    font-size: 1.3rem;
+  }
+  .btn-op:hover { background: linear-gradient(160deg, #8f4200 0%, #6b2d00 100%); }
+  .btn-op:active { box-shadow: 0 1px 0 #2a0e00; transform: scale(0.93) translateY(3px); }
+
+  /* Special / Clear */
+  .btn-sp {
+    background: linear-gradient(160deg, #1e1204 0%, #150c00 100%);
+    color: rgba(200,146,42,0.8);
+    border: 1px solid rgba(200,146,42,0.3);
+    box-shadow: 0 4px 0 #0a0600, 0 5px 12px rgba(0,0,0,0.4);
+    font-size: 0.95rem;
+  }
+  .btn-sp:hover { color: var(--gold2); background: linear-gradient(160deg, #2a1a08 0%, #1e1005 100%); }
+  .btn-sp:active { box-shadow: 0 1px 0 #0a0600; transform: scale(0.93) translateY(3px); }
+
+  /* Equals */
+  .btn-eq {
+    background: linear-gradient(160deg, var(--gold) 0%, #a06818 100%);
+    color: var(--dark);
+    border: 1px solid var(--gold2);
+    box-shadow: 0 4px 0 #7a4a00, 0 5px 16px rgba(200,146,42,0.3);
+    font-size: 1.4rem;
+    font-weight: 900;
+  }
+  .btn-eq:hover { background: linear-gradient(160deg, var(--gold2) 0%, var(--gold) 100%); }
+  .btn-eq:active { box-shadow: 0 1px 0 #7a4a00; transform: scale(0.93) translateY(3px); }
+
+  /* Zero – spans 2 cols */
+  .span2 { grid-column: span 2; }
+
+  /* Ripple effect */
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(240,201,107,0.3);
+    transform: scale(0);
+    animation: ripple 0.4s linear;
+    pointer-events: none;
+  }
+  @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 0.65rem;
+    color: rgba(200,146,42,0.35);
+    letter-spacing: 3px;
+    font-style: italic;
+    animation: fadeUp 0.8s ease both 0.4s;
+  }
+
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:none; } }
+  @keyframes fadeUp   { from { opacity:0; transform:translateY(20px);  } to { opacity:1; transform:none; } }
+
+  .pulse {
+    animation: pulse 0.2s ease;
+  }
+  @keyframes pulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="ornament">✦ ❧ ✦</div>
+    <h1>Pasar Indramayu<br>Club Makrifat</h1>
+    <div class="sub">Kalkulator Berkah</div>
+  </div>
+
+  <div class="calc">
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <div class="display">
+      <div class="expr" id="expr"></div>
+      <div class="result" id="result">0</div>
+    </div>
+
+    <div class="grid">
+      <!-- Row 1 -->
+      <button class="btn-sp" onclick="clearAll()">AC</button>
+      <button class="btn-sp" onclick="toggleSign()">+/-</button>
+      <button class="btn-sp" onclick="percent()">%</button>
+      <button class="btn-op" onclick="setOp('÷')">÷</button>
+
+      <!-- Row 2 -->
+      <button class="btn-num" onclick="num('7')">7</button>
+      <button class="btn-num" onclick="num('8')">8</button>
+      <button class="btn-num" onclick="num('9')">9</button>
+      <button class="btn-op" onclick="setOp('×')">×</button>
+
+      <!-- Row 3 -->
+      <button class="btn-num" onclick="num('4')">4</button>
+      <button class="btn-num" onclick="num('5')">5</button>
+      <button class="btn-num" onclick="num('6')">6</button>
+      <button class="btn-op" onclick="setOp('−')">−</button>
+
+      <!-- Row 4 -->
+      <button class="btn-num" onclick="num('1')">1</button>
+      <button class="btn-num" onclick="num('2')">2</button>
+      <button class="btn-num" onclick="num('3')">3</button>
+      <button class="btn-op" onclick="setOp('+')">+</button>
+
+      <!-- Row 5 -->
+      <button class="btn-num span2" onclick="num('0')">0</button>
+      <button class="btn-num" onclick="dot()">.</button>
+      <button class="btn-eq" onclick="calc()">=</button>
+    </div>
+  </div>
+
+  <div class="footer">✦ بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم ✦</div>
+</div>
+
+<script>
+  let cur = '0', prev = '', op = '', shouldReset = false;
+
+  const disp  = document.getElementById('result');
+  const expr  = document.getElementById('expr');
+
+  function updateDisplay(val) {
+    disp.textContent = format(val);
+    const len = String(format(val)).length;
+    disp.className = 'result' + (len > 12 ? ' bigger' : len > 8 ? ' big' : '');
+    disp.classList.add('pulse');
+    setTimeout(() => disp.classList.remove('pulse'), 200);
+  }
+
+  function format(n) {
+    if (n === 'Error') return 'Error';
+    const s = String(n);
+    // Only format if it's a complete number (not mid-entry with trailing dot)
+    if (s.endsWith('.') || (s.includes('.') && s.endsWith('0'))) return s;
+    const num = parseFloat(n);
+    if (isNaN(num)) return s;
+    if (Math.abs(num) >= 1e15) return num.toExponential(4);
+    return num.toLocaleString('id-ID', { maximumFractionDigits: 10 });
+  }
+
+  function num(d) {
+    rippleBtn(event);
+    if (shouldReset) { cur = d === '.' ? '0' : d; shouldReset = false; }
+    else if (cur === '0' && d !== '.') cur = d;
+    else if (cur.length < 18) cur += d;
+    updateDisplay(cur);
+  }
+
+  function dot() {
+    rippleBtn(event);
+    if (shouldReset) { cur = '0.'; shouldReset = false; }
+    else if (!cur.includes('.')) cur += '.';
+    updateDisplay(cur);
+  }
+
+  function setOp(o) {
+    rippleBtn(event);
+    if (op && !shouldReset) calculate();
+    prev = cur; op = o; shouldReset = true;
+    expr.textContent = format(prev) + ' ' + o;
+  }
+
+  function calculate() {
+    if (!op || !prev) return;
+    const a = parseFloat(prev), b = parseFloat(cur);
+    let res;
+    if (op === '+')  res = a + b;
+    if (op === '−')  res = a - b;
+    if (op === '×')  res = a * b;
+    if (op === '÷')  res = b === 0 ? 'Error' : a / b;
+    expr.textContent = format(prev) + ' ' + op + ' ' + format(cur) + ' =';
+    cur = res === 'Error' ? 'Error' : String(+res.toFixed(10));
+    op = ''; prev = ''; shouldReset = true;
+    updateDisplay(cur);
+  }
+
+  function calc() {
+    rippleBtn(event);
+    calculate();
+  }
+
+  function clearAll() {
+    rippleBtn(event);
+    cur = '0'; prev = ''; op = ''; shouldReset = false;
+    expr.textContent = '';
+    updateDisplay('0');
+  }
+
+  function toggleSign() {
+    rippleBtn(event);
+    if (cur === '0' || cur === 'Error') return;
+    cur = String(-parseFloat(cur));
+    updateDisplay(cur);
+  }
+
+  function percent() {
+    rippleBtn(event);
+    if (cur === 'Error') return;
+    cur = String(parseFloat(cur) / 100);
+    updateDisplay(cur);
+  }
+
+  function rippleBtn(e) {
+    if (!e || !e.currentTarget) return;
+    const btn = e.currentTarget;
+    const r = document.createElement('span');
+    r.className = 'ripple';
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    r.style.cssText = `width:${size}px;height:${size}px;left:${(rect.width-size)/2}px;top:${(rect.height-size)/2}px`;
+    btn.appendChild(r);
+    setTimeout(() => r.remove(), 450);
+  }
+
+  // Keyboard support
+  document.addEventListener('keydown', e => {
+    const k = e.key;
+    if ('0123456789'.includes(k))      { num(k); }
+    else if (k === '.')                { dot(); }
+    else if (k === '+')                { setOp('+'); }
+    else if (k === '-')                { setOp('−'); }
+    else if (k === '*')                { setOp('×'); }
+    else if (k === '/')                { e.preventDefault(); setOp('÷'); }
+    else if (k === 'Enter' || k === '=') { calc(); }
+    else if (k === 'Backspace')        { if (!shouldReset && cur.length > 1) cur = cur.slice(0,-1); else cur = '0'; updateDisplay(cur); }
+    else if (k === 'Escape')           { clearAll(); }
+    else if (k === '%')                { percent(); }
+  });
+</script>
+</body>
+</html>
+

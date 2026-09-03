@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Branded Poin — Indramayu Club Makrifat</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap');
+
+:root {
+  --dark:    #0A0800;
+  --dark2:   #120E03;
+  --dark3:   #1C1608;
+  --dark4:   #28200C;
+  --gold:    #C9A84C;
+  --gold-l:  #F0D080;
+  --gold-d:  #7A6020;
+  --text:    #E8D8A0;
+  --text-d:  #8A7840;
+
+  /* Poin Colors */
+  --kara:    #E8C060;
+  --kara-d:  #8A6C20;
+  --nur:     #60C8E8;
+  --nur-d:   #206880;
+  --gif:     #E860A8;
+  --gif-d:   #801060;  
+  --vou:     #80E860;
+  --vou-d:   #206810;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--dark);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  padding: 20px 14px 48px;
+}
+
+/* Batik BG */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23C9A84C' fill-opacity='0.03'%3E%3Cpath d='M40 0 L80 40 L40 80 L0 40 Z'/%3E%3Ccircle cx='40' cy='40' r='10'/%3E%3Ccircle cx='0' cy='0' r='4'/%3E%3Ccircle cx='80' cy='80' r='4'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 30% 20%, rgba(201,168,76,0.05) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+.wrap { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; }
+
+/* ── HEADER ── */
+.header { text-align: center; margin-bottom: 28px; }
+.header .eye { font-size: 32px; margin-bottom: 6px; }
+.header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(15px, 4.5vw, 22px);
+  color: var(--gold);
+  letter-spacing: 2px;
+  text-shadow: 0 0 24px rgba(201,168,76,0.4);
+}
+.header .sub {
+  font-size: 10px; letter-spacing: 3px;
+  color: var(--text-d); margin-top: 5px;
+  text-transform: uppercase;
+}
+.g-line {
+  width: 80px; height: 1px; margin: 10px auto;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ── MEMBER CARD ── */
+.member-card {
+  background: linear-gradient(135deg, var(--dark3), var(--dark2));
+  border: 1px solid var(--dark4);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 14px;
+  position: relative; overflow: hidden;
+}
+.member-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold-d), var(--gold), var(--gold-d));
+}
+.member-avatar {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--dark4), var(--dark3));
+  border: 2px solid var(--gold-d);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.member-info .name {
+  font-family: 'Cinzel', serif;
+  font-size: 13px; color: var(--gold-l); font-weight: 700;
+}
+.member-info .id {
+  font-size: 10px; color: var(--text-d); margin-top: 2px;
+}
+.member-info .tier {
+  display: inline-block; margin-top: 6px;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 20px; padding: 2px 10px;
+  font-size: 9px; color: var(--gold); letter-spacing: 2px;
+}
+
+/* ── SECTION LABEL ── */
+.s-label {
+  font-size: 9px; letter-spacing: 3px;
+  color: var(--text-d); text-transform: uppercase;
+  text-align: center; margin: 0 0 12px;
+}
+
+/* ── POIN GRID ── */
+.poin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.poin-card {
+  border-radius: 14px;
+  padding: 16px 14px;
+  position: relative; overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.poin-card:active { transform: scale(0.97); }
+
+.poin-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06), transparent 60%);
+  pointer-events: none;
+}
+
+/* KARA */
+.poin-kara {
+  background: linear-gradient(135deg, #1A1200, #2A1E00);
+  border: 1px solid var(--kara-d);
+  box-shadow: 0 0 20px rgba(232,192,96,0.1);
+}
+.poin-kara:hover { box-shadow: 0 0 30px rgba(232,192,96,0.25); transform: translateY(-2px); }
+
+/* Rp NUR */
+.poin-nur {
+  background: linear-gradient(135deg, #001218, #001E28);
+  border: 1px solid var(--nur-d);
+  box-shadow: 0 0 20px rgba(96,200,232,0.1);
+}
+.poin-nur:hover { box-shadow: 0 0 30px rgba(96,200,232,0.25); transform: translateY(-2px); }
+
+/* GIFNUR */
+.poin-gif {
+  background: linear-gradient(135deg, #180010, #280018);
+  border: 1px solid var(--gif-d);
+  box-shadow: 0 0 20px rgba(232,96,168,0.1);
+}
+.poin-gif:hover { box-shadow: 0 0 30px rgba(232,96,168,0.25); transform: translateY(-2px); }
+
+/* VOUCHER NUR */
+.poin-vou {
+  background: linear-gradient(135deg, #001800, #002800);
+  border: 1px solid var(--vou-d);
+  box-shadow: 0 0 20px rgba(128,232,96,0.1);
+}
+.poin-vou:hover { box-shadow: 0 0 30px rgba(128,232,96,0.25); transform: translateY(-2px); }
+
+.poin-icon { font-size: 26px; margin-bottom: 8px; display: block; }
+
+.poin-name {
+  font-family: 'Cinzel', serif;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 1px; margin-bottom: 4px;
+}
+.poin-kara .poin-name { color: var(--kara); }
+.poin-nur  .poin-name { color: var(--nur); }
+.poin-gif  .poin-name { color: var(--gif); }
+.poin-vou  .poin-name { color: var(--vou); }
+
+.poin-value {
+  font-size: 22px; font-weight: 700; line-height: 1;
+  margin-bottom: 2px;
+}
+.poin-kara .poin-value { color: var(--kara); }
+.poin-nur  .poin-value { color: var(--nur); }
+.poin-gif  .poin-value { color: var(--gif); }
+.poin-vou  .poin-value { color: var(--vou); }
+
+.poin-unit {
+  font-size: 9px; letter-spacing: 1px;
+  opacity: 0.6;
+}
+.poin-kara .poin-unit { color: var(--kara); }
+.poin-nur  .poin-unit { color: var(--nur); }
+.poin-gif  .poin-unit { color: var(--gif); }
+.poin-vou  .poin-unit { color: var(--vou); }
+
+.poin-desc {
+  font-size: 9px; color: rgba(255,255,255,0.35);
+  margin-top: 8px; line-height: 1.4;
+}
+
+/* Badge "aktif" */
+.poin-badge {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 8px; letter-spacing: 1px;
+  padding: 2px 6px; border-radius: 10px;
+}
+.poin-kara .poin-badge { background: rgba(232,192,96,0.15); color: var(--kara); }
+.poin-nur  .poin-badge { background: rgba(96,200,232,0.15); color: var(--nur); }
+.poin-gif  .poin-badge { background: rgba(232,96,168,0.15); color: var(--gif); }
+.poin-vou  .poin-badge { background: rgba(128,232,96,0.15); color: var(--vou); }
+
+/* ── ALWI RENDER ENGINE ── */
+.render-engine {
+  background: linear-gradient(135deg, #1A1000, #0A0800);
+  border: 1px solid rgba(232,160,32,0.4);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.render-engine::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #E8A020, transparent);
+}
+.render-engine .re-title {
+  font-size: 9px; letter-spacing: 3px;
+  color: rgba(232,160,32,0.6); margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.render-engine .re-name {
+  font-family: 'Cinzel', serif;
+  font-size: 14px; color: #FFD060; font-weight: 700;
+}
+.render-engine .re-email {
+  font-size: 10px; color: rgba(232,160,32,0.4); margin-top: 3px;
+}
+.render-engine .re-flow {
+  display: flex; justify-content: center;
+  gap: 6px; margin-top: 12px; flex-wrap: wrap;
+}
+.re-tag {
+  font-size: 9px; padding: 3px 8px; border-radius: 10px;
+  font-weight: 600; letter-spacing: 0.5px;
+}
+.re-tag.kara { background: rgba(232,192,96,0.2); color: var(--kara); border: 1px solid rgba(232,192,96,0.3); }
+.re-tag.nur  { background: rgba(96,200,232,0.2); color: var(--nur);  border: 1px solid rgba(96,200,232,0.3); }
+.re-tag.gif  { background: rgba(232,96,168,0.2); color: var(--gif);  border: 1px solid rgba(232,96,168,0.3); }
+.re-tag.vou  { background: rgba(128,232,96,0.2); color: var(--vou);  border: 1px solid rgba(128,232,96,0.3); }
+
+/* ── TRANSAKSI ── */
+.tx-section { margin-bottom: 24px; }
+.tx-title {
+  font-size: 10px; letter-spacing: 2px; color: var(--text-d);
+  text-transform: uppercase; margin-bottom: 10px;
+}
+.tx-item {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--dark3);
+  border: 1px solid var(--dark4);
+  border-radius: 10px; padding: 10px 12px;
+  margin-bottom: 6px;
+}
+.tx-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.tx-info { flex: 1; }
+.tx-info .tx-desc { font-size: 11px; color: var(--text); }
+.tx-info .tx-time { font-size: 9px; color: var(--text-d); margin-top: 2px; }
+.tx-amount { font-size: 12px; font-weight: 700; }
+.tx-amount.plus  { color: #80E860; }
+.tx-amount.minus { color: #E86060; }
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center; padding-top: 16px;
+  border-top: 1px solid var(--dark4);
+}
+.footer p { font-size: 9px; color: var(--text-d); letter-spacing: 1px; }
+.footer .brand {
+  font-family: 'Cinzel', serif;
+  font-size: 10px; color: var(--gold-d); margin-top: 4px;
+}
+
+/* ── PULSE ── */
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.live-dot {
+  display: inline-block; width: 6px; height: 6px;
+  background: #80E860; border-radius: 50%;
+  margin-right: 4px; animation: pulse 2s infinite;
+  vertical-align: middle;
+}
+
+/* ── MODAL ── */
+.modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.8); z-index: 100;
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: var(--dark3);
+  border: 1px solid var(--modal-color, var(--gold));
+  border-radius: 16px; padding: 24px;
+  width: 100%; max-width: 340px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.8);
+  animation: fadeUp 0.2s ease;
+}
+@keyframes fadeUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+.modal-icon { font-size: 36px; text-align: center; margin-bottom: 10px; }
+.modal-title {
+  font-family: 'Cinzel', serif;
+  font-size: 16px; text-align: center;
+  margin-bottom: 4px;
+}
+.modal-sub { font-size: 10px; color: var(--text-d); text-align: center; margin-bottom: 16px; }
+.modal-val { font-size: 36px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+.modal-unit { font-size: 11px; text-align: center; color: var(--text-d); margin-bottom: 16px; }
+.modal-desc {
+  font-size: 11px; color: var(--text-d); line-height: 1.6;
+  background: var(--dark4); border-radius: 8px; padding: 10px 12px;
+  margin-bottom: 16px;
+}
+.modal-close {
+  width: 100%; padding: 10px;
+  background: var(--dark4); border: 1px solid var(--dark4);
+  border-radius: 8px; color: var(--text); font-size: 12px;
+  cursor: pointer; transition: background 0.2s;
+}
+.modal-close:hover { background: var(--dark3); border-color: var(--gold-d); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="eye">🌙</div>
+    <h1>SISTEM POIN NUR</h1>
+    <div class="g-line"></div>
+    <p class="sub">Ekosistem Mandiri · Indramayu Club Makrifat</p>
+  </div>
+
+  <!-- MEMBER CARD -->
+  <div class="member-card">
+    <div class="member-avatar">👤</div>
+    <div class="member-info">
+      <div class="name">Pak Jamhari Dulkohar</div>
+      <div class="id"><span class="live-dot"></span>ID: IMC-001 · Admin Utama</div>
+      <div class="tier">⭐ VVIP · PiramidaGuard</div>
+    </div>
+  </div>
+
+  <!-- ALWI RENDER ENGINE -->
+  <div class="s-label">Mesin Render</div>
+  <div class="render-engine">
+    <div class="re-title">⚡ Alwi Output Engine</div>
+    <div class="re-name">ALWI · Render Poin</div>
+    <div class="re-email">alwi.indramayuclub@gmail.com</div>
+    <div class="re-flow">
+      <span class="re-tag kara">KARA</span>
+      <span class="re-tag nur">Rp NUR</span>
+      <span class="re-tag gif">GIFNUR</span>
+      <span class="re-tag vou">VOUCHER NUR</span>
+    </div>
+  </div>
+
+  <!-- POIN GRID -->
+  <div class="s-label" style="margin-top:20px;">Saldo Poin Anda</div>
+  <div class="poin-grid">
+
+    <!-- KARA -->
+    <div class="poin-card poin-kara" onclick="openModal('kara')">
+      <span class="poin-badge">AKTIF</span>
+      <span class="poin-icon">🟡</span>
+      <div class="poin-name">KARA</div>
+      <div class="poin-value" id="val-kara">1.250</div>
+      <div class="poin-unit">KARA POIN</div>
+      <div class="poin-desc">Mata uang utama ekosistem IMC</div>
+    </div>
+
+    <!-- Rp NUR -->
+    <div class="poin-card poin-nur" onclick="openModal('nur')">
+      <span class="poin-badge">AKTIF</span>
+      <span class="poin-icon">💠</span>
+      <div class="poin-name">Rp NUR</div>
+      <div class="poin-value" id="val-nur">87.500</div>
+      <div class="poin-unit">RUPIAH NUR</div>
+      <div class="poin-desc">Nilai rupiah internal ekosistem</div>
+    </div>
+
+    <!-- GIFNUR -->
+    <div class="poin-card poin-gif" onclick="openModal('gif')">
+      <span class="poin-badge">AKTIF</span>
+      <span class="poin-icon">🎁</span>
+      <div class="poin-name">GIFNUR</div>
+      <div class="poin-value" id="val-gif">3</div>
+      <div class="poin-unit">GIFT NUR</div>
+      <div class="poin-desc">Hadiah reward dari aktivitas</div>
+    </div>
+
+    <!-- VOUCHER NUR -->
+    <div class="poin-card poin-vou" onclick="openModal('vou')">
+      <span class="poin-badge">AKTIF</span>
+      <span class="poin-icon">🎟️</span>
+      <div class="poin-name">VOUCHER NUR</div>
+      <div class="poin-value" id="val-vou">2</div>
+      <div class="poin-unit">VOUCHER</div>
+      <div class="poin-desc">Voucher redeem & belanja</div>
+    </div>
+
+  </div>
+
+  <!-- RIWAYAT TRANSAKSI -->
+  <div class="tx-section">
+    <div class="tx-title">📜 Riwayat Transaksi</div>
+
+    <div class="tx-item">
+      <div class="tx-dot" style="background:var(--kara)"></div>
+      <div class="tx-info">
+        <div class="tx-desc">Render Alwi — Kontribusi Diskusi</div>
+        <div class="tx-time">Hari ini · 14:30</div>
+      </div>
+      <div class="tx-amount plus">+250 KARA</div>
+    </div>
+
+    <div class="tx-item">
+      <div class="tx-dot" style="background:var(--nur)"></div>
+      <div class="tx-info">
+        <div class="tx-desc">Konversi KARA → Rp NUR</div>
+        <div class="tx-time">Kemarin · 09:15</div>
+      </div>
+      <div class="tx-amount plus">+17.500 Rp NUR</div>
+    </div>
+
+    <div class="tx-item">
+      <div class="tx-dot" style="background:var(--gif)"></div>
+      <div class="tx-info">
+        <div class="tx-desc">GIFNUR — Reward Member Aktif</div>
+        <div class="tx-time">3 hari lalu</div>
+      </div>
+      <div class="tx-amount plus">+1 GIFNUR</div>
+    </div>
+
+    <div class="tx-item">
+      <div class="tx-dot" style="background:var(--vou)"></div>
+      <div class="tx-info">
+        <div class="tx-desc">Voucher Nur — Redeem Kreator</div>
+        <div class="tx-time">5 hari lalu</div>
+      </div>
+      <div class="tx-amount minus">−1 VOUCHER</div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="g-line"></div>
+    <p>Ekosistem mandiri tanpa ketergantungan pihak ke-3</p>
+    <div class="brand">✦ INDRAMAYU CLUB MAKRIFAT · 248 Member ✦</div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-icon" id="m-icon">🟡</div>
+    <div class="modal-title" id="m-title">KARA</div>
+    <div class="modal-sub" id="m-sub">Mata uang utama</div>
+    <div class="modal-val" id="m-val">1.250</div>
+    <div class="modal-unit" id="m-unit">KARA POIN</div>
+    <div class="modal-desc" id="m-desc">Deskripsi poin.</div>
+    <button class="modal-close" onclick="closeModal()">✕ Tutup</button>
+  </div>
+</div>
+
+<script>
+const poins = {
+  kara: {
+    icon: '🟡', title: 'KARA', sub: 'Mata Uang Utama Ekosistem',
+    val: '1.250', unit: 'KARA POIN', color: '#E8C060',
+    desc: 'KARA adalah mata uang utama Indramayu Club Makrifat. Diperoleh dari kontribusi aktif di 9 divisi ekosistem. Dirender oleh Alwi Output Engine secara otomatis. Tidak tergantung pada pihak ketiga manapun.'
+  },
+  nur: {
+    icon: '💠', title: 'Rp NUR', sub: 'Nilai Rupiah Internal',
+    val: '87.500', unit: 'RUPIAH NUR', color: '#60C8E8',
+    desc: 'Rp NUR adalah representasi nilai rupiah di dalam ekosistem IMC. Dikonversi dari KARA oleh sistem Alwi. Dapat digunakan untuk transaksi internal antar member tanpa melibatkan rekening bank eksternal.'
+  },
+  gif: {
+    icon: '🎁', title: 'GIFNUR', sub: 'Hadiah & Reward Member',
+    val: '3', unit: 'GIFT NUR', color: '#E860A8',
+    desc: 'GIFNUR adalah poin hadiah yang diberikan kepada member aktif dan berprestasi. Dirender Alwi berdasarkan aktivitas di divisi Kreator Digital, Diskusi, dan Komunikasi. Bisa ditukarkan dengan benefit eksklusif.'
+  },
+  vou: {
+    icon: '🎟️', title: 'VOUCHER NUR', sub: 'Voucher Redeem & Belanja',
+    val: '2', unit: 'VOUCHER', color: '#80E860',
+    desc: 'Voucher Nur adalah tiket digital yang bisa digunakan untuk redeem produk, layanan, atau keuntungan khusus dalam ekosistem Indramayu Club. Diterbitkan oleh Alwi dari divisi Bank Game dan Game Arisan.'
+  }
+};
+
+function openModal(type) {
+  const p = poins[type];
+  document.getElementById('m-icon').textContent = p.icon;
+  document.getElementById('m-title').textContent = p.title;
+  document.getElementById('m-title').style.color = p.color;
+  document.getElementById('m-sub').textContent = p.sub;
+  document.getElementById('m-val').textContent = p.val;
+  document.getElementById('m-val').style.color = p.color;
+  document.getElementById('m-unit').textContent = p.unit;
+  document.getElementById('m-desc').textContent = p.desc;
+  document.getElementById('modal-box').style.setProperty('--modal-color', p.color);
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal')) {
+    document.getElementById('modal').classList.remove('open');
+  }
+}
+</script>
+</body>
+</html>
+

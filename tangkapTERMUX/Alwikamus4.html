@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kamus Indramayu Club · Poin Nur Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Noto+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   RESET & VARIABEL UTAMA INDRAMAYU CLUB
+══════════════════════════════════════════ */
+:root {
+  --emas       : #c9a84c;
+  --emas-muda  : #f0d070;
+  --emas-tua   : #7a5c1e;
+  --hitam      : #0d0d0d;
+  --gelap      : #1a1408;
+  --kartu      : #1e1608;
+  --border     : #3a2c0a;
+  --teks       : #e8d5a0;
+  --teks-redup : #9a8050;
+  --hijau      : #1a6b3a;
+  
+  /* Nur Ecosystem Colors */
+  --nur-color  : #60c8e8;
+  --gif-color  : #e860a8;
+  --vou-color  : #80e860;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+  background: var(--hitam);
+  color: var(--teks);
+  padding-bottom: 80px; /* Jarak agar tidak tertutup footer */
+}
+
+/* ══════════════════════════════════════════
+   PANEL EKONOMI NUR
+══════════════════════════════════════════ */
+.panel-ekonomi-nur {
+  max-width: 800px;
+  margin: 15px auto 5px;
+  padding: 0 15px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+@media (max-width: 600px) {
+  .panel-ekonomi-nur { grid-template-columns: 1fr; }
+}
+.dompet-nur {
+  background: linear-gradient(135deg, var(--gelap), var(--kartu));
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  transition: all 0.3s ease;
+}
+.dompet-rp { border-color: var(--nur-color); }
+.dompet-gif { border-color: var(--gif-color); }
+.dompet-vou { border-color: var(--vou-color); }
+
+.dompet-nur h4 {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+.dompet-rp h4 { color: var(--nur-color); }
+.dompet-gif h4 { color: var(--gif-color); }
+.dompet-vou h4 { color: var(--vou-color); }
+
+.angka-saldo {
+  font-family: 'Cinzel', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+/* STATUS BAR / EMIT LOG */
+.status-bar {
+  max-width: 770px; margin: 10px auto; background: #111;
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 12px; font-size: 12px; color: var(--emas-muda);
+  text-align: center; font-family: monospace;
+}
+
+/* HEADER KAMUS ALWI */
+.header {
+  text-align: center;
+  padding: 25px 15px 15px;
+  background: linear-gradient(to bottom, var(--gelap), transparent);
+  position: relative;
+}
+.header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.8rem;
+  color: var(--emas);
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+.header p {
+  font-size: 12px;
+  color: var(--teks-redup);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+/* TOMBOL MUTE SUARA */
+.sound-toggle {
+  position: absolute;
+  top: 18px;
+  right: 15px;
+  background: var(--kartu);
+  border: 1px solid var(--border);
+  color: var(--emas-muda);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sound-toggle.muted {
+  opacity: 0.5;
+  border-color: #555;
+}
+
+/* ── KOLOM INPUT PENCARIAN & KOTAK VOUCHER ── */
+.search-box-container {
+  max-width: 800px;
+  margin: 10px auto;
+  padding: 0 15px;
+  display: flex;
+  gap: 8px;
+}
+.search-input {
+  flex: 1;
+  background: #111;
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+}
+.search-input:focus {
+  border-color: var(--emas);
+}
+.search-btn {
+  background: var(--emas-tua);
+  border: 1px solid var(--emas);
+  color: #fff;
+  padding: 0 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+#hasilBox {
+  max-width: 800px;
+  margin: 10px auto;
+  padding: 0 15px;
+}
+
+/* LIVE TICKER */
+.ticker {
+  background: var(--gelap);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-wrap {
+  display: inline-block;
+  padding-left: 100%;
+  animation: jalanteks 25s linear infinite;
+}
+.ticker-item {
+  display: inline-block;
+  padding: 0 20px;
+  font-size: 13px;
+  color: var(--emas-muda);
+}
+@keyframes jalanteks {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-100%, 0, 0); }
+}
+
+/* CHIPS FILTER */
+.scroller-kat {
+  max-width: 800px;
+  margin: 15px auto 5px;
+  padding: 0 15px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.scroller-kat::-webkit-scrollbar { display: none; }
+
+.filter-chip {
+  background: var(--kartu);
+  border: 1px solid var(--border);
+  color: var(--teks-redup);
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.filter-chip span {
+  background: rgba(0,0,0,0.4);
+  color: var(--emas);
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: bold;
+}
+.filter-chip.active {
+  background: var(--emas-tua);
+  border-color: var(--emas);
+  color: var(--emas-muda);
+}
+
+/* MAIN LIST KAMUS */
+.kamus-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 10px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.item-card {
+  background: linear-gradient(145deg, var(--kartu), #140f05);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  position: relative;
+  transition: transform 0.2s, border-color 0.2s;
+  cursor: pointer;
+}
+.item-card:hover {
+  border-color: var(--emas);
+  transform: translateX(3px);
+}
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+.kata-indramayu {
+  font-family: 'Cinzel', serif;
+  font-size: 1.15rem;
+  color: var(--emas-muda);
+  font-weight: 700;
+}
+.badge-kat {
+  font-size: 9px;
+  background: var(--gelap);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: var(--teks-redup);
+  text-transform: uppercase;
+}
+.arti-indo {
+  font-size: 13px;
+  color: #ccc;
+  line-height: 1.4;
+}
+
+/* ANIMASI PROPERTI KAMUS TERBANG */
+.fly-prop {
+  position: fixed;
+  z-index: 9999;
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: 20px;
+  pointer-events: none;
+  animation: terbangKeDompet 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+@keyframes terbangKeDompet {
+  0% { transform: translate(0,0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0.5); opacity: 0; }
+}
+
+/* ══════════════════════════════════════════
+   PROPERTI NUR AI MELAYANG (CSS FIXED)
+══════════════════════════════════════════ */
+.gifnur-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  text-align: center;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.nur-speech-bubble {
+  background: linear-gradient(135deg, var(--kartu), #0d0d0d);
+  border: 1px solid var(--emas);
+  color: var(--teks);
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  margin-bottom: 8px;
+  max-width: 160px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.6);
+  border-bottom-right-radius: 2px;
+  white-space: nowrap;
+}
+.gifnur-img {
+  width: 85px;
+  height: 85px;
+  filter: drop-shadow(0 0 12px var(--emas));
+  animation: nurTerbang 3s ease-in-out infinite;
+  cursor: pointer;
+  border-radius: 50%;
+}
+@keyframes nurTerbang {
+  0% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-15px) scale(1.05); }
+  100% { transform: translateY(0px) scale(1); }
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background: var(--gelap);
+  border-top: 1px solid var(--border);
+  margin-top: 30px;
+}
+</style>
+</head>
+<body>
+
+<div class="panel-ekonomi-nur">
+  <div class="dompet-nur dompet-rp" id="dompet-nur">
+    <h4>💠 RP NUR</h4>
+    <div class="angka-saldo" id="val-nur">Rp 0</div>
+  </div>
+  <div class="dompet-nur dompet-gif" id="dompet-gif">
+    <h4>🎁 GIF NUR</h4>
+    <div class="angka-saldo" id="val-gif">0 GIFT</div>
+  </div>
+  <div class="dompet-nur dompet-vou" id="dompet-vou">
+    <h4>🎟️ VOUCHER NUR</h4>
+    <div class="angka-saldo" id="val-vou">0 Pcs</div>
+  </div>
+</div>
+
+<div class="status-bar" id="statusBar">Menunggu manifestasi kata Alwi...</div>
+
+<div class="header">
+  <button class="sound-toggle" id="soundToggle" onclick="toggleSuara()" title="Matikan/nyalakan suara">🔊</button>
+  <h1>Kamus Indramayu</h1>
+  <p>Agent Alwi & Poin Nur Integration</p>
+</div>
+
+<!-- KOTAK PENCARIAN UTAMA -->
+<div class="search-box-container">
+  <input type="text" class="search-input" id="inputKata" placeholder="Ketik voucher (rpnur, koin, gif) atau cari kamus..." onkeyup="if(event.key==='Enter') cari()">
+  <button class="search-btn" onclick="cari()">CARI</button>
+</div>
+
+<!-- PENAMPUNG VOUCHER HADIAH -->
+<div id="hasilBox"></div>
+
+<div class="ticker">
+  <div class="ticker-wrap" id="tickerBox"></div>
+</div>
+
+<div class="scroller-kat" id="filterRow">
+  <div class="filter-chip active" id="chipAll" onclick="filterKat('Semua', this)">
+    📖 Semua <span id="totalChip">0</span>
+  </div>
+</div>
+
+<div class="kamus-container" id="kamusList"></div>
+
+<!-- Elemen Avatar Nur AI Melayang -->
+<div class="gifnur-container" id="gifNurContainer" onclick="ttsPlay('Hadir pak dulKohar. Sila masukkan kode voucher atau cari kata di kolom atas.', 'id')">
+  <div class="nur-speech-bubble" id="bubbleNur">Hadir pak dulKohar! 🤖</div>
+  <img src="https://i.gifer.com/ZKZg.gif" class="gifnur-img" alt="Nur AI">
+</div>
+
+<footer>
+  ✦ Indramayu Club Makrifat · Agent Alwi v2.0 ✦<br>
+  <span style="font-size:10px;opacity:0.5;margin-top:4px;display:block;">
+    Nguri-uri Budaya lan Basa Indramayu
+  </span>
+</footer>
+
+<script>
+// DATA UTAMA KAMUS ALWI
+const kamus = {
+  'reang':     { indo: 'Saya / Aku', kat: 'Kata Ganti' },
+  'ira':       { indo: 'Kamu / Anda', kat: 'Kata Ganti' },
+  'sira':      { indo: 'Kamu (lebih kasual)', kat: 'Kata Ganti' },
+  'deweke':    { indo: 'Dia', kat: 'Kata Ganti' },
+  'kita':      { indo: 'Kami / Kita', kat: 'Kata Ganti' },
+  'pira':      { indo: 'Berapa', kat: 'Kata Tanya' },
+  'sapa':      { indo: 'Siapa', kat: 'Kata Tanya' },
+  'apa':       { indo: 'Apa', kat: 'Kata Tanya' },
+  'mending':   { indo: 'Lebih baik', kat: 'Kata Sifat' },
+  'mengkonon': { indo: 'Begitu / Seperti itu', kat: 'Penunjuk' },
+  'mene':      { indo: 'Ke sini / Sini', kat: 'Penunjuk' },
+  'mana':      { indo: 'Ke sana / Sana', kat: 'Penunjuk' },
+  'mangan':    { indo: 'Makan', kat: 'Kata Kerja' },
+  'turu':      { indo: 'Tidur', kat: 'Kata Kerja' },
+  'mlaku':     { indo: 'Berjalan', kat: 'Kata Kerja' },
+  'balik':     { indo: 'Pulang / Kembali', kat: 'Kata Kerja' },
+  'teka':      { indo: 'Datang / Tiba', kat: 'Kata Kerja' },
+  'angger':    { indo: 'Setiap / Selalu', kat: 'Waktu' },
+  'bengen':    { indo: 'Dahulu / Dulu kala', kat: 'Waktu' },
+  'sekien':    { indo: 'Sekarang', kat: 'Waktu' },
+  'maning':    { indo: 'Lagi', kat: 'Partikel' },
+  'baen':      { indo: 'Saja', kat: 'Partikel' },
+  'bokat':     { indo: 'Barangkali / Siapa tahu', kat: 'Umum' },
+  'doyan':     { indo: 'Suka / Gemar (biasanya makanan)', kat: 'Kata Sifat' }
+};
+
+// INITIAL LOAD SALDO DARI LOCALSTORAGE
+let saldoNur = parseInt(localStorage.getItem('ic_saldo_nur')) || 0;
+let saldoGif = parseInt(localStorage.getItem('ic_saldo_gif')) || 0;
+let saldoVou = parseInt(localStorage.getItem('ic_saldo_vou')) || 0;
+
+// ══════════════════════════════════════════
+// ENGINE SUARA EFEK (WEB AUDIO API - TANPA FILE EKSTERNAL)
+// ══════════════════════════════════════════
+let audioCtx = null;
+let suaraAktif = (localStorage.getItem('ic_suara_aktif') !== 'off');
+
+function getAudioCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function nadaSuara(freq, durasi, tipe = 'sine', volume = 0.25, tunda = 0) {
+  if (!suaraAktif) return;
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = tipe;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime + tunda);
+    gain.gain.setValueAtTime(volume, ctx.currentTime + tunda);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + tunda + durasi);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime + tunda);
+    osc.stop(ctx.currentTime + tunda + durasi);
+  } catch (e) { /* abaikan jika audio diblokir browser */ }
+}
+
+// Efek klik kata di daftar kamus
+function sfxKlikKata() {
+  nadaSuara(880, 0.07, 'triangle', 0.2);
+}
+// Efek properti terbang menuju dompet
+function sfxTerbangPoin() {
+  nadaSuara(1100, 0.1, 'sine', 0.22);
+  nadaSuara(1500, 0.09, 'sine', 0.18, 0.07);
+}
+// Efek kode voucher terdeteksi
+function sfxVoucherTerdeteksi() {
+  nadaSuara(440, 0.09, 'sawtooth', 0.18);
+  nadaSuara(660, 0.13, 'sawtooth', 0.18, 0.09);
+}
+// Efek klaim hadiah sukses (cha-ching 3 nada naik)
+function sfxKlaimSukses() {
+  nadaSuara(523, 0.1, 'square', 0.22);
+  nadaSuara(659, 0.1, 'square', 0.22, 0.1);
+  nadaSuara(784, 0.16, 'square', 0.28, 0.2);
+}
+// Efek pilih filter chip
+function sfxPilihChip() {
+  nadaSuara(600, 0.05, 'sine', 0.15);
+}
+
+function toggleSuara() {
+  suaraAktif = !suaraAktif;
+  localStorage.setItem('ic_suara_aktif', suaraAktif ? 'on' : 'off');
+  const btn = document.getElementById('soundToggle');
+  btn.textContent = suaraAktif ? '🔊' : '🔇';
+  btn.classList.toggle('muted', !suaraAktif);
+  if (suaraAktif) nadaSuara(700, 0.06, 'sine', 0.2); // konfirmasi bunyi saat dinyalakan
+}
+
+// SISTEM SUARA (TEXT TO SPEECH) CADANGAN
+function ttsPlay(text, lang) {
+  if (!suaraAktif) return;
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang === 'id' ? 'id-ID' : 'en-US';
+    window.speechSynthesis.speak(utterance);
+  } else {
+    console.log("TTS play:", text);
+  }
+}
+
+function updateDisplaySaldo() {
+  document.getElementById('val-nur').textContent = `Rp ${saldoNur.toLocaleString('id-ID')}`;
+  document.getElementById('val-gif').textContent = `${saldoGif} GIFT`;
+  document.getElementById('val-vou').textContent = `${saldoVou} Pcs`;
+  
+  localStorage.setItem('ic_saldo_nur', saldoNur);
+  localStorage.setItem('ic_saldo_gif', saldoGif);
+  localStorage.setItem('ic_saldo_vou', saldoVou);
+}
+
+// FUNGSI UTAMA: CARI KATA ATAU DETEKSI VOUCHER (SUARA DULUAN)
+async function cari() {
+  const inp  = document.getElementById('inputKata');
+  const kata = inp.value.toLowerCase().trim();
+  if (!kata) return;
+
+  document.getElementById('hasilBox').innerHTML = ''; // Reset box hadiah sebelumnya
+
+  // ── DETEKSI KODE VOUCHER INDRAMAYU CLUB (ALUR: SUARA DULUAN ➔ BOX GIF NAIK) ──
+  if (kata.includes('rpnur') || kata.includes('gif') || kata.includes('koin') || kata.includes('voucher')) {
+    
+    // 1. Ganti teks bubble Nur melayang
+    const bubble = document.getElementById('bubbleNur');
+    if (bubble) bubble.textContent = "Voucher terdeteksi! 🎁";
+    
+    // 2. Bunyikan efek suara notifikasi + suara asisten Nur
+    sfxVoucherTerdeteksi();
+    ttsPlay('Mendeteksi kode hadiah. Mempersiapkan klaim properti digital menuju celengan.', 'id');
+
+    // 3. Setelah suara dipicu, baru tampilkan Box Gift Premium di atas
+    tampilBoxGiftICM(kata);
+    return; 
+  }
+
+  // ── PENCARIAN KAMUS BIASA ──
+  setStatus('🔍 Mencari "' + kata + '"...', '');
+  
+  if (kamus[kata]) {
+    const data = kamus[kata];
+    sfxKlikKata();
+    document.getElementById('hasilBox').innerHTML = `
+      <div class="item-card" style="border-color: var(--emas);">
+        <div class="card-top">
+          <div class="kata-indramayu" style="font-size:1.5rem;">${kata}</div>
+          <div class="badge-kat">${data.kat}</div>
+        </div>
+        <div class="arti-indo" style="font-size:16px; margin-top:8px;">Artinya: <b>${data.indo}</b></div>
+      </div>`;
+    setStatus('✅ Kata ditemukan!', 'ok');
+  } else {
+    document.getElementById('hasilBox').innerHTML = `<div class="status-bar" style="color:#ff6b6b">❌ Kata "${kata}" tidak ditemukan di kamus lokal.</div>`;
+    setStatus('Kata tidak ditemukan', '');
+  }
+}
+
+// ENGINE DISPLAY BOX VOUCHER HADIAH PREMIUM
+function tampilBoxGiftICM(kode) {
+  setStatus('🎫 Memvalidasi Voucher Digital...', 'info');
+  
+  let jenisHadiah = "GIFT RP-NUR DIGITAL";
+  let detailHadiah = "Pengaktifan lencana otomatis dan fitur roleplay spiritual Indramayu Club.";
+  let warnaTema = "#51cf66"; 
+  let bgTema = "linear-gradient(135deg, #122b15, #0d0d0d)";
+
+  if (kode.includes('koin')) {
+    jenisHadiah = "KOIN NUR EMAS (BONUS TRADING)";
+    detailHadiah = "Suntikan koin digital untuk saldo tambahan bermain atau disimpan di celengan member.";
+    warnaTema = "#f0d070"; 
+    bgTema = "linear-gradient(135deg, #2b220a, #0d0d0d)";
+  } else if (kode.includes('gif')) {
+    jenisHadiah = "ANIMASI GIF NUR PROPERTI TERBANG";
+    detailHadiah = "Sinkronisasi avatar melayang Nur AI agar aktif menetap di akun platform digital.";
+  }
+
+  document.getElementById('hasilBox').innerHTML = `
+    <div class="dompet-nur" style="border-color: ${warnaTema}; background: ${bgTema}; max-width:100%; text-align:left; margin-bottom: 20px; padding:20px;">
+      <div class="card-top">
+        <div class="kata-indramayu" style="color: ${warnaTema}; font-size: 1.3rem;">🎁 ${jenisHadiah}</div>
+        <div class="badge-kat" style="background: ${warnaTema}; color: #000; font-weight: bold; border:none;">VOUCHER AKTIF</div>
+      </div>
+      <hr style="border-color: ${warnaTema}40; margin: 10px 0;">
+      <div style="text-align: center; padding: 10px 0;">
+        <div style="font-size: 11px; color: var(--teks-redup); margin-bottom: 5px;">KODE KLAIM:</div>
+        <code style="font-size: 18px; color: var(--emas-muda); background: rgba(0,0,0,0.5); padding: 6px 14px; border-radius: 6px; border: 1px dashed ${warnaTema}; font-family: monospace;">
+          ${kode.toUpperCase()}
+        </code>
+      </div>
+      <p style="font-size: 13px; text-align: center; color: #ccc; margin: 15px 0 10px; line-height: 1.5;">
+        ${detailHadiah}
+      </p>
+      <hr style="border-color: ${warnaTema}40; margin: 10px 0;">
+      <div style="display: flex; gap: 8px; margin-top: 15px;">
+        <button style="flex: 1; font-size: 13px; padding: 10px; background: ${warnaTema}; color: #000; font-weight: bold; border: none; border-radius: 6px; cursor: pointer;" onclick="klaimVoucherKeGAS('${kode}')">
+          🚀 Ambil Hadiah
+        </button>
+        <button style="flex: 1; padding: 10px; background: #222; color: #fff; border: 1px solid #444; border-radius: 6px; cursor: pointer;" onclick="clearHasilVoucher()">Batal</button>
+      </div>
+    </div>`;
+}
+
+function klaimVoucherKeGAS(kode) {
+  setStatus('⚡ Menghubungkan ke Server Nur pusat...', 'info');
+  
+  setTimeout(() => {
+    setStatus('✅ ' + kode.toUpperCase() + ' Sukses Disinkronkan!', 'ok');
+    
+    // Inject saldo bonus ke dompet dashboard langsung secara instan
+    if(kode.includes('koin')) { saldoNur += 50000; }
+    else if(kode.includes('gif')) { saldoGif += 5; }
+    else { saldoVou += 1; }
+    
+    updateDisplaySaldo();
+    
+    const bubble = document.getElementById('bubbleNur');
+    if (bubble) bubble.textContent = "Sukses! 💰";
+    
+    sfxKlaimSukses();
+    ttsPlay('Klaim berhasil disetujui oleh server utama.', 'id');
+    alert('Sukses! Properti data voucher telah masuk ke database Indramayu Club.');
+    document.getElementById('hasilBox').innerHTML = '';
+  }, 1200);
+}
+
+function clearHasilVoucher() {
+  document.getElementById('hasilBox').innerHTML = '';
+  const bubble = document.getElementById('bubbleNur');
+  if (bubble) bubble.textContent = "Hadir pak dulKohar! 🤖";
+  setStatus('Siap', 'ok');
+}
+
+function setStatus(pesan, tipe) {
+  document.getElementById('statusBar').textContent = pesan;
+}
+
+// FORMAT TICKER MARQUEE RUNNING TEXT
+function initTicker() {
+  const box = document.getElementById('tickerBox');
+  let gabung = "";
+  Object.entries(kamus).slice(0, 10).forEach(([k, v]) => {
+    gabung += `<span class="ticker-item">✦ <b>${k}</b>: ${v.indo}</span>`;
+  });
+  box.innerHTML = gabung + gabung;
+}
+
+// GENERATE DYNAMIC LIST DAN EVENT KLIK TERBANG POIN
+let katAktif = 'Semua';
+
+function renderKamus() {
+  const container = document.getElementById('kamusList');
+  container.innerHTML = "";
+
+  Object.entries(kamus).forEach(([jawa, data]) => {
+    if (katAktif !== 'Semua' && data.kat !== katAktif) return;
+
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="kata-indramayu">${jawa}</div>
+        <div class="badge-kat">${data.kat}</div>
+      </div>
+      <div class="arti-indo">${data.indo}</div>
+    `;
+
+    card.onclick = (e) => triggerTerbangPoin(e, jawa, data.kat);
+    container.appendChild(card);
+  });
+}
+
+// CORE ENGINE: PROPERTI TERBANG KE DOMPET SALDO
+function triggerTerbangPoin(event, kata, kategori) {
+  sfxKlikKata();
+
+  const tipeArray = ['nur', 'gif', 'vou'];
+  const tipeAcak = tipeArray[Math.floor(Math.random() * tipeArray.length)];
+  
+  let emoji = "💠";
+  let targetId = "dompet-nur";
+  let penambahan = 0;
+  let pesanStatus = "";
+
+  if (tipeAcak === 'nur') {
+    emoji = "💠 Rp NUR";
+    targetId = "dompet-nur";
+    penambahan = 15000;
+    saldoNur += penambahan;
+    pesanStatus = `Manifestasi '${kata}' memicu bonus +Rp 15.000 NUR!`;
+  } else if (tipeAcak === 'gif') {
+    emoji = "🎁 GIFNUR";
+    targetId = "dompet-gif";
+    penambahan = 1;
+    saldoGif += penambahan;
+    pesanStatus = `Kosakata '${kata}' berhasil dikonversi menjadi +1 GIFNUR!`;
+  } else {
+    emoji = "🎟️ VOUCHER";
+    targetId = "dompet-vou";
+    penambahan = 1;
+    saldoVou += penambahan;
+    pesanStatus = `Sandi Alwi '${kata}' mengaktifkan +1 VOUCHER NUR!`;
+  }
+
+  const targetEl = document.getElementById(targetId);
+  const tRect = targetEl.getBoundingClientRect();
+
+  const fly = document.createElement('div');
+  fly.className = 'fly-prop';
+  fly.textContent = emoji;
+  fly.style.color = (tipeAcak === 'nur') ? 'var(--nur-color)' : (tipeAcak === 'gif') ? 'var(--gif-color)' : 'var(--vou-color)';
+  fly.style.left = event.clientX + 'px';
+  fly.style.top = event.clientY + 'px';
+
+  const deltaX = (tRect.left + tRect.width / 2) - event.clientX;
+  const deltaY = (tRect.top + tRect.height / 2) - event.clientY;
+
+  fly.style.setProperty('--dx', deltaX + 'px');
+  fly.style.setProperty('--dy', deltaY + 'px');
+
+  document.body.appendChild(fly);
+  sfxTerbangPoin();
+
+  setTimeout(() => {
+    fly.remove();
+    updateDisplaySaldo();
+    document.getElementById('statusBar').textContent = `[ONLINE FIX] ${pesanStatus}`;
+  }, 750);
+}
+
+// CHIPS FILTER GENERATOR
+function initFilter() {
+  const stats = {};
+  const iconMap = {
+    'Kata Ganti':'👤','Kata Tanya':'❓','Penunjuk':'👉',
+    'Kata Kerja':'🏃','Kata Sifat':'🎨','Waktu':'🕐','Umum':'📖','Partikel':'💬'
+  };
+
+  Object.values(kamus).forEach(v => { stats[v.kat] = (stats[v.kat] || 0) + 1; });
+  document.getElementById('totalChip').textContent = Object.keys(kamus).length;
+
+  const row = document.getElementById('filterRow');
+  Object.entries(stats).forEach(([k, n]) => {
+    const icon = iconMap[k] || '📝';
+    const div = document.createElement('div');
+    div.className = 'filter-chip';
+    div.innerHTML = `${icon} ${k} <span>${n}</span>`;
+    div.onclick = () => filterKat(k, div);
+    row.appendChild(div);
+  });
+}
+
+function filterKat(kategori, element) {
+  sfxPilihChip();
+  katAktif = kategori;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  element.classList.add('active');
+  renderKamus();
+}
+
+// RUNTIME INITIALIZATION
+window.onload = () => {
+  updateDisplaySaldo();
+  initTicker();
+  initFilter();
+  renderKamus();
+
+  // Set tampilan tombol suara sesuai preferensi tersimpan
+  const btn = document.getElementById('soundToggle');
+  btn.textContent = suaraAktif ? '🔊' : '🔇';
+  btn.classList.toggle('muted', !suaraAktif);
+};
+</script>
+</body>
+</html>
+

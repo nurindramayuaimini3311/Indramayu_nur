@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIVE PROMOSI — 4 Slot</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --emas:#d97706; --emas-terang:#f59e0b;
+  --border:#3b82f6; --border-sub:#cbd5e1;
+  --text-utama:#0f172a; --text-biru:#1e40af; --hijau:#16a34a;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:"Inter",sans-serif;min-height:100vh;background:linear-gradient(180deg,#ffffff 0%,#eef6ff 100%);color:var(--text-utama)}
+.topbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:2px solid var(--border-sub);padding:10px 14px;display:flex;align-items:center;gap:10px}
+.btn-home{display:flex;align-items:center;gap:6px;background:var(--emas-terang);color:#fff;border:none;border-radius:10px;padding:9px 14px;font-weight:900;font-size:13px;text-decoration:none;box-shadow:0 3px 8px rgba(245,158,11,0.35)}
+.btn-home:active{transform:scale(0.96)}
+.topbar h1{font-family:"Cinzel",serif;font-size:15px;color:var(--text-biru);flex:1;text-align:center}
+#wrap{max-width:800px;margin:0 auto;padding:14px 12px 40px}
+.server-box{background:#fff;border:2px solid #bfdbfe;border-radius:12px;padding:9px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.s-dot{width:10px;height:10px;border-radius:50%;background:var(--hijau);flex-shrink:0;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.s-text{color:var(--text-biru);font-weight:800;flex:1;font-size:12px}
+.video-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.video-slot{position:relative;width:100%;padding-top:56.25%;background:#000;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.12);border:2.5px solid var(--ink)}
+.video-slot iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+@media (max-width:480px){.video-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="btn-home" href="../index.html" id="homeBtn">🏠 Home</a>
+  <h1>👑 INDRAMAYU CLUB — LIVE</h1>
+</div>
+
+<div id="wrap">
+  <div class="server-box"><div class="s-dot"></div><div class="s-text">🟢 Server Online • 4 Slot Live</div></div>
+
+  <div class="video-grid">
+    <div class="video-slot">
+      <iframe src="slot-1-anda.html?id=live1&nama=Anda&ava=🙂" allow="camera;microphone;autoplay"></iframe>
+    </div>
+    <div class="video-slot">
+      <iframe src="slot-2-imah.html?id=live1&nama=Imah%20Azzah&ava=👸" allow="camera;microphone;autoplay"></iframe>
+    </div>
+    <div class="video-slot">
+      <iframe src="slot-3-nur.html?id=live1&nama=Nur%20Generator&ava=🤖" allow="camera;microphone;autoplay"></iframe>
+    </div>
+    <div class="video-slot">
+      <iframe src="slot-4-club.html?id=live1&nama=Indramayu%20Club&ava=🕌" allow="camera;microphone;autoplay"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+const URL_HOME = "../index.html";
+document.getElementById("homeBtn").setAttribute("href", URL_HOME);
+</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("../../sw.js").catch(function(){})}</script></body>
+</html>

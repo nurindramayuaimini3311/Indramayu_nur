@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<title>Indramayu Club Sultan Portal - Makrifat Grand Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --hutan-tua: #06140b;
+  --daun: #1d6b3a;
+  --zamrud: #27ae60;
+  --emas: #d4af37;
+  --emas-terang: #ffd700;
+  --emas-muda: #f7e27b;
+  --batik: #0e2415;
+  --kartu: #0f1f15;
+  --teks: #fffdf2;
+  --abu-emas: #c9a227;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: repeating-linear-gradient(45deg, var(--batik) 0px, var(--batik) 20px, var(--hutan-tua) 20px, var(--hutan-tua) 40px), var(--hutan-tua);
+  min-height: 100vh; color: var(--teks); overflow-x: hidden;
+}
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background: radial-gradient(circle at 20% 10%, rgba(212,175,55,0.15) 0%, transparent 40%),
+              radial-gradient(circle at 80% 90%, rgba(247,226,123,0.1) 0%, transparent 40%);
+  pointer-events: none; z-index: 0;
+}
+
+.portal-header { text-align: center; padding: 32px 24px 24px; position: relative; z-index: 1; }
+.brand-logo {
+  width: 180px; height: 180px; border-radius: 24px; object-fit: cover;
+  box-shadow: 0 0 30px rgba(212,175,55,0.5), inset 0 0 20px rgba(255,215,0,0.2);
+  border: 3px solid var(--emas-terang); margin-bottom: 16px;
+}
+.portal-header h1 {
+  font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(1.6rem, 5vw, 2.4rem);
+  color: var(--emas-terang); letter-spacing: 0.08em;
+  text-shadow: 0 0 20px rgba(212,175,55,0.8), 0 2px 10px #000;
+}
+.portal-header p { color: var(--emas-muda); font-size: 0.9rem; margin-top: 8px; letter-spacing: 0.2em; font-weight: 600; }
+.portal-header::after { content: '◆ ◇ ◆'; display: block; color: var(--emas); margin: 14px auto 0; font-size: 1.2rem; letter-spacing: 0.5em; }
+
+/* PANEL TEMBAK LIVE TRANSMISI */
+.panel-kendali { max-width: 1400px; margin: 0 auto 20px; padding: 0 28px; position: relative; z-index: 1; }
+.box-kendali { background: linear-gradient(145deg, #112d1b, #07170e); border: 2px solid var(--emas-terang); border-radius: 15px; padding: 20px; box-shadow: 0 0 25px rgba(212,175,55,0.3); }
+.box-kendali h2 { font-family: 'Cinzel', serif; color: var(--emas-terang); font-size: 1.2rem; margin-bottom: 15px; text-align: center; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.input-sultan { background: #0a1811; border: 1.5px solid var(--emas); border-radius: 8px; padding: 10px; color: var(--teks); font-size: 13px; outline: none; }
+.input-sultan:focus { border-color: var(--emas-terang); box-shadow: 0 0 10px rgba(255,215,0,0.3); }
+.btn-tembak { background: linear-gradient(135deg, var(--emas), var(--emas-terang)); color: var(--hutan-tua); border: none; border-radius: 8px; font-weight: 800; cursor: pointer; transition: all 0.2s; }
+.btn-tembak:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 0 15px var(--emas-terang); }
+
+/* GRID UTAMA STREAMING */
+.grid-streaming { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 28px; max-width: 1400px; margin: 0 auto; padding: 0 28px 40px; position: relative; z-index: 1; }
+@media (max-width: 720px) { .grid-streaming { grid-template-columns: 1fr; padding: 0 14px 40px; } }
+
+.kartu { background: linear-gradient(145deg, var(--kartu), #14291c); border-radius: 20px; overflow: hidden; box-shadow: 0 0 0 2px var(--emas), 0 0 25px rgba(212,175,55,0.3), 0 12px 35px rgba(0,0,0,0.6); transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative; border: 1px solid rgba(212,175,55,0.4); }
+.kartu-besar { grid-column: span 2; background: linear-gradient(145deg, #112d1b, #07170e); box-shadow: 0 0 0 3px var(--emas-terang), 0 0 45px rgba(255,215,0,0.4); border: 2px solid var(--emas-terang); }
+@media (max-width: 900px) { .kartu-besar { grid-column: span 1; } }
+.kartu::before { content: '❖'; position: absolute; top: 6px; right: 10px; color: var(--emas-terang); font-size: 18px; opacity: 0.7; z-index: 4; }
+.kartu:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 0 0 3px var(--emas-terang), 0 0 40px rgba(255,215,0,0.5); }
+.kartu-strip { height: 5px; background: linear-gradient(90deg, var(--emas) 0%, var(--emas-terang) 50%, var(--emas) 100%); background-size: 200% 100%; animation: geser 2.5s linear infinite; }
+@keyframes geser { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
+
+.kartu-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px 12px; }
+.kartu-head h3 { font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--emas-muda); text-shadow: 0 0 10px rgba(212,175,55,0.5); }
+.badge-level { background: linear-gradient(135deg, var(--emas), var(--emas-terang)); color: var(--hutan-tua); font-size: 10px; font-weight: 900; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.1em; }
+
+.avatar-3d { width: 100%; aspect-ratio: 16 / 9; background: #000; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; border-top: 2px solid var(--emas); border-bottom: 2px solid var(--emas); }
+.kartu-besar .avatar-3d { aspect-ratio: 21 / 9; }
+@media (max-width: 720px) { .kartu-besar .avatar-3d { aspect-ratio: 16 / 9; } }
+.avatar-3d img, .avatar-3d iframe, .avatar-3d video { width: 100%; height: 100%; object-fit: cover; }
+.avatar-3d iframe { border: none; }
+
+.gender-tag { position: absolute; bottom: 8px; right: 8px; background: linear-gradient(135deg, var(--emas), var(--emas-terang)); color: var(--hutan-tua); font-size: 10px; font-weight: 900; padding: 4px 9px; border-radius: 6px; z-index: 2; }
+.live-badge { position: absolute; top: 8px; left: 8px; background: linear-gradient(135deg, #ff3b3b, #ff6b6b); color: #fff; font-size: 10px; font-weight: 900; padding: 4px 9px; border-radius: 6px; animation: denyut 1.2s ease-in-out infinite; z-index: 2; box-shadow: 0 0 12px rgba(255,59,59,0.6); }
+@keyframes denyut { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.7; } }
+
+.info-panel { margin: 14px 16px; background: linear-gradient(135deg, #14291c, #1a3323); border: 1.5px solid var(--emas); border-radius: 10px; padding: 10px 14px; font-size: 12px; }
+.baris { display: flex; justify-content: space-between; padding: 4px 0; }
+.label-info { color: var(--abu-emas); }
+.saldo-nilai { color: var(--emas-terang); font-weight: 900; font-size: 14px; text-shadow: 0 0 8px rgba(255,215,0,0.6); }
+.komentar-textarea { width: 100%; height: 70px; background: #0a1811; border: 1.5px dashed var(--emas); border-radius: 8px; padding: 8px; font-size: 12px; color: var(--emas-muda); resize: none; font-family: monospace; }
+
+/* UTALITAS TOMBOL AKSI KONTROL */
+.tombol-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 16px 18px; }
+.btn-aksi { border: 1.5px solid var(--emas); padding: 11px 4px; border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s ease; text-align: center; }
+.btn-aksi:hover { transform: scale(1.08); filter: brightness(1.2); }
+.btn-bom { background: linear-gradient(135deg, #8b0000, #c0392b); color: #ffd700; border-color: #ffd700; }
+.btn-sandal { background: linear-gradient(135deg, #2c3e50, #34495e); color: var(--emas-terang); }
+.btn-gif { background: linear-gradient(135deg, var(--emas), var(--emas-terang)); color: var(--hutan-tua); }
+.btn-vchmur { background: linear-gradient(135deg, #6a0dad, #9b59b6); color: #ffd700; border-color: #ffd700; }
+
+/* TOAST & EFFECT */
+.toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+.toast { background: linear-gradient(135deg, var(--hutan-tua), var(--kartu)); color: var(--emas-terang); border: 2px solid var(--emas); border-radius: 12px; padding: 12px 18px; font-size: 13px; font-weight: 700; box-shadow: 0 0 20px rgba(212,175,55,0.4); animation: masuk 0.3s ease forwards; }
+@keyframes masuk { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+
+.properti-fly { position: fixed; font-size: 38px; z-index: 999; pointer-events: none; filter: drop-shadow(0 0 8px var(--emas-terang)); animation: terbang 1.2s cubic-bezier(.17,.67,.48,1) forwards; }
+@keyframes terbang { 0% { transform: translate(0, 0) scale(0.5) rotate(0deg); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) scale(1.4) rotate(1080deg); opacity: 0; } }
+.hit-effect { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 48px; animation: pop 0.6s ease forwards; filter: drop-shadow(0 0 15px var(--emas-terang)); pointer-events: none; z-index: 3; }
+@keyframes pop { 0% { transform: translate(-50%, -50%) scale(0); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; } }
+
+/* AULA KEMENANGAN SULTAN */
+.ruangan-putih { max-width: 1400px; margin: 0 auto 60px; padding: 0 28px; position: relative; z-index: 1; }
+.kartu-putih { background: linear-gradient(145deg, #1a1a1a, #0d0d0d); border-radius: 22px; box-shadow: 0 0 0 3px var(--emas), 0 0 40px rgba(212,175,55,0.4); border: 1px solid var(--emas-terang); overflow: hidden; color: var(--emas-muda); }
+.kartu-putih-head { background: linear-gradient(135deg, var(--emas), var(--emas-terang)); padding: 20px; text-align: center; border-bottom: 2px solid var(--emas-terang); }
+.kartu-putih-head h2 { font-family: 'Cinzel', serif; font-weight: 900; color: var(--hutan-tua); font-size: 1.3rem; letter-spacing: 0.1em; }
+.pemenang-banner { font-size: 1.7rem; font-weight: 900; letter-spacing: 0.15em; margin-top: 4px; color: var(--hutan-tua); animation: glow 1.2s ease-in-out infinite alternate; }
+@keyframes glow { from { text-shadow: 0 0 10px #fff, 0 0 20px var(--emas-terang); } to { text-shadow: 0 0 20px #fff, 0 0 35px var(--emas-terang); } }
+.komentar-publik-boks { padding: 20px; }
+.komentar-publik-textarea { width: 100%; height: 100px; border: 2px solid var(--emas); border-radius: 12px; padding: 12px; font-size: 14px; background: #0a0a0a; color: var(--emas-muda); resize: none; outline: none; }
+.btn-publish { width: 100%; margin-top: 14px; padding: 15px; background: linear-gradient(135deg, var(--emas), var(--emas-terang)); color: var(--hutan-tua); border: none; border-radius: 12px; font-size: 16px; font-weight: 900; cursor: pointer; box-shadow: 0 0 20px rgba(212,175,55,0.5); transition: all 0.2s; }
+.btn-publish:hover { transform: translateY(-3px); box-shadow: 0 0 30px rgba(255,215,0,0.7); }
+.feed-komentar { padding: 0 20px 20px; max-height: 250px; overflow-y: auto; }
+.feed-item { background: #121212; border-left: 4px solid var(--emas-terang); padding: 12px 14px; margin-bottom: 10px; border-radius: 8px; font-size: 13px; color: var(--emas-muda); }
+</style>
+</head>
+<body>
+
+<div class="portal-header">
+  <img src="1000046603.jpg" alt="Indramayu Club Logo" class="brand-logo">
+  <h1>🌿 INDRAMAYU CLUB SULTAN</h1>
+  <p>MAKRIFAT GOLD EDITION | 10 TOTAL ROOMS ACTIVE</p>
+</div>
+
+<!-- PANEL TRANSMISI LIVE UTAMA -->
+<div class="panel-kendali">
+  <div class="box-kendali">
+    <h2>⚡ PANEL UTAMA TRANSMISI LIVE</h2>
+    <div class="form-grid">
+      <select class="input-sultan" id="pilihRoom">
+        <option value="M001">Room M001 (Bang Jago)</option>
+        <option value="M002">Room M002 (Kang Alam)</option>
+        <option value="M003">Room M003 (Neng Sinar)</option>
+        <option value="M004">Room M004 (Teh Cahaya)</option>
+      </select>
+      <select class="input-sultan" id="pilihPlatform">
+        <option value="YT">YOUTUBE (ID Embed)</option>
+        <option value="TT">TIKTOK (Live Embed ID)</option>
+        <option value="IG">INSTAGRAM (Live URL)</option>
+      </select>
+      <input type="text" class="input-sultan" id="idTargetLive" placeholder="Masukkan ID Video / Username">
+      <input type="password" class="input-sultan" id="passOtoritas" placeholder="Kode Akses Utama Nur">
+      <button class="btn-tembak" onclick="eksekusiTembak()">Tembak Transmisi  🚀</button>
+    </div>
+  </div>
+</div>
+
+<div class="grid-streaming">
+<!-- ======================= 6 ROOM SULTAN SUPREME & VIP ======================= -->
+<!-- M005 SULTAN SUPREME (LELAKI) -->
+<div class="kartu kartu-besar" id="room-M005">
+<div class="kartu-strip"></div>
+<div class="kartu-head"><h3>👑 Raden Agung Nur</h3><span class="badge-level">SULTAN SUPREME</span></div>
+<div class="avatar-3d" id="target-M005">
+<span class="live-badge">● LIVE ULTRA</span>
+<img src="https://i.imgur.com/8z5t9uL.png" alt="Avatar 3D Lelaki 5">
+<span class="gender-tag">♂ LELAKI</span>
+</div>
+<div class="info-panel"><div class="baris"><span class="label-info">🆔 ID Member</span><span>M005</span></div><div class="baris"><span class="label-info">💰 Saldo RpNur</span><span class="saldo-nilai" id="saldo-M005">Rp 0</span></div></div>
+<div><textarea class="komentar-textarea" id="text-M005" readonly placeholder="Log manifest emas..."></textarea></div>
+<div class="tombol-grid"><button class="btn-aksi btn-bom" onclick="lemparProperti('M005','💣',25000)">💣 Bom</button><button class="btn-aksi btn-sandal" onclick="lemparProperti('M005','🩴',10000)">🩴 Sendal</button><button class="btn-aksi btn-gif" onclick="lemparProperti('M005','🎁',5000)">🎁 Gif</button><button class="btn-aksi btn-vchmur" onclick="lemparProperti('M005','🪙',2000)">🪙 Coin</button></div>
+</div>
+
+<!-- M006 SULTAN SUPREME (PEREMPUAN) -->
+<div class="kartu kartu-besar" id="room-M006">
+<div class="kartu-strip"></div>
+<div class="kartu-head"><h3>👑 Ratu Arum Makrifat</h3><span class="badge-level">SULTAN SUPREME</span></div>
+<div class="avatar-3d" id="target-M006">
+<span class="live-badge">● LIVE ULTRA</span>
+<img src="https://i.imgur.com/V2kQb9F.png" alt="Avatar 3D Perempuan 6">
+<span class="gender-tag">♀ PEREMPUAN</span>
+</div>
+<div class="info-panel"><div class="baris"><span class="label-info">🆔 ID Member</span><span>M006</span></div><div class="baris"><span class="label-info">💰 Saldo RpNur</span><span class="saldo-nilai" id="saldo-M006">Rp 0</span></div></div>
+<div><textarea class="komentar-textarea" id="text-M006" readonly placeholder="Log manifest emas..."></textarea></div>
+<div class="tombol-grid"><button class="btn-aksi btn-bom" onclick="lemparProperti('M006','💣',25000)">💣 Bom</button><button class="btn-aksi btn-sandal" onclick="lemparProperti('M006','🩴',10000)">🩴 Sendal</button><button class="btn-aksi btn-gif" onclick="lemparProperti('M006','🎁',5000)">🎁 Gif</button><button class="btn-aksi btn-vchmur" onclick="lemparProperti('M006','🪙',2000)">🪙 Coin</button></div>
+</div>
+
+<!-- M007 SULTAN NATIVE / LOCAL STORAGE LAYER (LELAKI) -->
+<div class="kartu kartu-besar" id="room-M007">
+  <div class="kartu-strip"></div>
+  <div class="kartu-head"><h3>👑 Pemutar Mandiri Sultan (Gusti Arya)</h3><span class="badge-level">LOCAL STORAGE VIP</span></div>
+  <div class="avatar-3d" id="target-M007">
+    <div id="placeholder-M007" style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #0a1811; color: var(--emas-muda); text-align: center; font-size: 13px;">
+      <span style="font-size: 30px; margin-bottom: 8px;">🎬</span> Folder HP belum termuat.
+    </div>
+    <video id="video-lokal-M007" controls autoplay muted loop playsinline style="width:100%; height:100%; display:none;"></video>
+    <span class="gender-tag">♂ LELAKI</span>
+  </div>
+  <div class="info-panel">
+    <div class="baris"><span class="label-info">📂 File</span><span id="nama-file-M007" style="color:var(--emas-terang);">Kosong</span></div>
+    <div class="baris"><span class="label-info">💰 Saldo RpNur</span><span class="saldo-nilai" id="saldo-M007">Rp 0</span></div>
+  </div>
+  <input type="file" id="file-picker-M007" accept="video/*" style="display: none;" onchange="muatVideoLokal(this, 'M007')">
+  <div class="tombol-grid" style="grid-template-columns: 1fr; padding-bottom: 8px;">
+    <button class="btn-aksi" style="background: linear-gradient(135deg, var(--daun), var(--zamrud)); color: #fff; border: 1px solid var(--emas-terang); font-family: 'Cinzel', serif;" onclick="document.getElementById('file-picker-M007').click()">
+      📂 PILIH FOLDER / VIDEO HP
+    </button>
+  </div>
+  <div style="padding: 0 14px 10px;"><textarea class="komentar-textarea" id="text-M007" readonly placeholder="Log storage..."></textarea></div>
+  <div class="tombol-grid">
+    <button class="btn-aksi btn-bom" onclick="lemparProperti('M007','💣',25000)">💣 Bom</button>
+    <button class="btn-aksi btn-sandal" onclick="lemparProperti('M007','🩴',10000)">🩴 Sendal</button>
+    <button class="btn-aksi btn-gif" onclick="lemparProperti('M007','🎁',5000)">🎁 Gif</button>
+    <button class="btn-aksi btn-vchmur" onclick="lemparProperti('M007','🪙',2000)">🪙 Coin</button>
+  </div>
+</div>
+
+<!-- M008 SULTAN VIP (PEREMPUAN) -->
+<div class="kartu kartu-besar" id="room-M008">
+<div class="kartu-strip"></div>
+<div class="kartu-head"><h3>👑 Nyai Sekar</h3><span class="badge-level">SULTAN VIP</span></div>
+<div class="avatar-3d" id="target-M008">
+<span class="live-badge">● LIVE</span>
+<img src="https://i.imgur.com/pK8r5Tq.png" alt="Avatar 3D Perempuan 8">
+<span class="gender-tag">♀ PEREMPUAN</span>
+</div>
+<div class="info-panel"><div class="baris"><span class="label-info">🆔 ID Member</span><span>M008</span></div><div class="baris"><span class="label-info">💰 Saldo RpNur</span><span class="saldo-nilai" id="saldo-M008">Rp 0</span></div></div>
+<div><textarea class="komentar-textarea" id="text-M008" readonly placeholder="Log manifest emas..."></textarea></div>
+<div class="tombol-grid"><button class="btn-aksi btn-bom" onclick="lemparProperti('M008','💣',25000)">💣 Bom</button><button class="btn-aksi btn-sandal" onclick="lemparProperti('M008','🩴',10000)">🩴 Sendal</button><button class="btn-aksi btn-gif" onclick="lemparProperti('M008','🎁',5000)">🎁 Gif</button><button class="btn-aksi btn-vchmur" onclick="lemparProperti('M008','🪙',2000)">🪙 Coin</button></div>
+</div>
+
+<!-- M009 SULTAN VIP (LELAKI) -->
+<div class="kartu kartu-besar" id="room-M009">
+<div class="kartu-strip"></div>
+<div class="kartu-head"><h3>👑 Pangeran Wijaya</h3><span class="badge-level">SULTAN VIP</span></div>
+<div class="avatar-3d" id="target-M009">
+<span class="live-badge">● LIVE</span>
+<img src="https://i.imgur.com/8z5t9uL.png" alt="Avatar 3D Lelaki 9">
+<span class="gender-tag">♂ LELAKI</span>
+</div>
+<div class="info-panel"><div class="baris"><span class="label-info">🆔 ID Member</span><span>M009</span></div><div class="baris"><span class="label-info">💰 Saldo RpNur</span><span class="saldo-nilai" id="saldo-M009">Rp 0</span></div></div>
+<div><textarea class="komentar-textarea" id="text-M009" readonly placeholder="Log manifest emas..."></textarea></div>
+<div class="tombol-grid"><button class="btn-aksi btn-bom" onclick="lemparProperti('M009','💣',25000)">💣 Bom</button><button class="btn-aksi btn-sandal" onclick="lemparProperti('M009','🩴',10000)">🩴 Sendal</button><button class="btn-aksi btn-gif" onclick="lemparProperti('M009','🎁',5000)">🎁 Gif</button><button class="btn-aksi btn-vchmur" onclick="lemparProperti('M009','🪙',2000)">🪙 Coin</button></div>
+</div>
+
+<!-- M010 SULTAN VIP (PEREMPUAN) -->
+<div class="kartu kartu-besar" id="room-M010">
+<div class="kartu-strip"></div>
+<div class="kartu-head"><h3>👑 Putri Larasati</h3><span class="badge-level">SULTAN VIP</span></div>
+<div class="avatar-3d" id="target-M010">
+<span class="live-badge">● LIVE</span>
+<img src="https://i.imgur.com/V2kQb9F.png" alt="Avatar 3D Perempuan 10">
+<span class="gender-tag">♀ PEREMPUAN</span>
+</div>
+<div class="info-panel"><div class="baris"><span class="label-info">🆔 ID Member</span><span>M010</span></div><div class="baris"><span class="label-info">💰 Saldo RpNur</span><span class="saldo-nilai" id="saldo-M010">Rp 0</span></div></div>
+<div><textarea class="komentar-textarea" id="text-M010" readonly placeholder="Log manifest emas..."></textarea></div>
+<div class="tombol-grid"><button class="btn-aksi btn-bom" onclick="lemparProperti('M010','💣',25000)">💣 Bom</button><button class="btn-aksi btn-sandal" onclick="lemparProperti('M010','🩴',10000)">🩴 Sendal</button><button class="btn-aksi btn-gif" onclick="lemparProperti('M010','🎁',5000)">🎁 Gif</button><button class="btn-aksi btn-vchmur" onclick="lemparProperti('M010','🪙',2000)">🪙 Coin</button></div>
+</div>
+
+
+<!-- ======================= 4 KANAL EMBED TRANSMISI STANDAR ======================= -->
+<!-- M001 PLATINUM TRANSMISSION -->
+<div class="kartu" id="room-M001">
+<div class="kartu-strip"></div>
+<div class="kartu-head"><h3>👨‍🎤 Bang Jago Nur</h3><span class="badge-level">PLATINUM</span></div>
+<div class="avatar-3d" id="target-M001">
+<span class="live-badge">● LIVE PORTAL</span>
+<iframe id="frame-M001" src="https://www.youtube.com/embed/jNQXAC9IVRw" allowfullscreen></iframe>
+</div>
+<div class="info-panel"><div class="baris"><span class="label-info">🆔 ID / Link</span><span>M001</span></div><div class="baris"><span class="label-info">💰 Saldo RpNur</span><span class="saldo-nilai" id="saldo-M001">Rp 0</span></div></div>
+<div><textarea class="komentar-textarea" id="text-M001" readonly placeholder="Log aktivitas..."></textarea></div>
+<div class="tombol-grid"><button class="btn-aksi btn-bom" onclick="lemparProperti('M001','💣',10000)">💣 Bom</button><button class="btn-aksi btn-sandal" onclick="lemparProperti('M001','🩴',5000)">🩴 Sandal</button><button class="btn-aksi btn-gif" onclick="lemparProperti('M001','🎁',2500)">🎁 Gif</button><button class="btn-aksi btn-vchmur" onclick="lemparProperti('M001','🎫',500)"> 🎫 Vch</button></div>
+</div>
+
+<!-- M002 GOLD TRANSMISSION -->
+<div class="kartu" id="room-M002">
+<div class="kartu-strip"></div>
+<div class="kartu-head"><h3>👨‍💻 Kang Alam</h3><span class="badge-level">GOLD</span></div>
+<div class="avatar-3d" id="target-M002">
+<span class="live-badge">● LIVE PORTAL</span>
+<iframe id="frame-M002" src="https://www.tiktok.com/embed/live/PASTE_ID" allowfullscreen></iframe>
+</div>
+<div class="info-panel"><div class="baris"><span class="label-info">🆔 ID / Link</span><span>M002</span></div><div class="baris"><span class="label-info">💰 Saldo RpNur</span><span class="saldo-nilai" id="saldo-M002">Rp 0</span></div></div>
+<div><textarea class="komentar-textarea" id="text-M002" readonly placeholder="Log aktivitas..."></textarea></div>
+<div class="tombol-grid"><button class="btn-aksi btn-bom" onclick="lemparProperti('M002','💣',10000)">💣 Bom</button><button class="btn-aksi btn-sandal" onclick="lemparProperti('M002','🩴',5000)">🩴 Sandal</button><button class="btn-aksi btn-gif" onclick="lemparProperti('M002','🎁',2500)">🎁 Gif</button><button class="btn-aksi btn-vchmur" onclick="lemparProperti('M002','🎫',500)"> 🎫 Vch</button></div>
+</div>
+
+<!-- M003 SILVER TRANSMISSION -->
+<div class="kartu" id="room-M003">
+<div class="kartu-strip"></div>
+<div class="kartu-head"><h3>👩‍🎨 Neng Sinar</h3><span class="badge-level">SILVER</span></div>
+<div class="avatar-3d" id="target-M003">
+<span class="live-badge">● LIVE PORTAL</span>
+<iframe id="frame-M003" src="https://www.instagram.com/USERNAME/live/embed" allowfullscreen></iframe>
+</div>
+<div class="info-panel"><div class="baris"><span class="label-info">🆔 ID / Link</span><span>M003</span></div><div class="baris"><span class="label-info">💰 Saldo RpNur</span><span class="saldo-nilai" id="saldo-M003">Rp 0</span></div></div>
+<div><textarea class="komentar-textarea" id="text-M003" readonly placeholder="Log aktivitas..."></textarea></div>
+<div class="tombol-grid"><button class="btn-aksi btn-bom" onclick="lemparProperti('M003','💣',10000)">💣 Bom</button><button class="btn-aksi btn-sandal" onclick="lemparProperti('M003','🩴',5000)">🩴 Sandal</button><button class="btn-aksi btn-gif" onclick="lemparProperti('M003','🎁',2500)">🎁 Gif</button><button class="btn-aksi btn-vchmur" onclick="lemparProperti('M003','🎫',500)"> 🎫 Vch</button></div>
+</div>
+
+<!-- M004 BRONZE TRANSMISSION -->
+<div class="kartu" id="room-M004">
+<div class="kartu-strip"></div>
+<div class="kartu-head"><h3>👩‍🏫 Teh Cahaya</h3><span class="badge-level">BRONZE</span></div>
+<div class="avatar-3d" id="target-M004">
+<span class="live-badge">● LIVE PORTAL</span>
+<iframe id="frame-M004" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+</div>
+<div class="info-panel"><div class="baris"><span class="label-info">🆔 ID / Link</span><span>M004</span></div><div class="baris"><span class="label-info">💰 Saldo RpNur</span><span class="saldo-nilai" id="saldo-M004">Rp 0</span></div></div>
+<div><textarea class="komentar-textarea" id="text-M004" readonly placeholder="Log aktivitas..."></textarea></div>
+<div class="tombol-grid"><button class="btn-aksi btn-bom" onclick="lemparProperti('M004','💣',10000)">💣 Bom</button><button class="btn-aksi btn-sandal" onclick="lemparProperti('M004','🩴',5000)">🩴 Sandal</button><button class="btn-aksi btn-gif" onclick="lemparProperti('M004','🎁',2500)">🎁 Gif</button><button class="btn-aksi btn-vchmur" onclick="lemparProperti('M004','🎫',500)"> 🎫 Vch</button></div>
+</div>
+</div>
+
+<!-- AULA KEMENANGAN -->
+<div class="ruangan-putih">
+  <div class="kartu-putih">
+    <div class="kartu-putih-head">
+      <h2>📢 AULA KEMENANGAN</h2>
+      <div class="pemenang-banner">PEMENANG 🏆 🎉 🏆</div>
+    </div>
+    <div class="komentar-publik-boks">
+      <textarea class="komentar-publik-textarea" id="komentarPublik" placeholder="Ukir namamu di Aula Emas..."></textarea>
+      <button class="btn-publish" onclick="pushPublish()">🚀 PUSH PUBLISH SULTAN</button>
+    </div>
+    <div class="feed-komentar" id="feedKomentar">
+      <div class="feed-item">🏆 Selamat datang di Aula Emas Indramayu Club Sultan!</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastBox"></div>
+
+<script>
+// Efek Lempar Multi-Properti Beruntun (4 Ledakan)
+function lemparProperti(idMember, emoji, bonus) {
+  const target = document.getElementById(`target-${idMember}`);
+  const btn = event.target;
+  const btnRect = btn.getBoundingClientRect();
+  const targetRect = target.getBoundingClientRect();
+
+  for(let i = 0; i < 4; i++) {
+    setTimeout(() => {
+      const fly = document.createElement('div');
+      fly.className = 'properti-fly';
+      fly.textContent = emoji;
+      fly.style.left = (btnRect.left + btnRect.width/2) + (Math.random() * 30 - 15) + 'px';
+      fly.style.top = btnRect.top + 'px';
+
+      const tx = (targetRect.left + targetRect.width/2) - (btnRect.left + btnRect.width/2) + (Math.random() * 80 - 40) + 'px';
+      const ty = (targetRect.top + targetRect.height/2) - btnRect.top + (Math.random() * 60 - 30) + 'px';
+      fly.style.setProperty('--tx', tx);
+      fly.style.setProperty('--ty', ty);
+      document.body.appendChild(fly);
+
+      setTimeout(() => {
+        const hit = document.createElement('div');
+        hit.className = 'hit-effect';
+        hit.textContent = emoji;
+        target.appendChild(hit);
+        setTimeout(() => hit.remove(), 600);
+      }, 1100);
+
+      setTimeout(() => fly.remove(), 1200);
+    }, i * 150);
+  }
+
+  // Update Saldo & Log Manifest internal
+  const elSaldo = document.getElementById(`saldo-${idMember}`);
+  const angka = parseInt(elSaldo.textContent.replace(/\D/g, '')) || 0;
+  elSaldo.textContent = `Rp ${(angka + bonus).toLocaleString('id-ID')}`;
+
+  const txtBox = document.getElementById(`text-${idMember}`);
+  const waktu = new Date().toLocaleTimeString('id-ID');
+  txtBox.value += `[${waktu}] Paket ${emoji} Masuk +Rp${bonus.toLocaleString('id-ID')}\n`;
+  txtBox.scrollTop = txtBox.scrollHeight;
+
+  tampilToast(`Room ${idMember} menerima ledakan ${emoji}!`);
+}
+
+// Kontroler Tembak Transmisi (Untuk Modifikasi Link Embed dari Dashboard)
+function eksekusiTembak() {
+  const room = document.getElementById('pilihRoom').value;
+  const platform = document.getElementById('pilihPlatform').value;
+  const idLive = document.getElementById('idTargetLive').value.trim();
+  const pass = document.getElementById('passOtoritas').value;
+  const frame = document.getElementById(`frame-${room}`);
+
+  if(!idLive) return tampilToast('ID Transmisi masih kosong! 🚀');
+  if(!pass) return tampilToast('Masukkan Kode Akses Otoritas Utama!');
+
+  let urlEmbed = '';
+  if(platform === 'YT') {
+    urlEmbed = `https://www.youtube.com/embed/${idLive}`;
+  } else if(platform === 'TT') {
+    urlEmbed = `https://www.tiktok.com/embed/live/${idLive}`;
+  } else if(platform === 'IG') {
+    urlEmbed = `https://www.instagram.com/${idLive}/live/embed`;
+  }
+
+  if(frame) {
+    frame.src = urlEmbed;
+    tampilToast(`Transmisi Room ${room} Berhasil Ditembak! ⚡`);
+    const txtBox = document.getElementById(`text-${room}`);
+    txtBox.value += `[${new Date().toLocaleTimeString('id-ID')}] Transmisi diperbarui via ${platform} (${idLive})\n`;
+  }
+}
+
+// Pemutar Video Storage Jalur Lokal (Room M007)
+function muatVideoLokal(input, idMember) {
+  const file = input.files[0];
+  if (file) {
+    const videoPlayer = document.getElementById(`video-lokal-${idMember}`);
+    const placeholder = document.getElementById(`placeholder-${idMember}`);
+    const namaFileLabel = document.getElementById(`nama-file-${idMember}`);
+    const txtBox = document.getElementById(`text-${idMember}`);
+
+    const urlVideo = URL.createObjectURL(file);
+    videoPlayer.src = urlVideo;
+    videoPlayer.style.display = "block";
+    placeholder.style.display = "none";
+
+    const namaBersih = file.name.length > 25 ? file.name.substring(0, 22) + '...' : file.name;
+    namaFileLabel.textContent = namaBersih;
+
+    const ukuranMB = (file.size / (1024 * 1024)).toFixed(2);
+    const waktu = new Date().toLocaleTimeString('id-ID');
+
+    txtBox.value += `[${waktu}] [SULTAN NODE] Video Lokal Di-Push!\n`;
+    txtBox.value += `[${waktu}] Manifest File: ${namaBersih} (${ukuranMB} MB)\n`;
+    txtBox.value += `[${waktu}] [BOT ALWI]: Membuka gerbang jalur lokal...\n\n`;
+    txtBox.scrollTop = txtBox.scrollHeight;
+
+    tampilToast(`📂 Storage Lokal Terhubung! ${namaBersih} Ter-push.`);
+  }
+}
+
+function pushPublish() {
+  const txt = document.getElementById('komentarPublik');
+  const feed = document.getElementById('feedKomentar');
+  if (txt.value.trim() === '') return tampilToast('Pesan Aula kosong!  🏆');
+
+  const item = document.createElement('div');
+  item.className = 'feed-item';
+  item.textContent = `[${new Date().toLocaleTimeString('id-ID')}] 🏆 ${txt.value}`;
+  feed.prepend(item);
+  txt.value = '';
+  tampilToast('Komentar berhasil di-PUBLISH ke Aula!  🎉');
+}
+
+function tampilToast(pesan) {
+  const box = document.getElementById('toastBox');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = pesan;
+  box.appendChild(toast);
+  setTimeout(() => toast.remove(), 3200);
+}
+</script>
+</body>
+</html>
+

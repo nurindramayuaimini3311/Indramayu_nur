@@ -1,96 +1,76 @@
-// META ALWI - Service Worker v2.0
-// Offline + Auto-Update untuk Indramayu_nur + meta_folder (VPS Connect)
-const CACHE_NAME = 'meta-alwi-v2-b' + Date.now();
-const OFFLINE_URL = '/offline.html';
+// Service Worker — Indramayu Club
+// Path semua relatif, jadi file ini SAMA PERSIS bisa dipakai di VPS maupun GitHub Pages
+// tanpa perlu diubah, selama struktur folder di kedua tempat sama.
 
-const CORE_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-512.png',
+const CACHE_VERSION = 'v1'; // naikkan versi ini (v2, v3, ...) tiap kali ganti isi app shell
+const CACHE_NAME = 'indramayu-club-' + CACHE_VERSION;
+
+// App shell inti — halaman/asset penting yang harus tetap bisa dibuka walau offline.
+// Sesuaikan daftar ini dengan halaman/asset yang paling sering dibuka.
+const APP_SHELL = [
+  './',
+  './index.html',
+  './manifest.json',
+  './img/icon-192.png',
+  './img/icon-512.png'
 ];
 
-self.addEventListener('install', e => {
-  console.log('[SW] Install new version:', CACHE_NAME);
+// INSTALL — precache app shell
+self.addEventListener('install', (e) => {
+  self.skipWaiting();
   e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(CORE_ASSETS.map(url => new Request(url, {cache: 'no-cache'}))).catch(err => {
-        console.log('[SW] Core cache fail, skip', err);
-      });
-    }).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then((cache) =>
+      cache.addAll(APP_SHELL).catch(() => {
+        // kalau salah satu file gagal (misal path beda), jangan sampai install gagal total
+      })
+    )
   );
 });
 
-self.addEventListener('activate', e => {
-  console.log('[SW] Activate, clean old cache');
+// ACTIVATE — buang cache versi lama saja, bukan semua cache
+self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys().then(keys => {
-      return Promise.all(
-        keys.filter(key => key !== CACHE_NAME).map(key => {
-          console.log('[SW] Delete old cache:', key);
-          return caches.delete(key);
-        })
-      );
-    }).then(() => self.clients.claim())
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys
+          .filter((k) => k.startsWith('indramayu-club-') && k !== CACHE_NAME)
+          .map((k) => caches.delete(k))
+      )
+    ).then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', e => {
-  const req = e.request;
-  const url = new URL(req.url);
-
-  if (
-    url.pathname.startsWith('/api/') ||
-    url.pathname.includes('/secure/') ||
-    url.pathname.includes('34.170.37.50')
-  ) {
-    e.respondWith(
-      fetch(req, {cache: 'no-store'})
-        .then(res => {
-          if (res.ok) {
-            const clone = res.clone();
-            caches.open(CACHE_NAME).then(c => c.put(req, clone));
-          }
-          return res;
-        })
-        .catch(() => caches.match(req))
-    );
-    return;
-  }
-
-  if (req.headers.get('accept')?.includes('text/html') || url.pathname.endsWith('.js') || url.pathname.endsWith('.css')) {
-    e.respondWith(
-      fetch(req, {cache: 'no-store'})
-        .then(res => {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then(c => c.put(req, clone));
-          return res;
-        })
-        .catch(() => caches.match(req).then(cached => cached || caches.match(OFFLINE_URL)))
-    );
-    return;
-  }
+// FETCH — strategi: network dulu (biar selalu dapat versi terbaru saat online),
+// kalau gagal (offline / server down) baru fallback ke cache.
+// Response sukses dari network otomatis disimpan ke cache buat dipakai offline nanti.
+self.addEventListener('fetch', (e) => {
+  // Hanya tangani GET — request lain (POST ke /api/..., dll) biarkan langsung ke network
+  if (e.request.method !== 'GET') return;
 
   e.respondWith(
-    caches.match(req).then(cached => {
-      if (cached) return cached;
-      return fetch(req).then(res => {
-        if (res.ok) {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then(c => c.put(req, clone));
-        }
-        return res;
-      }).catch(() => {
-        if (req.destination === 'image') {
-          return new Response('', {status: 204});
-        }
-      });
-    })
+    fetch(e.request)
+      .then((response) => {
+        // Simpan salinan response ke cache untuk dipakai offline nanti
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(e.request, copy).catch(() => {});
+        });
+        return response;
+      })
+      .catch(() =>
+        // Offline / network gagal → coba ambil dari cache
+        caches.match(e.request).then((cached) => {
+          if (cached) return cached;
+          // Kalau ini navigasi halaman dan tidak ada di cache, fallback ke index.html (app shell)
+          if (e.request.mode === 'navigate') {
+            return caches.match('./index.html');
+          }
+          return new Response('Offline — konten belum pernah dibuka sebelumnya.', {
+            status: 503,
+            statusText: 'Offline'
+          });
+        })
+      )
   );
 });
 
-self.addEventListener('message', e => {
-  if (e.data === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
-});

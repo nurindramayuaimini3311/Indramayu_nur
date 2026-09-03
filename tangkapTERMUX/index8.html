@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>RADAR CLOUDFLARED | AGEN ALWI</title>
+<style>
+body { background:#06140b; color:#ffd700; font-family:'Inter',sans-serif; text-align:center; padding:20px; }
+.box { border:2px solid #c9a84c; border-radius:16px; padding:20px; max-width:400px; margin:40px auto; background:#0a2e1c; }
+button { background:linear-gradient(135deg,#c9a84c,#ffd700); border:none; padding:12px 20px; border-radius:10px; font-weight:900; color:#06140b; cursor:pointer; width:100%; margin-top:10px; }
+.status { font-size:18px; margin-top:15px; }
+.link { word-break:break-all; font-size:12px; color:#c9a84c; margin-top:8px; }
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>📡 RADAR CLOUDFLARED</h2>
+  <div id="status" class="status">⏳ Mengecek...</div>
+  <div id="link" class="link"></div>
+  <button onclick="cekSinyal()">🔄 ISI ULANG SINYAL</button>
+</div>
+
+<script>
+// Fungsi cek status tunnel via API lokal Termux
+async function cekSinyal() {
+  document.getElementById('status').innerHTML = '⏳ Mengecek...';
+  document.getElementById('link').innerHTML = '';
+
+  try {
+    // 1. Cek apakah port 8890 aktif
+    const res = await fetch('http://localhost:8890', { mode: 'no-cors' });
+    document.getElementById('status').innerHTML = '✅ TUNNEL AKTIF | Port 8890 Online';
+
+    // 2. Ambil link trycloudflare dari log. Ini simulasi, aslinya butuh backend
+    // Karena JS di browser gak bisa baca file log Termux langsung
+    document.getElementById('link').innerHTML = '⚠️ Link Publik: Cek di Terminal -> cat ~/.cloudflared/*.log | grep trycloudflare';
+
+  } catch (e) {
+    document.getElementById('status').innerHTML = '🔴 TUNNEL MATI | Port 8890 Down';
+    document.getElementById('link').innerHTML = 'Jalankan: cloudflared tunnel --url http://localhost:8890';
+  }
+}
+
+// Auto cek pas buka halaman
+cekSinyal();
+setInterval(cekSinyal, 15000); // Auto isi ulang tiap 15 detik
+</script>
+</body>
+</html>

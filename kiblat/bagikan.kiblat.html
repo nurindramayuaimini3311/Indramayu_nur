@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111827">
+<title>🔳 Bagikan Kompas Kiblat</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(135deg,#111827,#1f2937);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px;color:#f9fafb}
+  h1{font-size:1.2rem;margin-bottom:6px;color:#fbbf24}
+  .sub{font-size:12px;color:#9ca3af;margin-bottom:18px;text-align:center}
+  .box{background:#1f2937;border:1px solid #374151;border-radius:16px;padding:18px;width:100%;max-width:380px}
+  label{font-size:12px;font-weight:700;color:#d1d5db;display:block;margin-bottom:6px}
+  textarea,input[type=text]{width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid #4b5563;background:#111827;color:#f9fafb;font-size:14px;outline:none;margin-bottom:12px;font-family:inherit}
+  textarea:focus,input:focus{border-color:#eab308}
+  .row{display:flex;gap:8px;margin-bottom:12px}
+  select{flex:1;padding:9px;border-radius:10px;border:1.5px solid #4b5563;background:#111827;color:#f9fafb;font-size:13px}
+  button{background:#eab308;color:#111827;border:none;border-radius:10px;padding:11px;font-weight:800;cursor:pointer;font-size:14px;flex:1}
+  button.secondary{background:#4b5563;color:#fff}
+  #qrWrap{margin-top:16px;background:#fff;border-radius:12px;padding:16px;display:none;text-align:center}
+  #qrWrap.show{display:block}
+  #qrcode img{max-width:100%;width:240px;height:auto;image-rendering:pixelated}
+  .link-out{font-size:11px;color:#10b981;word-break:break-all;background:#0f172a;padding:8px;border-radius:8px;margin-top:10px}
+  .tip{font-size:11px;color:#9ca3af;margin-top:14px;text-align:center;line-height:1.5}
+  .back{margin-top:16px;font-size:12px;color:#6ee7b7;text-decoration:none}
+  footer{margin-top:auto;padding-top:18px;font-size:11px;color:#6b7280}
+</style>
+</head>
+<body>
+  <h1>🔳 Bagikan Kompas Kiblat</h1>
+  <div class="sub">Buat QR agar orang lain bisa langsung buka aplikasi ini</div>
+
+  <div class="box">
+    <label for="qrText">Link aplikasi:</label>
+    <textarea id="qrText" rows="2" placeholder="https://domainmu.com/kiblat-app/index.html"></textarea>
+
+    <div class="row">
+      <select id="qrSize">
+        <option value="10">Ukuran: Kecil</option>
+        <option value="13" selected>Ukuran: Sedang</option>
+        <option value="16">Ukuran: Besar</option>
+      </select>
+      <button class="secondary" onclick="downloadQR()">⬇️ Unduh</button>
+    </div>
+    <button onclick="buatQR()">🔳 Buat QR</button>
+
+    <div id="qrWrap">
+      <div id="qrcode"></div>
+      <div class="link-out" id="qrLink"></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    ⚡ Kirim gambar QR ini lewat WhatsApp. Penerima tinggal scan pakai kamera HP untuk langsung membuka Kompas Kiblat.
+  </div>
+
+  <a class="back" href="index.html">← Kembali ke Kompas Kiblat</a>
+  <footer>Alwi Club — Indramayu 🌐</footer>
+
+<script src="qrcodejs.js"></script>
+<script>
+var qrcode=null;
+
+// otomatis isi dengan URL app ini sendiri (index.html), bukan halaman bagikan.html
+(function(){
+  var lokasi = location.href.replace(/bagikan\.html.*$/, 'index.html');
+  document.getElementById('qrText').value = lokasi;
+})();
+
+function buatQR(){
+  var txt=document.getElementById('qrText').value.trim();
+  if(!txt){ alert('Isi dulu teks/link!'); return; }
+  var size=parseInt(document.getElementById('qrSize').value);
+  var wrap=document.getElementById('qrWrap');
+  var el=document.getElementById('qrcode');
+  el.innerHTML='';
+  qrcode=new QRCode(el,{ text: txt, width: size*12, height: size*12, colorDark:'#111827', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.H });
+  document.getElementById('qrLink').textContent=txt;
+  wrap.classList.add('show');
+}
+
+function downloadQR(){
+  if(!qrcode){ buatQR(); }
+  if(!qrcode) return;
+  var img=document.getElementById('qrcode').querySelector('img');
+  if(!img) return;
+  var a=document.createElement('a');
+  a.href=img.src;
+  a.download='qr-kiblat.png';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// buat otomatis begitu halaman dibuka
+buatQR();
+</script>
+</body>
+</html>
+

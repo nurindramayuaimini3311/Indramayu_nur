@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚙️ Pengaturan — Alwi Online</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin:0; padding:0; }
+  :root {
+    --biru: #0d6efd;
+    --muda: #eaf4ff;
+    --tua: #0b5ed7;
+    --border: #cfe2ff;
+    --text: #0f356e;
+    --merah: #dc2626;
+    --hijau: #16a34a;
+  }
+  body{
+    font-family: 'Fredoka', system-ui, sans-serif;
+    background: linear-gradient(180deg, #fff, #eaf4ff);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+  header{
+    height: 58px;
+    background: rgba(255,255,255,.96);
+    border-bottom: 2px solid var(--border);
+    display: flex; align-items: center; gap: 10px; padding: 0 14px;
+    position: sticky; top: 0;
+  }
+  header h1{ font-size: 15px; color: var(--tua); flex:1; }
+  .back-btn{
+    border: 1.5px solid var(--border); background: #fff; border-radius: 12px;
+    padding: 7px 12px; font-weight: 800; font-size: 12px; color: var(--tua);
+    text-decoration:none;
+  }
+  .wrap{ max-width: 480px; margin: 0 auto; padding: 16px 14px; }
+  .card{
+    background: #fff; border: 1.6px solid var(--border); border-radius: 16px;
+    padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(13,110,253,.06);
+  }
+  .card h3{ font-size: 13px; color: var(--tua); margin-bottom: 10px; display:flex; align-items:center; gap:6px; }
+  .row{ display:flex; align-items:center; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+  .row:last-child{ border-bottom: none; }
+  .row .lbl{ font-size: 13px; font-weight: 600; }
+  .row .sub{ font-size: 10px; color: #6b8ab8; margin-top: 2px; }
+  select{
+    border: 1.5px solid var(--border); border-radius: 10px; padding: 8px 10px;
+    font-size: 12px; font-weight: 700; color: var(--tua); background: #f8fafc;
+  }
+  .switch{ position: relative; width: 44px; height: 24px; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider{ position:absolute; inset:0; background:#cbd5e1; border-radius:24px; cursor:pointer; transition:.2s; }
+  .slider::before{ content:''; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s; }
+  input:checked + .slider{ background: var(--biru); }
+  input:checked + .slider::before{ transform: translateX(20px); }
+  .btn{
+    width:100%; padding: 12px; border-radius: 12px; border: none;
+    font-weight: 800; font-size: 13px; cursor: pointer; margin-top: 6px;
+  }
+  .btn-reset{ background: #fee2e2; color: var(--merah); }
+  .btn-reset:active{ background: #fecaca; }
+  .info-txt{ font-size: 11px; color: #6b8ab8; margin-top: 8px; line-height: 1.5; }
+  .toast{
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--hijau); color: #fff; padding: 10px 18px; border-radius: 20px;
+    font-size: 12px; font-weight: 700; display: none; z-index: 999;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚙️ Pengaturan Chat AI</h1>
+  <a href="../fitur-online.html" class="back-btn">🏠 Kembali</a>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <h3>🔊 Suara & Bahasa</h3>
+    <div class="row">
+      <div>
+        <div class="lbl">Suara Otomatis</div>
+        <div class="sub">Bacakan jawaban AI dengan suara</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="toggleSuara" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="row">
+      <div>
+        <div class="lbl">Pilihan Suara</div>
+        <div class="sub">Bahasa untuk voice note & TTS</div>
+      </div>
+      <select id="pilihSuara">
+        <option value="id">🇮🇩 Indonesia</option>
+        <option value="su">🌿 Sunda</option>
+        <option value="jw">📜 Jawa</option>
+        <option value="en">🇬🇧 English</option>
+        <option value="ja">🇯🇵 Japanese</option>
+        <option value="ar">🕌 Arab</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🧠 Memori Percakapan</h3>
+    <div class="row">
+      <div>
+        <div class="lbl">Riwayat Chat Tersimpan</div>
+        <div class="sub" id="jumlahMemori">Memuat...</div>
+      </div>
+    </div>
+    <button class="btn btn-reset" onclick="resetMemori()">🗑️ Hapus Riwayat Chat</button>
+    <p class="info-txt">Menghapus riwayat tidak memengaruhi kamus atau artikel — hanya percakapan chat AI yang tersimpan di perangkat ini.</p>
+  </div>
+
+  <div class="card">
+    <h3>ℹ️ Tentang</h3>
+    <p class="info-txt">
+      Alwi — Asisten Digital Indramayu Club Makrifat.<br>
+      Setelan di halaman ini tersimpan lokal di perangkat kamu.
+    </p>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">✅ Tersimpan</div>
+
+<script>
+  const KEY_SUARA_ON = 'alwiSetting_suaraOn';
+  const KEY_SUARA_BAHASA = 'alwiSetting_bahasa';
+
+  const toggleSuara = document.getElementById('toggleSuara');
+  const pilihSuara = document.getElementById('pilihSuara');
+  const jumlahMemori = document.getElementById('jumlahMemori');
+  const toast = document.getElementById('toast');
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 1800);
+  }
+
+  // Muat setelan tersimpan
+  toggleSuara.checked = localStorage.getItem(KEY_SUARA_ON) !== 'mati';
+  pilihSuara.value = localStorage.getItem(KEY_SUARA_BAHASA) || 'id';
+
+  toggleSuara.addEventListener('change', () => {
+    localStorage.setItem(KEY_SUARA_ON, toggleSuara.checked ? 'nyala' : 'mati');
+    showToast(toggleSuara.checked ? '🔊 Suara diaktifkan' : '🔇 Suara dimatikan');
+  });
+
+  pilihSuara.addEventListener('change', () => {
+    localStorage.setItem(KEY_SUARA_BAHASA, pilihSuara.value);
+    showToast('✅ Bahasa suara diganti');
+  });
+
+  // Hitung memori chat (kalau ada tersimpan di localStorage key 'alwiMemory' dari widget chat)
+  function hitungMemori() {
+    try {
+      const raw = localStorage.getItem('alwiMemory');
+      const arr = raw ? JSON.parse(raw) : [];
+      jumlahMemori.textContent = arr.length + ' pesan tersimpan';
+    } catch (e) {
+      jumlahMemori.textContent = 'Belum ada riwayat';
+    }
+  }
+  hitungMemori();
+
+  function resetMemori() {
+    if (!confirm('Yakin hapus semua riwayat chat AI?')) return;
+    localStorage.removeItem('alwiMemory');
+    hitungMemori();
+    showToast('🗑️ Riwayat chat dihapus');
+  }
+</script>
+
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>
+

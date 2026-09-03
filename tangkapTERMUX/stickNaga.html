@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stickman Clash — Ekor Naga Kilat (Tarik 2 Jari)</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #050810;
+    overflow: hidden;
+    height: 100%;
+  }
+  canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    touch-action: none;
+  }
+  #hint {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #3fa9f5;
+    font: 12px monospace;
+    opacity: 0.6;
+    letter-spacing: 1px;
+    pointer-events: none;
+    text-align: center;
+    width: 92%;
+  }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="hint">TARIK STICKMAN PAKAI JARI (BISA 2 JARI BARENGAN) • LEPAS = TERLONTAR • TAP KOSONG = PETIR</div>
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ---------- Util ----------
+function rand(a, b) { return a + Math.random() * (b - a); }
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+// ---------- Stickman ----------
+class Stickman {
+  constructor(x, color) {
+    this.x = x;
+    this.y = 0; // di-set tiap frame relatif GROUND_Y + dragOffsetY
+    this.vx = rand(320, 420) * (Math.random() < 0.5 ? -1 : 1);
+    this.color = color;
+    this.walkPhase = Math.random() * 10;
+    this.flashTimer = 0; // nyala putih pas nabrak / ketemu lawan
+
+    // Drag state
+    this.dragging = null;   // pointerId yang lagi nyekel, atau null
+    this.dragOffsetY = 0;   // offset vertikal dari ground (negatif = ke atas)
+    this.vyDrag = 0;        // kecepatan vertikal (buat lontaran & gravitasi)
+
+    // --- Ekor naga: rantai segmen yang ngintil di belakang ---
+    this.NAGA_N = 10;
+    this.nagaTail = [];
+    for (let i = 0; i < this.NAGA_N; i++) {
+      this.nagaTail.push({ x, y: 0 });
+    }
+  }
+
+  update(dt, groundY, w) {
+    if (this.dragging === null) {
+      // gerak normal, mantul ke dinding kiri/kanan
+      this.x += this.vx * dt;
+      const margin = 30;
+      if (this.x < margin) { this.x = margin; this.vx *= -1; this.flashTimer = 0.15; }
+      if (this.x > w - margin) { this.x = w - margin; this.vx *= -1; this.flashTimer = 0.15; }
+
+      // gravitasi buat balik ke ground pas abis dilontar
+      this.dragOffsetY += this.vyDrag * dt;
+      this.vyDrag += 1400 * dt;
+      if (this.dragOffsetY > 0) {
+        // mantul dikit pas nyentuh tanah biar berasa hidup
+        this.dragOffsetY = 0;
+        if (Math.abs(this.vyDrag) > 60) {
+          this.vyDrag *= -0.35;
+        } else {
+          this.vyDrag = 0;
+        }
+      }
+    }
+
+    this.y = groundY + this.dragOffsetY;
+
+    // siklus jalan/lari independen dari fisika
+    this.walkPhase += dt * (this.dragging !== null ? 6 : 18);
+
+    // update ekor naga: tiap segmen ngejar segmen di depannya (lerp)
+    const head = { x: this.x, y: this.y - 30 };
+    const follow = 0.35;
+    this.nagaTail[0].x += (head.x - this.nagaTail[0].x) * follow;
+    this.nagaTail[0].y += (head.y - this.nagaTail[0].y) * follow;
+    for (let i = 1; i < this.NAGA_N; i++) {
+      const target = this.nagaTail[i - 1];
+      this.nagaTail[i].x += (target.x - this.nagaTail[i].x) * follow;
+      this.nagaTail[i].y += (target.y - this.nagaTail[i].y) * follow;
+    }
+
+    if (this.flashTimer > 0) this.flashTimer -= dt;
+  }
+
+  drawTrail(ctx) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+
+    ctx.strokeStyle = this.color;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(this.x, this.y - 30);
+    this.nagaTail.forEach(p => ctx.lineTo(p.x, p.y));
+    ctx.lineWidth = 10;
+    ctx.globalAlpha = 0.25;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 20;
+    ctx.stroke();
+
+    for (let i = 0; i < this.nagaTail.length; i++) {
+      const p = this.nagaTail[i];
+      const t = 1 - i / this.nagaTail.length;
+      const r = 4 + t * 9;
+      ctx.globalAlpha = t * 0.6;
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 3);
+      grad.addColorStop(0, this.color);
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r * 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  drawStickman(ctx) {
+    const legSwing = Math.sin(this.walkPhase) * 22;
+    const armSwing = Math.sin(this.walkPhase + Math.PI) * 18;
+    const bodyColor = this.flashTimer > 0 ? '#ffffff' : this.color;
+    const isDragged = this.dragging !== null;
+
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.strokeStyle = bodyColor;
+    ctx.lineWidth = isDragged ? 6 : 5;
+    ctx.lineCap = 'round';
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = isDragged ? 42 : 28;
+
+    // Kepala
+    ctx.beginPath();
+    ctx.arc(0, -55, isDragged ? 12 : 10, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Badan
+    ctx.beginPath();
+    ctx.moveTo(0, -45);
+    ctx.lineTo(0, -10);
+    ctx.stroke();
+
+    // Kaki
+    ctx.beginPath();
+    ctx.moveTo(0, -10);
+    ctx.lineTo(legSwing, 30);
+    ctx.moveTo(0, -10);
+    ctx.lineTo(-legSwing, 30);
+    ctx.stroke();
+
+    // Lengan
+    ctx.beginPath();
+    ctx.moveTo(0, -38);
+    ctx.lineTo(armSwing, -15);
+    ctx.moveTo(0, -38);
+    ctx.lineTo(-armSwing, -15);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  draw(ctx) {
+    this.drawTrail(ctx);
+    this.drawStickman(ctx);
+  }
+}
+
+// ---------- Efek Petir ----------
+class Lightning {
+  constructor(x1, y1, x2, y2, color) {
+    this.x1 = x1; this.y1 = y1; this.x2 = x2; this.y2 = y2;
+    this.color = color;
+    this.life = 0.25;
+    this.maxLife = 0.25;
+    this.segments = this.generate();
+  }
+
+  generate() {
+    const points = [];
+    const steps = 10;
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const x = this.x1 + (this.x2 - this.x1) * t + (i > 0 && i < steps ? rand(-18, 18) : 0);
+      const y = this.y1 + (this.y2 - this.y1) * t + (i > 0 && i < steps ? rand(-18, 18) : 0);
+      points.push({ x, y });
+    }
+    return points;
+  }
+
+  update(dt) {
+    this.life -= dt;
+    if (Math.random() < 0.5) this.segments = this.generate();
+  }
+
+  draw(ctx) {
+    const alpha = Math.max(0, this.life / this.maxLife);
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = '#ffffff';
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 25;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    this.segments.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+    ctx.stroke();
+    ctx.strokeStyle = this.color;
+    ctx.lineWidth = 6;
+    ctx.globalAlpha = alpha * 0.4;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  get dead() { return this.life <= 0; }
+}
+
+// ---------- Setup ----------
+const GROUND_RATIO = 0.72;
+const player1 = new Stickman(canvas.width * 0.25, '#3fa9f5'); // biru
+const player2 = new Stickman(canvas.width * 0.7, '#ff5555');  // merah
+let lightnings = [];
+let clashCooldown = 0;
+
+// ---------- Drag / Multi-touch ----------
+const pointerData = new Map(); // pointerId -> {x, y, lastX, lastY, lastTime}
+const GRAB_RADIUS = 130;
+
+function updateDragPosition(player, clientX, clientY) {
+  const w = canvas.width;
+  const margin = 30;
+  player.x = clamp(clientX, margin, w - margin);
+  const groundY = canvas.height * GROUND_RATIO;
+  let offsetY = clientY - groundY;
+  offsetY = clamp(offsetY, -320, 40);
+  player.dragOffsetY = offsetY;
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  const px = e.clientX, py = e.clientY;
+  const candidates = [player1, player2].filter(p => p.dragging === null);
+  let target = null, bestDist = Infinity;
+  candidates.forEach(p => {
+    const d = Math.hypot(p.x - px, (p.y - 35) - py);
+    if (d < bestDist) { bestDist = d; target = p; }
+  });
+
+  if (target && bestDist < GRAB_RADIUS) {
+    target.dragging = e.pointerId;
+    target.vyDrag = 0;
+    target.flashTimer = 0.1;
+    canvas.setPointerCapture(e.pointerId);
+    pointerData.set(e.pointerId, {
+      x: px, y: py, lastX: px, lastY: py, lastTime: performance.now()
+    });
+    updateDragPosition(target, px, py);
+  } else {
+    // area kosong -> efek petir manual
+    lightnings.push(new Lightning(px, py, px + rand(-100, 100), py + rand(-100, 100), '#66ccff'));
+  }
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  const player = [player1, player2].find(p => p.dragging === e.pointerId);
+  if (!player) return;
+  const data = pointerData.get(e.pointerId);
+  if (data) {
+    data.lastX = data.x;
+    data.lastY = data.y;
+    data.lastTime = data.time || performance.now();
+    data.x = e.clientX;
+    data.y = e.clientY;
+    data.time = performance.now();
+  }
+  updateDragPosition(player, e.clientX, e.clientY);
+});
+
+function releasePointer(e) {
+  const player = [player1, player2].find(p => p.dragging === e.pointerId);
+  if (player) {
+    const data = pointerData.get(e.pointerId);
+    if (data) {
+      const dtRelease = Math.max((performance.now() - data.lastTime) / 1000, 0.001);
+      const vx = (data.x - data.lastX) / dtRelease;
+      const vy = (data.y - data.lastY) / dtRelease;
+      player.vx = clamp(vx, -1400, 1400);
+      player.vyDrag = clamp(vy, -1600, 1600);
+    }
+    player.dragging = null;
+    pointerData.delete(e.pointerId);
+  }
+}
+canvas.addEventListener('pointerup', releasePointer);
+canvas.addEventListener('pointercancel', releasePointer);
+canvas.addEventListener('pointerleave', (e) => {
+  if ([player1, player2].some(p => p.dragging === e.pointerId)) releasePointer(e);
+});
+
+// ---------- Loop ----------
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min((now - last) / 1000, 0.05);
+  last = now;
+
+  const w = canvas.width, h = canvas.height;
+  const groundY = h * GROUND_RATIO;
+
+  ctx.fillStyle = 'rgba(5, 8, 16, 0.28)';
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(63,169,245,0.5)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, groundY + 30);
+  ctx.lineTo(w, groundY + 30);
+  ctx.stroke();
+  ctx.restore();
+
+  player1.update(dt, groundY, w);
+  player2.update(dt, groundY, w);
+
+  const dist = Math.abs(player1.x - player2.x);
+  const yDist = Math.abs(player1.y - player2.y);
+  clashCooldown -= dt;
+  if (dist < 70 && yDist < 60 && clashCooldown <= 0) {
+    clashCooldown = 0.4;
+    if (player1.dragging === null) player1.vx *= -1;
+    if (player2.dragging === null) player2.vx *= -1;
+    player1.flashTimer = 0.15;
+    player2.flashTimer = 0.15;
+    const midX = (player1.x + player2.x) / 2;
+    const midY = groundY - 40;
+    for (let i = 0; i < 4; i++) {
+      lightnings.push(new Lightning(
+        midX + rand(-20, 20), midY + rand(-30, 30),
+        midX + rand(-60, 60), midY + rand(-60, 40),
+        Math.random() < 0.5 ? player1.color : player2.color
+      ));
+    }
+  }
+
+  player1.draw(ctx);
+  player2.draw(ctx);
+
+  lightnings.forEach(l => l.update(dt));
+  lightnings = lightnings.filter(l => !l.dead);
+  lightnings.forEach(l => l.draw(ctx));
+
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
+	

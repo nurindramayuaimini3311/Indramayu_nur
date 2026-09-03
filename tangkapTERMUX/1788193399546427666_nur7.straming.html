@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<title>Preview — Indramayu Club Streaming Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root { --hutan: #0a2615; --daun: #1d6b3a; --zamrud: #27ae60; --muda: #52d68a; --emas: #c9a227; --emas-muda: #f0c040; --krim: #fffdf2; --kartu: #f4fbf6; --teks: #0d1f12; --abu: #5a7263; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', system-ui, sans-serif; background: var(--hutan); min-height: 100vh; color: var(--teks); }
+.portal-header { text-align: center; padding: 32px 24px 24px; display: flex; flex-direction: column; align-items: center; }
+.brand-logo { width: 180px; height: 180px; border-radius: 24px; object-fit: cover; box-shadow: 0 8px 32px rgba(240,192,64,0.25); border: 2px solid var(--emas); margin-bottom: 16px; transition: transform 0.3s ease; }
+.brand-logo:hover { transform: scale(1.05) rotate(2deg); }
+.portal-header::after { content: ''; display: block; width: 120px; height: 3px; background: linear-gradient(90deg, var(--zamrud), var(--emas)); margin: 18px auto 0; border-radius: 2px; }
+.portal-header h1 { font-family: 'Cinzel', serif; font-size: clamp(1.4rem, 4vw, 2rem); color: var(--emas-muda); letter-spacing: 0.04em; text-shadow: 0 2px 18px rgba(201,162,39,0.35); }
+.portal-header p { color: var(--muda); font-size: 0.88rem; margin-top: 8px; letter-spacing: 0.08em; }
+.grid-streaming { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; max-width: 1260px; margin: 0 auto; padding: 0 28px 60px; }
+@media (max-width: 720px) { .grid-streaming { grid-template-columns: 1fr; padding: 0 14px 40px; }
+.kartu { background: var(--kartu); border-radius: 18px; overflow: hidden; box-shadow: 0 0 0 1.5px var(--daun), 0 8px 28px rgba(10,38,21,0.5); transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.kartu:hover { transform: translateY(-5px); box-shadow: 0 0 0 2px var(--emas), 0 18px 42px rgba(10,38,21,0.6); }
+.kartu-strip { height: 4px; background: linear-gradient(90deg, var(--zamrud) 0%, var(--emas) 50%, var(--zamrud) 100%); background-size: 200% 100%; animation: geser 3s linear infinite; }
+@keyframes geser { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
+.kartu-head { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px 10px; }
+.kartu-head h3 { font-family: 'Cinzel', serif; font-size: 0.95rem; color: var(--hutan); letter-spacing: 0.02em; }
+.badge-level { background: linear-gradient(135deg, var(--emas), var(--emas-muda)); color: var(--hutan); font-size: 10px; font-weight: 700; padding: 3px 11px; border-radius: 20px; letter-spacing: 0.08em; }
+.avatar-3d { width: 100%; aspect-ratio: 16 / 9; background: #000; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.avatar-3d img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-3d .gender-tag { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); color: #fff; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; backdrop-filter: blur(4px); z-index: 10; }
+.live-badge { position: absolute; top: 8px; left: 8px; background: #e74c3c; color: #fff; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.1em; animation: denyut 1.4s ease-in-out infinite; z-index: 10; }
+@keyframes denyut { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; }
+.info-panel { margin: 14px 16px; background: linear-gradient(135deg, #e8f5ec, #fdf8e1); border: 1px solid #b7dfc5; border-radius: 10px; padding: 10px 14px; font-size: 12px; }
+.baris { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; }
+.label-info { color: var(--abu); }
+.nilai-info { font-weight: 600; color: var(--daun); }
+.saldo-nilai { color: var(--emas); font-weight: 700; font-size: 13px; }
+.komentar-log-boks { margin: 0 16px 14px; position: relative; }
+.komentar-textarea { width: 100%; height: 80px; background: #ffffff; border: 1px dashed var(--daun); border-radius: 8px; padding: 8px; font-size: 12px; font-family: 'Inter', sans-serif; color: var(--hutan); resize: vertical; overflow-y: auto; outline: none; transition: border-color 0.2s; touch-action: none; transform-origin: top left; }
+.komentar-textarea:focus { border-color: var(--emas); background: #fffdf5; }
+.tombol-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 0 16px 18px; }
+.btn-aksi { border: none; padding: 10px 4px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; transition: transform 0.15s ease, filter 0.15s ease; font-family: 'Inter', sans-serif; letter-spacing: 0.01em; text-align: center; }
+.btn-aksi:hover { transform: scale(1.05); filter: brightness(1.1); }
+.btn-aksi:active { transform: scale(0.95); }
+.btn-bom { background: linear-gradient(135deg, #c0392b, #e74c3c); color: #fff; }
+.btn-sandal { background: linear-gradient(135deg, #2c3e50, #34495e); color: #fff; }
+.btn-gif { background: linear-gradient(135deg, var(--emas), var(--emas-muda)); color: var(--hutan); }
+.btn-vchmur { background: linear-gradient(135deg, #8e44ad, #9b59b6); color: #fff; }
+.paginasi { display: flex; justify-content: center; gap: 16px; padding: 10px 24px 48px; }
+.paginasi a { padding: 11px 26px; background: linear-gradient(135deg, var(--daun), var(--zamrud)); color: #fff; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 14px; border: 1.5px solid var(--emas); transition: background 0.2s, transform 0.15s; }
+.paginasi a:hover { background: linear-gradient(135deg, var(--emas), var(--emas-muda)); color: var(--hutan); transform: translateY(-2px); }
+.toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+.toast { background: linear-gradient(135deg, var(--hutan), var(--daun)); color: #fff; border: 1px solid var(--emas); border-radius: 12px; padding: 12px 18px; font-size: 13px; font-weight: 500; min-width: 240px; box-shadow: 0 6px 24px rgba(0,0,0,0.4); animation: masuk 0.3s ease forwards; }
+@keyframes masuk { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); }
+</style>
+</head>
+<body>
+<div class="portal-header">
+<img src="1000046603.jpg" alt="Indramayu Club Logo" class="brand-logo">
+<h1>🌿 Indramayu Club Makrifat</h1>
+<p>Multi-Room Live Streaming Portal | 2 Lelaki 2 Perempuan</p>
+</div>
+<div class="grid-streaming">
+<!-- MEMBER 1 - LELAKI -->
+<div class="kartu" id="room-M001">
+<div class="kartu-strip"></div>
+<div class="kartu-head">
+<h3>👨‍🎤 Bang Jago Nur</h3>
+<span class="badge-level">PLATINUM</span>
+</div>
+<div class="avatar-3d">
+<span class="live-badge">● LIVE</span>
+<img src="https://i.imgur.com/8z5t9uL.png" alt="Avatar 3D Lelaki 1">
+<span class="gender-tag">♂ LELAKI</span>
+</div>
+<div class="info-panel">
+<div class="baris"> <span class="label-info">🆔 ID Member</span> <span class="nilai-info">M001</span> </div>
+<div class="baris"> <span class="label-info">💰 Celengan Saldo</span> <span class="saldo-nilai" id="saldo-M001">Rp 0</span> </div>
+</div>
+<div class="komentar-log-boks"> <textarea class="komentar-textarea" placeholder="Komentar log manifest..." id="text-M001"></textarea> </div>
+<div class="tombol-grid">
+<button class="btn-aksi btn-bom" onclick="kirimAksi('M001','bom')">💣 Bom</button>
+<button class="btn-aksi btn-sandal" onclick="kirimAksi('M001','sandal')">🩴 Sandal</button>
+<button class="btn-aksi btn-gif" onclick="kirimAksi('M001','gif')">🎁 Gif Koin</button>
+<button class="btn-aksi btn-vchmur" onclick="kirimAksi('M001','voucherMur')"> 🎫 Vch Mur</button>
+</div>
+</div>
+
+<!-- MEMBER 2 - LELAKI -->
+<div class="kartu" id="room-M002">
+<div class="kartu-strip"></div>
+<div class="kartu-head">
+<h3>👨‍💻 Kang Alam Barokah</h3>
+<span class="badge-level">GOLD</span>
+</div>
+<div class="avatar-3d">
+<span class="live-badge">● LIVE</span>
+<img src="https://i.imgur.com/7Qw9r3M.png" alt="Avatar 3D Lelaki 2">
+<span class="gender-tag">♂ LELAKI</span>
+</div>
+<div class="info-panel">
+<div class="baris"> <span class="label-info">🆔 ID Member</span> <span class="nilai-info">M002</span> </div>
+[B<div class="baris"> <span class="label-info">💰 Celengan Saldo</span> <span class="saldo-nilai" id="saldo-M002">Rp 0</span> </div>
+</div>
+<div class="komentar-log-boks"> <textarea class="komentar-textarea" placeholder="Komentar log manifest..." id="text-M002"></textarea> </div>
+<div class="tombol-grid">
+<button class="btn-aksi btn-bom" onclick="kirimAksi('M002','bom')">💣 Bom</button>
+<button class="btn-aksi btn-sandal" onclick="kirimAksi('M002','sandal')">🩴 Sandal</button>
+<button class="btn-aksi btn-gif" onclick="kirimAksi('M002','gif')">🎁 Gif Koin</button>
+<button class="btn-aksi btn-vchmur" onclick="kirimAksi('M002','voucherMur')"> 🎫 Vch Mur</button>
+</div>
+</div>
+
+<!-- MEMBER 3 - PEREMPUAN -->
+<div class="kartu" id="room-M003">
+<div class="kartu-strip"></div>
+<div class="kartu-head">
+<h3>👩‍🎨 Neng Sinar Hikmah</h3>
+<span class="badge-level">SILVER</span>
+</div>
+<div class="avatar-3d">
+<span class="live-badge">● LIVE</span>
+<img src="https://i.imgur.com/V2kQb9F.png" alt="Avatar 3D Perempuan 1">
+<span class="gender-tag">♀ PEREMPUAN</span>
+</div>
+<div class="info-panel">
+<div class="baris"> <span class="label-info">🆔 ID Member</span> <span class="nilai-info">M003</span> </div>
+<div class="baris"> <span class="label-info">💰 Celengan Saldo</span> <span class="saldo-nilai" id="saldo-M003">Rp 0</span> </div>
+</div>
+<div class="komentar-log-boks"> <textarea class="komentar-textarea" placeholder="Komentar log manifest..." id="text-M003"></textarea> </div>
+<div class="tombol-grid">
+<button class="btn-aksi btn-bom" onclick="kirimAksi('M003','bom')">💣 Bom</button>
+<button class="btn-aksi btn-sandal" onclick="kirimAksi('M003','sandal')">🩴 Sandal</button>
+<button class="btn-aksi btn-gif" onclick="kirimAksi('M003','gif')">🎁 Gif Koin</button>
+<button class="btn-aksi btn-vchmur" onclick="kirimAksi('M003','voucherMur')"> 🎫 Vch Mur</button>
+</div>
+</div>
+
+<!-- MEMBER 4 - PEREMPUAN -->
+<div class="kartu" id="room-M004">
+<div class="kartu-strip"></div>
+<div class="kartu-head">
+<h3>👩‍🏫 Teh Cahaya Makrifat</h3>
+<span class="badge-level">BRONZE</span>
+</div>
+<div class="avatar-3d">
+<span class="live-badge">● LIVE</span>
+<img src="https://i.imgur.com/pK8r5Tq.png" alt="Avatar 3D Perempuan 2">
+<span class="gender-tag">♀ PEREMPUAN</span>
+</div>
+<div class="info-panel">
+<div class="baris"> <span class="label-info">🆔 ID Member</span> <span class="nilai-info">M004</span> </div>
+<div class="baris"> <span class="label-info">💰 Celengan Saldo</span> <span class="saldo-nilai" id="saldo-M004">Rp 0</span> </div>
+</div>
+<div class="komentar-log-boks"> <textarea class="komentar-textarea" placeholder="Komentar log manifest..." id="text-M004"></textarea> </div>
+<div class="tombol-grid">
+<button class="btn-aksi btn-bom" onclick="kirimAksi('M004','bom')">💣 Bom</button>
+<button class="btn-aksi btn-sandal" onclick="kirimAksi('M004','sandal')">🩴 Sandal</button>
+<button class="btn-aksi btn-gif" onclick="kirimAksi('M004','gif')">🎁 Gif Koin</button>
+<button class="btn-aksi btn-vchmur" onclick="kirimAksi('M004','voucherMur')"> 🎫 Vch Mur</button>
+</div>
+</div>
+</div>
+<div class="paginasi"> <a href="#">⬅️ Ruangan Sebelumnya</a> <a href="#">➡️ Ruangan Berikutnya</a> </div>
+<div class="toast-container" id="toastBox"></div>
+<script>
+const SIMBOL = { bom: "💣 BOM MELEDAK!", sandal: "🩴 SANDAL MELAYANG!", gif: "🎁 GIF KOIN DIKIRIM!", voucherMur: "🎫 VOUCHER MURAH RpNUR DIKLAIM!" };
+function kirimAksi(idMember, tipe) {
+tampilToast(`Room ${idMember} — ${SIMBOL[tipe]}`);
+const txtBox = document.getElementById(`text-${idMember}`);
+if (txtBox) {
+const waktu = new Date().toLocaleTimeString('id-ID');
+txtBox.value += `[${waktu}] Berhasil eksekusi ${tipe}\n`;
+txtBox.scrollTop = txtBox.scrollHeight;
+}
+const el = document.getElementById(`saldo-${idMember}`);
+if (el) {
+const angka = parseInt(el.textContent.replace(/\D/g, '')) || 0;
+let bonus = 0;
+if (tipe === 'bom') bonus = 10000; else if (tipe === 'sandal') bonus = 5000; else if (tipe === 'gif') bonus = 2500; else if (tipe === 'voucherMur') bonus = 500;
+el.textContent = `Rp ${(angka + bonus).toLocaleString('id-ID')}`;
+}
+}
+function tampilToast(pesan) {
+const box = document.getElementById('toastBox');
+const toast = document.createElement('div');
+toast.className = 'toast';
+toast.textContent = pesan;
+box.appendChild(toast);
+setTimeout(() => toast.remove(), 3200);
+}
+document.querySelectorAll('.komentar-textarea').forEach(textarea => {
+let evCache = []; let prevDiff = -1; let currentScale = 1;
+textarea.addEventListener('pointerdown', (ev) => { evCache.push(ev); });
+textarea.addEventListener('pointermove', (ev) => {
+const index = evCache.findIndex(cachedEv => cachedEv.pointerId === ev.pointerId);
+if (index > -1) evCache[index] = ev;
+if (evCache.length === 2) {
+const diffX = Math.abs(evCache[0].clientX - evCache[1].clientX);
+const diffY = Math.abs(evCache[0].clientY - evCache[1].clientY);
+const curDiff = Math.sqrt(diffX * diffX + diffY * diffY);
+if (prevDiff > 0) {
+if (curDiff > prevDiff) { currentScale += 0.03; } else if (curDiff < prevDiff) { currentScale -= 0.03; }
+currentScale = Math.min(Math.max(0.8, currentScale), 2.2);
+textarea.style.fontSize = `${12 * currentScale}px`;
+} prevDiff = curDiff;
+} });
+const stopZoom = (ev) => {
+const index = evCache.findIndex(cachedEv => cachedEv.pointerId === ev.pointerId);
+if (index > -1) evCache.splice(index, 1);
+if (evCache.length < 2) prevDiff = -1;
+};
+textarea.addEventListener('pointerup', stopZoom);
+textarea.addEventListener('pointercancel', stopZoom);
+textarea.addEventListener('pointerout', stopZoom);
+textarea.addEventListener('pointerleave', stopZoom);
+});
+
+<!-- ============================================================
+     INIT & RUNNING SYSTEM
+     ============================================================ -->
+<script>
+  buildDots();
+  applyWallpaper(0);
+  startWallpaperTimer();
+  buildGallery();
+
+  document.getElementById('peringatan-drive-modal').addEventListener('click', function(e) {
+    if(e.target === this) tutupPeringatan();
+  });
+</script> 
+
+<!-- ⛑️ ALWI grandlew-->
+<script src="components/agen_alwi.js"></script>
+
+
+</script>
+</body>
+</html>

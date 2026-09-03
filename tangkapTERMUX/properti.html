@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>INDRAMAYU CLUB (IMC)</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --latar: #ffffff;
+  --teks-utama: #000000;
+  --teks-sekunder: #444444;
+  --border-garis: #dddddd;
+  --abu-ringan: #f9f9f9;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--latar);
+  color: var(--teks-utama);
+  padding: 15px;
+  min-height: 100vh;
+}
+
+/* ===== TOPNAV MINIMALIS ===== */
+.topnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--latar);
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 2px solid var(--teks-utama);
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.nav-left-zone {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-logo {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--teks-utama);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.hamburger {
+  background: var(--abu-ringan);
+  border: 1.5px solid var(--teks-utama);
+  color: var(--teks-utama);
+  font-size: 1.3rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-search {
+  flex: 0.4;
+  padding: 8px 12px;
+  background: var(--abu-ringan);
+  border: 1.5px solid var(--teks-utama);
+  border-radius: 6px;
+  color: var(--teks-utama);
+  font-size: 0.9rem;
+  min-width: 120px;
+}
+
+/* DROPDOWN NAV-LINKS */
+.nav-links {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--latar);
+  border: 2px solid var(--teks-utama);
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 5px;
+  gap: 8px;
+  z-index: 100;
+}
+
+.nav-links.active { display: flex; }
+
+.nav-link {
+  padding: 10px 15px;
+  color: var(--teks-utama);
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  border: 1px solid var(--border-garis);
+}
+
+.nav-link:hover, .nav-link.active {
+  background: var(--teks-utama);
+  color: var(--latar);
+  font-weight: bold;
+}
+
+.nav-right { display: flex; gap: 8px; }
+.nav-btn {
+  padding: 8px 12px;
+  background: var(--abu-ringan);
+  border: 1px solid var(--teks-utama);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+/* ===== HEADER UTAMA ===== */
+header {
+  text-align: center;
+  padding: 25px 10px;
+  border: 2px solid var(--teks-utama);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  background: var(--abu-ringan);
+}
+
+header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  color: var(--teks-utama);
+  letter-spacing: 0.05em;
+}
+
+header p {
+  color: var(--teks-sekunder);
+  font-size: 0.8rem;
+  margin-top: 5px;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+/* ===== 4 KONTAINER PROPERTI KOSONG ===== */
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  margin: 20px 0 10px;
+  border-left: 4px solid var(--teks-utama);
+  padding-left: 8px;
+}
+
+.properti-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+@media (min-width: 600px) {
+  .properti-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.kontainer-kosong {
+  background: var(--latar);
+  border: 2px dashed #888888; /* Efek garis putus-putus tanda siap diisi */
+  border-radius: 10px;
+  padding: 30px 15px;
+  text-align: center;
+  color: #666666;
+  font-size: 0.9rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+}
+
+.kontainer-kosong span {
+  display: block;
+  font-size: 1.3rem;
+  color: var(--teks-utama);
+  margin-bottom: 5px;
+  font-family: 'Cinzel', serif;
+}
+
+.kontainer-kosong:hover {
+  border-color: var(--teks-utama);
+  background: var(--abu-ringan);
+}
+
+/* ===== MENU TOMBOL AKSI JALUR CEPAT ===== */
+.menu-sultan-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 600px) {
+  .menu-sultan-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
+}
+
+.btn-menu-sultan {
+  background: var(--abu-ringan);
+  border: 2px solid var(--teks-utama);
+  border-radius: 8px;
+  padding: 15px 10px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-menu-sultan:hover {
+  background: var(--teks-utama);
+  color: var(--latar);
+}
+
+/* ===== FOOTER NAVIGASI ===== */
+.footer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 25px;
+  padding: 15px;
+  border: 2px solid var(--teks-utama);
+  border-radius: 8px;
+}
+
+.btn-footer {
+  flex: 1;
+  padding: 12px;
+  background: var(--latar);
+  color: var(--teks-utama);
+  text-align: center;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.9rem;
+  border: 1px solid var(--teks-utama);
+}
+
+.btn-footer:hover {
+  background: var(--teks-utama);
+  color: var(--latar);
+}
+
+/* RESPONSIVE LAYOUT DESKTOP */
+@media (min-width: 768px) {
+  .hamburger { display: none; }
+  .nav-links {
+    display: flex;
+    flex-direction: row;
+    position: static;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 580px) {
+  .topnav { flex-wrap: wrap; gap: 12px; }
+  .nav-search { order: 3; width: 100%; flex: unset; }
+}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="nav-left-zone">
+    <button class="hamburger" id="navToggle">☰</button>
+    <div class="nav-logo">
+      INDRAMAYU CLUB (IMC)
+    </div>
+  </div>
+  
+  <div class="nav-links" id="navLinksMenu">
+    <a href="DASHBOARD.html" class="nav-link active">Dashboard</a>
+    <a href="kamus.html" class="nav-link">Kamus Alwi</a>
+    <a href="live_member.html" class="nav-link">Live Member</a>
+    <a href="contact.html" class="nav-link">Admin Jodoh</a>
+  </div>
+
+  <input class="nav-search" placeholder="🔍 Cari...">
+  <div class="nav-right">
+    <div class="nav-btn">💬</div>
+    <div class="nav-btn">🔔</div>
+  </div>
+</div>
+
+<header>
+  <h1>INDRAMAYU CLUB (IMC)</h1>
+  <p>PORTAL UTAMA KENDALI EMAS SULTAN MAKRIFAT</p>
+</header>
+
+<div class="section-title">📦 LAB KENDALIAN PROPERTI SULTAN</div>
+<div class="properti-grid">
+  
+  <div class="kontainer-kosong" id="kontainer-gif-nur">
+    <span>GIF NUR</span>
+    [ Ruang Properti Kosong — Siap Disuntik Komponen ]
+  </div>
+
+  <div class="kontainer-kosong" id="kontainer-voucher-nur">
+    <span>VOUCHER NUR</span>
+    [ Ruang Properti Kosong — Siap Disuntik Komponen ]
+  </div>
+
+  <div class="kontainer-kosong" id="kontainer-kara-nur">
+    <span>KARA NUR</span>
+    [ Ruang Properti Kosong — Siap Disuntik Komponen ]
+  </div>
+
+  <div class="kontainer-kosong" id="kontainer-rpnur">
+    <span>RPNUR</span>
+    [ Ruang Properti Kosong — Siap Disuntik Komponen ]
+  </div>
+
+</div>
+
+<div class="section-title">⚡ SISTEM JALUR CEPAT MALINGPAA</div>
+<div class="menu-sultan-grid">
+  <div class="btn-menu-sultan" onclick="location.href='kamus.html'">📖 KAMUS INDRAMAYU</div>
+  <div class="btn-menu-sultan" onclick="location.href='live_member.html'">👥 LIVE MEMBER</div>
+  <div class="btn-menu-sultan" onclick="location.href='Live_vvip.html'">👑 LIVE VVIP</div>
+  <div class="btn-menu-sultan" onclick="location.href='KALKULATOR.html'">🧮 KALKULATOR</div>
+</div>
+
+<div class="footer-nav">
+  <a href="DASHBOARD.html" class="btn-footer">📊 REFRESH DASHBOARD</a>
+  <a href="contact.html" class="btn-footer">👤 BACKEND ADMIN JODOH</a>
+</div>
+
+<script>
+  const navToggle = document.getElementById('navToggle');
+  const navLinksMenu = document.getElementById('navLinksMenu');
+
+  navToggle.addEventListener('click', (e) => {
+    navLinksMenu.classList.toggle('active');
+    e.stopPropagation();
+  });
+
+  document.addEventListener('click', () => {
+    if(navLinksMenu.classList.contains('active')) {
+      navLinksMenu.classList.remove('active');
+    }
+  });
+</script>
+
+</body>
+</html>
+

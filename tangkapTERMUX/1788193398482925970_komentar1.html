@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Media Sosial - Indramayu Club</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;600;700&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #061F14; /* Background Hijau Sultan */
+            color: #FFFFFF; /* Tulisan Utama Putih */
+            padding-bottom: 60px;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar { 
+            background-color: #061F14; 
+            border-bottom: 3px solid #C9A84C; 
+            color: #FFFFFF; 
+            padding: 15px 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .navbar h2 { 
+            font-family: 'Cinzel', serif;
+            color: #C9A84C; 
+            font-size: 20px;
+        }
+
+        /* ── TICKER TEXT ── */
+        .ticker-container { 
+            background: rgba(255, 255, 255, 0.03); 
+            color: #C9A84C; 
+            padding: 8px 0; 
+            text-align: center; 
+            font-size: 14px; 
+            border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+            font-weight: 600;
+        }
+
+        /* ── LAYOUT ── */
+        .main-layout { 
+            display: grid; 
+            grid-template-columns: 2fr 1fr; 
+            gap: 25px; 
+            max-width: 1200px; 
+            margin: 20px auto; 
+            padding: 0 15px; 
+        }
+
+        @media (max-width: 768px) {
+            .main-layout { grid-template-columns: 1fr; }
+        }
+
+        /* ── POST CARD MAIN ── */
+        .post-card { 
+            background: rgba(255, 255, 255, 0.04); 
+            border-radius: 12px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            border: 1px solid #C9A84C; 
+        }
+        .post-card h3 {
+            font-family: 'Cinzel', serif;
+            color: #C9A84C;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .post-card p {
+            font-size: 14px;
+            line-height: 1.6;
+            opacity: 0.95;
+            margin-bottom: 25px;
+        }
+
+        .comment-section-title {
+            font-size: 12px;
+            color: #C9A84C;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            border-top: 1px solid rgba(201, 168, 76, 0.2);
+            padding-top: 15px;
+        }
+
+        /* ── 4 KONTAINER TERPISAH, AGAK BESAR & BISA SKROLL ── */
+        .comment-box-large {
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid rgba(201, 168, 76, 0.4);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+            padding-bottom: 8px;
+        }
+
+        .comment-user {
+            color: #C9A84C;
+            font-weight: 700;
+        }
+
+        /* AREA TEXTAREA BESAR DENGAN SKROLL & DUKUNGAN CUBIT */
+        .textarea-wrapper {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .comment-textarea-scroll {
+            width: 100%;
+            height: 160px; /* Ukuran Lebih Besar */
+            background-color: #061F14; /* Hijau Sultan */
+            color: #FFFFFF; /* Tulisan Putih */
+            border: 1px solid rgba(201, 168, 76, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px; /* Ukuran dasar dinamis saat dicubit */
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+            overflow-y: scroll; /* Mengaktifkan Skroll */
+            touch-action: none; /* Mencegah skroll default browser saat dicubit */
+        }
+        .comment-textarea-scroll:focus {
+            border-color: #C9A84C;
+            box-shadow: 0 0 10px rgba(201, 168, 76, 0.3);
+        }
+
+        /* ── ACTIONS & ECONOMY BUTTONS ROW ── */
+        .comment-footer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .economy-tokens {
+            display: flex;
+            gap: 6px;
+        }
+
+        /* INDIKATOR POIN DI SETIAP KOMENTAR */
+        .token-btn {
+            background: rgba(201, 168, 76, 0.1);
+            color: #C9A84C;
+            border: 1px solid rgba(201, 168, 76, 0.4);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .token-btn:hover {
+            background: rgba(201, 168, 76, 0.25);
+        }
+
+        /* TOMBOL PUSH DATA EMAS KONSISTEN */
+        .push-btn {
+            background: transparent;
+            color: #FFFFFF;
+            border: 1px solid #C9A84C;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+        }
+        .push-btn:hover {
+            background: #C9A84C;
+            color: #061F14;
+        }
+
+        /* ── SIDEBAR CARD ── */
+        .sidebar-card { 
+            background: rgba(255, 255, 255, 0.03); 
+            border-radius: 12px; 
+            padding: 20px; 
+            border: 1px solid #C9A84C; 
+        }
+        .sidebar-card h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #C9A84C;
+        }
+        .kamus-item { 
+            background: rgba(255, 255, 255, 0.02); 
+            padding: 10px; 
+            margin-bottom: 8px; 
+            border-radius: 6px; 
+            border-left: 3px solid #C9A84C;
+            font-size: 13px;
+        }
+        .kamus-item span { 
+            color: #C9A84C; 
+            font-weight: bold; 
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <h2>👥 Indramayu Club Sosmed</h2>
+    <div>
+        <a href="dashboard.html" style="color:#C9A84C; text-decoration:none; font-weight:bold; font-size:13px;">🏦 Bank Dashboard</a>
+    </div>
+</div>
+
+<!-- TICKER CONTAINER -->
+<div class="ticker-container">
+    <marquee>⚡ Cubit (Pinch) area teks untuk Zoom In/Out huruf • Skroll internal aktif mandiri • Komunikasi Nur 7 ⚡</marquee>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+    
+    <!-- KIRIMAN UTAMA & KOMENTAR BESAR -->
+    <div>
+        <div class="post-card">
+            <h3>Nur Makrifat</h3>
+            <p>Sistem ekosistem digital raksasa resmi dipindahkan ke lokasi baru dengan aman dan murni publik!</p>
+            
+            <div class="comment-section-title">💬 Ruang Interaksi Kontainer Skroll & Pinch Zoom (Nur 7)</div>
+
+            <!-- KONTAINER KOMENTAR 1 -->
+            <div class="comment-box-large">
+                <div class="comment-header">
+                    <span class="comment-user">✨ Nur 7 — Alokasi Rp NUR</span>
+                    <span style="opacity:0.6; font-size:10px;">ID: IMC-07A</span>
+                </div>
+                <div class="textarea-wrapper">
+                    <textarea class="comment-textarea-scroll pinch-zoom" placeholder="[Skroll & Cubit Aktif] Tulis pesan penyambung aplikasi atau sapaan member baru menggunakan Rp NUR di sini..."></textarea>
+                </div>
+                <div class="comment-footer-actions">
+                    <div class="economy-tokens">
+                        <button class="token-btn">💠 Rp NUR</button>
+                        <button class="token-btn">🎁 GifNur</button>
+                        <button class="token-btn">🎟️ Voucher Nur</button>
+                    </div>
+                    <button class="push-btn" onclick="alert('Data Rp NUR Berhasil Di-Push!')">🚀 Push Data</button>
+                </div>
+            </div>
+
+            <!-- KONTAINER KOMENTAR 2 -->
+            <div class="comment-box-large">
+                <div class="comment-header">
+                    <span class="comment-user">✨ Nur 7 — Distribusi GifNur</span>
+                    <span style="opacity:0.6; font-size:10px;">ID: IMC-07B</span>
+                </div>
+                <div class="textarea-wrapper">
+                    <textarea class="comment-textarea-scroll pinch-zoom" placeholder="[Skroll & Cubit Aktif] Berikan untaian kata puitis makrifat dengan insentif Koin Hadiah GifNur di sini..."></textarea>
+                </div>
+                <div class="comment-footer-actions">
+                    <div class="economy-tokens">
+                        <button class="token-btn">💠 Rp NUR</button>
+                        <button class="token-btn">🎁 GifNur</button>
+                        <button class="token-btn">🎟️ Voucher Nur</button>
+                    </div>
+                    <button class="push-btn" onclick="alert('Data GifNur Berhasil Di-Push!')">🚀 Push Data</button>
+                </div>
+            </div>
+
+            <!-- KONTAINER KOMENTAR 3 -->
+            <div class="comment-box-large">
+                <div class="comment-header">
+                    <span class="comment-user">✨ Nur 7 — Validasi Voucher Nur</span>
+                    <span style="opacity:0.6; font-size:10px;">ID: IMC-07C</span>
+                </div>
+                <div class="textarea-wrapper">
+                    <textarea class="comment-textarea-scroll pinch-zoom" placeholder="[Skroll & Cubit Aktif] Input kode Voucher Nur untuk aktivasi otomatis lencana umur dan gender di sini..."></textarea>
+                </div>
+                <div class="comment-footer-actions">
+                    <div class="economy-tokens">
+                        <button class="token-btn">💠 Rp NUR</button>
+                        <button class="token-btn">🎁 GifNur</button>
+                        <button class="token-btn">🎟️ Voucher Nur</button>
+                    </div>
+                    <button class="push-btn" onclick="alert('Data Voucher Nur Berhasil Di-Push!')">🚀 Push Data</button>
+                </div>
+            </div>
+
+            <!-- KONTAINER KOMENTAR 4 -->
+            <div class="comment-box-large">
+                <div class="comment-header">
+                    <span class="comment-user">✨ Nur 7 — Log Alwi Render Engine</span>
+                    <span style="opacity:0.6; font-size:10px;">ID: IMC-07D</span>
+                </div>
+                <div class="textarea-wrapper">
+                    <textarea class="comment-textarea-scroll pinch-zoom" placeholder="[Skroll & Cubit Aktif] Catatan pencarian admin manusia baru dan sinkronisasi data komparasi ekosistem..."></textarea>
+                </div>
+                <div class="comment-footer-actions">
+                    <div class="economy-tokens">
+                        <button class="token-btn">💠 Rp NUR</button>
+                        <button class="token-btn">🎁 GifNur</button>
+                        <button class="token-btn">🎟️ Voucher Nur</button>
+                    </div>
+                    <button class="push-btn" onclick="alert('Data Output Engine Berhasil Di-Push!')">🚀 Push Data</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+    <!-- SIDEBAR KAMUS -->
+    <div>
+        <div class="sidebar-card">
+            <h3>📖 Kamus Dermayu</h3>
+            <div class="kamus-item"><span>Wong</span> = Orang</div>
+            <div class="kamus-item"><span>Kesuwun</span> = Terima Kasih</div>
+            <div class="kamus-item"><span>Lur</span> = Saudara</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Logika JavaScript Pinch-to-Zoom (Cubit Layar) Khusus Area Textarea HP
+    const textareas = document.querySelectorAll('.pinch-zoom');
+
+    textareas.forEach(textarea => {
+        let currentFontSize = 14; // Font dasar
+        let initialDistance = null;
+
+        // Menggunakan pointer events agar kompatibel dengan touch perangkat mobile
+        textarea.addEventListener('pointerdown', (e) => {
+            // Aktifkan mekanisme jika ada dua sentuhan jari
+            if (e.pointerType === 'touch') {
+                textarea.setPointerCapture(e.pointerId);
+            }
+        });
+
+        textarea.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                // Hitung jarak awal antara kedua jari saat menyentuh layar
+                initialDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+            }
+        });
+
+        textarea.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2 && initialDistance !== null) {
+                // Hitung jarak baru saat jari bergerak (mencubit menjauh/mendekat)
+                const currentDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+
+                const change = currentDistance / initialDistance;
+
+                if (change > 1) {
+                    currentFontSize = Math.min(currentFontSize + 0.3, 28); // Batas maksimal pembesaran huruf
+                } else if (change < 1) {
+                    currentFontSize = Math.max(currentFontSize - 0.3, 11); // Batas minimal pengecilan huruf
+                }
+
+                textarea.style.fontSize = currentFontSize + 'px';
+                initialDistance = currentDistance; // Perbarui jarak dasar
+            }
+        });
+
+        textarea.addEventListener('touchend', (e) => {
+            if (e.touches.length < 2) {
+                initialDistance = null;
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
+

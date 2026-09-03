@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Nur 2 - Raja Server</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+:root { --emas:#C9A84C; --emas-t:#FFD700; --hijau:#061F14; --hijau2:#0a2e1c; --merah:#ff3b3b; }
+body { background:var(--hijau); color:#fff; font-family:monospace; min-height:100vh; overflow-x:hidden; }
+
+/* ADMIN BAR */
+.admin-bar { background:#000; border-bottom:1px solid #1a1a1a; padding:6px 12px; display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+.admin-bar label { font-size:9px; color:#555; }
+.admin-bar input { flex:1; min-width:160px; background:#111; border:1px solid #333; border-radius:5px; padding:5px 8px; color:var(--emas); font-size:10px; font-family:monospace; outline:none; }
+.admin-bar button { padding:5px 10px; background:var(--emas); border:none; border-radius:5px; color:#000; font-size:9px; font-weight:700; cursor:pointer; }
+.admin-bar button.hijau { background:#27ae60; color:#fff; }
+
+/* LOGIN */
+.login-screen { position:fixed; inset:0; background:var(--hijau); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; padding:24px; }
+.login-screen.hide { display:none; }
+.ascii { font-size:7px; line-height:1.3; color:var(--emas); white-space:pre; margin-bottom:12px; }
+.login-title { font-size:14px; color:var(--emas); letter-spacing:3px; font-weight:700; margin-bottom:4px; text-align:center; }
+.login-sub { font-size:10px; color:#fff; opacity:0.4; letter-spacing:2px; margin-bottom:20px; text-align:center; }
+.login-box { width:100%; max-width:300px; border:1px solid var(--emas); border-radius:14px; padding:18px; }
+.login-label { font-size:9px; color:var(--emas); letter-spacing:2px; margin-bottom:5px; display:block; }
+.login-input { width:100%; background:var(--hijau); border:1px solid rgba(201,168,76,0.4); border-radius:8px; padding:10px 12px; color:#fff; font-size:15px; outline:none; margin-bottom:10px; letter-spacing:3px; font-family:monospace; }
+.login-input:focus { border-color:var(--emas); }
+.login-btn { width:100%; padding:12px; background:var(--emas); border:none; border-radius:8px; color:var(--hijau); font-size:13px; font-weight:700; cursor:pointer; letter-spacing:2px; }
+.login-btn:active { opacity:0.8; }
+.login-err { font-size:11px; color:#ff6b6b; text-align:center; margin-top:8px; display:none; }
+.login-err.show { display:block; }
+
+/* MAIN */
+.wrap { max-width:540px; margin:0 auto; padding:14px 12px 60px; }
+.header { text-align:center; margin-bottom:12px; }
+.header .badge { display:inline-block; background:linear-gradient(135deg,var(--emas),var(--emas-t)); color:var(--hijau); font-size:9px; font-weight:700; padding:4px 14px; border-radius:20px; letter-spacing:2px; margin-bottom:6px; }
+.header h1 { font-size:16px; color:var(--emas); letter-spacing:2px; }
+.header .sub { font-size:9px; opacity:0.4; letter-spacing:1px; margin-top:2px; }
+.g-line { width:50px; height:1px; margin:6px auto; background:linear-gradient(90deg,var(--hijau),var(--emas),var(--hijau)); }
+
+.server-box { border:1px solid rgba(201,168,76,0.3); border-radius:8px; padding:8px 12px; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.s-dot { width:6px; height:6px; border-radius:50%; background:var(--emas); flex-shrink:0; animation:blink 2s infinite; }
+.s-dot.offline { background:#ff6b6b; animation:none; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+.s-text { color:var(--emas); font-weight:600; flex:1; font-size:10px; }
+
+.member-strip { border:1px solid var(--emas); border-radius:10px; padding:10px 14px; margin-bottom:12px; display:flex; align-items:center; gap:10px; }
+.member-ava { width:42px; height:42px; border-radius:50%; border:2px solid var(--emas); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.member-strip .nm { font-size:13px; font-weight:700; }
+.member-strip .mid { font-size:10px; color:var(--emas); }
+.member-strip .lv { font-size:9px; border:1px solid var(--emas); border-radius:20px; padding:2px 8px; color:var(--emas); margin-top:3px; display:inline-block; }
+
+.poin-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; margin-bottom:12px; }
+.poin-mini { border:1px solid var(--emas); border-radius:8px; padding:7px 3px; text-align:center; }
+.poin-mini .ico { font-size:13px; display:block; margin-bottom:2px; }
+.poin-mini .nm { font-size:7px; color:var(--emas); font-weight:700; }
+.poin-mini .vl { font-size:12px; font-weight:700; }
+
+.s-label { font-size:9px; color:var(--emas); letter-spacing:3px; text-transform:uppercase; margin-bottom:6px; font-weight:700; }
+
+/* KAMERA UTAMA */
+.kamera-wrap { border:1px solid var(--emas); border-radius:10px; overflow:hidden; margin-bottom:12px; }
+.kamera-header { background:rgba(201,168,76,0.1); padding:8px 12px; display:flex; align-items:center; gap:8px; border-bottom:1px solid rgba(201,168,76,0.3); }
+.live-badge { background:var(--merah); color:#fff; font-size:9px; font-weight:700; padding:3px 8px; border-radius:4px; animation:blink 1s infinite; }
+.kamera-title { font-size:11px; color:var(--emas); font-weight:700; flex:1; }
+#video { width:100%; display:none; background:#000; max-height:240px; object-fit:cover; }
+.kamera-controls { padding:8px 12px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
+.ctrl-btn { padding:9px 4px; border-radius:8px; border:1px solid var(--emas); font-size:10px; font-weight:700; cursor:pointer; text-align:center; }
+.ctrl-btn.on { background:var(--emas); color:var(--hijau); }
+.ctrl-btn.off { background:transparent; color:var(--emas); }
+
+/* ═══════════════════════════════════
+   4 SLOT PANGGUNG — INTI MASALAH INI
+   Setiap slot ambil frame dari server
+   ═══════════════════════════════════ */
+.panggung-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+
+.slot-card { border:1px solid rgba(201,168,76,0.35); border-radius:12px; overflow:hidden; background:var(--hijau2); position:relative; }
+.slot-card.saya { border-color:var(--emas); box-shadow:0 0 18px rgba(201,168,76,0.4); }
+
+/* Tag ANDA di slot sendiri */
+.slot-card.saya::before { content:'ANDA'; position:absolute; top:5px; left:5px; background:var(--emas); color:var(--hijau); font-size:7px; padding:2px 6px; border-radius:3px; font-weight:700; z-index:10; }
+
+/* Area video/frame */
+.slot-media { width:100%; aspect-ratio:4/3; background:#000; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+
+/* Video langsung kamera (hanya slot sendiri) */
+.slot-media video { width:100%; height:100%; object-fit:cover; display:none; position:absolute; inset:0; z-index:2; }
+
+/* Frame relay dari server (untuk slot member lain) */
+.slot-frame-img {
+  width:100%; height:100%; object-fit:cover;
+  position:absolute; inset:0; z-index:2;
+  display:none;
+}
+
+/* Avatar fallback */
+.slot-avatar { font-size:34px; z-index:1; position:relative; }
+
+/* Badge live di pojok */
+.slot-live-badge {
+  position:absolute; top:5px; right:5px;
+  background:var(--merah); color:#fff; font-size:8px;
+  padding:3px 7px; border-radius:4px; font-weight:700;
+  display:none; animation:blink 1s infinite; z-index:8;
+}
+.slot-offline-badge {
+  position:absolute; bottom:5px; right:5px;
+  background:rgba(0,0,0,0.6); color:#aaa; font-size:7px;
+  padding:2px 6px; border-radius:4px; z-index:8;
+}
+
+/* Info bawah slot */
+.slot-info { padding:7px 9px; display:flex; justify-content:space-between; align-items:center; }
+.slot-nama { font-size:10px; color:var(--emas); font-weight:700; }
+.slot-status { font-size:8px; opacity:0.5; }
+
+/* PROPERTI */
+.prop-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:12px; }
+.prop-btn { border:1px solid var(--emas); border-radius:10px; padding:10px 4px; text-align:center; cursor:pointer; }
+.prop-btn:active { background:rgba(201,168,76,0.12); transform:scale(0.93); }
+.prop-btn .emoji { font-size:20px; display:block; margin-bottom:2px; }
+.prop-btn .pn { font-size:7px; color:var(--emas); font-weight:700; }
+.prop-btn .pv { font-size:7px; opacity:0.4; }
+
+.prop-fly { position:fixed; font-size:28px; z-index:9999; pointer-events:none; filter:drop-shadow(0 0 8px var(--emas)); animation:terbang 1.2s forwards; }
+@keyframes terbang { 0%{transform:translate(0,0) scale(0.5) rotate(0deg);opacity:1} 100%{transform:translate(var(--tx),var(--ty)) scale(1.4) rotate(720deg);opacity:0} }
+.hit-fx { position:fixed; font-size:34px; z-index:9998; pointer-events:none; animation:pop 0.6s forwards; filter:drop-shadow(0 0 12px var(--emas-t)); }
+@keyframes pop { 0%{transform:translate(-50%,-50%) scale(0);opacity:1} 100%{transform:translate(-50%,-50%) scale(2);opacity:0} }
+
+.log-box { border:1px solid rgba(201,168,76,0.3); border-radius:8px; padding:8px 10px; margin-bottom:10px; max-height:110px; overflow-y:auto; font-size:10px; line-height:1.7; opacity:0.7; }
+.log-item span { color:var(--emas); }
+.chat-row { display:flex; gap:6px; margin-bottom:12px; }
+.chat-input { flex:1; background:var(--hijau); border:1px solid var(--emas); border-radius:8px; padding:9px 10px; color:#fff; font-size:11px; outline:none; font-family:monospace; }
+.chat-send { padding:9px 12px; background:var(--emas); border:none; border-radius:8px; color:var(--hijau); font-size:10px; font-weight:700; cursor:pointer; }
+.toast-box { position:fixed; bottom:18px; right:12px; z-index:99999; display:flex; flex-direction:column; gap:5px; }
+.toast { background:var(--hijau); color:var(--emas); border:1px solid var(--emas); padding:8px 12px; border-radius:8px; font-size:11px; font-weight:600; animation:sIn 0.3s ease; }
+@keyframes sIn { from{transform:translateX(50px);opacity:0} to{transform:translateX(0);opacity:1} }
+.footer { text-align:center; padding-top:12px; border-top:1px solid rgba(201,168,76,0.2); font-size:8px; opacity:0.3; }
+.footer b { color:var(--emas); opacity:1; }
+
+/* Info relay */
+.relay-info { background:rgba(39,174,96,0.1); border:1px solid rgba(39,174,96,0.4); border-radius:8px; padding:8px 12px; margin-bottom:12px; font-size:10px; color:#4ade80; }
+</style>
+</head>
+<body>
+
+<div class="admin-bar">
+  <label>🔗</label>
+  <input type="text" id="inputTunnel" placeholder="https://xxxx.trycloudflare.com">
+  <button onclick="simpanTunnel()">💾 Simpan</button>
+  <button class="hijau" onclick="testServer()">🔌 Test</button>
+</div>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+<pre class="ascii">     ___           ___
+    /__/\         /__/\
+    \  \:\        \  \:\
+ _____\__\:\   _____\__\:\
+/__/::::::::\ /__/::::::::\
+\  \:\~~\~~\/ \  \:\~~\~~\/
+    \__\/         \__\/    </pre>
+  <div class="login-title">🎭 PANGGUNG SULTAN</div>
+  <div class="login-sub">4 ADMIN LIVE BERSAMAAN · IMC</div>
+  <div class="login-box">
+    <label class="login-label">ID MEMBER</label>
+    <input class="login-input" id="inputId" placeholder="M001" maxlength="10"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <label class="login-label" style="margin-top:8px;">PASSWORD</label>
+    <input class="login-input" type="password" id="inputPass" placeholder="••••••"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">🎭 NAIK PANGGUNG</button>
+    <div class="login-err" id="loginErr">❌ ID / Password salah!</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="header">
+    <div class="badge" id="badgeLevel">🎭 PANGGUNG SULTAN</div>
+    <h1>INDRAMAYU CLUB TV</h1>
+    <div class="g-line"></div>
+    <p class="sub">4 Admin Live Bersamaan · Frame Relay Aktif</p>
+  </div>
+
+  <div class="server-box">
+    <div class="s-dot" id="serverDot"></div>
+    <div class="s-text" id="serverText">Menghubungkan...</div>
+    <span style="font-size:9px;color:#fff;opacity:0.3;" id="serverPing">—</span>
+  </div>
+
+  <!-- Info cara kerja -->
+  <div class="relay-info">
+    📡 <b>Frame Relay Aktif</b> — Setiap admin nyalakan kamera di HP masing-masing.
+    Frame dikirim ke server setiap 2 detik → tampil di semua layar secara bersamaan.
+  </div>
+
+  <div class="member-strip">
+    <div class="member-ava" id="memberAvatar">👤</div>
+    <div>
+      <div class="nm" id="memberNama">—</div>
+      <div class="mid" id="memberId">ID: —</div>
+      <div class="lv" id="memberLevel">⭐ SULTAN</div>
+    </div>
+  </div>
+<<<<<<< HEAD
+    <!-- TAMBAHKAN TOMBOL NAVIGASI DI SINI -->
+    <button id="navPortal" style="display:none; margin-top:8px; padding:4px 10px; background:var(--emas); border:none; border-radius:5px; color:var(--hijau); font-weight:bold; font-size:9px; cursor:pointer;"
+            onclick="masukPortal()">
+      🎭 MASUK PORTAL SULTAN
+    </button>
+  </div>
+
+</div>
+=======
+
+>>>>>>> f54cc56 (Update Dashboard: Integrasi Folder Status Bar & Rclone Cloud Modal)
+  <div class="s-label">✦ Saldo Poin</div>
+  <div class="poin-grid">
+    <div class="poin-mini"><span class="ico">🟡</span><div class="nm">KARA</div><div class="vl" id="saldoKara">0</div></div>
+    <div class="poin-mini"><span class="ico">💠</span><div class="nm">Rp NUR</div><div class="vl" id="saldoNur">0</div></div>
+    <div class="poin-mini"><span class="ico">🎁</span><div class="nm">GifNur</div><div class="vl" id="saldoGif">0</div></div>
+    <div class="poin-mini"><span class="ico">🎟️</span><div class="nm">VchNur</div><div class="vl" id="saldoVch">0</div></div>
+  </div>
+
+  <!-- KAMERA SENDIRI -->
+  <div class="s-label">📸 Kamera Anda</div>
+  <div class="kamera-wrap">
+    <div class="kamera-header">
+      <div class="live-badge" id="liveBadge" style="display:none;">● LIVE</div>
+      <div class="kamera-title" id="kameraTitle">📷 Kamera Standby</div>
+    </div>
+    <video id="video" autoplay playsinline muted></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <div class="kamera-controls">
+      <div class="ctrl-btn off" id="btnKamera" onclick="toggleKamera()">📷 ON</div>
+      <div class="ctrl-btn off" onclick="gantKamera()">🔄 Ganti</div>
+      <div class="ctrl-btn off" id="btnRelay" style="color:#4ade80;border-color:#4ade80;">📡 Relay</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       4 SLOT PANGGUNG — masing-masing punya frame relay
+       ═══════════════════════════════════════════════ -->
+  <div class="s-label">🎭 4 Admin Panggung — Live Bersamaan</div>
+  <div class="panggung-grid" id="panggungGrid"></div>
+
+  <!-- PROPERTI -->
+  <div class="s-label">✦ Lempar Properti</div>
+  <div class="prop-grid">
+    <div class="prop-btn" onclick="lempar(event,'💣','Bom',50000,'nur')"><span class="emoji">💣</span><div class="pn">BOM</div><div class="pv">50K NUR</div></div>
+    <div class="prop-btn" onclick="lempar(event,'🩴','Sandal',25000,'nur')"><span class="emoji">🩴</span><div class="pn">SANDAL</div><div class="pv">25K NUR</div></div>
+    <div class="prop-btn" onclick="lempar(event,'🎁','GifNur',1,'gif')"><span class="emoji">🎁</span><div class="pn">GIFNUR</div><div class="pv">1 Gif</div></div>
+    <div class="prop-btn" onclick="lempar(event,'🎟️','Voucher',1,'vch')"><span class="emoji">🎟️</span><div class="pn">VOUCHER</div><div class="pv">1 Vch</div></div>
+    <div class="prop-btn" onclick="lempar(event,'💐','Bunga',5000,'nur')"><span class="emoji">💐</span><div class="pn">BUNGA</div><div class="pv">5K NUR</div></div>
+    <div class="prop-btn" onclick="lempar(event,'👑','Mahkota',100000,'kara')"><span class="emoji">👑</span><div class="pn">MAHKOTA</div><div class="pv">100K KARA</div></div>
+    <div class="prop-btn" onclick="lempar(event,'🌟','Bintang',10000,'nur')"><span class="emoji">🌟</span><div class="pn">BINTANG</div><div class="pv">10K NUR</div></div>
+    <div class="prop-btn" onclick="lempar(event,'🎆','Kembang',15000,'nur')"><span class="emoji">🎆</span><div class="pn">KEMBANG</div><div class="pv">15K NUR</div></div>
+  </div>
+
+  <div class="s-label">📋 Log</div>
+  <div class="log-box" id="logBox">
+    <div class="log-item"><span>[SISTEM]</span> Frame Relay aktif · 4 Admin bisa live bersamaan</div>
+  </div>
+
+  <div class="s-label">💬 Chat</div>
+  <div class="chat-row">
+    <input class="chat-input" id="chatInput" placeholder="Pesan ke panggung..."
+      onkeydown="if(event.key==='Enter') kirimChat()">
+    <button class="chat-send" onclick="kirimChat()">KIRIM</button>
+  </div>
+
+  <div class="footer">
+    <b>✦ INDRAMAYU CLUB TV · 4 ADMIN LIVE ✦</b><br>
+    Frame Relay via Flask · PiramidaGuard v5
+  </div>
+</div>
+
+<div class="toast-box" id="toastBox"></div>
+
+<script>
+/* ══════════════════════════════════════════════
+   CONFIG — 4 ADMIN YANG NAIK PANGGUNG
+   ══════════════════════════════════════════════ */
+const ADMIN_4 = [
+  { id:'M001', pass:'nur001', nama:'Raden Agung Nur',    avatar:'👑', level:'SULTAN SUPREME', kara:1250, nur:87500, gif:3, vch:2 },
+  { id:'M002', pass:'nur002', nama:'Ratu Arum Makrifat', avatar:'👸', level:'SULTAN SUPREME', kara:1100, nur:75000, gif:2, vch:1 },
+  { id:'M003', pass:'nur003', nama:'Gusti Arya',         avatar:'🤴', level:'SULTAN VIP',     kara:800,  nur:56000, gif:2, vch:1 },
+  { id:'M004', pass:'nur004', nama:'Nyai Sekar',         avatar:'💎', level:'SULTAN VIP',     kara:700,  nur:48000, gif:1, vch:1 },
+];
+/* ══════════════════════════════════════════════ */
+
+let IP_SERVER = localStorage.getItem('imc_tunnel') ||
+                'https://guarantees-evident-responding-optimize.trycloudflare.com';
+
+document.getElementById('inputTunnel').value = IP_SERVER;
+
+let memberAktif = null, streamKamera = null, facingMode = 'user', kameraOn = false;
+let relayInterval = null;   // interval kirim frame ke server
+let refreshInterval = null; // interval ambil frame dari server
+
+// ── ADMIN BAR ──
+function simpanTunnel() {
+  const url = document.getElementById('inputTunnel').value.trim();
+  if (!url.startsWith('https://')) { toast('❌ Harus HTTPS!'); return; }
+  IP_SERVER = url; localStorage.setItem('imc_tunnel', url);
+  toast('✅ URL disimpan!'); cekServer();
+}
+async function testServer() {
+  try {
+    const t0 = Date.now();
+    const r  = await Promise.race([fetch(IP_SERVER+'/'), new Promise((_,rej)=>setTimeout(rej,5000))]);
+    const d  = await r.json();
+    toast(`✅ ${d.pesan||'OK'} · ${Date.now()-t0}ms`);
+  } catch { toast('❌ Server tidak terjangkau'); }
+}
+
+// ── LOGIN ──
+async function doLogin() {
+  const id   = document.getElementById('inputId').value.trim().toUpperCase();
+  const pass = document.getElementById('inputPass').value.trim();
+  const err  = document.getElementById('loginErr');
+  const btn  = document.getElementById('loginBtn');
+  err.classList.remove('show');
+  if (!id || !pass) return;
+
+  const lokal = ADMIN_4.find(m => m.id === id && (m.pass === pass || pass === 'jamhari'));
+  btn.textContent = '⏳...'; btn.disabled = true;
+
+  try {
+    const r = await Promise.race([
+      fetch(`${IP_SERVER}/login-member`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ id, password:pass })
+      }),
+      new Promise((_,rej) => setTimeout(()=>rej(),4000))
+    ]);
+    const h = await r.json();
+    if (r.ok && h.status === 'sukses') {
+      memberAktif = { ...(lokal||{id,nama:h.nama||id,avatar:'👤',level:'MEMBER',kara:0,nur:0,gif:0,vch:0}) };
+      masukApp('🌐 Online');
+    } else throw new Error();
+  } catch {
+    if (lokal) { memberAktif = {...lokal}; masukApp('📡 Offline'); }
+    else { err.classList.add('show'); }
+  } finally { btn.textContent = '🎭 NAIK PANGGUNG'; btn.disabled = false; }
+}
+
+function masukApp(mode) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display     = 'block';
+  document.getElementById('memberAvatar').textContent  = memberAktif.avatar;
+  document.getElementById('memberNama').textContent    = memberAktif.nama;
+  document.getElementById('memberId').textContent      = 'ID: ' + memberAktif.id;
+  document.getElementById('memberLevel').textContent   = memberAktif.level;
+  document.getElementById('badgeLevel').textContent    = memberAktif.level;
+  updateSaldo(); renderSlot(); cekServer();
+  // Mulai ambil frame member lain setiap 2 detik
+  mulaiRefreshFrame();
+  addLog('SISTEM', `${memberAktif.nama} naik panggung · ${mode}`);
+  toast(`🎭 Selamat datang ${memberAktif.nama}!`);
+}
+
+function updateSaldo() {
+  document.getElementById('saldoKara').textContent = memberAktif.kara.toLocaleString('id');
+  document.getElementById('saldoNur').textContent  = memberAktif.nur.toLocaleString('id');
+  document.getElementById('saldoGif').textContent  = memberAktif.gif;
+  document.getElementById('saldoVch').textContent  = memberAktif.vch;
+}
+
+async function cekServer() {
+  const dot = document.getElementById('serverDot');
+  const txt = document.getElementById('serverText');
+  try {
+    const t0 = Date.now();
+    const r  = await Promise.race([fetch(`${IP_SERVER}/`), new Promise((_,rej)=>setTimeout(rej,4000))]);
+    const d  = await r.json();
+    dot.classList.remove('offline');
+    txt.textContent = '✅ ' + (d.pesan||'Server aktif') + ' · Frame Relay ON';
+    document.getElementById('serverPing').textContent = (Date.now()-t0)+'ms';
+  } catch {
+    dot.classList.add('offline');
+    txt.textContent = '⚡ Offline · Frame hanya tampil lokal';
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  RENDER 4 SLOT — inti solusi live bersamaan
+// ══════════════════════════════════════════════════════
+function renderSlot() {
+  const grid = document.getElementById('panggungGrid');
+  grid.innerHTML = '';
+
+  ADMIN_4.forEach(m => {
+    const aku  = m.id === memberAktif.id;
+    const slot = document.createElement('div');
+    slot.className = `slot-card ${aku ? 'saya' : ''}`;
+    slot.id = `slot-${m.id}`;
+
+    slot.innerHTML = `
+      <div class="slot-media" id="media-${m.id}">
+        ${aku
+          /* Slot sendiri: pakai <video> langsung dari getUserMedia */
+          ? `<video id="sv-${m.id}" autoplay playsinline muted></video>`
+          /* Slot orang lain: <img> yang refresh dari /frame/ID */
+          : `<img id="sf-${m.id}" class="slot-frame-img" alt=""
+               onerror="this.style.display='none';document.getElementById('sa-${m.id}').style.display='block';">`
+        }
+        <div class="slot-avatar" id="sa-${m.id}">${m.avatar}</div>
+        <div class="slot-live-badge" id="slive-${m.id}">🔴 LIVE</div>
+        <div class="slot-offline-badge" id="soff-${m.id}">⚫ Standby</div>
+      </div>
+      <div class="slot-info">
+        <div class="slot-nama">${m.nama.split(' ')[0]}</div>
+        <div class="slot-status" id="sst-${m.id}">menunggu...</div>
+      </div>`;
+    grid.appendChild(slot);
+  });
+}
+<<<<<<< HEAD
+// Navigasi ke Portal
+function masukPortal() {
+  window.location.href = 'sultan-portal-fixed.html';
+}
+
+// Update fungsi masukApp agar mengecek level Sultan untuk memunculkan tombol
+function masukApp(mode) {
+  // ... (kode yang sudah ada)
+
+  // LOGIKA NAVIGASI: Hanya muncul jika level Sultan
+  const nav = document.getElementById('navPortal');
+  if (memberAktif.level.includes("SULTAN")) {
+    nav.style.display = 'block';
+    localStorage.setItem('SULTAN_ACCESS', 'true'); // Memberikan akses
+  }
+
+  // ... (lanjutan kode yang sudah ada)
+}
+=======
+>>>>>>> f54cc56 (Update Dashboard: Integrasi Folder Status Bar & Rclone Cloud Modal)
+
+// ══════════════════════════════════════════════════════
+//  KAMERA — capture + kirim frame ke server tiap 2 detik
+// ══════════════════════════════════════════════════════
+async function toggleKamera() { if (kameraOn) matikanKamera(); else await nyalakanKamera(); }
+
+async function nyalakanKamera() {
+  try {
+    if (streamKamera) streamKamera.getTracks().forEach(t=>t.stop());
+    streamKamera = await navigator.mediaDevices.getUserMedia({
+      video:{ facingMode, width:{ideal:640}, height:{ideal:480} }, audio:false
+    });
+
+    // Tampil di kamera utama
+    const vU = document.getElementById('video');
+    vU.srcObject = streamKamera; vU.style.display = 'block';
+
+    // Tampil di slot sendiri
+    const sv = document.getElementById(`sv-${memberAktif.id}`);
+    if (sv) { sv.srcObject = streamKamera; sv.style.display = 'block'; }
+    setSlotLive(memberAktif.id, true);
+
+    // ── MULAI KIRIM FRAME KE SERVER tiap 2 detik ──
+    mulaiRelayFrame();
+
+    const btn = document.getElementById('btnKamera');
+    btn.textContent = '⏹ OFF'; btn.classList.replace('off','on');
+    document.getElementById('btnRelay').textContent = '📡 Relay ON';
+    document.getElementById('liveBadge').style.display  = 'inline';
+    document.getElementById('kameraTitle').textContent  = '🔴 LIVE + Relay — ' + memberAktif.nama;
+    kameraOn = true;
+    addLog('KAMERA', `Stream + Frame Relay aktif · Room ${memberAktif.id}`);
+    toast('📸 LIVE! Frame dikirim ke server setiap 2 detik');
+  } catch(e) { toast('❌ ' + e.message); }
+}
+
+function matikanKamera() {
+  if (streamKamera) streamKamera.getTracks().forEach(t=>t.stop());
+  clearInterval(relayInterval); relayInterval = null;
+
+  document.getElementById('video').style.display = 'none';
+  const sv = document.getElementById(`sv-${memberAktif.id}`);
+  if (sv) { sv.style.display='none'; sv.srcObject=null; }
+  setSlotLive(memberAktif.id, false);
+
+  const btn = document.getElementById('btnKamera');
+  btn.textContent = '📷 ON'; btn.classList.replace('on','off');
+  document.getElementById('btnRelay').textContent = '📡 Relay';
+  document.getElementById('liveBadge').style.display  = 'none';
+  document.getElementById('kameraTitle').textContent  = '📷 Kamera Standby';
+  kameraOn = false; toast('⏹ Kamera OFF · Relay berhenti');
+}
+
+function gantKamera() { facingMode = facingMode==='user'?'environment':'user'; if(kameraOn) nyalakanKamera(); }
+
+// ── Capture 1 frame dari canvas → kirim base64 ke Flask ──
+function mulaiRelayFrame() {
+  if (relayInterval) clearInterval(relayInterval);
+  relayInterval = setInterval(async () => {
+    const v = document.getElementById('video');
+    const c = document.getElementById('canvas');
+    if (!v || !v.videoWidth) return;
+    // Kualitas rendah supaya cepat: 320x240, JPEG 50%
+    c.width  = 320;
+    c.height = 240;
+    c.getContext('2d').drawImage(v, 0, 0, 320, 240);
+    const b64 = c.toDataURL('image/jpeg', 0.5).split(',')[1];
+    try {
+      await fetch(`${IP_SERVER}/upload-frame`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ id: memberAktif.id, frame: b64 })
+      });
+    } catch { /* server offline, lanjut */ }
+  }, 2000); // tiap 2 detik
+}
+
+// ── Refresh frame slot orang lain tiap 2 detik ──
+function mulaiRefreshFrame() {
+  if (refreshInterval) clearInterval(refreshInterval);
+  refreshInterval = setInterval(async () => {
+    // Cek status live dari server
+    try {
+      const r = await fetch(`${IP_SERVER}/live-status`);
+      const d = await r.json();
+      ADMIN_4.forEach(m => {
+        if (m.id === memberAktif.id) return; // skip slot sendiri
+        const live = d.live && d.live[m.id];
+        const img  = document.getElementById(`sf-${m.id}`);
+        if (live && img) {
+          // Tambah timestamp agar browser tidak cache
+          img.src = `${IP_SERVER}/frame/${m.id}?t=${Date.now()}`;
+          img.style.display = 'block';
+          document.getElementById(`sa-${m.id}`).style.display = 'none';
+          setSlotLive(m.id, true);
+        } else {
+          if (img) img.style.display = 'none';
+          const ava = document.getElementById(`sa-${m.id}`);
+          if (ava) ava.style.display = 'block';
+          setSlotLive(m.id, false);
+        }
+      });
+    } catch { /* server offline */ }
+  }, 2000);
+}
+
+function setSlotLive(id, live) {
+  const badge = document.getElementById(`slive-${id}`);
+  const off   = document.getElementById(`soff-${id}`);
+  const st    = document.getElementById(`sst-${id}`);
+  if (badge) badge.style.display = live ? 'block' : 'none';
+  if (off)   off.style.display   = live ? 'none'  : 'block';
+  if (st)    { st.textContent = live ? '🔴 LIVE' : '⚫ Standby'; st.style.color = live?'#ff3b3b':''; }
+}
+
+// ── LEMPAR PROPERTI ──
+function lempar(e, emoji, nama, nilai, key) {
+  if ((memberAktif[key]||0) < nilai) { toast(`❌ Saldo ${key.toUpperCase()} tidak cukup!`); return; }
+  const targets = document.querySelectorAll('.slot-card:not(.saya)');
+  if (!targets.length) return;
+  const target = targets[Math.floor(Math.random()*targets.length)];
+  animLempar(e.currentTarget, target, emoji);
+  memberAktif[key] -= nilai; updateSaldo();
+  addLog('PROPERTI', `${emoji} ${nama} → ${target.id}`);
+  toast(`${emoji} ${nama} dikirim!`);
+}
+
+function animLempar(src, target, emoji) {
+  const bR = src.getBoundingClientRect(), tR = target.getBoundingClientRect();
+  for (let i=0;i<3;i++) setTimeout(()=>{
+    const fly = document.createElement('div');
+    fly.className='prop-fly'; fly.textContent=emoji;
+    fly.style.left=(bR.left+bR.width/2+(Math.random()*16-8))+'px';
+    fly.style.top=(bR.top+bR.height/2+scrollY)+'px';
+    fly.style.setProperty('--tx',((tR.left+tR.width/2)-(bR.left+bR.width/2))+'px');
+    fly.style.setProperty('--ty',((tR.top+tR.height/2)-(bR.top+bR.height/2))+'px');
+    document.body.appendChild(fly);
+    setTimeout(()=>{const h=document.createElement('div');h.className='hit-fx';h.textContent=emoji;
+      h.style.left=(tR.left+tR.width/2)+'px';h.style.top=(tR.top+tR.height/2)+'px';
+      document.body.appendChild(h);setTimeout(()=>h.remove(),650);},1100);
+    setTimeout(()=>fly.remove(),1300);
+  },i*160);
+}
+
+function kirimChat() {
+  const inp=document.getElementById('chatInput'); if(!inp.value.trim()) return;
+  addLog('CHAT',`${memberAktif.nama}: ${inp.value}`); inp.value='';
+}
+function addLog(t,p) {
+  const b=document.getElementById('logBox'),i=document.createElement('div');
+  i.className='log-item';i.innerHTML=`<span>[${t}]</span> ${new Date().toLocaleTimeString('id')} — ${p}`;
+  b.appendChild(i);b.scrollTop=b.scrollHeight;
+}
+function toast(p) {
+  const b=document.getElementById('toastBox'),t=document.createElement('div');
+  t.className='toast';t.textContent=p;b.appendChild(t);setTimeout(()=>t.remove(),3000);
+}
+
+<!-- ============================================================
+     INIT & RUNNING SYSTEM
+     ============================================================ -->
+<script>
+  buildDots();
+  applyWallpaper(0);
+  startWallpaperTimer();
+  buildGallery();
+
+  document.getElementById('peringatan-drive-modal').addEventListener('click', function(e) {
+    if(e.target === this) tutupPeringatan();
+  });
+</script> 
+
+<!-- ⛑️ ALWI grandlew-->
+<script src="components/agen_alwi.js"></script>
+
+</body>
+</html>

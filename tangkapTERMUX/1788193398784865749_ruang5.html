@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Ruangan 5 — Brankas Utama (Boss) — Pencuri Robi</title>
+<style>
+  :root{
+    --ink:#0a0d14; --moon:#cfe3ff; --moon-dim:#7f93b8;
+    --amber:#ffb020; --danger:#ff4d5e; --gold:#f4d35e;
+    --wall:#2b3550; --wall-edge:#4a5a86; --safe:#3ddc84;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0; height:100%; overflow:hidden; background:var(--ink); font-family:'Courier New',monospace; color:var(--moon); user-select:none;}
+  #wrap{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;
+    background:radial-gradient(ellipse at 50% -10%, #1a2236 0%, transparent 60%), var(--ink);}
+  #hud{display:flex; align-items:center; justify-content:space-between; padding:10px 14px; font-size:13px; letter-spacing:1px; z-index:5; border-bottom:1px solid #1c2436;}
+  #hud .label{color:var(--moon-dim); font-size:10px; letter-spacing:2px; text-transform:uppercase;}
+  #doorCount{font-size:19px; font-weight:bold; color:var(--gold); font-family:Georgia,serif;}
+  #roomLine{font-size:10px; color:var(--moon-dim); margin-top:2px;}
+  #doorTrack{display:flex; gap:8px; font-size:20px;}
+  #doorTrack span{opacity:0.3; transition:opacity .3s, transform .3s;}
+  #doorTrack span.done{opacity:1; transform:scale(1.15);}
+  #heatBox{display:flex; gap:3px; margin-top:4px;}
+  .heatDot{width:8px; height:8px; border-radius:50%; background:#2a3247; border:1px solid #3a4359; transition:background .2s;}
+  .heatDot.on{background:var(--danger); border-color:var(--danger); box-shadow:0 0 6px var(--danger);}
+  #stage{position:relative; flex:1; overflow:hidden;}
+  canvas{display:block; width:100%; height:100%; touch-action:none;}
+  #controls{position:absolute; bottom:18px; left:0; right:0; display:flex; justify-content:space-between; align-items:flex-end; padding:0 18px; z-index:6; pointer-events:none;}
+  #stick{width:120px; height:120px; border-radius:50%; background:rgba(207,227,255,0.05); border:1px solid rgba(207,227,255,0.18); position:relative; pointer-events:auto; touch-action:none;}
+  #stickKnob{width:52px; height:52px; border-radius:50%; background:rgba(207,227,255,0.35); border:1px solid rgba(207,227,255,0.6); position:absolute; left:34px; top:34px; transition:background .15s;}
+  #hint{color:var(--moon-dim); font-size:11px; text-align:right; max-width:150px; line-height:1.5;}
+  #topbar{position:absolute; top:64px; left:14px; z-index:6;}
+  #backHub{background:rgba(207,227,255,0.08); border:1px solid rgba(207,227,255,0.2); color:var(--moon-dim); font-size:11px; padding:6px 10px; border-radius:4px; font-family:'Courier New',monospace; letter-spacing:1px;}
+  #overlay{position:absolute; inset:0; background:rgba(6,8,13,0.94); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px; z-index:10; gap:14px;}
+  #overlay.hidden{display:none;}
+  #overlay h1{font-family:Georgia,serif; font-size:27px; color:var(--gold); margin:0; letter-spacing:1px;}
+  #overlay p{color:var(--moon-dim); font-size:13px; max-width:290px; line-height:1.6; margin:0;}
+  #overlay .big{font-size:15px; color:var(--moon);}
+  #legend{display:flex; gap:12px; font-size:11px; color:var(--moon-dim); margin-top:2px; flex-wrap:wrap; justify-content:center; max-width:300px;}
+  #legend span{display:flex; align-items:center; gap:4px;}
+  button, a.btn{background:var(--amber); color:#1a1204; border:none; padding:14px 28px; font-family:'Courier New',monospace; font-weight:bold; font-size:14px; letter-spacing:2px; text-transform:uppercase; border-radius:4px; margin-top:6px; text-decoration:none; display:inline-block;}
+  button:active, a.btn:active{transform:scale(0.96);}
+  #banner{position:absolute; top:50%; left:50%; transform:translate(-50%,-60%); font-size:20px; font-weight:bold; color:var(--gold); z-index:8; opacity:0; pointer-events:none; font-family:Georgia,serif; text-shadow:0 0 12px rgba(0,0,0,0.8); text-align:center; white-space:nowrap;}
+  #safeFlag{position:absolute; z-index:4; font-size:22px; pointer-events:none; transform:translate(-50%,-50%);}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="hud">
+    <div>
+      <div class="label">Pintu Dibobol</div>
+      <div id="doorCount">0 / 3</div>
+      <div id="roomLine">Brankas Utama (Boss) · Ekstrem</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="label">Progres</div>
+      <div id="doorTrack">
+        <span id="markUtama">🎁</span>
+        <span id="markTengah">🏆</span>
+        <span id="markKeluar">👑</span>
+      </div>
+    </div>
+    <div>
+      <div class="label" style="text-align:right;">Waspada</div>
+      <div id="heatBox">
+        <div class="heatDot"></div><div class="heatDot"></div><div class="heatDot"></div>
+        <div class="heatDot"></div><div class="heatDot"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="stage">
+    <canvas id="game"></canvas>
+    <div id="banner"></div>
+    <div id="topbar"><a class="btn" id="backHub" href="index.html">← Hub</a></div>
+
+    <div id="controls">
+      <div id="stick"><div id="stickKnob"></div></div>
+      <div id="hint">Geser joystick untuk gerak.<br>Cari 🚪 utama → tengah → keluar.<br>🚩 dekat pintu masuk = zona aman.</div>
+    </div>
+
+    <div id="overlay">
+      <h1>🥷 Brankas Utama (Boss)</h1>
+      <p>Tingkat kesulitan: <span class="big">Ekstrem</span>. Bobol <span class="big">pintu utama</span>,
+      tembus <span class="big">pintu tengah</span>, lalu kabur lewat <span class="big">pintu keluar</span>.
+      Zona 🚩 dekat pintu masuk aman dari kejaran musuh.</p>
+      <div id="legend">
+        <span>🎁 Utama</span><span>🏆 Tengah</span><span>👑 Selesai</span>
+        <span>👻 Tertangkap</span><span>🚩 Zona aman</span>
+      </div>
+      <button id="startBtn">Mulai Mencuri</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const overlay = document.getElementById('overlay');
+  const startBtn = document.getElementById('startBtn');
+  const doorCountEl = document.getElementById('doorCount');
+  const heatDots = document.querySelectorAll('.heatDot');
+  const banner = document.getElementById('banner');
+  const stick = document.getElementById('stick');
+  const stickKnob = document.getElementById('stickKnob');
+  const markUtama = document.getElementById('markUtama');
+  const markTengah = document.getElementById('markTengah');
+  const markKeluar = document.getElementById('markKeluar');
+
+  const ROOM_INDEX = 5;
+  const NEXT_FILE = "index.html";
+  const NEXT_LABEL = "🏆 Kembali ke Hub — Selesai!";
+  const UNLOCK_KEY = "pencuriRobiUnlocked";
+  const FIXED_COLS = 10, FIXED_ROWS = 12;
+  const DOG_COUNT = 2, POLICE_COUNT = 3;
+  const SPEED_MULT = 1.5;
+
+  let W, H;
+  function resize(){
+    const stage = document.getElementById('stage');
+    W = canvas.width = stage.clientWidth * devicePixelRatio;
+    H = canvas.height = stage.clientHeight * devicePixelRatio;
+    canvas.style.width = stage.clientWidth+'px';
+    canvas.style.height = stage.clientHeight+'px';
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  let doorsTotal = 0;
+  let heat = 0;
+  let running = false;
+
+  let cols, rows, cellW, cellH, cells;
+  let wallRects = [];
+  let player, enemies;
+  let doorUtama, doorTengah, doorKeluar;
+  let openedUtama, openedTengah, openedKeluar;
+  let startCell;
+
+  function rand(a,b){ return a + Math.random()*(b-a); }
+  function dist(a,b){ return Math.hypot(a.x-b.x, a.y-b.y); }
+  function cellCenter(cell){ return { x:(cell.c+0.5)*cellW, y:(cell.r+0.5)*cellH }; }
+
+  function generateMaze(c, r){
+    const grid = [];
+    for(let rr=0; rr<r; rr++){
+      grid.push([]);
+      for(let cc=0; cc<c; cc++) grid[rr].push({ r:rr, c:cc, visited:false, walls:{top:true,right:true,bottom:true,left:true} });
+    }
+    const stack = []; let current = grid[0][0];
+    current.visited = true; stack.push(current);
+    const dirs = [
+      {dr:-1,dc:0,wall:'top',opp:'bottom'}, {dr:0,dc:1,wall:'right',opp:'left'},
+      {dr:1,dc:0,wall:'bottom',opp:'top'}, {dr:0,dc:-1,wall:'left',opp:'right'}
+    ];
+    while(stack.length){
+      current = stack[stack.length-1];
+      const neighbors = [];
+      for(const d of dirs){
+        const nr = current.r+d.dr, nc = current.c+d.dc;
+        if(nr>=0 && nr<r && nc>=0 && nc<c && !grid[nr][nc].visited) neighbors.push({ cell: grid[nr][nc], dir: d });
+      }
+      if(neighbors.length){
+        const pick = neighbors[Math.floor(Math.random()*neighbors.length)];
+        current.walls[pick.dir.wall] = false;
+        pick.cell.walls[pick.dir.opp] = false;
+        pick.cell.visited = true;
+        stack.push(pick.cell);
+      } else stack.pop();
+    }
+    return grid;
+  }
+
+  function bfs(grid, r0, c0){
+    const dst = Array.from({length:rows}, ()=>new Array(cols).fill(-1));
+    const prev = Array.from({length:rows}, ()=>new Array(cols).fill(null));
+    dst[r0][c0] = 0;
+    const q = [[r0,c0]]; let qi = 0;
+    while(qi < q.length){
+      const [r,c] = q[qi++]; const cell = grid[r][c]; const nbs = [];
+      if(!cell.walls.top) nbs.push([r-1,c]);
+      if(!cell.walls.right) nbs.push([r,c+1]);
+      if(!cell.walls.bottom) nbs.push([r+1,c]);
+      if(!cell.walls.left) nbs.push([r,c-1]);
+      for(const [nr,nc] of nbs){
+        if(dst[nr][nc] === -1){ dst[nr][nc] = dst[r][c]+1; prev[nr][nc] = [r,c]; q.push([nr,nc]); }
+      }
+    }
+    return { dst, prev };
+  }
+
+  function pathTo(prev, r0, c0, r1, c1){
+    const path = [[r1,c1]]; let cur = [r1,c1];
+    while(!(cur[0]===r0 && cur[1]===c0)){ cur = prev[cur[0]][cur[1]]; if(!cur) break; path.push(cur); }
+    path.reverse(); return path;
+  }
+
+  function buildWallRects(){
+    wallRects = [];
+    const t = Math.max(4, Math.min(cellW, cellH) * 0.09);
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+      const cell = cells[r][c]; const x = c*cellW, y = r*cellH;
+      if(cell.walls.top) wallRects.push({x:x-t/2, y:y-t/2, w:cellW+t, h:t});
+      if(cell.walls.left) wallRects.push({x:x-t/2, y:y-t/2, w:t, h:cellH+t});
+      if(r===rows-1 && cell.walls.bottom) wallRects.push({x:x-t/2, y:y+cellH-t/2, w:cellW+t, h:t});
+      if(c===cols-1 && cell.walls.right) wallRects.push({x:x+cellW-t/2, y:y-t/2, w:t, h:cellH+t});
+    }
+  }
+
+  function neighborsOf(r,c){
+    const cell = cells[r][c]; const nbs = [];
+    if(!cell.walls.top) nbs.push([r-1,c]);
+    if(!cell.walls.right) nbs.push([r,c+1]);
+    if(!cell.walls.bottom) nbs.push([r+1,c]);
+    if(!cell.walls.left) nbs.push([r,c-1]);
+    return nbs;
+  }
+
+  function newLevel(){
+    const stage = document.getElementById('stage');
+    cols = FIXED_COLS; rows = FIXED_ROWS;
+    cellW = W/cols; cellH = H/rows;
+
+    let path, attempts = 0;
+    do{
+      cells = generateMaze(cols, rows);
+      const { dst, prev } = bfs(cells, 0, 0);
+      let far = {r:0,c:0,d:0};
+      for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) if(dst[r][c] > far.d) far = {r,c,d:dst[r][c]};
+      path = pathTo(prev, 0, 0, far.r, far.c);
+      attempts++;
+    } while(path.length < 6 && attempts < 8);
+
+    buildWallRects();
+    startCell = {r:0,c:0};
+
+    const uIdx = Math.max(1, Math.floor(path.length/3));
+    const tIdx = Math.max(uIdx+1, Math.floor(path.length*2/3));
+    const kIdx = path.length-1;
+
+    doorUtama = { r: path[uIdx][0], c: path[uIdx][1] };
+    doorTengah = { r: path[Math.min(tIdx, kIdx-1)][0], c: path[Math.min(tIdx, kIdx-1)][1] };
+    doorKeluar = { r: path[kIdx][0], c: path[kIdx][1] };
+
+    openedUtama = false; openedTengah = false; openedKeluar = false;
+    markUtama.classList.remove('done'); markTengah.classList.remove('done'); markKeluar.classList.remove('done');
+
+    const startCenter = cellCenter(startCell);
+    player = { x: startCenter.x, y: startCenter.y, r: Math.min(cellW,cellH)*0.28, speed: cellW*0.052 };
+
+    enemies = [];
+    for(let i=0;i<DOG_COUNT;i++) enemies.push(spawnEnemy('dog', path));
+    for(let i=0;i<POLICE_COUNT;i++) enemies.push(spawnEnemy('police', path));
+  }
+
+  function spawnEnemy(type, path){
+    const idx = Math.floor(rand(path.length*0.4, path.length*0.85));
+    const [r,c] = path[Math.min(idx, path.length-1)];
+    const center = cellCenter({r,c});
+    return {
+      type, r, c, x: center.x, y: center.y, targetR: r, targetC: c, t: 1,
+      mode: 'patrol', lastFrom: null,
+      speed: (type==='dog' ? 0.028 : 0.022) * SPEED_MULT,
+      alertCells: type==='dog' ? 3.2 : 2.6
+    };
+  }
+
+  let stickActive = false, stickVec = {x:0,y:0}, stickOrigin = {x:0,y:0};
+  function stickStart(clientX, clientY){
+    stickActive = true;
+    const rect = stick.getBoundingClientRect();
+    stickOrigin = { x: rect.left+rect.width/2, y: rect.top+rect.height/2 };
+    updateStick(clientX, clientY);
+  }
+  function updateStick(clientX, clientY){
+    let dx = clientX - stickOrigin.x, dy = clientY - stickOrigin.y;
+    const max = 40, d = Math.hypot(dx,dy);
+    if(d>max){ dx = dx/d*max; dy = dy/d*max; }
+    stickKnob.style.left = (34+dx)+'px'; stickKnob.style.top = (34+dy)+'px';
+    stickVec = { x: dx/max, y: dy/max };
+  }
+  function stickEnd(){ stickActive = false; stickVec = {x:0,y:0}; stickKnob.style.left='34px'; stickKnob.style.top='34px'; }
+  stick.addEventListener('touchstart', e=>{ e.preventDefault(); const t=e.touches[0]; stickStart(t.clientX,t.clientY); }, {passive:false});
+  stick.addEventListener('touchmove', e=>{ e.preventDefault(); const t=e.touches[0]; if(stickActive) updateStick(t.clientX,t.clientY); }, {passive:false});
+  stick.addEventListener('touchend', e=>{ e.preventDefault(); stickEnd(); }, {passive:false});
+  stick.addEventListener('mousedown', e=>{ stickStart(e.clientX,e.clientY); });
+  window.addEventListener('mousemove', e=>{ if(stickActive) updateStick(e.clientX,e.clientY); });
+  window.addEventListener('mouseup', ()=>{ if(stickActive) stickEnd(); });
+
+  const keys = {};
+  window.addEventListener('keydown', e=>{ keys[e.key]=true; });
+  window.addEventListener('keyup', e=>{ keys[e.key]=false; });
+  function getMoveVec(){
+    let x = stickVec.x, y = stickVec.y;
+    if(keys['ArrowLeft']||keys['a']) x -= 1;
+    if(keys['ArrowRight']||keys['d']) x += 1;
+    if(keys['ArrowUp']||keys['w']) y -= 1;
+    if(keys['ArrowDown']||keys['s']) y += 1;
+    const d = Math.hypot(x,y);
+    if(d>1){ x/=d; y/=d; }
+    return {x,y};
+  }
+
+  function rectCircleCollide(rect, c){
+    const cx = Math.max(rect.x, Math.min(c.x, rect.x+rect.w));
+    const cy = Math.max(rect.y, Math.min(c.y, rect.y+rect.h));
+    return Math.hypot(c.x-cx, c.y-cy) < c.r;
+  }
+  function collidesAt(x,y,r){
+    for(const w of wallRects) if(rectCircleCollide(w, {x,y,r})) return true;
+    return false;
+  }
+
+  function getPlayerCell(){
+    return { r: Math.max(0,Math.min(rows-1, Math.floor(player.y/cellH))), c: Math.max(0,Math.min(cols-1, Math.floor(player.x/cellW))) };
+  }
+
+  function update(){
+    if(!running) return;
+    const mv = getMoveVec();
+    const step = player.speed;
+    const nx = player.x + mv.x*step, ny = player.y + mv.y*step;
+    if(!collidesAt(nx, player.y, player.r*0.75)) player.x = nx;
+    if(!collidesAt(player.x, ny, player.r*0.75)) player.y = ny;
+    player.x = Math.max(player.r, Math.min(W-player.r, player.x));
+    player.y = Math.max(player.r, Math.min(H-player.r, player.y));
+
+    checkDoors();
+
+    // ---- Safe Zone 🚩: dekat pintu masuk, musuh tidak bisa mengejar/menangkap ----
+    const sp = cellCenter(startCell);
+    const inSafeZone = dist(player, sp) < Math.min(cellW,cellH) * 0.8;
+
+    let maxAlert = 0;
+    for(const e of enemies){
+      updateEnemy(e, inSafeZone);
+      const pc = getPlayerCell();
+      const cellDist = Math.hypot(e.c-pc.c, e.r-pc.r);
+      if(!inSafeZone && cellDist < e.alertCells) maxAlert = Math.max(maxAlert, 1-cellDist/e.alertCells);
+      if(!inSafeZone && dist(e,player) < (Math.min(cellW,cellH)*0.3)){
+        onCaught(e.type);
+        return;
+      }
+    }
+    heat = inSafeZone ? 0 : Math.round(maxAlert*5);
+    updateHeatUI();
+  }
+
+  function updateEnemy(e, inSafeZone){
+    if(e.t < 1){
+      e.t += e.speed; if(e.t > 1) e.t = 1;
+      const from = cellCenter({r:e.r,c:e.c}), to = cellCenter({r:e.targetR,c:e.targetC});
+      e.x = from.x + (to.x-from.x)*e.t; e.y = from.y + (to.y-from.y)*e.t;
+      return;
+    }
+    e.r = e.targetR; e.c = e.targetC;
+    const pc = getPlayerCell();
+    const cellDist = Math.hypot(e.c-pc.c, e.r-pc.r);
+    e.mode = (!inSafeZone && cellDist < e.alertCells) ? 'chase' : 'patrol';
+
+    let nextCell;
+    if(e.mode === 'chase'){
+      const { prev } = bfs(cells, e.r, e.c);
+      const path = pathTo(prev, e.r, e.c, pc.r, pc.c);
+      nextCell = path.length > 1 ? { r:path[1][0], c:path[1][1] } : { r:e.r, c:e.c };
+    } else {
+      const nbs = neighborsOf(e.r, e.c).filter(n => !(e.lastFrom && n[0]===e.lastFrom[0] && n[1]===e.lastFrom[1]));
+      const pool = nbs.length ? nbs : neighborsOf(e.r, e.c);
+      const pick = pool[Math.floor(Math.random()*pool.length)] || [e.r,e.c];
+      nextCell = { r: pick[0], c: pick[1] };
+    }
+    e.lastFrom = [e.r, e.c];
+    e.targetR = nextCell.r; e.targetC = nextCell.c; e.t = 0;
+  }
+
+  function updateHeatUI(){ heatDots.forEach((dot,i)=>{ dot.classList.toggle('on', i < heat); }); }
+
+  function showBanner(text){
+    banner.textContent = text;
+    banner.style.transition = 'none'; banner.style.opacity = '1'; banner.style.transform = 'translate(-50%,-60%)';
+    requestAnimationFrame(()=>{
+      banner.style.transition = 'opacity .9s ease, transform .9s ease';
+      banner.style.opacity = '0'; banner.style.transform = 'translate(-50%,-95%)';
+    });
+  }
+
+  function bumpTotal(n){
+    doorsTotal = Math.min(3, doorsTotal+n);
+    doorCountEl.textContent = doorsTotal + ' / 3';
+  }
+
+  function checkDoors(){
+    const pc = getPlayerCell();
+    if(!openedUtama && pc.r===doorUtama.r && pc.c===doorUtama.c){
+      openedUtama = true; markUtama.classList.add('done'); bumpTotal(1);
+      showBanner('🎁 PINTU UTAMA DIBOBOL!');
+    } else if(openedUtama && !openedTengah && pc.r===doorTengah.r && pc.c===doorTengah.c){
+      openedTengah = true; markTengah.classList.add('done'); bumpTotal(1);
+      showBanner('🏆 PINTU TENGAH TERTEMBUS!');
+    } else if(openedTengah && !openedKeluar && pc.r===doorKeluar.r && pc.c===doorKeluar.c){
+      openedKeluar = true; markKeluar.classList.add('done'); bumpTotal(1);
+      showBanner('👑 RUANGAN AMAN!');
+      try{
+        const cur = parseInt(localStorage.getItem(UNLOCK_KEY) || "1", 10);
+        localStorage.setItem(UNLOCK_KEY, Math.max(cur, ROOM_INDEX+1));
+      }catch(e){}
+      running = false;
+      setTimeout(()=>{ endGame(true); }, 700);
+    }
+  }
+
+  function onCaught(type){ endGame(false, type); }
+
+  function endGame(won, caughtBy){
+    running = false;
+    overlay.classList.remove('hidden');
+    const h1 = overlay.querySelector('h1');
+    const p = overlay.querySelector('p');
+    const legend = document.getElementById('legend');
+    legend.style.display = 'none';
+    if(won){
+      h1.textContent = '👑 Brankas Utama (Boss) AMAN!';
+      p.innerHTML = 'Semua pintu di ruangan ini berhasil dibobol tanpa ketahuan.';
+      startBtn.textContent = 'Ulangi Ruangan';
+      let nextHtml = '<a class="btn" href="'+NEXT_FILE+'" style="margin-top:10px;">'+NEXT_LABEL+'</a>';
+      if(!document.getElementById('nextRoomBtn')){
+        const div = document.createElement('div');
+        div.id = 'nextRoomBtnWrap';
+        div.innerHTML = nextHtml;
+        div.querySelector('a').id = 'nextRoomBtn';
+        overlay.appendChild(div);
+      }
+    } else {
+      const who = caughtBy === 'dog' ? '🐕 Anjing penjaga' : '👮 Polisi';
+      h1.textContent = '👻 TERTANGKAP!';
+      p.innerHTML = who + ' menangkap Robi di <span class="big">Brankas Utama (Boss)</span>. Coba lagi?';
+      startBtn.textContent = 'Coba Lagi';
+      const existing = document.getElementById('nextRoomBtnWrap');
+      if(existing) existing.remove();
+    }
+  }
+
+  function drawEmoji(str, x, y, size){
+    ctx.font = size+'px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(str, x, y);
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const grad = ctx.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0, '#0d1420'); grad.addColorStop(1, '#080a10');
+    ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+    if(!running && doorsTotal===0){ return; }
+
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--wall');
+    wallRects.forEach(w=>{ ctx.fillRect(w.x, w.y, w.w, w.h); });
+
+    // safe zone ring
+    const sp = cellCenter(startCell);
+    ctx.save();
+    ctx.setLineDash([6,6]);
+    ctx.strokeStyle = 'rgba(61,220,132,0.5)';
+    ctx.lineWidth = 2*devicePixelRatio;
+    ctx.beginPath();
+    ctx.arc(sp.x, sp.y, Math.min(cellW,cellH)*0.8, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.restore();
+    drawEmoji('🚩', sp.x, sp.y - Math.min(cellW,cellH)*0.9, Math.min(cellW,cellH)*1.1);
+
+    const du = cellCenter(doorUtama), dt = cellCenter(doorTengah), dk = cellCenter(doorKeluar);
+    const doorSize = Math.min(cellW,cellH)*1.5;
+    drawEmoji(openedUtama ? '🎁' : '🚪', du.x, du.y, doorSize);
+    drawEmoji(openedTengah ? '🏆' : (openedUtama ? '🚪' : '🔒'), dt.x, dt.y, doorSize);
+    drawEmoji(openedKeluar ? '👑' : (openedTengah ? '🚪' : '🔒'), dk.x, dk.y, doorSize);
+
+    enemies.forEach(e=>{
+      const emoji = e.type==='dog' ? '🐕' : '👮';
+      if(e.mode==='chase'){
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.alertCells*Math.min(cellW,cellH)*0.5, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(255,77,94,0.15)'; ctx.fill();
+        ctx.restore();
+      }
+      drawEmoji(emoji, e.x, e.y, Math.min(cellW,cellH)*1.3);
+    });
+
+    drawEmoji('🥷', player.x, player.y, Math.min(cellW,cellH)*1.4);
+  }
+
+  function loop(){ update(); draw(); requestAnimationFrame(loop); }
+
+  startBtn.addEventListener('click', ()=>{
+    doorsTotal = 0; heat = 0;
+    doorCountEl.textContent = '0 / 3';
+    updateHeatUI();
+    overlay.classList.add('hidden');
+    const wrap = document.getElementById('nextRoomBtnWrap');
+    if(wrap) wrap.remove();
+    document.getElementById('legend').style.display = 'flex';
+    newLevel();
+    running = true;
+  });
+
+  resize(); draw(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

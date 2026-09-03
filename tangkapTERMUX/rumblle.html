@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PS1 Retro Zone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-luar:   #1a1c23;
+      --bg-card:   #242631;
+      --teks-main: #ffffff;
+      --teks-sub:  #9ca3af;
+      --accent:    #e63946;
+      --border:    #374151;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-luar);
+      color: var(--teks-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+    }
+
+    .game-container {
+      width: 100%;
+      max-width: 500px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .game-header {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .game-judul {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      color: var(--teks-main);
+      text-transform: uppercase;
+    }
+    .game-sub {
+      font-size: 11px;
+      color: var(--teks-sub);
+      margin-top: 4px;
+    }
+
+    .iframe-wrapper {
+      position: relative;
+      width: 100%;
+      height: 384px;
+      background-color: #000;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid var(--accent);
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .petunjuk {
+      margin-top: 12px;
+      background-color: rgba(0,0,0,0.2);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      line-height: 1.4;
+      color: var(--teks-sub);
+    }
+    .petunjuk strong {
+      color: #f39c12;
+    }
+  </style>
+</head>
+<body>
+
+<div class="game-container">
+  
+  <div class="game-header">
+    <h1 class="game-judul">🎮 Retro Arcade</h1>
+    <p class="game-sub">NASCAR Rumble — PlayStation 1 (PSX)</p>
+  </div>
+
+  <div class="iframe-wrapper">
+    <iframe 
+      src="https://archive.org/embed/psx_nascarmb" 
+      allowfullscreen="true" 
+      webkitallowfullscreen="true" 
+      mozallowfullscreen="true"
+      allow="autoplay; gamepad; keyboard; fullscreen">
+    </iframe>
+  </div>
+
+  <div class="petunjuk">
+    💡 <strong>Cara Main:</strong><br>
+    • Tunggu unduhan data game PS1 selesai.<br>
+    • <strong>Layar HP:</strong> Sentuh ikon 🎮 (gamepad) di pojok emulator untuk memunculkan tombol stik virtual bawaan emulator.<br>
+    • <strong>Keyboard PC:</strong> Tombol Panah (Kemudi), Enter (Start), Z/X/C/V (Tombol Aksi PS1).
+  </div>
+
+</div>
+
+</body>
+</html>
+

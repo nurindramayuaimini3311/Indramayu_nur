@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>RAJA — Indramayu Club Streaming</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #06140b;
+  --batik:    #0e2415;
+  --kartu:    #0f1f15;
+  --emas:     #d4af37;
+  --emas2:    #ffd700;
+  --emas3:    #f7e27b;
+  --teks:     #fffdf2;
+  --merah:    #ff3b3b;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+body {
+  font-family:'Inter',sans-serif;
+  background: repeating-linear-gradient(45deg,var(--batik) 0,var(--batik) 20px,var(--bg) 20px,var(--bg) 40px);
+  color:var(--teks); overflow-x:hidden; min-height:100vh;
+}
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(212,175,55,0.18) 0%, transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(255,215,0,0.12) 0%, transparent 45%);
+}
+
+/* HEADER */
+.header { text-align:center; padding:28px 20px 20px; position:relative; z-index:1; }
+.level-badge {
+  display:inline-block; background:linear-gradient(135deg,var(--emas),var(--emas2));
+  color:var(--bg); font-family:'Cinzel',serif; font-weight:900;
+  font-size:11px; letter-spacing:4px; padding:5px 20px; border-radius:30px;
+  margin-bottom:12px; box-shadow:0 0 20px rgba(255,215,0,0.5);
+}
+.header h1 {
+  font-family:'Cinzel',serif; font-weight:900;
+  font-size:clamp(1.5rem,5vw,2.2rem);
+  color:var(--emas2); text-shadow:0 0 25px rgba(255,215,0,0.8);
+  letter-spacing:0.08em;
+}
+.header p { color:var(--emas3); font-size:0.85rem; margin-top:6px; letter-spacing:0.2em; }
+.header::after { content:'◆ ◇ ◆'; display:block; color:var(--emas); margin:12px auto 0; font-size:1.1rem; letter-spacing:0.5em; }
+
+/* NAVIGASI LEVEL */
+.nav-level {
+  display:flex; justify-content:center; gap:8px;
+  flex-wrap:wrap; padding:0 20px 20px; position:relative; z-index:1;
+}
+.nav-btn {
+  font-family:'Cinzel',serif; font-size:10px; font-weight:700;
+  padding:6px 14px; border-radius:20px; cursor:pointer;
+  border:1.5px solid var(--emas); letter-spacing:1px;
+  text-decoration:none; transition:all 0.2s;
+}
+.nav-btn.aktif { background:var(--emas2); color:var(--bg); }
+.nav-btn:not(.aktif) { background:transparent; color:var(--emas3); }
+.nav-btn:hover { background:var(--emas); color:var(--bg); }
+
+/* GRID */
+.grid { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; max-width:1200px; margin:0 auto; padding:0 20px 32px; position:relative; z-index:1; }
+@media(max-width:680px) { .grid { grid-template-columns:1fr; } }
+
+/* KARTU STREAM */
+.kartu {
+  background:linear-gradient(145deg,var(--kartu),#14291c);
+  border-radius:18px; border:1.5px solid var(--emas);
+  box-shadow:0 0 25px rgba(212,175,55,0.25);
+  overflow:hidden; position:relative;
+}
+.strip {
+  height:4px;
+  background:linear-gradient(90deg,var(--emas),var(--emas2),var(--emas));
+  background-size:200%; animation:geser 2s linear infinite;
+}
+@keyframes geser { 0%{background-position:0%} 100%{background-position:200%} }
+
+.kartu-head {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:14px 16px 10px;
+}
+.kartu-head h3 { font-family:'Cinzel',serif; color:var(--emas3); font-size:14px; }
+.badge {
+  background:linear-gradient(135deg,var(--emas),var(--emas2));
+  color:var(--bg); font-size:9px; font-weight:900;
+  padding:3px 10px; border-radius:20px; letter-spacing:1px;
+}
+.badge.sultan1 { background:linear-gradient(135deg,#ff8c00,#ffd700); }
+
+/* STREAM FRAME */
+.frame {
+  width:100%; aspect-ratio:16/9;
+  background:#000; position:relative;
+  border-top:2px solid var(--emas); border-bottom:2px solid var(--emas);
+}
+.frame iframe { width:100%; height:100%; border:none; }
+.live-dot {
+  position:absolute; top:8px; left:8px; z-index:2;
+  background:linear-gradient(135deg,var(--merah),#ff6b6b);
+  color:#fff; font-size:10px; font-weight:900;
+  padding:4px 9px; border-radius:6px;
+  animation:denyut 1.2s infinite;
+}
+@keyframes denyut { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+/* INFO PANEL */
+.info {
+  margin:12px 14px; background:#14291c;
+  border:1.5px solid rgba(212,175,55,0.4);
+  border-radius:10px; padding:10px 14px; font-size:12px;
+}
+.baris { display:flex; justify-content:space-between; margin-bottom:4px; }
+.baris:last-child { margin-bottom:0; }
+.saldo { color:var(--emas2); font-weight:900; font-size:13px; }
+
+/* POIN LABEL */
+.poin-row {
+  display:flex; gap:6px; padding:0 14px 10px; flex-wrap:wrap;
+}
+.poin-tag {
+  font-size:9px; padding:3px 8px; border-radius:10px;
+  border:1px solid rgba(212,175,55,0.4); color:var(--emas3);
+  font-weight:600; letter-spacing:0.5px;
+}
+
+/* TEXTAREA */
+.textarea-wrap { padding:0 14px 10px; }
+.komentar {
+  width:100%; height:72px;
+  background:#0a1811; border:1.5px dashed rgba(212,175,55,0.5);
+  border-radius:8px; padding:8px; font-size:12px;
+  color:var(--emas3); resize:none; outline:none;
+  font-family:'Inter',sans-serif;
+}
+.komentar:focus { border-color:var(--emas2); }
+
+/* TOMBOL PROPERTI */
+.tombol-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; padding:0 14px 16px; }
+.btn {
+  border:1.5px solid var(--emas); padding:10px 4px;
+  border-radius:10px; font-size:11px; font-weight:800;
+  cursor:pointer; transition:all 0.2s; text-align:center;
+}
+.btn:active { transform:scale(0.95); }
+.btn-bom    { background:#8b0000; color:var(--emas2); }
+.btn-sandal { background:#2c3e50; color:var(--emas2); }
+.btn-gif    { background:var(--emas); color:var(--bg); }
+.btn-vch    { background:#6a0dad; color:var(--emas2); }
+
+/* PROPERTI MELAYANG */
+.prop-fly {
+  position:fixed; font-size:36px; z-index:9999;
+  pointer-events:none;
+  filter:drop-shadow(0 0 8px var(--emas2));
+  animation:terbang 1.2s forwards;
+}
+@keyframes terbang {
+  0%   { transform:translate(0,0) scale(0.5) rotate(0deg); opacity:1; }
+  100% { transform:translate(var(--tx),var(--ty)) scale(1.4) rotate(720deg); opacity:0; }
+}
+.hit-fx {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  font-size:44px; z-index:3;
+  animation:pop 0.6s forwards;
+  filter:drop-shadow(0 0 12px var(--emas2));
+}
+@keyframes pop {
+  0%   { transform:translate(-50%,-50%) scale(0); opacity:1; }
+  100% { transform:translate(-50%,-50%) scale(2); opacity:0; }
+}
+
+/* AULA SULTAN */
+.aula { max-width:1200px; margin:0 auto 40px; padding:0 20px; position:relative; z-index:1; }
+.aula-kartu {
+  background:linear-gradient(145deg,#1a1a0a,#0d0d05);
+  border-radius:20px; border:2px solid var(--emas2);
+  box-shadow:0 0 40px rgba(255,215,0,0.3); overflow:hidden;
+}
+.aula-head {
+  background:linear-gradient(135deg,var(--emas),var(--emas2));
+  padding:18px; text-align:center;
+}
+.aula-title { font-family:'Cinzel',serif; font-size:1.4rem; font-weight:900; color:var(--bg); }
+.aula-sub { font-size:11px; color:var(--bg); opacity:0.7; margin-top:4px; letter-spacing:2px; }
+.aula-body { padding:18px; }
+.feed-area {
+  max-height:200px; overflow-y:auto;
+  margin-bottom:14px;
+}
+.feed-item {
+  background:#121200; border-left:4px solid var(--emas2);
+  padding:10px 12px; margin-bottom:8px;
+  border-radius:8px; color:var(--emas3); font-size:12px; line-height:1.5;
+}
+.aula-input {
+  width:100%; height:100px;
+  background:#0a0a00; color:var(--emas3);
+  border:2px solid var(--emas); border-radius:10px;
+  padding:12px; font-size:13px; resize:none;
+  outline:none; font-family:'Inter',sans-serif;
+  margin-bottom:10px;
+}
+.btn-publish {
+  width:100%; padding:14px;
+  background:linear-gradient(135deg,var(--emas),var(--emas2));
+  color:var(--bg); font-weight:900; border:none;
+  border-radius:12px; cursor:pointer; font-size:13px;
+  letter-spacing:2px; font-family:'Cinzel',serif;
+  transition:opacity 0.2s;
+}
+.btn-publish:active { opacity:0.8; }
+
+/* TOAST */
+.toast-box { position:fixed; bottom:20px; right:16px; z-index:99999; }
+.toast {
+  background:var(--kartu); color:var(--emas2);
+  border:2px solid var(--emas); padding:10px 16px;
+  border-radius:10px; font-size:12px; margin-top:6px;
+  font-weight:600; animation:slideIn 0.3s ease;
+}
+@keyframes slideIn { from{transform:translateX(60px);opacity:0} to{transform:translateX(0);opacity:1} }
+
+/* FOOTER */
+.footer {
+  text-align:center; padding:16px; border-top:1px solid rgba(212,175,55,0.2);
+  font-size:10px; color:var(--emas3); opacity:0.5; letter-spacing:1px;
+  position:relative; z-index:1;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="level-badge">👑 🏅 RAJA — LEVEL KETIGA</div>
+  <h1>INDRAMAYU CLUB SULTAN</h1>
+  <p>STREAMING PORTAL · MULTI PLATFORM · NUR ENGINE</p>
+</div>
+
+<!-- NAVIGASI LEVEL -->
+<div class="nav-level">
+  <a class="nav-btn" href="streaming_sultan1.html">👑 Sultan 1</a>
+  <a class="nav-btn" href="streaming_sultan2.html">👑 Sultan 2</a>
+  <a class="nav-btn aktif" href="streaming_raja.html">🏅 Raja</a>
+  <a class="nav-btn" href="streaming_bangsawan.html">⭐ Bangsawan</a>
+  <a class="nav-btn" href="streaming_member.html">👤 Member</a>
+</div>
+
+<!-- GRID STREAMING -->
+<div class="grid">
+
+  <!-- ROOM 1 -->
+  <div class="kartu" id="room-RA">
+    <div class="strip"></div>
+    <div class="kartu-head">
+      <h3>👑 Raja Nur YT</h3>
+      <span class="badge sultan1">RAJA</span>
+    </div>
+    <div class="frame" id="target-RA">
+      <span class="live-dot">● LIVE</span>
+      <iframe src="https://www.youtube.com/embed/jNQXAC9IVRw" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+    <div class="info">
+      <div class="baris"><span>ID Member</span><span>R-001</span></div>
+      <div class="baris"><span>Level</span><span style="color:var(--emas2);font-weight:700;">👑 Sultan 1</span></div>
+      <div class="baris"><span>Saldo Rp NUR</span><span class="saldo" id="saldo-RA">0</span></div>
+    </div>
+    <div class="poin-row">
+      <span class="poin-tag">💠 Rp NUR</span>
+      <span class="poin-tag">🎁 GifNur</span>
+      <span class="poin-tag">🎟️ Voucher Nur</span>
+      <span class="poin-tag">🟡 KARA</span>
+    </div>
+    <div class="textarea-wrap">
+      <textarea class="komentar" id="text-RA" placeholder="Komentar Sultan 1 — Rp NUR, GifNur, Voucher Nur..."></textarea>
+    </div>
+    <div class="tombol-grid">
+      <button class="btn btn-bom"    onclick="lempar('RA','💣',20000)">💣<br>Bom</button>
+      <button class="btn btn-sandal" onclick="lempar('RA','🩴',2000)">🩴<br>Sandal</button>
+      <button class="btn btn-gif"    onclick="lempar('RA','🎁',2000)">🎁<br>GifNur</button>
+      <button class="btn btn-vch"    onclick="lempar('RA','🎟️',2000)">🎟️<br>Vch Nur</button>
+    </div>
+  </div>
+
+  <!-- ROOM 2 -->
+  <div class="kartu" id="room-RB">
+    <div class="strip"></div>
+    <div class="kartu-head">
+      <h3>👑 Raja Makrifat TT</h3>
+      <span class="badge sultan1">RAJA</span>
+    </div>
+    <div class="frame" id="target-RB">
+      <span class="live-dot">● LIVE</span>
+      <iframe src="https://www.tiktok.com/embed/live/PASTE_ID_TIKTOK" allow="autoplay; fullscreen" allowfullscreen></iframe>
+    </div>
+    <div class="info">
+      <div class="baris"><span>ID Member</span><span>R-002</span></div>
+      <div class="baris"><span>Level</span><span style="color:var(--emas2);font-weight:700;">👑 Sultan 1</span></div>
+      <div class="baris"><span>Saldo Rp NUR</span><span class="saldo" id="saldo-RB">0</span></div>
+    </div>
+    <div class="poin-row">
+      <span class="poin-tag">💠 Rp NUR</span>
+      <span class="poin-tag">🎁 GifNur</span>
+      <span class="poin-tag">🎟️ Voucher Nur</span>
+      <span class="poin-tag">🟡 KARA</span>
+    </div>
+    <div class="textarea-wrap">
+      <textarea class="komentar" id="text-RB" placeholder="Komentar Sultan 1 — Rp NUR, GifNur, Voucher Nur..."></textarea>
+    </div>
+    <div class="tombol-grid">
+      <button class="btn btn-bom"    onclick="lempar('RB','💣',20000)">💣<br>Bom</button>
+      <button class="btn btn-sandal" onclick="lempar('RB','🩴',2000)">🩴<br>Sandal</button>
+      <button class="btn btn-gif"    onclick="lempar('RB','🎁',2000)">🎁<br>GifNur</button>
+      <button class="btn btn-vch"    onclick="lempar('RB','🎟️',2000)">🎟️<br>Vch Nur</button>
+    </div>
+  </div>
+
+  <!-- ROOM 3 -->
+  <div class="kartu" id="room-RC">
+    <div class="strip"></div>
+    <div class="kartu-head">
+      <h3>👑 Raja Budaya IG</h3>
+      <span class="badge sultan1">RAJA</span>
+    </div>
+    <div class="frame" id="target-RC">
+      <span class="live-dot">● LIVE</span>
+      <iframe src="https://www.instagram.com/USERNAME/live/embed" allowfullscreen></iframe>
+    </div>
+    <div class="info">
+      <div class="baris"><span>ID Member</span><span>R-003</span></div>
+      <div class="baris"><span>Level</span><span style="color:var(--emas2);font-weight:700;">👑 Sultan 1</span></div>
+      <div class="baris"><span>Saldo Rp NUR</span><span class="saldo" id="saldo-RC">0</span></div>
+    </div>
+    <div class="poin-row">
+      <span class="poin-tag">💠 Rp NUR</span>
+      <span class="poin-tag">🎁 GifNur</span>
+      <span class="poin-tag">🎟️ Voucher Nur</span>
+      <span class="poin-tag">🟡 KARA</span>
+    </div>
+    <div class="textarea-wrap">
+      <textarea class="komentar" id="text-RC" placeholder="Komentar Sultan 1 — Rp NUR, GifNur, Voucher Nur..."></textarea>
+    </div>
+    <div class="tombol-grid">
+      <button class="btn btn-bom"    onclick="lempar('RC','💣',20000)">💣<br>Bom</button>
+      <button class="btn btn-sandal" onclick="lempar('RC','🩴',2000)">🩴<br>Sandal</button>
+      <button class="btn btn-gif"    onclick="lempar('RC','🎁',2000)">🎁<br>GifNur</button>
+      <button class="btn btn-vch"    onclick="lempar('RC','🎟️',2000)">🎟️<br>Vch Nur</button>
+    </div>
+  </div>
+
+  <!-- ROOM 4 -->
+  <div class="kartu" id="room-RD">
+    <div class="strip"></div>
+    <div class="kartu-head">
+      <h3>👑 Raja Digital YT</h3>
+      <span class="badge sultan1">RAJA</span>
+    </div>
+    <div class="frame" id="target-RD">
+      <span class="live-dot">● LIVE</span>
+      <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+    <div class="info">
+      <div class="baris"><span>ID Member</span><span>R-004</span></div>
+      <div class="baris"><span>Level</span><span style="color:var(--emas2);font-weight:700;">👑 Sultan 1</span></div>
+      <div class="baris"><span>Saldo Rp NUR</span><span class="saldo" id="saldo-RD">0</span></div>
+    </div>
+    <div class="poin-row">
+      <span class="poin-tag">💠 Rp NUR</span>
+      <span class="poin-tag">🎁 GifNur</span>
+      <span class="poin-tag">🎟️ Voucher Nur</span>
+      <span class="poin-tag">🟡 KARA</span>
+    </div>
+    <div class="textarea-wrap">
+      <textarea class="komentar" id="text-RD" placeholder="Komentar Sultan 1 — Rp NUR, GifNur, Voucher Nur..."></textarea>
+    </div>
+    <div class="tombol-grid">
+      <button class="btn btn-bom"    onclick="lempar('RD','💣',20000)">💣<br>Bom</button>
+      <button class="btn btn-sandal" onclick="lempar('RD','🩴',2000)">🩴<br>Sandal</button>
+      <button class="btn btn-gif"    onclick="lempar('RD','🎁',2000)">🎁<br>GifNur</button>
+      <button class="btn btn-vch"    onclick="lempar('RD','🎟️',2000)">🎟️<br>Vch Nur</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- AULA RAJA -->
+<div class="aula">
+  <div class="aula-kartu">
+    <div class="aula-head">
+      <div class="aula-title">👑 AULA RAJA</div>
+      <div class="aula-sub">KOMENTAR EKSKLUSIF · Rp NUR · GifNur · Voucher Nur · KARA</div>
+    </div>
+    <div class="aula-body">
+      <div class="feed-area" id="feed">
+        <div class="feed-item">👑 Selamat datang di Aula Sultan 1 — Level Tertinggi Indramayu Club!</div>
+      </div>
+      <textarea class="aula-input" id="inputAula" placeholder="Tulis pesan Sultan 1 — Rp NUR, GifNur, Voucher Nur, KARA..."></textarea>
+      <button class="btn-publish" onclick="publish()">🚀 PUSH RAJA</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  👑 RAJA · INDRAMAYU CLUB MAKRIFAT · NUR ENGINE · Rp NUR · GifNur · Voucher Nur · KARA
+</div>
+
+<div class="toast-box" id="toastBox"></div>
+
+<script>
+function lempar(id, emoji, nilai) {
+  const target = document.getElementById('target-' + id);
+  const btn    = event.target.closest('button');
+  const bR     = btn.getBoundingClientRect();
+  const tR     = target.getBoundingClientRect();
+
+  // Properti melayang
+  const fly = document.createElement('div');
+  fly.className = 'prop-fly';
+  fly.textContent = emoji;
+  fly.style.left = (bR.left + bR.width/2) + 'px';
+  fly.style.top  = (bR.top + window.scrollY) + 'px';
+  fly.style.setProperty('--tx', ((tR.left + tR.width/2) - (bR.left + bR.width/2)) + 'px');
+  fly.style.setProperty('--ty', ((tR.top + tR.height/2) - (bR.top + window.scrollY)) + 'px');
+  document.body.appendChild(fly);
+  setTimeout(() => fly.remove(), 1300);
+
+  // Efek hit di target
+  setTimeout(() => {
+    const hit = document.createElement('div');
+    hit.className = 'hit-fx';
+    hit.textContent = emoji;
+    target.appendChild(hit);
+    setTimeout(() => hit.remove(), 650);
+  }, 1100);
+
+  // Update saldo Rp NUR
+  const el = document.getElementById('saldo-' + id);
+  const lama = parseInt(el.textContent.replace(/\D/g,'')) || 0;
+  el.textContent = (lama + nilai).toLocaleString('id-ID');
+
+  // Log komentar
+  const txt = document.getElementById('text-' + id);
+  const label = emoji === '🎁' ? 'GifNur' : emoji === '🎟️' ? 'Voucher Nur' : 'Rp NUR';
+  txt.value += `[${new Date().toLocaleTimeString('id')}] ${emoji} +${nilai.toLocaleString('id')} ${label}\n`;
+  txt.scrollTop = txt.scrollHeight;
+
+  toast(`${emoji} +${nilai.toLocaleString('id')} ${label} → Room ${id}`);
+}
+
+function publish() {
+  const inp  = document.getElementById('inputAula');
+  const feed = document.getElementById('feed');
+  if (!inp.value.trim()) return toast('Tulis pesan dulu! 👑');
+  const div = document.createElement('div');
+  div.className = 'feed-item';
+  div.textContent = `[${new Date().toLocaleTimeString('id')}] 👑 ${inp.value}`;
+  feed.prepend(div);
+  inp.value = '';
+  toast('Pesan Raja di-PUSH! 🚀');
+}
+
+function toast(pesan) {
+  const box = document.getElementById('toastBox');
+  const t   = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = pesan;
+  box.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+</script>
+
+<!-- SIRKUIT TOMBOL OTOMATIS BACK & NEXT -->
+<div class="sirkuit-navigasi" style="text-align: center; margin: 30px 0; padding: 10px;">
+    <button onclick="window.location.href='Nur18.html'" style="padding: 10px 20px; font-weight: bold; background-color: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">
+        ⬅️ BACK (Nur18.html)
+    </button>
+    <button onclick="window.location.href='Nur2.html'" style="padding: 10px 20px; font-weight: bold; background-color: #2ecc71; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        NEXT (Nur2.html) ➡️
+    </button>
+</div>
+<!-- END SIRKUIT TOMBOL OTOMATIS -->
+
+</body>
+</html>
+

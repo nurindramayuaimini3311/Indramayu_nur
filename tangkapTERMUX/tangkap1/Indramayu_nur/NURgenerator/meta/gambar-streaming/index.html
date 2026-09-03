@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIVE PROMOSI — 4 Kontainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --emas:#d97706; --emas-terang:#f59e0b;
+  --border:#3b82f6; --border-sub:#cbd5e1;
+  --text-utama:#0f172a; --text-biru:#1e40af; --hijau:#16a34a;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',sans-serif;min-height:100vh;background:linear-gradient(180deg,#ffffff 0%,#eef6ff 100%);color:var(--text-utama)}
+.topbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:2px solid var(--border-sub);padding:10px 14px;display:flex;align-items:center;gap:10px}
+.btn-home{
+  display:flex;align-items:center;gap:6px;
+  background:var(--emas-terang);color:#fff;border:none;border-radius:10px;
+  padding:9px 14px;font-weight:900;font-size:13px;text-decoration:none;
+  box-shadow:0 3px 8px rgba(245,158,11,0.35);
+}
+.btn-home:active{transform:scale(0.96)}
+.topbar h1{font-family:'Cinzel',serif;font-size:15px;color:var(--text-biru);flex:1;text-align:center}
+
+#wrap{max-width:560px;margin:0 auto;padding:14px 12px 40px}
+.server-box{background:#fff;border:2px solid #bfdbfe;border-radius:12px;padding:9px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.s-dot{width:10px;height:10px;border-radius:50%;background:var(--hijau);flex-shrink:0;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.s-text{color:var(--text-biru);font-weight:800;flex:1;font-size:12px}
+
+.panggung-grid{display:flex;flex-direction:column;gap:14px}
+.panggung-grid iframe{width:100%;border:none;height:640px;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+
+/* VOICE RECORDER */
+.btn-voice{display:flex;align-items:center;justify-content:center;width:36px;background:#fff;border:2.5px solid var(--ink);border-radius:9px;font-size:15px;cursor:pointer;flex-shrink:0;transition:all .2s}
+.btn-voice.recording{background:var(--merah);color:#fff;animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}50%{box-shadow:0 0 0 8px rgba(220,38,38,0)}}
+.rec-timer{font-size:10px;font-weight:900;color:var(--merah);display:none;align-items:center;gap:4px}
+.rec-timer.on{display:flex}
+.rec-dot{width:6px;height:6px;background:var(--merah);border-radius:50%;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.voice-msg{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#1e40af,#7c3aed);border:2px solid var(--ink);border-radius:12px;padding:8px 12px;margin-top:5px;color:#fff;min-width:200px}
+.voice-msg .play-btn{width:32px;height:32px;border-radius:50%;background:#fff;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;flex-shrink:0}
+.voice-msg .play-btn:active{transform:scale(.9)}
+.voice-msg .wave{flex:1;display:flex;align-items:center;gap:2px;height:28px}
+.voice-msg .wave span{display:block;width:3px;background:rgba(255,255,255,.7);border-radius:2px;animation:wavebar 1s ease-in-out infinite}
+.voice-msg .wave span:nth-child(1){height:8px;animation-delay:0s}
+.voice-msg .wave span:nth-child(2){height:16px;animation-delay:.1s}
+.voice-msg .wave span:nth-child(3){height:10px;animation-delay:.2s}
+.voice-msg .wave span:nth-child(4){height:20px;animation-delay:.3s}
+.voice-msg .wave span:nth-child(5){height:12px;animation-delay:.4s}
+.voice-msg .wave span:nth-child(6){height:18px;animation-delay:.15s}
+.voice-msg .wave span:nth-child(7){height:8px;animation-delay:.25s}
+.voice-msg .dur{font-size:10px;font-weight:800;margin-left:4px;white-space:nowrap}
+@keyframes wavebar{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.4)}}
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="btn-home" href="../index.html" id="homeBtn">🏠 Home</a>
+  <h1>👑🕌 INDRAMAYU CLUB — LIVE</h1>
+</div>
+
+<div id="wrap">
+  <div class="server-box"><div class="s-dot"></div><div class="s-text">🟢 Server Online • Akses Bebas • 4 Slot Live</div></div>
+
+  <div class="panggung-grid">
+    <iframe src="slot-1-anda.html?id=anda&nama=Anda&ava=🙂" allow="camera;microphone;autoplay"></iframe>
+    <iframe src="slot-2-imah.html?id=imah&nama=Imah%20Azzah&ava=👸" allow="camera;microphone;autoplay"></iframe>
+    <iframe src="slot-3-nur.html?id=nur&nama=Nur%20Generator&ava=🤖" allow="camera;microphone;autoplay"></iframe>
+    <iframe src="slot-4-club.html?id=club&nama=Indramayu%20Club&ava=🕌" allow="camera;microphone;autoplay"></iframe>
+  </div>
+</div>
+
+<script>
+// Ganti URL_HOME sesuai lokasi index utama / DASHBOARD.html di server Bos
+const URL_HOME = "../index.html"; // atau ganti ke "../../DASHBOARD.html" kalau perlu
+document.getElementById('homeBtn').setAttribute('href', URL_HOME);
+
+/* ===== PESAN SUARA (TERSIMPAN) ===== */
+let mediaRecorder=null, audioChunks=[], recStart=0, recInterval=null;
+
+const btnV=document.getElementById("btnVoice");
+btnV.addEventListener("mousedown", mulaiRekam);
+btnV.addEventListener("mouseup", berhentiRekam);
+btnV.addEventListener("mouseleave", berhentiRekam);
+btnV.addEventListener("touchstart", function(e){e.preventDefault();mulaiRekam();});
+btnV.addEventListener("touchend", function(e){e.preventDefault();berhentiRekam();});
+
+async function mulaiRekam(){
+  try{
+    var stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    mediaRecorder=new MediaRecorder(stream);
+    audioChunks=[];
+    mediaRecorder.ondataavailable=function(e){if(e.data.size>0)audioChunks.push(e.data);};
+    mediaRecorder.onstop=function(){
+      stream.getTracks().forEach(function(t){t.stop();});
+      kirimVoice();
+    };
+    mediaRecorder.start();
+    recStart=Date.now();
+    btnV.classList.add("recording");
+    document.getElementById("recTimer").classList.add("on");
+    recInterval=setInterval(updateRecDur,500);
+  }catch(e){alert("Error mic: "+e.message);}
+}
+
+function berhentiRekam(){
+  if(mediaRecorder&&mediaRecorder.state==="recording"){
+    mediaRecorder.stop();
+    clearInterval(recInterval);
+    btnV.classList.remove("recording");
+    document.getElementById("recTimer").classList.remove("on");
+  }
+}
+
+function updateRecDur(){
+  var s=Math.floor((Date.now()-recStart)/1000);
+  var m=Math.floor(s/60);
+  document.getElementById("recDur").textContent=m+":"+String(s%60).padStart(2,"0");
+}
+
+async function kirimVoice(){
+  if(!audioChunks.length)return;
+  var blob=new Blob(audioChunks,{type:"audio/webm"});
+  var durasi=Math.floor((Date.now()-recStart)/1000);
+  var reader=new FileReader();
+  reader.onload=async function(){
+    var base64=reader.result;
+    var balon=document.createElement("div");
+    balon.className="balon";
+    balon.innerHTML='<div class="nm">'+namaAktif()+' 🔊</div><div class="voice-msg"><div class="play-btn" onclick="putarVoice(this)">▶</div><div class="wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="dur">'+durasi+'s</div></div>';
+    balon.dataset.audioSrc=base64;
+    document.getElementById("komentarList").appendChild(balon);
+    document.getElementById("komentarList").scrollTop=99999;
+
+    try{
+      var r=await fetch("/api/voice",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({slot:ID,nama:namaAktif(),audio:base64,durasi:durasi})});
+      var j=await r.json();
+      if(j.ok){balon.dataset.audioSrc=j.url;}
+    }catch(e){console.error("Gagal simpan voice:",e);}
+  };
+  reader.readAsDataURL(blob);
+}
+
+function putarVoice(btn){
+  var balon=btn.closest(".balon");
+  var src=balon.dataset.audioSrc||"";
+  var existing=btn.closest(".voice-msg").querySelector("audio");
+  if(existing){existing.pause();existing.remove();btn.textContent="▶";return;}
+  var a=new Audio(src);
+  a.play();
+  btn.textContent="⏸";
+  a.onended=function(){btn.textContent="▶";a.remove();};
+  a.onerror=function(){btn.textContent="▶";a.remove();alert("Gagal putar audio");};
+  btn.closest(".voice-msg").appendChild(a);
+}
+
+/* Load saved voices from server */
+(async function(){
+  try{
+    var r=await fetch("/api/voice?slot="+ID);
+    var list=await r.json();
+    list.slice(-20).forEach(function(v){
+      var balon=document.createElement("div");
+      balon.className="balon";
+      balon.dataset.audioSrc="/meta/upload/voice/"+v.filename;
+      balon.innerHTML='<div class="nm">'+v.nama+' 🔊</div><div class="voice-msg"><div class="play-btn" onclick="putarVoice(this)">▶</div><div class="wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="dur">'+(v.durasi||0)+'s</div></div>';
+      document.getElementById("komentarList").appendChild(balon);
+    });
+  }catch(e){}
+})();
+
+</script><script src="../../../alwi_bubble2.js"></script>/* ===== PESAN SUARA (TERSIMPAN) ===== */
+let mediaRecorder=null, audioChunks=[], recStart=0, recInterval=null;
+
+const btnV=document.getElementById("btnVoice");
+btnV.addEventListener("mousedown", mulaiRekam);
+btnV.addEventListener("mouseup", berhentiRekam);
+btnV.addEventListener("mouseleave", berhentiRekam);
+btnV.addEventListener("touchstart", function(e){e.preventDefault();mulaiRekam();});
+btnV.addEventListener("touchend", function(e){e.preventDefault();berhentiRekam();});
+
+async function mulaiRekam(){
+  try{
+    var stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    mediaRecorder=new MediaRecorder(stream);
+    audioChunks=[];
+    mediaRecorder.ondataavailable=function(e){if(e.data.size>0)audioChunks.push(e.data);};
+    mediaRecorder.onstop=function(){
+      stream.getTracks().forEach(function(t){t.stop();});
+      kirimVoice();
+    };
+    mediaRecorder.start();
+    recStart=Date.now();
+    btnV.classList.add("recording");
+    document.getElementById("recTimer").classList.add("on");
+    recInterval=setInterval(updateRecDur,500);
+  }catch(e){alert("Error mic: "+e.message);}
+}
+
+function berhentiRekam(){
+  if(mediaRecorder&&mediaRecorder.state==="recording"){
+    mediaRecorder.stop();
+    clearInterval(recInterval);
+    btnV.classList.remove("recording");
+    document.getElementById("recTimer").classList.remove("on");
+  }
+}
+
+function updateRecDur(){
+  var s=Math.floor((Date.now()-recStart)/1000);
+  var m=Math.floor(s/60);
+  document.getElementById("recDur").textContent=m+":"+String(s%60).padStart(2,"0");
+}
+
+async function kirimVoice(){
+  if(!audioChunks.length)return;
+  var blob=new Blob(audioChunks,{type:"audio/webm"});
+  var durasi=Math.floor((Date.now()-recStart)/1000);
+  var reader=new FileReader();
+  reader.onload=async function(){
+    var base64=reader.result;
+    var balon=document.createElement("div");
+    balon.className="balon";
+    balon.innerHTML='<div class="nm">'+namaAktif()+' 🔊</div><div class="voice-msg"><div class="play-btn" onclick="putarVoice(this)">▶</div><div class="wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="dur">'+durasi+'s</div></div>';
+    balon.dataset.audioSrc=base64;
+    document.getElementById("komentarList").appendChild(balon);
+    document.getElementById("komentarList").scrollTop=99999;
+
+    try{
+      var r=await fetch("/api/voice",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({slot:ID,nama:namaAktif(),audio:base64,durasi:durasi})});
+      var j=await r.json();
+      if(j.ok){balon.dataset.audioSrc=j.url;}
+    }catch(e){console.error("Gagal simpan voice:",e);}
+  };
+  reader.readAsDataURL(blob);
+}
+
+function putarVoice(btn){
+  var balon=btn.closest(".balon");
+  var src=balon.dataset.audioSrc||"";
+  var existing=btn.closest(".voice-msg").querySelector("audio");
+  if(existing){existing.pause();existing.remove();btn.textContent="▶";return;}
+  var a=new Audio(src);
+  a.play();
+  btn.textContent="⏸";
+  a.onended=function(){btn.textContent="▶";a.remove();};
+  a.onerror=function(){btn.textContent="▶";a.remove();alert("Gagal putar audio");};
+  btn.closest(".voice-msg").appendChild(a);
+}
+
+/* Load saved voices from server */
+(async function(){
+  try{
+    var r=await fetch("/api/voice?slot="+ID);
+    var list=await r.json();
+    list.slice(-20).forEach(function(v){
+      var balon=document.createElement("div");
+      balon.className="balon";
+      balon.dataset.audioSrc="/meta/upload/voice/"+v.filename;
+      balon.innerHTML='<div class="nm">'+v.nama+' 🔊</div><div class="voice-msg"><div class="play-btn" onclick="putarVoice(this)">▶</div><div class="wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="dur">'+(v.durasi||0)+'s</div></div>';
+      document.getElementById("komentarList").appendChild(balon);
+    });
+  }catch(e){}
+})();
+
+</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("../../sw.js").catch(function(){})}</script></body>
+</html>

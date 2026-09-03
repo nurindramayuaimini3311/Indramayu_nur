@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Berkah - Nur 6</title>
+<style>
+  :root{
+    --hijau-tua: #061F14;
+    --hijau-panel: #0a2e1c;
+    --emas: #C9A84C;
+    --emas-terang: #E8C877;
+    --putih: #FFFFFF;
+  }
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(201,168,76,0.08), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(201,168,76,0.06), transparent 40%),
+      linear-gradient(180deg, var(--hijau-tua) 0%, #030f0a 100%);
+    display:flex; align-items:center; justify-content:center;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    padding: 24px;
+  }
+
+  .bingkai{
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .label-atas{
+    text-align:center;
+    color: var(--emas);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-family: -apple-system, sans-serif;
+    opacity: 0.85;
+  }
+
+  .kalkulator{
+    background: linear-gradient(160deg, rgba(10,46,28,0.75), rgba(6,31,20,0.85));
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1.5px solid var(--emas);
+    border-radius: 20px;
+    box-shadow:
+      0 0 0 1px rgba(201,168,76,0.15),
+      0 20px 50px rgba(0,0,0,0.55),
+      inset 0 1px 0 rgba(255,255,255,0.05);
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kalkulator::before{
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:1px;
+    background: linear-gradient(90deg, transparent, var(--emas-terang), transparent);
+  }
+
+  .layar{
+    background: rgba(3,15,10,0.6);
+    border: 1px solid rgba(201,168,76,0.35);
+    border-radius: 12px;
+    padding: 20px 16px 14px;
+    margin-bottom: 18px;
+    text-align: right;
+    min-height: 92px;
+    display:flex; flex-direction:column; justify-content:flex-end;
+  }
+
+  .riwayat{
+    color: rgba(201,168,76,0.55);
+    font-size: 13px;
+    min-height: 18px;
+    font-family: -apple-system, sans-serif;
+    word-break: break-all;
+  }
+
+  .hasil{
+    color: var(--putih);
+    font-size: 34px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    word-break: break-all;
+    line-height: 1.1;
+    margin-top: 4px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  button{
+    border: 1px solid rgba(201,168,76,0.4);
+    background: rgba(255,255,255,0.02);
+    color: var(--putih);
+    font-size: 18px;
+    font-family: -apple-system, sans-serif;
+    border-radius: 10px;
+    height: 58px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  button:active{
+    transform: scale(0.94);
+  }
+
+  button:hover{
+    border-color: var(--emas-terang);
+    background: rgba(201,168,76,0.10);
+  }
+
+  .btn-operator{
+    color: var(--emas-terang);
+    border-color: var(--emas);
+    background: rgba(201,168,76,0.06);
+    font-weight: 600;
+  }
+
+  .btn-fungsi{
+    color: rgba(255,255,255,0.55);
+    font-size: 15px;
+  }
+
+  .btn-sama{
+    grid-column: span 2;
+    background: linear-gradient(135deg, var(--emas), #a8863a);
+    color: var(--hijau-tua);
+    font-weight: 800;
+    border: none;
+  }
+
+  .btn-sama:hover{
+    filter: brightness(1.08);
+  }
+
+  .btn-nol{
+    grid-column: span 2;
+  }
+
+  .footer-note{
+    text-align:center;
+    color: rgba(201,168,76,0.45);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    margin-top: 14px;
+    font-family: -apple-system, sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<div class="bingkai">
+  <div class="label-atas">✦ Nur 6 — Bank Makrifat ✦</div>
+  <div class="kalkulator">
+    <div class="layar">
+      <div class="riwayat" id="riwayat"></div>
+      <div class="hasil" id="hasil">0</div>
+    </div>
+
+    <div class="grid">
+      <button class="btn-fungsi" onclick="bersihkan()">AC</button>
+      <button class="btn-fungsi" onclick="hapusSatu()">⌫</button>
+      <button class="btn-fungsi" onclick="persen()">%</button>
+      <button class="btn-operator" onclick="pilihOperator('÷')">÷</button>
+
+      <button onclick="masukAngka('7')">7</button>
+      <button onclick="masukAngka('8')">8</button>
+      <button onclick="masukAngka('9')">9</button>
+      <button class="btn-operator" onclick="pilihOperator('×')">×</button>
+
+      <button onclick="masukAngka('4')">4</button>
+      <button onclick="masukAngka('5')">5</button>
+      <button onclick="masukAngka('6')">6</button>
+      <button class="btn-operator" onclick="pilihOperator('-')">−</button>
+
+      <button onclick="masukAngka('1')">1</button>
+      <button onclick="masukAngka('2')">2</button>
+      <button onclick="masukAngka('3')">3</button>
+      <button class="btn-operator" onclick="pilihOperator('+')">+</button>
+
+      <button class="btn-nol" onclick="masukAngka('0')">0</button>
+      <button onclick="masukAngka('.')">.</button>
+      <button class="btn-sama" onclick="hitungHasil()">=</button>
+    </div>
+  </div>
+  <div class="footer-note">KALKULATOR BERKAH · INDRAMAYU CLUB MAKRIFAT</div>
+</div>
+
+<script>
+  let angkaSaatIni = '0';
+  let angkaSebelumnya = '';
+  let operator = null;
+  let barusajaSama = false;
+
+  const elHasil = document.getElementById('hasil');
+  const elRiwayat = document.getElementById('riwayat');
+
+  function tampilkan(){
+    elHasil.textContent = formatAngka(angkaSaatIni);
+    elRiwayat.textContent = angkaSebelumnya && operator
+      ? `${formatAngka(angkaSebelumnya)} ${operator}`
+      : '';
+  }
+
+  function formatAngka(str){
+    if (str === '') return '0';
+    const [bulat, desimal] = str.split('.');
+    const bulatFormatted = bulat.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return desimal !== undefined ? `${bulatFormatted},${desimal}` : bulatFormatted;
+  }
+
+  function masukAngka(digit){
+    if (barusajaSama){
+      angkaSaatIni = digit === '.' ? '0.' : digit;
+      barusajaSama = false;
+      tampilkan();
+      return;
+    }
+    if (digit === '.' && angkaSaatIni.includes('.')) return;
+    if (angkaSaatIni === '0' && digit !== '.'){
+      angkaSaatIni = digit;
+    } else {
+      if (angkaSaatIni.replace('.', '').replace('-', '').length >= 15) return;
+      angkaSaatIni += digit;
+    }
+    tampilkan();
+  }
+
+  function pilihOperator(op){
+    if (operator && angkaSebelumnya !== '' && !barusajaSama){
+      hitungHasil();
+    }
+    angkaSebelumnya = angkaSaatIni;
+    operator = op;
+    angkaSaatIni = '0';
+    barusajaSama = false;
+    tampilkan();
+  }
+
+  function hitungHasil(){
+    if (operator === null || angkaSebelumnya === '') return;
+    const a = parseFloat(angkaSebelumnya);
+    const b = parseFloat(angkaSaatIni);
+    let hasil;
+    switch(operator){
+      case '+': hasil = a + b; break;
+      case '-': hasil = a - b; break;
+      case '×': hasil = a * b; break;
+      case '÷': hasil = b === 0 ? NaN : a / b; break;
+      default: return;
+    }
+    angkaSaatIni = isNaN(hasil) ? '0' : String(Math.round(hasil * 1e10) / 1e10);
+    operator = null;
+    angkaSebelumnya = '';
+    barusajaSama = true;
+    tampilkan();
+  }
+
+  function bersihkan(){
+    angkaSaatIni = '0';
+    angkaSebelumnya = '';
+    operator = null;
+    barusajaSama = false;
+    tampilkan();
+  }
+
+  function hapusSatu(){
+    if (barusajaSama){ bersihkan(); return; }
+    angkaSaatIni = angkaSaatIni.length > 1 ? angkaSaatIni.slice(0, -1) : '0';
+    tampilkan();
+  }
+
+  function persen(){
+    angkaSaatIni = String(parseFloat(angkaSaatIni) / 100);
+    tampilkan();
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key >= '0' && e.key <= '9') masukAngka(e.key);
+    else if (e.key === '.') masukAngka('.');
+    else if (e.key === '+') pilihOperator('+');
+    else if (e.key === '-') pilihOperator('-');
+    else if (e.key === '*') pilihOperator('×');
+    else if (e.key === '/') { e.preventDefault(); pilihOperator('÷'); }
+    else if (e.key === 'Enter' || e.key === '=') hitungHasil();
+    else if (e.key === 'Backspace') hapusSatu();
+    else if (e.key === 'Escape') bersihkan();
+  });
+
+  tampilkan();
+</script>
+
+<!-- ============================================================
+     SINKRONISASI ⛑️ AGEN ALWI GRANDEW ⛑️
+     ============================================================ -->
+	<script src="components/agen_alwi.js?v=2.0.6"></script>
+
+</body>
+</html>
+

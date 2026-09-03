@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>💬 Komentar Live — Al-Quran & Member</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:#0a1424;color:#e2e8f0;min-height:100vh}
+header{background:#0d6efd;color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+header b{font-size:15px}
+a.home{background:#fff;color:#0d6efd;text-decoration:none;font-weight:800;font-size:11px;padding:7px 12px;border-radius:9px}
+.wrap{max-width:760px;margin:0 auto;padding:14px}
+.grid-2{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:720px){.grid-2{grid-template-columns:1fr 1fr}}
+iframe{width:100%;border:2px solid #0d6efd55;border-radius:14px;background:#fff;height:420px;display:block}
+.lbl{font-size:11px;font-weight:800;color:#90caf9;margin-bottom:6px}
+.kom{padding-top:6px}
+.kom-list{max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:8px;padding:4px}
+.balon{background:#0f2547;border:1px solid #0d6efd66;border-radius:12px;padding:8px 10px}
+.balon .nm{font-size:11px;font-weight:800;color:#7cc4ff}
+.balon .tx{font-size:13px;color:#e2e8f0;margin-top:2px;word-break:break-word}
+.kom-input-row{display:flex;gap:6px}
+#inputKomentar{flex:1;padding:10px 12px;border:1.5px solid #0d6efd66;border-radius:10px;background:#0f2547;color:#fff;font-size:13px;outline:none}
+.btn-kirim{padding:10px 16px;border:none;border-radius:10px;background:#0d6efd;color:#fff;font-weight:800;font-size:12px;cursor:pointer}
+.hint{font-size:10px;color:#64748b;margin-top:6px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <b>💬 KOMENTAR LIVE — Al-Quran &amp; Member</b>
+  <a class="home" href="/">🏠 Dashboard</a>
+</header>
+<div class="wrap">
+  <div class="grid-2">
+    <div>
+      <div class="lbl">📖 AL-QURAN (Baca / Copy / Putar)</div>
+      <iframe src="http://35.240.161.189:3000/"></iframe>
+    </div>
+    <div>
+      <div class="lbl">👥 KARTU MEMBER</div>
+      <iframe src="http://35.240.161.189:3000/"></iframe>
+    </div>
+  </div>
+
+  <div class="kom">
+    <div class="lbl">💬 KOMENTAR (memori sesi + backup localStorage)</div>
+    <div class="kom-list" id="komList"></div>
+    <div class="kom-input-row">
+      <input id="inputKomentar" placeholder="Nama + pesan, atau nama|pesan..." maxlength="160">
+      <button class="btn-kirim" onclick="kirim()">KIRIM</button>
+    </div>
+    <div class="hint">Format: tulis <b>Nama|Pesan</b> (pakai tanda |), Enter untuk kirim.</div>
+  </div>
+</div>
+
+<script>
+// Memori komentar (sesi HANYA sementara) + backup ke localStorage Chrome
+var MEM = [];
+var KEY = 'komentar_alwi_mem';
+
+function muatMem() {
+  try {
+    var data = JSON.parse(localStorage.getItem(KEY) || '[]');
+    if (Array.isArray(data)) MEM = data;
+  } catch (e) { MEM = []; }
+  render();
+}
+
+function simpanMem() {
+  try { localStorage.setItem(KEY, JSON.stringify(MEM)); } catch (e) { /* penuh */ }
+}
+
+function render() {
+  var list = document.getElementById('komList');
+  list.innerHTML = MEM.map(function(k) {
+    return '<div class="balon"><div class="nm">' + k.n + '</div><div class="tx">' + k.t + '</div></div>';
+  }).join('');
+  list.scrollTop = list.scrollHeight;
+}
+
+function kirim() {
+  var v = document.getElementById('inputKomentar').value.trim();
+  if (!v) return;
+  var n = 'Member', t = v;
+  if (v.indexOf('|') > -1) {
+    var p = v.split('|');
+    n = p[0].trim() || 'Member';
+    t = p.slice(1).join('|').trim();
+  }
+  MEM.push({ n: n, t: t, ts: Date.now() });
+  if (MEM.length > 200) MEM.shift();
+  simpanMem();
+  render();
+  document.getElementById('inputKomentar').value = '';
+}
+document.getElementById('inputKomentar').addEventListener('keydown', function(e){ if (e.key === 'Enter') kirim(); });
+
+muatMem();
+</script><script src="../alwi_bubble2.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script></body>
+</html>
