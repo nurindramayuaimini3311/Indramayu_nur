@@ -27,3 +27,11 @@ tunnel-url.txt
 catat-url-tunnel.sh
 otomatis.sh
 tunneling.sh
+.env
+.env.local
+*.env
+config.otomatis.env
+tunnel-url.txt
+catat-url-tunnel.sh
+otomatis.sh
+tunneling.sh
