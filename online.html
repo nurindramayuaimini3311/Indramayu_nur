@@ -111,8 +111,34 @@
       margin-bottom: 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
     }
     .jadwal-box .btn { flex-shrink:0; }
+    
+    /* Streaming Section */
+    .streaming-container {
+      background: rgba(255,255,255,0.95);
+      border-radius: 16px;
+      padding: 12px;
+      margin: 12px 4px;
+      box-shadow: 0 2px 8px rgba(13, 110, 253, .06);
+    }
+    
+    .streaming-header {
+      font-weight: 900;
+      color: var(--tua);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .streaming-frame {
+      width: 100%;
+      height: 500px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
 
-    /* ---------- Kompas Kiblat ---------- */
+    /* Kompas Kiblat Modal */
     #kiblatModal {
       display:none; position:fixed; inset:0; z-index:300;
       background:rgba(0,0,0,0.7); align-items:center; justify-content:center; padding:16px;
@@ -144,7 +170,7 @@
   </style></head>
 <body>
 
-  <a id="banner-hub" href="NURgenerator/meta/hub.html" style="display:block;background:#dc2626;color:#fff;text-align:center;padding:10px 8px;font-weight:800;font-size:13px;text-decoration:none;letter-spacing:.5px">🔴 ALWI HUB — Web Statis &amp; Ollama AI (klik)</a>
+  <a id="banner-hub" href="NURgenerator/meta/hub.html" style="display:block;background:#dc2626;color:#fff;text-align:center;padding:10px 8px;font-weight:800;font-size:13px;text-decoration:none;letter-spacing:.02em">🔔 ALWI HUB — AI Generator Ollama</a>
 
   <header>
     <div class="logo">🌐</div>
@@ -166,9 +192,15 @@
         <div style="font-size:11px;color:#b45309">Klik untuk langsung akses Panggung Live 4 Slot</div>
       </div>
       <a href="NURgenerator/LIVE1.html" class="btn btn-biru">📷Buka Live</a>
-      <a href="NURgenerator/netflix/index.html" class="btn btn-biru">🖥Video Live</a>
-      <a href="peta/index.html" class="btn btn-biru">🌍Peta Live</a>
       <button type="button" class="btn btn-biru" onclick="bukaKiblat()">🧭Kiblat</button>
+    </div>
+
+    <!-- META STREAMING SECTION -->
+    <div class="streaming-container">
+      <div class="streaming-header">
+        📺 Live Meta Streaming (Panggung Gambar)
+      </div>
+      <iframe class="streaming-frame" src="NURgenerator/meta/gambar-streaming/" allow="geolocation; microphone; camera"></iframe>
     </div>
 
     <div class="section-title"><span>🤖 CHAT AI ALWI</span></div>
@@ -201,9 +233,6 @@
       <a href="index4.html" class="card">
         <div class="ic">🛠️</div><div class="nm">Alwi Builder</div><div class="desc">Buat HTML</div>
       </a>
-      <a href="alwi_pusat_live.html" class="card">
-        <div class="ic">🧲</div><div class="nm">wallpaper</div><div class="desc">stick magnet</div>
-      </a>
       <a href="index5.html" class="card">
         <div class="ic">🖼️</div><div class="nm">Gallery Alwi</div><div class="desc">Kumpulan Foto</div>
       </a>
@@ -218,7 +247,7 @@
     <div class="section-title"><span>🧩 META CENTER — HALAMAN</span></div>
     <div class="grid" id="gridMetaPage"></div>
 
-    <div class="section-title"><span>📶META — PANGGUNG STREAMING</span></div>
+    <div class="section-title"><span>🔴 META — PANGGUNG STREAMING</span></div>
     <div class="grid" id="gridMetaStage"></div>
 
     <div class="section-title"><span>📂 META — MEDIA &amp; FOLDER</span></div>
@@ -228,19 +257,16 @@
   <div class="bottom">
     <a href="index.html" class="bnav"><span>🏠</span>Offline</a>
     <a href="NURgenerator/meta/ALWIbot.html" class="bnav active"><span>💬</span>WhatsApp</a>
-    <a href="NURgenerator/meta/gambar-streaming/index.html" class="bnav"><span>🖼️</span>Streaming</a>
-    <a href="NURgenerator/meta/promosi-streaming/index.html" class="bnav"><span>📸</span>Komentar</a>
-    <a href="NURgenerator/meta/hub.html" class="bnav"><span>🌐</span>buat situs AI</a>
+    <a href="NURgenerator/meta/gambar-streaming/" class="bnav"><span>🖼️</span>Streaming</a>
+    <a href="NURgenerator/LIVE1.html" class="bnav"><span>🔴</span>Live</a>
   </div>
 
   <script>
-    // Section BARU: Ibadah -- Adzan & Al-Qur'an (folder/file yang ditemukan di NURgenerator)
     const IBADAH = [
       { name: "FOLDER ADZAN", path: "NURgenerator/ADZAN/", icon: "🕌", cat: "ibadah", desc: "Kumpulan file adzan" },
       { name: "ADZAN", path: "NURgenerator/adzan.html", icon: "🔊", cat: "ibadah", desc: "Pengingat waktu adzan" },
-      { name: "ADZAN DASHBOARD", path: "NURgenerator/adzan-dashboard.html", icon: "📊", cat: "ibadah", desc: "Panel kontrol adzan" },
+      { name: "ADZAN DASHBOARD", path: "NURgenerator/ADZAN/DASHBOARD.html", icon: "📊", cat: "ibadah", desc: "Panel kontrol adzan" },
       { name: "ADZAN AUDIO", path: "NURgenerator/adzan_audio.html", icon: "🎧", cat: "ibadah", desc: "Putar suara adzan" },
-      { name: "MARQUEE ADZAN", path: "NURgenerator/marquee_adzan.html", icon: "📜", cat: "ibadah", desc: "Teks berjalan adzan" },
       { name: "AL-QUR'AN", path: "NURgenerator/alquran.html", icon: "📖", cat: "ibadah", desc: "Baca Al-Qur'an" },
       { name: "AL-QUR'AN AUDIO", path: "NURgenerator/alquran_audio.html", icon: "🎙️", cat: "ibadah", desc: "Murottal Al-Qur'an" },
       { name: "DISKUSI QUR'AN", path: "NURgenerator/diskusi_quran.html", icon: "💬", cat: "ibadah", desc: "Tanya jawab Qur'an" },
@@ -249,29 +275,21 @@
 
     const META_PAGES = [
       { name: "META CENTER", path: "NURgenerator/meta/", icon: "🧩", cat: "meta", desc: "Induk semua halaman meta" },
-      { name: "LOGIN MEMBER", path: "NURgenerator/LIVE1.html", icon: "🔑", cat: "meta", desc: "komentar live + buat kartu" },
+      { name: "ALWI HUB", path: "NURgenerator/meta/hub.html", icon: "🔴", cat: "meta", desc: "Web Statis + Ollama AI" },
       { name: "ALWI BOOK", path: "NURgenerator/meta/alwibook.html", icon: "📖", cat: "meta", desc: "Bacaan digital" },
-      { name: "NANTI DULU", path: "NURgenerator/meta/nantidulu.html", icon: "⏳", cat: "meta", desc: "Halaman tunggu" },
-      { name: "VIDEO DRIVE", path: "NURgenerator/meta/video-drive.html", icon: "🎬", cat: "meta", desc: "Pemutar video drive" },
-      { name: "TEMPLATE KOMENTAR", path: "NURgenerator/meta/template-komentar.html", icon: "💬", cat: "meta", desc: "Papan komentar" }
+      { name: "VIDEO DRIVE", path: "NURgenerator/meta/video-drive.html", icon: "🎬", cat: "meta", desc: "Pemutar video drive" }
     ];
     const META_STAGE = [
       { name: "GAMBAR STREAMING", path: "NURgenerator/meta/gambar-streaming/", icon: "🖼️", cat: "stage", desc: "Panggung streaming gambar" },
-      { name: "SLOT 1 — ANDA", path: "NURgenerator/meta/gambar-streaming/slot-1-anda.html", icon: "1️⃣", cat: "stage", desc: "Slot 1 panggung Anda" },
-      { name: "SLOT 2 — IMAH", path: "NURgenerator/meta/gambar-streaming/slot-2-imah.html", icon: "2️⃣", cat: "stage", desc: "Slot 2 panggung Imah" },
-      { name: "SLOT 3 — NUR", path: "NURgenerator/meta/gambar-streaming/slot-3-nur.html", icon: "3️⃣", cat: "stage", desc: "Slot 3 panggung Nur" },
-      { name: "SLOT 4 — CLUB", path: "NURgenerator/meta/gambar-streaming/slot-4-club.html", icon: "4️⃣", cat: "stage", desc: "Slot 4 panggung Club" },
-      { name: "PROMOSI STREAMING", path: "NURgenerator/meta/promosi-streaming/", icon: "📢", cat: "stage", desc: "Panggung promosi streaming" },
-      { name: "PROMO SLOT 1", path: "NURgenerator/meta/promosi-streaming/slot-1-anda.html", icon: "1️⃣", cat: "stage", desc: "Promosi slot Anda" },
-      { name: "PROMO SLOT 2", path: "NURgenerator/meta/promosi-streaming/slot-2-imah.html", icon: "2️⃣", cat: "stage", desc: "Promosi slot Imah" },
-      { name: "PROMO SLOT 3", path: "NURgenerator/meta/promosi-streaming/slot-3-nur.html", icon: "3️⃣", cat: "stage", desc: "Promosi slot Nur" },
-      { name: "PROMO SLOT 4", path: "NURgenerator/meta/promosi-streaming/slot-4-club.html", icon: "4️⃣", cat: "stage", desc: "Promosi slot Club" }
+      { name: "SLOT 1 — ANDA", path: "NURgenerator/meta/gambar-streaming/slot-1-anda.html", icon: "1️⃣", cat: "stage", desc: "Slot 1 panggung" },
+      { name: "SLOT 2 — IMAH", path: "NURgenerator/meta/gambar-streaming/slot-2-imah.html", icon: "2️⃣", cat: "stage", desc: "Slot 2 panggung" },
+      { name: "SLOT 3 — NUR", path: "NURgenerator/meta/gambar-streaming/slot-3-nur.html", icon: "3️⃣", cat: "stage", desc: "Slot 3 panggung" },
+      { name: "SLOT 4 — CLUB", path: "NURgenerator/meta/gambar-streaming/slot-4-club.html", icon: "4️⃣", cat: "stage", desc: "Slot 4 panggung" }
     ];
     const META_MEDIA = [
       { name: "GALLERY VIDEO", path: "NURgenerator/meta/gallery_video/", icon: "🎞️", cat: "media", desc: "Koleksi video" },
       { name: "KOMENTAR", path: "NURgenerator/meta/komentar/", icon: "🗨️", cat: "media", desc: "Data komentar" },
       { name: "MEMBER IMG", path: "NURgenerator/meta/member_img/", icon: "👤", cat: "media", desc: "Ikon & foto member" },
-      { name: "MP3 MEMBER", path: "NURgenerator/meta/mp3_member/", icon: "🎵", cat: "media", desc: "Audio member" },
       { name: "UPLOAD", path: "NURgenerator/meta/upload/", icon: "⬆️", cat: "media", desc: "Hasil unggahan" }
     ];
 
@@ -302,16 +320,7 @@
     window.addEventListener('DOMContentLoaded', render);
   </script>
   <script src="alwi_bubble4.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('sw.js').catch(function (e) {
-          console.warn('SW register gagal:', e);
-        });
-      });
-    }
-  </script>
-
+  
   <!-- Modal Kompas Kiblat -->
   <div id="kiblatModal">
     <div class="kiblat-card">
@@ -350,12 +359,10 @@
       if (_kiblat.listener) { window.removeEventListener('deviceorientation', _kiblat.listener); _kiblat.listener = null; }
     }
 
-    // Hitung arah kiblat (Makkah) dari posisi pengguna
     function hitungArahKiblat() {
       if (!navigator.geolocation) { document.getElementById('kiblatInfo').textContent = 'GPS tidak didukung perangkat ini.'; return; }
       navigator.geolocation.getCurrentPosition(function (pos) {
         var lat = pos.coords.latitude, lng = pos.coords.longitude;
-        // Koordinat Ka'bah
         var klat = 21.422487, klng = 39.826206;
         var dLat = (klat - lat) * Math.PI / 180;
         var dLng = (klng - lng) * Math.PI / 180;
@@ -368,13 +375,11 @@
           'Lokasi: ' + lat.toFixed(4) + ', ' + lng.toFixed(4) + '\nArah kiblat: ' + brg.toFixed(1) + '° dari Utara';
         if (!_kiblat.listener) updateNeedle(bearingKompasSekarang());
       }, function () {
-        // Fallback: default ke arah kiblat untuk sebagian besar Indonesia (~295°)
         _kiblat.qibla = 295;
         document.getElementById('kiblatInfo').textContent = 'GPS tidak diizinkan. Memakai arah kiblat wilayah Indonesia (± 295°).';
       }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
     }
 
-    // Aktifkan sensor magnetometer (kompas)
     function aktifkanSensorKompass() {
       if ('DeviceOrientationEvent' in window && typeof DeviceOrientationEvent.requestPermission === 'function') {
         DeviceOrientationEvent.requestPermission().then(function (s) {
@@ -399,7 +404,6 @@
 
     function updateNeedle(heading) {
       if (_kiblat.qibla == null || heading == null) return;
-      // jarum menunjuk ke arah kiblat relatif thd posisi HP
       var rel = _kiblat.qibla - heading;
       document.getElementById('needle').style.transform =
         'rotate(' + rel + 'deg)';
@@ -407,6 +411,7 @@
         'Kiblat: ' + _kiblat.qibla.toFixed(1) + '°  (HP: ' + Math.round(heading) + '°)';
     }
   </script>
+
+  <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script>
 </body>
 </html>
-
