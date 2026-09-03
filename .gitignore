@@ -19,3 +19,11 @@ version.txt
 .env
 .env.local
 node_modules/
+.env
+.env.local
+*.env
+config.otomatis.env
+tunnel-url.txt
+catat-url-tunnel.sh
+otomatis.sh
+tunneling.sh

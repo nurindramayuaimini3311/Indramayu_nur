@@ -176,6 +176,25 @@
     .kiblat-info{ font-size:12px; color:#6b7280; margin-bottom:12px; line-height:1.4; }
     .kiblat-warn{ font-size:11px; color:#b45309; margin-bottom:10px; }
     .kiblat-close{ background:#10b981; color:#fff; border:none; border-radius:10px; padding:9px 16px; font-weight:700; cursor:pointer; }
+    #petaKabahModal{ position:fixed; inset:0; z-index:400; background:rgba(0,0,0,0.85);
+      display:none; align-items:center; justify-content:center; padding:12px; }
+    #petaKabahModal.show{ display:flex; }
+    #petaKabahModal .pm-card{ background:#121212; border-radius:16px; width:100%; max-width:640px;
+      overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,0.6); color:#e0e0e0; max-height:92vh; display:flex; flex-direction:column; }
+    #petaKabahModal .pm-head{ display:flex; justify-content:space-between; align-items:center;
+      padding:10px 14px; border-bottom:1px solid #2b2b2b; }
+    #petaKabahModal .pm-head b{ color:#ffd700; font-size:14px; }
+    #petaKabahModal .pm-body{ padding:12px; overflow:auto; }
+    #mapKabah{ width:100%; height:55vh; border-radius:12px; border:2px solid #333; }
+    .kabah-info{ margin-top:10px; text-align:center; background:#1c2128; border:1px solid #333;
+      border-radius:12px; padding:10px; }
+    .kabah-info b{ color:#ffd700; }
+    .kabah-reading{ color:#10b981; font-weight:800; font-size:16px; margin:6px 0; }
+    .kabah-detail{ font-size:12px; color:#a0a0a0; }
+    .kabah-btn-row{ margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+    .kabah-btn{ border:1.5px solid #10b981; background:#0f2b23; color:#fff; border-radius:10px;
+      padding:8px 14px; font-weight:800; font-size:12px; cursor:pointer; }
+    .kabah-btn:hover{ background:#10b981; color:#000; }
   </style></head>
 <body>
 
@@ -209,6 +228,7 @@
       <div class="streaming-header">
         📺 Live Meta Streaming (Panggung Gambar)
       </div>
+      <div style="font-size:11px;color:#6b7280;margin:4px 2px 8px;text-align:center;">Jika streaming tidak tampil / kamera tidak aktif, hubungi admin.</div>
       <iframe class="streaming-frame" src="NURgenerator/meta/gambar-streaming/" allow="geolocation; microphone; camera"></iframe>
     </div>
 
@@ -245,7 +265,7 @@
       <a href="index5.html" class="card">
         <div class="ic">🖼️</div><div class="nm">Gallery Alwi</div><div class="desc">Kumpulan Foto</div>
       </a>
-      <a href="qa_lite.html" class="card">
+      <a href="NURgenerator/meta/gambar-streaming" class="card">
         <div class="ic">❓</div><div class="nm">Q&amp;A Lite</div><div class="desc">Tanya Jawab</div>
       </a>
       <a href="NURgenerator/meta/ALWIbot.html" class="card">
@@ -266,7 +286,7 @@
   <div class="bottom">
     <a href="index.html" class="bnav"><span>🏠</span>Offline</a>
     <a href="NURgenerator/meta/ALWIbot.html" class="bnav active"><span>💬</span>WhatsApp</a>
-    <a href="NURgenerator/meta/gambar-streaming/" class="bnav"><span>🖼️</span>Streaming</a>
+    <a href="NURgenerator/meta/promosi-streaming/" class="bnav"><span>🖼️</span>Streaming</a>
     <a href="NURgenerator/LIVE1.html" class="bnav"><span>🔴</span>Live</a>
   </div>
 
@@ -362,8 +382,28 @@
       <div class="kiblat-info" id="kiblatInfo"></div>
       <div class="kiblat-warn" id="kiblatWarn"></div>
       <div style="display:flex;gap:8px;justify-content:center;margin-bottom:10px;flex-wrap:wrap;">
-        <a href="peta/peta_kabah.html" target="_blank" rel="noopener" class="kiblat-close" style="background:#ffd700;color:#000;text-decoration:none;">🗺️ Peta Ka'bah</a>
+        <button type="button" class="kiblat-close" onclick="bukaPetaKabah()" style="background:#ffd700;color:#000;">🗺️ Peta Ka'bah</button>
         <button class="kiblat-close" onclick="tutupKiblat()">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="petaKabahModal">
+    <div class="pm-card">
+      <div class="pm-head"><b>🕋 Navigasi Ka'bah — Makkah</b><button class="kiblat-close" onclick="tutupPetaKabah()">✖ Tutup</button></div>
+      <div class="pm-body">
+        <div id="mapKabah"></div>
+        <div class="kabah-info">
+          <div>Lokasi Ka'bah: <b>21.4225° N, 39.8262° E</b> (Makkah, Saudi Arabia)</div>
+          <div class="kabah-reading" id="qiblaReadingKabah">Geser pin 📍 untuk melihat arah kiblat</div>
+          <div class="kabah-detail" id="qiblaDetailKabah"></div>
+          <div style="font-size:11px;color:#888;margin-top:6px;">💡 Tarik pin 📍 ke lokasi mana pun — garis &amp; arah kiblat otomatis menyesuaikan.</div>
+          <div class="kabah-btn-row">
+            <button class="kabah-btn" onclick="keKabah()">🧭 Pusatkan Ka'bah</button>
+            <button class="kabah-btn" onclick="lokasiSayaKabah()">📍 GPS Saya</button>
+            <button class="kabah-btn" onclick="resetPinKabah()">🎯 Reset Pin</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -387,6 +427,78 @@
     function tutupKiblat() {
       document.getElementById('kiblatModal').classList.remove('show');
       if (_kiblat.listener) { window.removeEventListener('deviceorientation', _kiblat.listener); _kiblat.listener = null; }
+    }
+
+    function bukaPetaKabah() {
+      document.getElementById('petaKabahModal').classList.add('show');
+      if (!window.__kabahMap) initMapKabah();
+      setTimeout(function(){ if (window.__kabahMap) window.__kabahMap.invalidateSize(); }, 250);
+    }
+    function tutupPetaKabah() {
+      document.getElementById('petaKabahModal').classList.remove('show');
+    }
+
+    var KABAH = { lat: 21.4225, lng: 39.8262 };
+    var DEFAULT_PIN = { lat: -6.3262, lng: 108.3200 };
+    function initMapKabah() {
+      var map = L.map('mapKabah').setView([KABAH.lat, KABAH.lng], 16);
+      window.__kabahMap = map;
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
+      var kabahIcon = L.divIcon({ className: '', html: '<div style="font-size:30px;line-height:1">🕋</div>', iconSize: [30,30], iconAnchor: [15,15] });
+      var kabah = L.marker([KABAH.lat, KABAH.lng], { icon: kabahIcon }).addTo(map);
+      kabah.bindPopup('<div style="text-align:center;padding:5px;"><h3 style="color:#ffd700;margin-bottom:5px;">🕋 Ka'bah — Makkah</h3><p style="font-size:12px;">Masjidil Haram, Mekkah<br>Kiblat umat Islam</p></div>').openPopup();
+      var pinIcon = L.divIcon({ className: '', html: '<div style="font-size:34px;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))">📍</div>', iconSize: [34,34], iconAnchor: [17,30] });
+      var pin = L.marker([DEFAULT_PIN.lat, DEFAULT_PIN.lng], { icon: pinIcon, draggable: true }).addTo(map);
+      pin.on('dragend', function(){ var ll = pin.getLatLng(); updateNavigasiKabah(ll.lat, ll.lng); });
+      window.__kabahPin = pin;
+      updateNavigasiKabah(DEFAULT_PIN.lat, DEFAULT_PIN.lng);
+    }
+    function updateNavigasiKabah(lat, lng) {
+      var brg = hitungKiblatKabah(lat, lng);
+      var jarak = hitungJarakKabah(lat, lng);
+      document.getElementById('qiblaReadingKabah').textContent = 'Arah Kiblat: ' + brg.toFixed(1) + '° dari Utara';
+      document.getElementById('qiblaDetailKabah').textContent = 'Posisi pin: ' + lat.toFixed(4) + ', ' + lng.toFixed(4) + ' • Jarak ke Ka\'bah ±' + jarak.toFixed(0) + ' km';
+      gambarGarisKabah(lat, lng, brg);
+    }
+    function keKabah() { if (window.__kabahMap) window.__kabahMap.setView([KABAH.lat, KABAH.lng], 16); }
+    function resetPinKabah() {
+      if (!window.__kabahPin) return;
+      window.__kabahPin.setLatLng([DEFAULT_PIN.lat, DEFAULT_PIN.lng]);
+      updateNavigasiKabah(DEFAULT_PIN.lat, DEFAULT_PIN.lng);
+      if (window.__kabahMap) window.__kabahMap.setView([DEFAULT_PIN.lat, DEFAULT_PIN.lng], 13);
+    }
+    function lokasiSayaKabah() {
+      if (!navigator.geolocation) { document.getElementById('qiblaReadingKabah').textContent = 'GPS tidak didukung. Geser pin manual.'; return; }
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        var lat = pos.coords.latitude, lng = pos.coords.longitude;
+        if (window.__kabahPin) window.__kabahPin.setLatLng([lat, lng]);
+        updateNavigasiKabah(lat, lng);
+        if (window.__kabahMap) window.__kabahMap.setView([lat, lng], 13);
+      }, function () {
+        document.getElementById('qiblaReadingKabah').textContent = 'GPS diblokir. Tarik pin 📍 manual ke lokasi Anda.';
+      }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
+    }
+    function hitungKiblatKabah(lat, lng) {
+      var klat = KABAH.lat*Math.PI/180, klng = KABAH.lng*Math.PI/180;
+      var lat1 = lat*Math.PI/180, lng1 = lng*Math.PI/180, dLng = klng - lng1;
+      var y = Math.sin(dLng)*Math.cos(klat);
+      var x = Math.cos(lat1)*Math.sin(klat) - Math.sin(lat1)*Math.cos(klat)*Math.cos(dLng);
+      return (Math.atan2(y,x)*180/Math.PI + 360) % 360;
+    }
+    function hitungJarakKabah(lat1, lng1) {
+      var R = 6371;
+      var la1 = lat1*Math.PI/180, la2 = KABAH.lat*Math.PI/180;
+      var dLat = la2-la1, dLng = (KABAH.lng-lng1)*Math.PI/180;
+      var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(la1)*Math.cos(la2)*Math.sin(dLng/2)*Math.sin(dLng/2);
+      return R*2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+    function gambarGarisKabah(lat, lng, brg) {
+      var map = window.__kabahMap; if (!map) return;
+      if (window.__qiblaLine) map.removeLayer(window.__qiblaLine);
+      var R = 3000;
+      var latEnd = Math.asin(Math.sin(lat*Math.PI/180)*Math.cos(R/6371) + Math.cos(lat*Math.PI/180)*Math.sin(R/6371)*Math.cos(brg*Math.PI/180))*180/Math.PI;
+      var lngEnd = lng + Math.atan2(Math.sin(brg*Math.PI/180)*Math.sin(R/6371)*Math.cos(lat*Math.PI/180), Math.cos(R/6371) - Math.sin(lat*Math.PI/180)*Math.sin(latEnd*Math.PI/180))*180/Math.PI;
+      window.__qiblaLine = L.polyline([[lat,lng],[latEnd,lngEnd]], { color:'#10b981', weight:4, dashArray:'6 6' }).addTo(map);
     }
 
     function hitungArahKiblat() {
@@ -443,5 +555,6 @@
   </script>
 
   <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
 </html>
