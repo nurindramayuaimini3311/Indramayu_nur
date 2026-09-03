@@ -92,6 +92,15 @@
     .b-bot{ background: #ddd6fe; color: #5b21b6; }
     .b-meta{ background: #e0f2fe; color: #075985; }
     .b-ibadah{ background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+    #kontenModal{ position: fixed; inset: 0; background: rgba(4,20,15,.92);
+      display: none; flex-direction: column; z-index: 60; }
+    #kontenModal.show{ display: flex; }
+    #kontenModal .ktop{ display: flex; justify-content: space-between; align-items: center;
+      gap: 10px; padding: 10px 12px; background: #062030; color: #fff; }
+    #kontenModal .ktop b{ font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #kontenModal .kclose{ background: #e11d48; border: 0; color: #fff; font-weight: 800;
+      padding: 8px 16px; border-radius: 10px; cursor: pointer; flex-shrink: 0; }
+    #kontenModal iframe{ flex: 1; width: 100%; border: 0; background: #fff; }
     .bottom{
       position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
       background: #fff; border-top: 2px solid var(--border);
@@ -299,12 +308,25 @@
     }
 
     function card(f) {
-      return `<a href="${f.path}" class="card">
+      var p = f.path;
+      return `<div class="card" onclick="bukaKonten('${encodeURIComponent(p)}', '${f.name.replace(/'/g, '\\\'')}')">
         <div class="ic">${f.icon}</div>
         <div class="nm">${f.name}</div>
         <div class="desc">${f.desc}</div>
         <span class="badge ${badgeClassFor(f)}">${f.cat.toUpperCase()}</span>
-      </a>`;
+      </div>`;
+    }
+
+    function bukaKonten(path, name) {
+      var fr = document.getElementById('kontenIframe');
+      fr.src = path;
+      document.getElementById('kontenJudul').textContent = name || 'Konten';
+      document.getElementById('kontenModal').classList.add('show');
+    }
+    function tutupKonten() {
+      var fr = document.getElementById('kontenIframe');
+      fr.src = 'about:blank';
+      document.getElementById('kontenModal').classList.remove('show');
     }
 
     function render() {
@@ -344,6 +366,14 @@
         <button class="kiblat-close" onclick="tutupKiblat()">Tutup</button>
       </div>
     </div>
+  </div>
+
+  <div id="kontenModal">
+    <div class="ktop">
+      <b id="kontenJudul">Konten</b>
+      <button class="kclose" onclick="tutupKonten()">✖ Tutup</button>
+    </div>
+    <iframe id="kontenIframe" src="about:blank" allow="camera;microphone;geolocation;autoplay;encrypted-media"></iframe>
   </div>
 
   <script>
