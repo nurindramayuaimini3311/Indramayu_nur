@@ -7,3 +7,12 @@
 meta_folder/*.bak-lama
 meta_folder/meta_index.html
 meta_folder/sever.html
+
+# artefak build / salinan / proyek terpisah — jangan dilacak
+www/
+tangkapTERMUX/
+node_modules/
+NURgenerator/
+*.apk
+*.idsig
+version.txt
