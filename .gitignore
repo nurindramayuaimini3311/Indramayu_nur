@@ -35,3 +35,5 @@ tunnel-url.txt
 catat-url-tunnel.sh
 otomatis.sh
 tunneling.sh
+NURgenerator/node_modules/
+node_modules/
