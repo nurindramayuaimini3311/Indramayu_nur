@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HELI MINI GAME - tdhel</title>
+<style>
+  body { background:#0f1115; color:white; font-family:Arial, sans-serif; padding:20px; overflow-x:hidden; }
+  h1 { text-align:center; letter-spacing:3px; margin-bottom:4px; }
+  .sub { text-align:center; opacity:0.6; margin-bottom:8px; font-size:13px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:15px; margin-top:20px; }
+  .card { background:#1c1f26; border-radius:12px; padding:12px; text-align:center; border:1px solid #2a2e38; transition:.2s; }
+  .card:hover { transform:scale(1.05); border-color:#00ff88; }
+  .card a { color:white; text-decoration:none; font-weight:bold; display:block; padding:10px 0; }
+  .card .desc { font-size:11px; opacity:0.6; padding-bottom:6px; }
+  .badge { font-size:10px; background:#00ff88; color:black; padding:2px 6px; border-radius:4px; }
+  .section-title { font-size:12px; font-weight:900; color:#00ff88; letter-spacing:.05em; margin:24px 4px 0; text-transform:uppercase; }
+</style>
+</head>
+<body>
+  <h1>🚁 HELI MINI GAME</h1>
+  <div class="sub">~/Indramayu_nur/game/tdhel - Koleksi Game Heli</div>
+
+  <div class="grid">
+    <div class="card">
+      <a href="contoh2_vanilla.html">🛸 Heli Vanilla</a>
+      <div class="desc">HELI SHOOTER - level 1-7, boss, touch mandiri</div>
+      <span class="badge">VANILLA</span>
+    </div>
+    <div class="card">
+      <a href="thunder_dragon.html">🐉 Thunder Dragon</a>
+      <div class="desc">Game heli dragon penuh dengan aset</div>
+      <span class="badge">DRAGON</span>
+    </div>
+  </div>
+
+  <div class="section-title">🚁 BARU HELI — 4 GAME</div>
+  <div class="grid">
+    <div class="card">
+      <a href="baru_heli/index.html">🚁 Heli Gabungan</a>
+      <div class="desc">UFO + AWAN (toggle mode) - satu file</div>
+      <span class="badge">GABUNG</span>
+    </div>
+    <div class="card">
+      <a href="baru_heli/heli_ufo.html">🛸 Heli UFO</a>
+      <div class="desc">Vanilla - latar bintang normal</div>
+      <span class="badge">VANILLA</span>
+    </div>
+    <div class="card">
+      <a href="baru_heli/heli_awan_mode.html">☁️ Heli Awan</a>
+      <div class="desc">Vanilla - mode awan + petir</div>
+      <span class="badge">VANILLA</span>
+    </div>
+    <div class="card">
+      <a href="baru_heli/heli_laut.html">🌊 Heli Laut</a>
+      <div class="desc">React - game heli laut</div>
+      <span class="badge">REACT</span>
+    </div>
+    <div class="card">
+      <a href="baru_heli/heli_dibalik.html">🔄 Heli Dib</a>
+      <div class="desc">React - game heli dibalik</div>
+      <span class="badge">REACT</span>
+    </div>
+  </div>
+
+  <p style="margin-top:30px; text-align:center; opacity:0.5; font-size:12px;">
+    Pilih game di atas untuk dimainkan.
+  </p>
+
+<!-- NAV FINAL ALWI - 1x ONLY -->
+<div id="alwi-rl" style="position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:space-between;z-index:9999999;padding:0 12px;pointer-events:none"><a id="rlL" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px rgba(0,0,0,.5)">←</a><a id="rlR" style="pointer-events:auto;width:56px;height:56px;background:#FFD700;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:0 4px 12px rgba(0,0,0,.5)">→</a></div>
+<script>
+(function(){
+const PAGES=["/","/setting/","/alwiSD/","/fiturBARU/","/game/","/kamera-hantu/","/konten/","/kuis/","/netflix/","/pencuri/","/peta/","/peta/peta-cod.html"];
+let p=location.pathname; let i=PAGES.indexOf(p);
+if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html','')));
+if(i<0) i=0;
+let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
+let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+L.href=prev; R.href=next;
+let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
+[L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
+let sx=0;
+document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>70){tuk(); setTimeout(tuk,70); if(dx>0) location.href=prev; else location.href=next;}},{passive:true});
+})();
+</script>
+
+<script src="/alwi_bubble4.js"></script>
+</body>
+</html>
