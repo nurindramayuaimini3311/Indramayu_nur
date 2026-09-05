@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IFRAME 4 — Serba-serbi & Ibadah</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:system-ui,sans-serif;background:#0f172a;color:#fff;height:100vh;display:flex;flex-direction:column}
+header{background:linear-gradient(135deg,#059669,#0ea5e9);padding:10px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+header h1{font-size:15px;font-weight:900;margin-right:auto}
+.chip{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:999px;padding:7px 13px;font-size:12px;font-weight:800;cursor:pointer;transition:.15s}
+.chip:active{transform:scale(.94)}
+.chip.on{background:#fbbf24;color:#000;border-color:#fbbf24}
+iframe{flex:1;width:100%;border:0;background:#fff}
+.badge{font-size:10px;background:#fbbf24;color:#000;border-radius:6px;padding:2px 7px;font-weight:900}
+</style>
+</head>
+<body>
+<header>
+  <h1>🚗 IFRAME 4 <span class="badge">Serba-serbi & Ibadah</span></h1>
+  <button class="chip on" onclick="b('mobil/')">🚗 Mainan Mobil</button>
+  <button class="chip" onclick="b('kamera-hantu/')">👻 Kamera Hantu</button>
+  <button class="chip" onclick="b('pencuri/')">🕵️ Pencuri</button>
+  <button class="chip" onclick="b('kalkulator.html')">🧮 Kalkulator</button>
+  <button class="chip" onclick="b('meta_AI.html')">🤖 Meta AI</button>
+  <button class="chip" onclick="b('bola_bayangan.html')">⚽ Bola Bayangan</button>
+  <button class="chip" onclick="b('NURgenerator/ibadah/')">🕌 Ibadah</button>
+  <button class="chip" onclick="b('NURgenerator/ADZAN/')">📢 Adzan</button>
+</header>
+<iframe id="f" src="https://pushing-dept-headset-rep.trycloudflare.com/mobil/" allow="camera;microphone;geolocation;autoplay;clipboard-read;clipboard-write"></iframe>
+<script>
+var BASE="https://pushing-dept-headset-rep.trycloudflare.com/";
+var chips=document.querySelectorAll('.chip');
+function b(u){
+  chips.forEach(function(c){ c.classList.remove('on'); });
+  event.currentTarget.classList.add('on');
+  var f=document.getElementById('f');
+  f.style.opacity='.4';
+  f.src=BASE+u;
+  f.onload=function(){ f.style.opacity='1'; };
+}
+</script>
+</body>
+</html>
