@@ -15,13 +15,15 @@ window.alwiLinkify = window.alwiLinkify || function(txt){
 };
 
 
-// Deteksi path → semua link menuju root aplikasi (NURgenerator / Indramayu_nur)
-const APP_ROOT = ['NURgenerator', 'Indramayu_nur'];
+// Deteksi path → semua link menuju root aplikasi (NURgenerator / Indramayu_nur / INDRAMAYU_CLUB)
+const APP_ROOT = ['NURgenerator', 'Indramayu_nur', 'INDRAMAYU_CLUB'];
 let pathParts = window.location.pathname.split('/').filter(Boolean);
 let prefix;
 let isRoot = !APP_ROOT.includes(pathParts[0]); // true bila di root portal
 if (APP_ROOT.includes(pathParts[0])) {
   prefix = pathParts.length > 2 ? '../' : './';
+} else if (pathParts.length <= 1) {
+  prefix = './'; // halaman di root server (mis. /index.html)
 } else {
   prefix = '/NURgenerator/';
 }
@@ -32,7 +34,7 @@ let isDragging=false, startX, startY, vx=0, vy=0, x=window.innerWidth-80, y=wind
 let ball=document.createElement('div');
 ball.id="ALWI_BOLA";
 ball.style.cssText=`position:fixed;left:${x}px;top:${y}px;z-index:999999999;width:60px;height:60px;background:radial-gradient(circle at 30% 30%,#7ec8ff,#0e7490);border-radius:50%;border:3px solid #00BFFF;box-shadow:0 0 20px rgba(0,191,255,0.5),0 0 40px rgba(0,191,255,0.3);font-size:32px;display:flex;align-items:center;justify-content:center;cursor:grab;user-select:none;transition:transform 0.1s;will-change:transform,left,top;`;
-      ball.innerHTML=`<img src="${prefix}img/icon_512.png" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">`;
+ball.innerHTML=`<img src="${prefix}ALWI_grendle.png" onerror="this.style.display='none';this.parentElement.textContent='🧕';" style="width:50px;height:50px;border-radius:50%;object-fit:cover;display:block;">`;
 document.body.appendChild(ball);
 
 // 1b. Tombol HOME di atas bola (index utama)
@@ -222,7 +224,7 @@ function showFunnyFace(){
     let originalSrc=img.src;
     ball.innerHTML='<span style="font-size:40px;">'+faceEmojis[Math.floor(Math.random()*faceEmojis.length)]+'</span>';
     setTimeout(()=>{
-ball.innerHTML=`<img src="${prefix}img/icon_512.png" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">`;
+ball.innerHTML=`<img src="${prefix}ALWI_grendle.png" onerror="this.style.display='none';this.parentElement.textContent='🧕';" style="width:50px;height:50px;border-radius:50%;object-fit:cover;display:block;">`;
     },800);
   }
 }
@@ -377,163 +379,122 @@ updateBallPosition=function(){
   poinBadge.style.top=(y-90)+'px';
 };
 
-// === FITUR MIC & SUARA (BOT HIDUP) ===
-let micBtn=document.createElement('div');
-micBtn.id="ALWI_MIC";
-micBtn.style.cssText=`position:fixed;left:${x+65}px;top:${y+10}px;z-index:999999998;width:42px;height:42px;background:linear-gradient(135deg,#ef4444,#dc2626);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;box-shadow:0 2px 10px rgba(239,68,68,0.5);transition:all 0.3s;border:2px solid #fff;`;
-micBtn.innerHTML='🎤';
-micBtn.title='Klik untuk bicara';
-if (!isRoot) document.body.appendChild(micBtn);
+// === MENU KARTU TANYA JAWAB AI ===
+(function(){
+  if(window.__alwiCard) return; window.__alwiCard=true;
 
-// Speech Recognition
-let recognition=null;
-let isListening=false;
-let SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var card=document.createElement('div');
+  card.id='ALWI_TANYA_CARD';
+  card.style.cssText='display:none;position:fixed;bottom:90px;right:15px;width:300px;background:#0a0a0a;border:2px solid #00BFFF;border-radius:14px;z-index:999999996;overflow:hidden;box-shadow:0 10px 30px rgba(0,191,255,0.3);font-family:sans-serif;';
 
-if(SpeechRecognition){
-  recognition=new SpeechRecognition();
-  recognition.continuous=false;
-  recognition.interimResults=false;
-  recognition.lang='id-ID';
-  
-  recognition.onresult=function(e){
-    let transcript=e.results[0][0].transcript.toLowerCase().trim();
-    alwiBotRespond(transcript);
-  };
-  
-  recognition.onend=function(){
-    isListening=false;
-    micBtn.style.background='linear-gradient(135deg,#ef4444,#dc2626)';
-    micBtn.innerHTML='🎤';
-    micBtn.style.boxShadow='0 2px 10px rgba(239,68,68,0.5)';
-  };
-  
-  recognition.onerror=function(){
-    isListening=false;
-    micBtn.style.background='linear-gradient(135deg,#ef4444,#dc2626)';
-    micBtn.innerHTML='🎤';
-    alwiBotSay('Maaf, saya tidak dengar. Coba lagi ya!');
-  };
-}
+  card.innerHTML=
+    '<div style="background:linear-gradient(135deg,#0891b2,#0e7490);padding:12px;display:flex;justify-content:space-between;align-items:center;">'+
+      '<b style="color:#fff;font-size:13px">🤖 TANYA ALWI</b>'+
+      '<span id="CARD_X" style="cursor:pointer;color:#fff;font-weight:bold;font-size:16px">✕</span>'+
+    '</div>'+
+    '<div id="CARD_LIST" style="max-height:300px;overflow-y:auto;padding:8px;"></div>'+
+    '<div style="padding:8px;border-top:1px solid #222;display:flex;gap:6px;">'+
+      '<input id="CARD_INPUT" placeholder="Ketik pertanyaan..." autocomplete="off" style="flex:1;background:#111;border:1px solid #333;border-radius:8px;color:#fff;padding:8px;font-size:12px;outline:none;" />'+
+      '<button id="CARD_GO" style="background:linear-gradient(135deg,#00A3FF,#00BFFF);border:none;border-radius:8px;color:#000;font-weight:800;padding:8px 12px;cursor:pointer;font-size:12px;">KIRIM</button>'+
+    '</div>';
+  document.body.appendChild(card);
 
-// Speech Synthesis
-function alwiBotSay(text){
-  if('speechSynthesis' in window){
-    window.speechSynthesis.cancel();
-    let u=new SpeechSynthesisUtterance(text);
-    u.lang='id-ID';
-    u.rate=1;
-    u.pitch=1.1;
-    // Cari suara Indonesia
-    let voices=window.speechSynthesis.getVoices();
-    let idVoice=voices.find(v=>v.lang.startsWith('id'));
-    if(idVoice) u.voice=idVoice;
-    window.speechSynthesis.speak(u);
+  var list=document.getElementById('CARD_LIST');
+  var input=document.getElementById('CARD_INPUT');
+
+  document.getElementById('CARD_X').onclick=function(){ card.style.display='none'; };
+
+  function addCard(tanya,jawab){
+    var d=document.createElement('div');
+    d.style.cssText='background:#111;border:1px solid #222;border-radius:10px;padding:10px;margin-bottom:6px;';
+    d.innerHTML='<div style="color:#00BFFF;font-size:11px;font-weight:700;margin-bottom:4px;">❓ '+tanya+'</div>'+
+                '<div style="color:#e2e8f0;font-size:12px;line-height:1.5;">'+jawab+'</div>';
+    list.appendChild(d);
+    list.scrollTop=list.scrollHeight;
   }
-  alwiBotShowChat(text);
-}
 
-// Tampilkan chat bubble
+  function loading(){
+    var d=document.createElement('div');
+    d.id='CARD_LOADING';
+    d.style.cssText='background:#111;border:1px solid #222;border-radius:10px;padding:10px;margin-bottom:6px;';
+    d.innerHTML='<div style="color:#94a3b8;font-size:12px;">⏳ Alwi sedang berpikir...</div>';
+    list.appendChild(d);
+    list.scrollTop=list.scrollHeight;
+    return d;
+  }
+
+  function API_BASE(){
+    return (location.protocol==='file:'?'http:':location.protocol)+'//'+(location.hostname||'34.170.37.50')+':8080';
+  }
+
+  function kirim(){
+    var t=input.value.trim();
+    if(!t) return;
+    input.value='';
+    addCard(t,'');
+    var ld=loading();
+    function tandai(ok){
+      if(ok===null){ ld.remove(); addCard(t,'⚠️ Server AI tak terjangkau.'); return; }
+      var jawab=ok&&(ok.reply||ok.response);
+      if(jawab){ ld.remove(); addCard(t,jawab.trim()); }
+      else{ kirimBot(); }
+    }
+    function kirimBot(){
+      fetch(API_BASE()+'/api/chat',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({message:'Jawab singkat padat dalam Bahasa Indonesia (maks 4 kalimat): '+t})
+      }).then(function(r){return r.json()})
+        .then(function(d){
+          ld.remove();
+          var jawab=d&&(d.reply||d.response||d.message&&d.message.content);
+          if(jawab){ addCard(t,jawab.trim()); }
+          else{ addCard(t,'⚠️ '+(d&&(d.galat||d.error)||'AI tidak merespons')); }
+        })
+        .catch(function(){ ld.remove(); addCard(t,'⚠️ Server AI tak terjangkau.'); });
+    }
+    fetch(API_BASE()+'/api/ai',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:'Jawab singkat padat dalam Bahasa Indonesia (maks 4 kalimat): '+t})
+    }).then(function(r){
+      if(!r.ok) return null;
+      return r.json();
+    }).then(tandai)
+      .catch(function(){ tandai(null); });
+  }
+
+  document.getElementById('CARD_GO').onclick=kirim;
+  input.addEventListener('keydown',function(e){ if(e.key==='Enter') kirim(); });
+
+  window.bukaTanyaCard=function(){
+    var m=document.getElementById('ALWI_DROPUP');
+    if(m) m.style.display='none';
+    card.style.display=card.style.display==='block'?'none':'block';
+    if(card.style.display==='block') setTimeout(function(){input.focus();},100);
+  };
+
+  // Tambah tombol ke menu
+  setTimeout(function(){
+    var m=document.getElementById('ALWI_DROPUP');
+    if(!m || m.getAttribute('data-card')) return;
+    m.setAttribute('data-card','1');
+    var b=document.createElement('button');
+    b.innerHTML='💬 TANYA ALWI';
+    b.style.cssText="padding:9px 8px;background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;border:1px solid #00BFFF;border-radius:8px;text-align:left;font-weight:800;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;";
+    b.onclick=window.bukaTanyaCard;
+    var first=m.querySelector('button');
+    if(first) m.insertBefore(b,first); else m.appendChild(b);
+  },300);
+})();
+
 function alwiBotShowChat(text){
-  let chat=document.createElement('div');
+  var chat=document.createElement('div');
   chat.style.cssText='position:fixed;bottom:160px;right:15px;max-width:240px;background:#0891b2;color:#fff;padding:12px 16px;border-radius:16px 16px 4px 16px;font-size:12px;font-weight:600;z-index:999999997;box-shadow:0 4px 15px rgba(0,191,255,0.4);animation:alwiPopPoin .3s ease;line-height:1.5;word-wrap:break-word;';
   chat.innerHTML='🤖 '+window.alwiLinkify(text);
   document.body.appendChild(chat);
-  setTimeout(()=>{chat.style.opacity='0';chat.style.transition='.5s';},4000);
-  setTimeout(()=>chat.remove(),4500);
+  setTimeout(function(){chat.style.opacity='0';chat.style.transition='.5s';},4000);
+  setTimeout(function(){chat.remove();},4500);
 }
-
-// Respon bot berdasarkan perintah suara
-function alwiBotRespond(text){
-  alwiBotShowChat('🎤 "'+text+'"');
-  
-  // KALKULATOR
-  if(text.includes('kalkulator')||text.includes('hitung')||text.includes('kalkulasi')){
-    alwiBotSay('Oke, saya bukakan kalkulator!');
-    setTimeout(()=>{bukaIframe(prefix+'alwiSD/kalkulator.html');},800);
-  }
-  // POIN
-  else if(text.includes('poin')||text.includes('cek poin')){
-    let p=alwiGetPoin();
-    alwiBotSay('Poin kamu sekarang '+p+' poin. Target seribu poin untuk tukar hadiah.');
-  }
-  // HOME
-  else if(text.includes('home')||text.includes('halaman utama')||text.includes('kembali')){
-    alwiBotSay('Kembali ke halaman utama!');
-    setTimeout(()=>{window.goHome();},800);
-  }
-  // GAME
-  else if(text.includes('game')||text.includes('main')){
-    alwiBotSay('Ayo main game! Saya bukakan game nya.');
-    setTimeout(()=>{bukaIframe(prefix+'game/index.html');},800);
-  }
-  // BELAJAR
-  else if(text.includes('belajar')||text.includes('belajar')){
-    alwiBotSay('Semangat belajar! Yuk mulai.');
-    setTimeout(()=>{bukaIframe(prefix+'alwiSD/index.html');},800);
-  }
-  // KUIS
-  else if(text.includes('kuis')||text.includes('quiz')){
-    alwiBotSay('Siap! Kuis menunggu kamu.');
-    setTimeout(()=>{bukaIframe(prefix+'kuis/quiz.html');},800);
-  }
-  // AI
-  else if(text.includes('ai')||text.includes('pusat')||text.includes('tanya')){
-    alwiBotSay('AI ALWI Pusat siap membantu!');
-    setTimeout(()=>{bukaIframe(prefix+'pusat.html');},800);
-  }
-  // WHATSAPP
-  else if(text.includes('whatsapp')||text.includes('wa')){
-    alwiBotSay('Membuka WhatsApp admin!');
-    setTimeout(()=>{cekPoinWA();},800);
-  }
-  // NAMA
-  else if(text.includes('siapa namamu')||text.includes('namamu')){
-    alwiBotSay('Halo! Nama saya Alwi, bot pintar dari Indramayu Club!');
-  }
-  // HELLO
-  else if(text.includes('halo')||text.includes('hai')||text.includes('hello')){
-    let sapa=['Halo! Ada yang bisa saya bantu?','Hai! Senang berkenalan dengan kamu!','Hey! Mau main game atau belajar?'];
-    alwiBotSay(sapa[Math.floor(Math.random()*sapa.length)]);
-  }
-  // DEFAULT
-  else {
-    alwiBotSay('Maaf, saya belum paham "'+text+'". Coba bilang: kalkulator, game, belajar, kuis, atau poin.');
-  }
-}
-
-// Toggle mic
-micBtn.onclick=function(e){
-  e.stopPropagation();
-  if(!SpeechRecognition){
-    alwiBotSay('Browser kamu tidak support microphone. Coba pakai Chrome ya!');
-    return;
-  }
-  if(isListening){
-    recognition.stop();
-    isListening=false;
-  } else {
-    isListening=true;
-    micBtn.style.background='linear-gradient(135deg,#22c55e,#16a34a)';
-    micBtn.innerHTML='🔴';
-    micBtn.style.boxShadow='0 0 20px rgba(34,197,94,0.6)';
-    alwiBotSay('Saya dengarkan...');
-    recognition.start();
-  }
-};
-
-// Load voices
-if('speechSynthesis' in window){
-  window.speechSynthesis.onvoiceschanged=function(){window.speechSynthesis.getVoices();};
-}
-
-// Update posisi mic saat bola gerak
-let _origUpdate2=updateBallPosition;
-updateBallPosition=function(){
-  _origUpdate2();
-  micBtn.style.left=(x+65)+'px';
-  micBtn.style.top=(y+10)+'px';
-};
+function alwiBotSay(text){ alwiBotShowChat(text); }
 
 }();
 /* ==================== ADZAN OTOMATIS (semua halaman ber-bubble) ==================== */
@@ -760,74 +721,6 @@ updateBallPosition=function(){
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',function(){setTimeout(pasangFolder,400);}); }
   else{ setTimeout(pasangFolder,400); }
-
-  /* --- tombol MIC melayang --- */
-  var mic=document.createElement('div');
-  mic.id='ALWI_MIC_BTN';
-  mic.innerHTML='\uD83C\uDFA4';
-  mic.title='Tanya Alwi pakai suara';
-  mic.style.cssText='position:fixed;bottom:18px;left:14px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0e7490,#00BFFF);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;z-index:999999999;border:3px solid #000;box-shadow:0 4px 14px rgba(0,191,255,.5);user-select:none;-webkit-user-select:none;touch-action:manipulation;';
-  document.body.appendChild(mic);
-
-  /* --- balon jawaban --- */
-  var bal=document.createElement('div');
-  bal.id='ALWI_MIC_BALON';
-  bal.style.cssText='display:none;position:fixed;bottom:82px;left:12px;width:min(330px,88vw);background:#0a1414;border:2px solid #00BFFF;border-radius:14px;padding:12px;z-index:999999999;box-shadow:0 10px 30px rgba(0,191,255,.35);font-family:sans-serif;';
-  bal.innerHTML='<div id="MIC_HDR" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b style="color:#00BFFF;font-size:12px">\uD83C\uDFA4 TANYA ALWI</b><span id="MIC_X" style="cursor:pointer;color:#888;font-weight:bold">\u2715</span></div>'+
-    '<div id="MIC_Q" style="font-size:11px;color:#00BFFF;margin-bottom:6px;display:none"></div>'+
-    '<div id="MIC_A" style="font-size:13px;line-height:1.55;color:#e2e8f0;max-height:40vh;overflow-y:auto">Mau tanya apa?</div>'+
-    '<button id="MIC_GO" style="display:none;margin-top:8px;padding:9px 12px;border:none;border-radius:8px;background:linear-gradient(135deg,#00A3FF,#00BFFF);color:#000;font-weight:800;font-size:11px;width:100%;cursor:pointer">\uD83D\uDCD6 BUKA LENGKAP DI KALKULATOR</button>';
-  document.body.appendChild(bal);
-
-  var teksTerakhir='';
-  function tampil(teksTanya, isi){
-    teksTerakhir=teksTanya||'';
-    document.getElementById('MIC_Q').textContent=teksTanya?('\u201C'+teksTanya+'\u201D'):'';
-    document.getElementById('MIC_Q').style.display=teksTanya?'block':'none';
-    document.getElementById('MIC_A').innerHTML=window.alwiLinkify(isi);
-    document.getElementById('MIC_GO').style.display=teksTanya?'block':'none';
-    bal.style.display='block';
-  }
-  document.getElementById('MIC_X').onclick=function(){ bal.style.display='none'; };
-  document.getElementById('MIC_GO').onclick=function(){
-    window.goToPage('/alwi_kalkulator.html?q='+encodeURIComponent(teksTerakhir));
-  };
-
-  function tanyaAI(teks){
-    tampil(teks,'<span style="color:#94a3b8">\u23F3 Alwi sedang berpikir...</span>');
-    fetch(API_BASE()+'/api/ai',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({prompt:'Jawab singkat padat dalam Bahasa Indonesia (maks 4 kalimat): '+teks,model:'Alwi',maks:220})
-    }).then(function(r){return r.json()})
-      .then(function(d){
-        if(d&&d.response){ tampil(teks,d.response.trim()); }
-        else{ tampil(teks,'\u26A0\uFE0F '+(d&&d.galat||'AI tidak merespons')); }
-      })
-      .catch(function(){ tampil(teks,'\u26A0\uFE0F Server AI tak terjangkau. Cek koneksi.'); });
-  }
-  function API_BASE(){
-    return (location.protocol==='file:'?'http:':location.protocol)+'//'+(location.hostname||'34.170.37.50')+':8080';
-  }
-
-  mic.onclick=function(){
-    var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-    if(!SR){
-      var t=prompt('\uD83C\uDFA4 Mic tidak didukung browser ini.\nKetik pertanyaanmu:');
-      if(t&&t.trim()) tanyaAI(t.trim());
-      return;
-    }
-    var r=new SR();
-    r.lang='id-ID'; r.interimResults=false; r.maxAlternatives=1;
-    mic.style.boxShadow='0 0 22px 6px rgba(255,0,80,.8)';
-    tampil(null,'\uD83C\uDFA4 <i>Dengarkan... silakan bicara!</i>');
-    bal.style.display='block';
-    r.onresult=function(e){ var t=e.results[0][0].transcript.trim(); if(t) tanyaAI(t); };
-    r.onerror=function(e){
-      tampil(null, e.error==='not-allowed' ? '\u26D4 Izinkan akses mikrofon di browser.' : '\u26A0\uFE0F Gagal mendengar ('+e.error+'). Coba lagi.');
-    };
-    r.onend=function(){ mic.style.boxShadow='0 4px 14px rgba(0,191,255,.5)'; };
-    try{ r.start(); }catch(e){}
-  };
 
   // ===== WIDGET TEKS BERJALAN ADZAN (muncul tiap 5 menit, kecil & non-intrusif) =====
   var adzanJam = [
