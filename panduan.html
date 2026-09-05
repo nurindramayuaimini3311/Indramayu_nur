@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🛠️ Panduan Buat Aplikasi — ALWI PUSAT</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:sans-serif;background:#0f172a;color:#e2e8f0;line-height:1.6;padding:20px}
+.wrap{max-width:860px;margin:0 auto}
+h1{color:#fbbf24;font-size:24px;margin-bottom:4px}
+.sub{color:#94a3b8;font-size:13px;margin-bottom:20px}
+.step{background:#1e293b;border-radius:12px;padding:16px 18px;margin-bottom:14px;border-left:4px solid #38bdf8}
+.step h2{color:#38bdf8;font-size:17px;margin-bottom:10px}
+ol{padding-left:20px}
+li{margin-bottom:6px;font-size:14px}
+code{background:#0f172a;color:#a5f3fc;padding:2px 6px;border-radius:5px;font-size:12px;font-family:monospace}
+pre{background:#0f172a;color:#f8fafc;padding:12px;border-radius:8px;overflow-x:auto;font-size:12px;margin:8px 0;font-family:monospace;white-space:pre-wrap}
+.note{background:#3b82f6;color:#fff;border-radius:8px;padding:10px 12px;font-size:12px;margin-top:8px}
+.gold{border-left-color:#fbbf24}
+.gold h2{color:#fbbf24}
+.red{border-left-color:#ef4444}
+.red h2{color:#ef4444}
+table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}
+th,td{border:1px solid #334155;padding:8px;text-align:left}
+th{background:#334155;color:#fbbf24}
+.btn{display:inline-block;background:#fbbf24;color:#0f172a;font-weight:800;padding:10px 16px;border-radius:8px;text-decoration:none;font-size:13px;margin:6px 6px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🛠️ Panduan Buat Aplikasi</h1>
+<div class="sub">ALWI PUSAT / Indramayu Nur — alur dari nol sampai publikasi. Urut dari atas, jangan lompat biar tidak konflik.</div>
+
+<div class="step">
+<h2>1️⃣ Persiapan Folder &amp; File Dasar</h2>
+<ol>
+<li>Buat folder baru di tempat yang sesuai:
+<pre>NURgenerator/&lt;nama-aplikasi&gt;/     aplikasi baru di generator
+offline/&lt;nama-aplikasi&gt;/          versi offline
+fiturBARU/&lt;nama-aplikasi&gt;/        fitur eksperimen</pre>
+</li>
+<li>Minimal wajib ada:
+<pre>index.html            (halaman utama)
+manifest.json         (nama, icon, theme-color)
+sw.js                 (service worker - cache offline)
+img/icon-192.png      DAN img/icon-512.png</pre>
+Bikin icon dari ffmpeg:
+<code>ffmpeg -i icon-512.png -vf scale=192:192 img/icon-192.png</code>
+</li>
+<li>Patuhi aturan <b>STATIC</b> — jangan simpan <code>node_modules/</code>, tanpa backend. Kalau perlu server → pakai VM, bukan folder github.</li>
+</ol>
+</div>
+
+<div class="step">
+<h2>2️⃣ Tambah PWA (biar bisa di-install)</h2>
+<p>Taruh di <code>&lt;head&gt;</code> index.html:</p>
+<pre>&lt;meta name="theme-color" content="#38bdf8"&gt;
+&lt;link rel="manifest" href="manifest.json"&gt;
+&lt;link rel="icon" type="image/png" href="img/icon-192.png"&gt;
+&lt;link rel="apple-touch-icon" href="img/icon-192.png"&gt;</pre>
+<p><b>sw.js</b> — cache network-first:</p>
+<pre>var CACHE='nama-aplikasi-v1';
+self.addEventListener('install',function(e){self.skipWaiting()});
+self.addEventListener('activate',function(e){e.waitUntil(clients.claim())});
+self.addEventListener('fetch',function(e){
+  e.respondWith(fetch(e.request).then(function(r){return r})
+    .catch(function(){return caches.match(e.request)}));
+});</pre>
+<div class="note">⚠️ Scope SW ikut lokasi file. Kalau file ada di NURgenerator/aplikasi/sw.js, scope cuma NURgenerator/aplikasi/. Kalau mau mencakup seluruh portal, taruh sw.js di root + manifest scope = './'.</div>
+</div>
+
+<div class="step">
+<h2>3️⃣ Publikasi ke GitHub</h2>
+<ol>
+<li>Masuk folder repo:
+<code>cd /root/ALWI_CENTER/Indramayu_nur</code></li>
+<li>Lepas folder dari <code>.gitignore</code> (kalau dilarang):
+<pre>sed -i '/^NURgenerator\/$/d' .gitignore</pre>
+<div class="note">⚠️ <code>NURgenerator/node_modules/</code> TETAP di dalam ignore — jangan dihapus.</div>
+</li>
+<li>Salin ke clone bersih + commit + push:
+<pre>cp -r &lt;folder&gt; /tmp/opencode/github-sync/Indramayu_nur/
+cd /tmp/opencode/github-sync/Indramayu_nur
+git add .
+git commit -m "Tambah aplikasi: &lt;nama&gt;"
+git push origin main</pre>
+</li>
+<li>Repositori: <b>nurindramayuaimini3311/Indramayu_nur</b> (main). Login via <code>gh</code>. <span class="red">JANGAN</span> pakai akun lain (ALWIgrandle-bit = salah).</li>
+</ol>
+</div>
+
+<div class="step">
+<h2>4️⃣ GitHub Pages — URL Publik</h2>
+<p>Tunggu ±1–2 menit biar Pages rebuild.</p>
+<pre>Base URL: https://nurindramayuaimini3311.github.io/Indramayu_nur/
+Aplikasi : https://nurindramayuaimini3311.github.io/Indramayu_nur/&lt;nama-aplikasi&gt;/</pre>
+<div class="note">⚠️ GitHub Pages TIDAK punya directory listing otomatis. Kalau mau path /folder/ tetap 200, WAJIB ada index.html di dalamnya.</div>
+</div>
+
+<div class="step">
+<h2>5️⃣ Pasang di Menu / iframe</h2>
+<p>Di halaman iframe (<code>iframe/index1.html</code> dst):</p>
+<ul>
+<li>BASE diarahkan ke <b>GitHub Pages</b> (bukan tunnel VM — tunnel menolak iframe):
+<pre>var BASE="https://nurindramayuaimini3311.github.io/Indramayu_nur/";</pre>
+</li>
+<li>Tambah tombol/chip: <code>onclick="b('&lt;path&gt;')"</code></li>
+</ul>
+<table>
+<tr><th>Target iframe</th><th>Status</th></tr>
+<tr><td>GitHub Pages</td><td>✅ ALLOWED</td></tr>
+<tr><td>Tunnel trycloudflare VM</td><td>❌ DITOLAK (frame-blocking)</td></tr>
+</table>
+</div>
+
+<div class="step">
+<h2>6️⃣ Versi Live di VM (opsional)</h2>
+<p>Tunnel trycloudflare dipakai untuk preview cepat / konten dinamis.</p>
+<pre>VM1: https://pushing-dept-headset-rep.trycloudflare.com   (ROOT ~/Indramayu_nur)</pre>
+<p>Cek hidup: <code>curl -sI &lt;tunnel&gt;/&lt;path&gt;</code> → harus 200. Kalau tunnel mati → halaman yang ref-nya trycloudflare ikut 404.</p>
+<p>Alwi_bubble4.js (bola ALWI) ada di VM1 — kalau halaman butuh bola:
+<code>https://pushing-dept-headset-rep.trycloudflare.com/alwi_bubble4.js</code></p>
+</div>
+
+<div class="step">
+<h2>7️⃣ Verifikasi Sebelum Dibilang "SIAP"</h2>
+<pre>Base: https://nurindramayuaimini3311.github.io/Indramayu_nur/
+Cek (harus 200 semua):
+  &lt;base&gt;/&lt;nama-aplikasi&gt;/
+  &lt;base&gt;/&lt;nama-aplikasi&gt;/index.html
+  &lt;base&gt;/&lt;nama-aplikasi&gt;/manifest.json
+  &lt;base&gt;/&lt;nama-aplikasi&gt;/sw.js
+  &lt;base&gt;/&lt;nama-aplikasi&gt;/img/icon-192.png</pre>
+<p>Di browser/HP: buka aplikasi → install PWA → cek offline masih jalan (sw cache).</p>
+</div>
+
+<div class="step gold">
+<h2>⚡ Aturan Emas — Jangan Langkahi</h2>
+<ol>
+<li>Hapus <code>node_modules</code> sebelum push (folder statis, jangan pernah di-track).</li>
+<li>Jangan sync <b>GitHub → VM</b>. Repo github itu sumber iframe. Versi asli yang diperbaiki ada di VM — sekali sync bisa menimpa dan hilang.</li>
+<li><code>alwi_bubble4.js</code> di GitHub SUDAH DIHAPUS — jangan push lagi versi error. Kalau perlu, load dari VM1 (bagian 6).</li>
+<li><code>.gitignore</code> — hapus rule folder target hati-hati, simpan <code>node_modules/</code> &amp; <code>.env</code> di dalam ignore.</li>
+<li>Pakai akun <code>nurindramayuaimini3311</code>, repo <code>Indramayu_nur</code>. Jangan campur dengan <code>ALWIgrandle-bit</code>.</li>
+</ol>
+</div>
+
+<div class="step red">
+<h2>🔑 Login Akun GitHub (kalau terputus)</h2>
+<pre>gh auth login --with-token
+gh api user -q .login     # cek identitas: harus nurindramayuaimini3311</pre>
+</div>
+
+<p style="text-align:center;margin-top:18px"><a class="btn" href="catatan.txt">📄 Lihat catatan.txt</a></p>
+</div>
+</body>
+</html>

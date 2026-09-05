@@ -1,0 +1,149 @@
+=============================================================================
+  CARA BUAT APLIKASI - ALUR DARI NOL
+  (ALWI PUSAT / Indramayu Nur - catatan kerja internal)
+=============================================================================
+
+Urutan dari atas ke bawah, jangan lompat, biar tidak ada konflik.
+
+
+-----------------------------------------------------------------------------
+1. PERSIAPAN FOLDER & FILE DASAR
+-----------------------------------------------------------------------------
+1) Buat folder baru di tempat yang sesuai:
+     <portal>/NURgenerator/<nama-aplikasi>/      aplikasi baru di generator
+     <portal>/offline/<nama-aplikasi>/           versi offline
+     <portal>/fiturBARU/<nama-aplikasi>/         fitur eksperimen
+
+2) Minimal wajib ada:
+     - index.html            (halaman utama)
+     - manifest.json         (nama, icon, theme-color)
+     - sw.js                 (service worker - cache offline)
+     - img/icon-192.png      DAN img/icon-512.png
+                            (bikin dari ffmpeg, contoh:)
+     ffmpeg -i icon-512.png -vf scale=192:192 img/icon-192.png
+
+3) Patuhi aturan STATIC - jangan simpan node_modules/, tidak ada backend.
+   Kalau perlu server -> pakai VM, bukan di folder github.
+
+
+-----------------------------------------------------------------------------
+2. TAMBAH PWA (BIAR BISA DI-INSTALL)
+-----------------------------------------------------------------------------
+Taruh di <head> index.html:
+
+  <meta name="theme-color" content="#38bdf8">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="img/icon-192.png">
+  <link rel="apple-touch-icon" href="img/icon-192.png">
+
+sw.js - cache network-first:
+
+  var CACHE='nama-aplikasi-v1';
+  self.addEventListener('install',function(e){self.skipWaiting()});
+  self.addEventListener('activate',function(e){e.waitUntil(clients.claim())});
+  self.addEventListener('fetch',function(e){
+    e.respondWith(fetch(e.request).then(function(r){return r})
+      .catch(function(){return caches.match(e.request)}));
+  });
+
+CATATAN:
+- Scope SW ikut lokasi file. Kalau file ada di NURgenerator/aplikasi/sw.js,
+  scope-nya cuma NURgenerator/aplikasi/, bukan seluruh portal.
+- Kalau mau mencakup seluruh portal, taruh sw.js di root + manifest scope = './'.
+
+
+-----------------------------------------------------------------------------
+3. PUBLIKASI KE GITHUB
+-----------------------------------------------------------------------------
+1) Pindah ke folder repo:
+     cd /root/ALWI_CENTER/Indramayu_nur
+
+2) Lepas folder dari .gitignore (kalau dilarang):
+     sed -i '/^NURgenerator\/$/d' .gitignore
+   CATATAN: NURgenerator/node_modules/ TETAP di dalam ignore - jangan dihapus.
+
+3) Salin ke clone bersih + commit + push:
+     cp -r <folder> /tmp/opencode/github-sync/Indramayu_nur/
+     cd /tmp/opencode/github-sync/Indramayu_nur
+     git add .
+     git commit -m "Tambah aplikasi: <nama>"
+     git push origin main
+
+4) Repositori GitHub: nurindramayuaimini3311/Indramayu_nur (main)
+   - Login otomatis via gh (token sudah di-handle).
+   - JANGAN pakai repo lain (misal ALWIgrandle-bit - akun salah).
+
+
+-----------------------------------------------------------------------------
+4. GITHUB PAGES - URL PUBLIK
+-----------------------------------------------------------------------------
+Setelah push, tunggu +/-1-2 menit biar Pages rebuild.
+
+  Base URL: https://nurindramayuaimini3311.github.io/Indramayu_nur/
+
+Aplikasi baru -> https://nurindramayuaimini3311.github.io/Indramayu_nur/<nama-aplikasi>/
+
+CATATAN: GitHub Pages TIDAK punya directory listing otomatis.
+Kalau mau path /folder/ tetap 200, WAJIB ada index.html di dalamnya.
+
+
+-----------------------------------------------------------------------------
+5. PASANG DI MENU / IFRAME
+-----------------------------------------------------------------------------
+Halaman iframe (iframe/index1.html dst):
+- BASE diarahkan ke GitHub Pages (bukan tunnel VM - tunnel menolak iframe):
+     var BASE="https://nurindramayuaimini3311.github.io/Indramayu_nur/";
+- Tambah tombol/chip:  onclick="b('<path>')"
+
+Embede dalam iframe yang boleh muat:
+- GitHub Pages: ALLOWED
+- Tunnel trycloudflare VM: DITOLAK (frame-blocking -> error 404/refused)
+
+
+-----------------------------------------------------------------------------
+6. VERSI LIVE DI VM (OPSIONAL)
+-----------------------------------------------------------------------------
+Tunnel trycloudflare dipakai untuk preview cepat / konten dinamis.
+- VM1: https://pushing-dept-headset-rep.trycloudflare.com  (ROOT ~/Indramayu_nur)
+- Cek hidup:  curl -sI <tunnel>/<path>   -> harus 200.
+- Kalau tunnel mati -> halaman yang ref-nya trycloudflare ikut 404.
+
+Alwi_bubble4.js (bola ALWI) ada di VM1. Kalau halaman butuh bola, load dari:
+    https://pushing-dept-headset-rep.trycloudflare.com/alwi_bubble4.js
+
+
+-----------------------------------------------------------------------------
+7. VERIFIKASI SEBELUM DIBILANG "SIAP"
+-----------------------------------------------------------------------------
+Base GitHub: https://nurindramayuaimini3311.github.io/Indramayu_nur/
+
+Cek (harus 200 semua):
+  <base>/<nama-aplikasi>/
+  <base>/<nama-aplikasi>/index.html
+  <base>/<nama-aplikasi>/manifest.json
+  <base>/<nama-aplikasi>/sw.js
+  <base>/<nama-aplikasi>/img/icon-192.png
+
+Cek di browser/HP:
+- Buka aplikasi -> install PWA -> offline masih jalan (sw cache).
+
+
+-----------------------------------------------------------------------------
+ATURAN EMAS - JANGAN LANGKAHI
+-----------------------------------------------------------------------------
+1. Hapus node_modules sebelum push (folder statis, jangan pernah di-track).
+2. Jangan sync GitHub -> VM. Repo github itu sumber iframe. Versi asli yang
+   diperbaiki ada di VM - sekali sync bisa menimpa dan hilang.
+3. alwi_bubble4.js di GitHub SUDAH DIHAPUS - jangan push lagi versi error.
+   Kalau perlu, load langsung dari VM1 (lihat bagian 6).
+4. .gitignore - hapus rule folder target dengan hati-hati, tapi simpan
+   node_modules/ dan .env di dalam ignore.
+5. Gunakan akun nurindramayuaimini3311, repo Indramayu_nur. Jangan campur
+   dengan akun ALWIgrandle-bit.
+
+
+-----------------------------------------------------------------------------
+LOGIN AKUN GITHUB (KALAU TERPUTUS)
+-----------------------------------------------------------------------------
+  gh auth login --with-token
+  gh api user -q .login     # cek identitas: harus nurindramayuaimini3311
