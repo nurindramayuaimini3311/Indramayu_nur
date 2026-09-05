@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>💬 Diskusi Al-Quran — Ibadah</title>
+<meta name="theme-color" content="#16a34a">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;min-height:100vh;background:linear-gradient(180deg,#f6f9f4,#e8f5e9);color:#123524;padding:14px 14px calc(20px + env(safe-area-inset-bottom,12px))}
+.wrap{max-width:720px;margin:0 auto}
+.head{text-align:center;background:linear-gradient(135deg,#14532d,#166534);color:#fff;border-radius:20px;padding:24px 16px;margin-bottom:16px}
+.head .ic{font-size:42px}
+.head h1{font-size:21px;font-weight:900;margin-top:6px}
+.head p{font-size:12px;color:#d9f2e0;margin-top:4px}
+.panel{background:#fff;border:2px solid #dce8d8;border-radius:16px;padding:16px;margin-bottom:14px}
+.panel h2{font-size:15px;font-weight:900;color:#14532d;margin-bottom:10px}
+.form-row{display:flex;gap:8px;margin-bottom:8px}
+.form-row input{flex:1;border:2px solid #eef4ec;border-radius:12px;padding:11px;font-size:13px;font-family:inherit;background:#fafcf9;color:#123524;outline:none}
+.form-row input:focus{border-color:#16a34a}
+textarea{width:100%;border:2px solid #eef4ec;border-radius:12px;padding:11px;font-size:13px;font-family:inherit;background:#fafcf9;color:#123524;outline:none;resize:vertical;min-height:74px;margin-bottom:8px}
+textarea:focus{border-color:#16a34a}
+.kirim{width:100%;background:#16a34a;color:#fff;border:none;border-radius:12px;padding:13px;font-weight:900;font-size:14px;cursor:pointer}
+.kirim:active{background:#15803d}
+.isi{margin-top:10px}
+.komen{background:#fafcf9;border:2px solid #eef4ec;border-radius:12px;padding:12px;margin-bottom:10px}
+.komen .at{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.komen .nama{font-weight:900;font-size:13px;color:#14532d}
+.komen .tgl{font-size:10px;color:#6b7f72}
+.komen .teks{font-size:13px;line-height:1.7;color:#35553f}
+.kosong{text-align:center;color:#6b7f72;font-size:12px;padding:18px 0}
+.hapus-smt{font-size:11px;color:#dc2626;background:none;border:none;cursor:pointer;font-weight:700}
+.back{display:block;text-align:center;background:#123524;color:#fff;text-decoration:none;font-weight:800;padding:13px;border-radius:14px;margin-top:16px;font-size:14px}
+.back:hover{background:#16a34a}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="head"><div class="ic">💬</div><h1>DISKUSI AL-QURAN</h1><p>Tulis pertanyaan & pesan — tersimpan di perangkatmu</p></div>
+
+<div class="panel">
+<h2>✍️ Tulis Pesan</h2>
+<div class="form-row">
+<input id="txtNama" type="text" placeholder="Nama kamu" maxlength="30">
+</div>
+<textarea id="txtPesan" placeholder="Tulis pendapat / pertanyaan tentang ayat Al-Quran..."></textarea>
+<button class="kirim" onclick="kirimKomen()">📤 KIRIM PESAN</button>
+</div>
+
+<div class="panel" id="panelDiskusi">
+<h2>💬 Diskusi (ayat &amp; renungan)</h2>
+<div class="isi" id="listKomen"></div>
+</div>
+
+<a class="back" href="../quran.html">📖 Kembali ke Quran</a>
+</div>
+
+<script>
+const KEY='alwiDiskusiQuran';
+var komen=[];try{komen=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){komen=[]}
+
+function simpan(){try{localStorage.setItem(KEY,JSON.stringify(komen))}catch(e){}}
+
+function esc(s){return (s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+
+function tglSekarang(){
+  var d=new Date(),m=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  return d.getDate()+' '+m[d.getMonth()]+' '+d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');
+}
+
+function render(){
+  var el=document.getElementById('listKomen');
+  if(!komen.length){el.innerHTML='<div class="kosong">Belum ada diskusi — jadilah yang pertama 🌟</div>';return}
+  el.innerHTML=komen.map(function(k,i){
+    return '<div class="komen"><div class="at"><span class="nama">'+esc(k.nama)+'</span><span class="tgl">'+esc(k.tgl)+'</span><span style="flex:1"></span><button class="hapus-smt" onclick="hapusKomen('+i+')">✕</button></div><div class="teks">'+esc(k.teks)+'</div></div>';
+  }).join('');
+}
+
+function hapusKomen(i){komen.splice(i,1);simpan();render()}
+
+function kirimKomen(){
+  var nama=document.getElementById('txtNama').value.trim()||'Anonim';
+  var teks=document.getElementById('txtPesan').value.trim();
+  if(!teks){alert('Tulis pesan dulu ya 😊');return}
+  komen.unshift({nama:nama,teks:teks,tgl:tglSekarang()});
+  simpan();render();
+  document.getElementById('txtPesan').value='';
+}
+
+render();
+</script>
+<script src="../../alwi_bubble4.js"></script>
+</body>
+</html>

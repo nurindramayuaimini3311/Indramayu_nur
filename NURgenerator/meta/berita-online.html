@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📰 Berita Online — ALWI CENTER</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(180deg,#0f172a,#1e293b);color:#fff;min-height:100vh;padding-bottom:80px}
+header{background:rgba(15,23,42,0.95);backdrop-filter:blur(12px);border-bottom:2px solid #ffd700;padding:12px 16px;position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:16px;color:#ffd700}
+.back{background:#fff;color:#0f172a;border:none;border-radius:10px;padding:8px 14px;font-weight:700;font-size:12px;cursor:pointer;text-decoration:none}
+.tabs{display:flex;gap:8px;padding:12px 16px;overflow-x:auto}
+.tab{background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);border-radius:12px;padding:10px 16px;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;color:#94a3b8;transition:all 0.3s}
+.tab.active{background:linear-gradient(135deg,#ffd700,#f59e0b);color:#000;border-color:#ffd700}
+.tab:hover{border-color:#ffd700}
+.frame-container{padding:0 16px}
+.frame-box{display:none;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.3);margin-bottom:16px}
+.frame-box.active{display:block}
+.frame-header{background:linear-gradient(135deg,#1e293b,#0f172a);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #ffd700}
+.frame-header span{color:#ffd700;font-weight:800;font-size:13px}
+.frame-header button{background:#ef4444;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-weight:700;font-size:11px;cursor:pointer}
+.frame-header button:hover{background:#dc2626}
+.frame-box iframe{width:100%;height:75vh;border:none;background:#f1f5f9}
+.footer{text-align:center;padding:20px;font-size:11px;color:#64748b}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">📰 BERITA ONLINE</div>
+  <a href="../index.html" class="back">🏠 HOME</a>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab(0)">🇮🇩 CNN Indonesia</div>
+  <div class="tab" onclick="switchTab(1)">📰 SINDOnews</div>
+  <div class="tab" onclick="switchTab(2)">📝 Kompas</div>
+</div>
+
+<div class="frame-container">
+  <div class="frame-box active" id="frame0">
+    <div class="frame-header">
+      <span>🇮🇩 CNN Indonesia</span>
+      <button onclick="refreshFrame(0)">🔄 Refresh</button>
+    </div>
+    <iframe src="https://www.cnnindonesia.com/" loading="lazy"></iframe>
+  </div>
+
+  <div class="frame-box" id="frame1">
+    <div class="frame-header">
+      <span>📰 SINDOnews</span>
+      <button onclick="refreshFrame(1)">🔄 Refresh</button>
+    </div>
+    <iframe src="https://www.sindonews.com/" loading="lazy"></iframe>
+  </div>
+
+  <div class="frame-box" id="frame2">
+    <div class="frame-header">
+      <span>📝 Kompas</span>
+      <button onclick="refreshFrame(2)">🔄 Refresh</button>
+    </div>
+    <iframe src="https://www.kompas.com/" loading="lazy"></iframe>
+  </div>
+</div>
+
+<div class="footer">ALWI CENTER — Berita Online © 2026</div>
+
+<script src="../alwi_bubble4.js"></script>
+<script>
+var tabs = document.querySelectorAll('.tab');
+var frames = document.querySelectorAll('.frame-box');
+
+function switchTab(i){
+  tabs.forEach(function(t){t.classList.remove('active')});
+  frames.forEach(function(f){f.classList.remove('active')});
+  tabs[i].classList.add('active');
+  frames[i].classList.add('active');
+}
+
+function refreshFrame(i){
+  var iframe = frames[i].querySelector('iframe');
+  iframe.src = iframe.src;
+}
+</script>
+</body>
+</html>

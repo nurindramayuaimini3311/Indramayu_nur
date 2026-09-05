@@ -12,7 +12,6 @@ meta_folder/sever.html
 www/
 tangkapTERMUX/
 node_modules/
-NURgenerator/
 *.apk
 *.idsig
 version.txt

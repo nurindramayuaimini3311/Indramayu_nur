@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ALWI Tube — Video Drive</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,'Segoe UI',Roboto,sans-serif}
+body{min-height:100vh;background:#0f0f0f;color:#f1f1f1;padding-bottom:60px}
+.top{position:sticky;top:0;background:#0f0f0fee;border-bottom:1px solid #272727;padding:12px 16px;display:flex;align-items:center;gap:10px;z-index:50}
+.logo{font-size:20px;font-weight:900}
+.logo b{background:#f00;border-radius:8px;padding:2px 8px;color:#fff;margin-right:6px;font-size:16px}
+.badges{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.badge{background:#272727;border:1px solid #3f3f3f;padding:5px 12px;border-radius:999px;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding:18px;max-width:1100px;margin:0 auto}
+.kartu{background:#181818;border-radius:14px;overflow:hidden;border:1px solid #272727;transition:.2s}
+.kartu:hover{border-color:#f00;transform:translateY(-3px)}
+.pemain{position:relative;width:100%;padding-top:56.25%;background:#000}
+.pemain iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.info{padding:12px 14px}
+.judul{font-weight:800;font-size:15px;margin-bottom:4px}
+.sub{font-size:11px;color:#aaa}
+.tombol{display:flex;gap:8px;padding:0 14px 14px}
+.tombol a{flex:1;text-align:center;text-decoration:none;background:#272727;color:#fff;font-size:12px;font-weight:700;padding:9px;border-radius:9px}
+.tombol a.buka{background:#f00}
+.catatan{max-width:1100px;margin:6px auto 0;padding:0 18px;font-size:12px;color:#888}
+.unduh-box{max-width:1100px;margin:14px auto 0;padding:0 18px}
+.unduh-kartu{background:#181818;border:1px solid #272727;border-radius:14px;padding:14px}
+.unduh-kartu h3{font-size:14px;color:#fff;margin-bottom:10px}
+.baris-unduh{display:flex;gap:8px;flex-wrap:wrap}
+.baris-unduh input{flex:1;min-width:200px;background:#0f0f0f;border:1px solid #3f3f3f;border-radius:9px;padding:11px 12px;color:#f1f1f1;font-size:13px}
+.baris-unduh button{background:#f00;border:none;border-radius:9px;padding:11px 18px;color:#fff;font-weight:800;font-size:13px;cursor:pointer}
+.baris-unduh button:disabled{opacity:.5}
+.hasil-unduh{margin-top:10px;font-size:12.5px;color:#aaa;line-height:1.6}
+.hasil-unduh a.tombol-file{display:inline-block;background:#272727;border:1px solid #3f3f3f;color:#3ea6ff;text-decoration:none;font-weight:700;padding:8px 14px;border-radius:9px}
+footer{text-align:center;font-size:11px;color:#555;margin-top:26px}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="logo"><b>▶</b>ALWI TUBE</div>
+  <div class="badges">
+    <span class="badge">👤 <b id="bnama">Member ALWI</b></span>
+    <span class="badge">📅 <span id="btanggal">-</span></span>
+  </div>
+</div>
+
+<div class="catatan">🎬 Koleksi video dari Google Drive (folder Video Gallery) — putar langsung di sini seperti YouTube.</div>
+
+<div class="unduh-box">
+  <div class="unduh-kartu">
+    <h3>🔗 UNDUH DARI LINK APA SAJA</h3>
+    <div class="baris-unduh">
+      <input id="inUrl" type="url" placeholder="Tempel link video… (YouTube, TikTok, Kompas, file .mp4 langsung, dll)" autocomplete="off">
+      <button id="btnAmbil">⬇️ Ambil</button>
+    </div>
+    <div class="hasil-unduh" id="hasilUnduh">Maks 300 MB per video • YouTube/TikTok/IG/X/situs berita didukung yt-dlp</div>
+  </div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div style="text-align:center;margin-top:10px">
+  <a href="https://drive.google.com/drive/folders/1FiRdprK5REcRoh8J7H03chcOzUoBtpLk" target="_blank" style="color:#3ea6ff;font-size:13px">📁 Buka Folder Drive Video Gallery</a>
+</div>
+
+<footer>ALWI Tube • Sumber: Google Drive • <span id="thn"></span></footer>
+
+<script>
+var q=new URLSearchParams(location.search);
+var nm=(q.get("nama")||"").trim()||"Member ALWI";
+document.getElementById("bnama").textContent=nm;
+document.getElementById("btanggal").textContent=new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+document.getElementById("thn").textContent=new Date().getFullYear();
+
+var VIDEO=[
+ {id:"19r1E_AUZ3QOe2Zze0QvofptEvjsTH0HB",judul:"Video ALWI #1",ket:"Upload dari kamera • Drive"},
+ {id:"1Cg8G29OQgKtuoSIu-2jxJNsvPkQcj-pS",judul:"Video ALWI #2",ket:"Upload dari kamera • Drive"},
+ {id:"1GeVS3ncLkXNZjjQUrBOuTmjW59-0QB3w",judul:"Video ALWI #3",ket:"Upload dari kamera • Drive"},
+ {id:"11bzmFNIo2SzEpzw2WKF92zNGZezMdB00",judul:"Video ALWI #4",ket:"Upload dari kamera • Drive"}
+];
+
+var grid=document.getElementById("grid");
+VIDEO.forEach(function(v,i){
+  var k=document.createElement("div");
+  k.className="kartu";
+  k.innerHTML=
+    '<div class="pemain"><iframe src="https://drive.google.com/file/d/'+v.id+'/preview" allow="autoplay; encrypted-media; fullscreen" allowfullscreen loading="lazy"></iframe></div>'+
+    '<div class="info"><div class="judul">'+v.judul+'</div><div class="sub">'+v.ket+'</div></div>'+
+    '<div class="tombol"><a class="buka" target="_blank" href="https://drive.google.com/file/d/'+v.id+'/view">▶️ Buka di Drive</a>'+
+    '<a download target="_blank" rel="noopener" href="https://drive.usercontent.google.com/download?id='+v.id+'&export=download&confirm=t">⬇️ Unduh Langsung</a></div>';
+  grid.appendChild(k);
+});
+</script>
+
+<script>
+(function(){
+  var inUrl=document.getElementById('inUrl'),btn=document.getElementById('btnAmbil'),hasil=document.getElementById('hasilUnduh');
+  var dasar=(location.protocol==='file:'?'http:':location.protocol)+'//'+(location.hostname||'34.170.37.50')+':8080';
+  var timer=null;
+  function cek(id){
+    fetch(dasar+'/api/ambil-video/status/'+id).then(function(r){return r.json()}).then(function(j){
+      if(j.status==='selesai'){
+        clearInterval(timer); btn.disabled=false;
+        hasil.innerHTML='✅ Selesai! <a class="tombol-file" download href="'+j.url+'">⬇️ Simpan: '+decodeURIComponent((j.file||'').replace(/^[^-]+-/,''))+'</a>';
+      }else if(j.status==='gagal'){
+        clearInterval(timer); btn.disabled=false;
+        hasil.innerHTML='❌ '+j.galat;
+      }else{
+        hasil.innerHTML='⏳ Server sedang mengunduh & mengonversi video… (bisa beberapa menit)';
+      }
+    }).catch(function(){clearInterval(timer);btn.disabled=false;hasil.innerHTML='❌ server tidak merespons'});
+  }
+  btn.onclick=function(){
+    var u=inUrl.value.trim();
+    if(!/^https?:\/\//.test(u)){hasil.textContent='⚠️ Tempel link yang benar dulu (mulai http/https)';return}
+    btn.disabled=true; hasil.textContent='📤 Mengirim ke server…';
+    fetch(dasar+'/api/ambil-video',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:u})})
+      .then(function(r){return r.json()})
+      .then(function(j){
+        if(!j.ok){hasil.textContent='❌ '+(j.galat||'gagal');btn.disabled=false;return}
+        hasil.textContent='⏳ Server sedang mengunduh…';
+        timer=setInterval(function(){cek(j.id)},3000);
+      })
+      .catch(function(){hasil.textContent='❌ server tidak merespons';btn.disabled=false});
+  };
+})();
+</script>
+<script src="/alwi_bubble2.js"></script>
+
+</body>
+</html>
