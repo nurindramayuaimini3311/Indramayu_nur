@@ -1,0 +1,18 @@
+#alwi-overlay{position:fixed;inset:0;z-index:9999;overflow:auto;pointer-events:none;display:flex;align-items:flex-start;justify-content:center;padding:20px 14px 40px}
+#alwi-overlay.hide{display:none}
+#alwi-overlay .menu-box{width:min(560px,100%);pointer-events:auto;background:rgba(5,8,17,.35);border:1px solid rgba(42,255,122,.3);border-radius:22px;padding:14px;box-shadow:0 0 40px rgba(42,255,122,.15),inset 0 1px 0 rgba(255,255,255,.06);backdrop-filter:blur(3px)}
+#alwi-overlay .menu-title{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+#alwi-overlay .menu-title .dot{width:9px;height:9px;border-radius:50%;background:#2aff7a;box-shadow:0 0 10px #2aff7a;animation:pulse 1.4s infinite}
+#alwi-overlay .menu-title h1{color:#fff;font-size:15px;font-family:'Space Grotesk',sans-serif;letter-spacing:.05em;text-shadow:0 0 18px rgba(42,255,122,.5)}
+#alwi-overlay .menu-title .chip{margin-left:auto;background:rgba(42,255,122,.15);border:1px solid rgba(42,255,122,.35);color:#b9ffd4;font-size:10px;font-family:monospace;padding:3px 9px;border-radius:999px}
+#alwi-overlay .menu-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;justify-content:center}
+#alwi-overlay .menu-nav a{background:rgba(42,255,122,.12);border:1px solid rgba(42,255,122,.35);color:#b9ffd4;padding:6px 11px;border-radius:999px;text-decoration:none;font-size:11px;font-family:courier,monospace;font-weight:700}
+#alwi-overlay .menu-nav a:hover{background:rgba(42,255,122,.3);color:#fff}
+#alwi-overlay .menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+@media(max-width:520px){#alwi-overlay .menu-grid{grid-template-columns:repeat(2,1fr)}}
+#alwi-overlay .menu-card{background:rgba(7,18,26,.55);border:1px solid rgba(42,255,122,.22);border-radius:15px;padding:12px 8px;text-align:center;text-decoration:none;color:#eafff2;display:block;transition:transform .15s,background .15s}
+#alwi-overlay .menu-card:hover{background:rgba(42,255,122,.2);transform:translateY(-2px)}
+#alwi-overlay .menu-card .ic{font-size:24px;display:block}
+#alwi-overlay .menu-card b{font-size:11.5px;display:block;margin-top:4px}
+#alwi-overlay .menu-foot{margin-top:10px;text-align:center;color:#6fffae;font-size:10.5px;font-family:monospace;opacity:.85}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}

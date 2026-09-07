@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kiblat Ka'bah - Jarak ke Mekah</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a1a12;color:#e8f5e9;font-family:system-ui,sans-serif;display:flex;flex-direction:column;min-height:100vh}
+h1{font-size:1.4rem;text-align:center;padding:12px 10px 4px}
+#info{font-size:0.9rem;color:#81c784;text-align:center;padding:0 10px}
+#wenversi{font-size:0.7rem;color:#777;text-align:center;margin-top:2px}
+.panel{display:flex;gap:8px;padding:8px 10px;flex-wrap:wrap}
+.btn{flex:1;min-width:120px;padding:11px 8px;border:none;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;color:#000}
+.btn-gps{background:#ffd700}
+.btn-wa{background:#25D366}
+.btn-reset{background:#444;color:#fff}
+#status{font-size:0.8rem;color:#aaa;text-align:center;padding:0 10px 6px;min-height:16px}
+#map{flex:1;width:100%}
+#jarak{text-align:center;font-size:0.9rem;color:#ffd54f;background:#132a1a;padding:6px 10px;border-top:1px solid #2e7d32}
+.leaflet-popup-content-wrapper{background:#1e1e1e;color:#fff;border-radius:8px;border:1px solid #ffd54f}
+.leaflet-popup-tip{background:#1e1e1e}
+.bubbles{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.bubbles i{position:absolute;bottom:-140px;border-radius:50%;display:block;
+  background:radial-gradient(circle at 30% 30%,#7cffb0,#1f9d55 70%);
+  box-shadow:0 0 12px rgba(42,255,122,.45),inset -6px -8px 18px rgba(0,0,0,.25);
+  animation:naik linear infinite;opacity:.85}
+.bubbles i.gold{background:radial-gradient(circle at 30% 30%,#ffe08a,#d9a406 70%);
+  box-shadow:0 0 14px rgba(255,215,0,.5),inset -6px -8px 18px rgba(0,0,0,.25)}
+.bubbles i.blu{background:radial-gradient(circle at 30% 30%,#9ad6ff,#1d5fa6 70%);
+  box-shadow:0 0 14px rgba(90,180,255,.5),inset -6px -8px 18px rgba(0,0,0,.25)}
+@keyframes naik{
+  0%{transform:translateY(0) translateX(0) scale(1);opacity:.9}
+  50%{transform:translateY(-55vh) translateX(30px) scale(1.08);opacity:.75}
+  100%{transform:translateY(-130vh) translateX(-35px) scale(1.18);opacity:0}}
+.wrap,.nav{position:relative;z-index:1}
+#map{position:relative;z-index:1}
+</style>
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#2aff7a">
+</head>
+<body>
+<div class="bubbles" aria-hidden="true">
+  <i style="left:6%; width:90px;height:90px; animation-duration:11s; animation-delay:0s"></i>
+  <i class="gold" style="left:18%; width:55px;height:55px; animation-duration:9s; animation-delay:2s"></i>
+  <i class="blu" style="left:29%; width:110px;height:110px; animation-duration:14s; animation-delay:1s"></i>
+  <i style="left:55%; width:78px;height:78px; animation-duration:12s; animation-delay:1.5s"></i>
+  <i class="blu" style="left:66%; width:50px;height:50px; animation-duration:9.5s; animation-delay:4s"></i>
+  <i class="gold" style="left:88%; width:64px;height:64px; animation-duration:10s; animation-delay:2.5s"></i>
+  <i class="blu" style="left:13%; width:28px;height:28px; animation-duration:7s; animation-delay:5s"></i>
+  <i class="gold" style="left:4%; width:24px;height:24px; animation-duration:7.5s; animation-delay:9s"></i>
+</div>
+<h1>🕋 Kiblat — Titik Pusat Ka'bah</h1>
+<div id="info">Menunggu posisi GPS...</div>
+<div id="wenversi">Versi Peta — tanpa kompas, jarak dari posisi Anda ke Ka'bah (Mekah)</div>
+<div class="panel">
+  <button class="btn btn-gps" onclick="mintaGPS()">📍 Ambil Posisi GPS</button>
+  <button class="btn btn-wa" id="btnWa" onclick="kirimWA()" disabled>🟢 Kirim ke WhatsApp</button>
+</div>
+<div class="panel">
+  <input id="dnsInput" placeholder="host/domain DNS Anda (mis. server1.ddns.net)" style="flex:2;padding:10px 12px;border-radius:8px;border:1px solid #2e7d32;background:#0d2418;color:#e8f5e9;font-size:13px;outline:none">
+  <button class="btn" style="background:#00bfff;flex:1" onclick="findDNS()">🔍 Find DNS</button>
+</div>
+<div id="status">Pencet "Ambil Posisi GPS" untuk melihat jarak ke Ka'bah. Find DNS untuk tahu lokasi host Anda.</div>
+<div id="map"></div>
+<div id="jarak">🕋 Ka'bah 21.4225, 39.8262 — Mekah</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const KAABA_LAT = 21.4225, KAABA_LNG = 39.8262;
+let userLat = null, userLng = null, jarakKm = 0;
+let mUser = null, garis = null;
+
+const map = L.map('map', { zoomControl: true }).setView([KAABA_LAT, KAABA_LNG], 6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19, attribution: '© OpenStreetMap'
+}).addTo(map);
+
+// Marker Ka'bah (titik pusat, selalu di tengah awalan)
+const ikonKabah = L.divIcon({ className: '', html: '<div style="background:#ffd54f;width:30px;height:30px;border-radius:4px;border:2px solid #333;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 14px rgba(255,213,79,.7)">🕋</div>', iconSize: [30,30] });
+const mKabah = L.marker([KAABA_LAT, KAABA_LNG], { icon: ikonKabah })
+  .addTo(map)
+  .bindPopup('<b>🕋 Ka\'bah — Mekah</b><br>21.42250, 39.82620');
+
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 6371000, r = Math.PI/180;
+  const dLat = (lat2-lat1)*r, dLng = (lng2-lng1)*r;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*r)*Math.cos(lat2*r)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function mintaGPS() {
+  const st = document.getElementById('status');
+  if (!navigator.geolocation) { st.textContent = '❌ HP/browser tidak mendukung GPS.'; return; }
+  st.textContent = '⏳ Mengambil posisi GPS...';
+  navigator.geolocation.getCurrentPosition(
+    (pos) => { tampilPosisi(pos.coords.latitude, pos.coords.longitude, 1); st.textContent = '✅ Posisi GPS didapat.'; },
+    (err) => { st.textContent = '❌ Gagal GPS: ' + err.message + ' — gunakan posisi default.'; tampilPosisi(-6.2088, 106.8456, 0); },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 20000 }
+  );
+}
+
+function tampilPosisi(lat, lng, gps) {
+  userLat = lat; userLng = lng;
+  jarakKm = haversine(lat, lng, KAABA_LAT, KAABA_LNG) / 1000;
+  if (mUser) map.removeLayer(mUser);
+  if (garis) map.removeLayer(garis);
+  mUser = L.marker([lat, lng], { icon: L.divIcon({ className:'', html: '<div style="background:#25D366;width:14px;height:14px;border-radius:50%;border:2px solid #000"></div>', iconSize:[14,14] }) })
+    .addTo(map)
+    .bindPopup(`<b>📍 Posisi Anda</b><br>${lat.toFixed(5)}, ${lng.toFixed(5)}${gps?'<br>(GPS)':''}`)
+    .openPopup();
+  garis = L.polyline([[lat,lng],[KAABA_LAT,KAABA_LNG]], { color:'#ffd54f', weight:3, dashArray:'6,6' }).addTo(map);
+  map.fitBounds(L.latLngBounds([[lat,lng],[KAABA_LAT,KAABA_LNG]]), { padding:[40,40] });
+  document.getElementById('info').textContent =
+    `Posisi Anda: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+  document.getElementById('jarak').textContent =
+    `🕋 Jarak ke Ka'bah: ${jarakKm.toFixed(0)} km ${gps?'(GPS)':'(default Jakarta)'} • Arab: arah panah tidak perlu — pusat di Mekah`;
+  document.getElementById('btnWa').disabled = false;
+}
+
+function kirimWA() {
+  if (userLat === null) return;
+  const gmaps = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${KAABA_LAT},${KAABA_LNG}&travelmode=driving`;
+  const pesan =
+    `🕋 *JARAK KE KA'BAH (MEKAH)*\n\n` +
+    `📍 Posisi saya: ${userLat.toFixed(6)}, ${userLng.toFixed(6)}\n` +
+    `🕋 Ka'bah: ${KAABA_LAT}, ${KAABA_LNG}\n` +
+    `📏 Jarak: *${jarakKm.toFixed(0)} km*\n\n` +
+    `Rute Google Maps: ${gmaps}`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(pesan), '_blank');
+}
+
+// ===== Find DNS: resolve host → IP → lokasi, hitung jarak dari GPS Anda =====
+async function findDNS() {
+  const host = document.getElementById('dnsInput').value.trim();
+  const st = document.getElementById('status');
+  if (!host) { st.textContent = '⚠️ Tulis dulu nama host/domain.'; return; }
+  st.textContent = '⏳ Men-resolve ' + host + ' ...';
+  try {
+    const r = await fetch('https://dns.google/resolve?name=' + encodeURIComponent(host) + '&type=A');
+    const d = await r.json();
+    const ipv4 = (d.Answer || []).filter(a => a.type === 1 && a.data).map(a => a.data);
+    if (!ipv4.length) { st.textContent = '❌ Tidak ada A-record untuk ' + host + '.'; return; }
+    let dlat, dlng, nama;
+    try {
+      const g = await fetch('https://ipapi.co/' + ipv4[0] + '/json/');
+      const j = await g.json();
+      dlat = parseFloat(j.latitude); dlng = parseFloat(j.longitude);
+      nama = [j.city, j.region, j.country_name].filter(Boolean).join(', ') || 'Lokasi IP';
+    } catch (e) {
+      dlat = KAABA_LAT; dlng = KAABA_LNG; nama = 'Tidak diketahui';
+    }
+    const mDNS = L.divIcon({ className: '', html: '<div style="background:#00bfff;width:24px;height:24px;border-radius:50%;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:12px">🌐</div>', iconSize: [24,24] });
+    const mk = L.marker([dlat, dlng], { icon: mDNS }).addTo(map)
+      .bindPopup(`<b>🌐 DNS</b><br>${host}<br>IP: ${ipv4[0]}<br>${nama}<br>${dlat.toFixed(4)}, ${dlng.toFixed(4)}`)
+      .openPopup();
+    map.setView([dlat, dlng], 6);
+    let msg = '✅ ' + host + ' → ' + ipv4.join(', ') + ' @ ' + nama;
+    if (userLat !== null) {
+      const dKm = haversine(userLat, userLng, dlat, dlng) / 1000;
+      msg += ` — jarak dari GPS Anda: ${dKm.toFixed(0)} km`;
+    } else {
+      msg += ' — ambil GPS dulu untuk jarak dari Anda.';
+    }
+    st.textContent = msg;
+  } catch (e) {
+    st.textContent = '❌ Gagal resolve: ' + e.message;
+  }
+}
+
+// Auto GPS saat halaman dibuka (tanpa tombol) — tetap aman default Jakarta bila ditolak
+mintaGPS();
+</script>
+<script src="../alwi_bubble4_3000.js"></script>
+
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("../sw.js")}</script>
+</body>
+</html>

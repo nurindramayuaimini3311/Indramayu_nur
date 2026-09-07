@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>🚀 Belajar NASA × Peta Indramayu</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#070b18;color:#e2e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+.wrap{max-width:720px;margin:0 auto;padding:14px}
+.header{text-align:center;padding:20px 0 8px}
+.header h1{font-size:1.45rem;background:linear-gradient(90deg,#38bdf8,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{font-size:.75rem;color:#64748b;margin-top:4px}
+.tabs{display:flex;gap:8px;margin:14px 0}
+.tab{flex:1;text-align:center;padding:12px;border-radius:14px;font-weight:800;font-size:.85rem;cursor:pointer;border:1px solid #334155;background:#0d1528;color:#64748b;transition:.25s}
+.tab.on{background:linear-gradient(135deg,#0c2440,#1e1b4b);color:#38bdf8;border-color:#38bdf8;box-shadow:0 0 18px rgba(56,189,248,.25)}
+.card{background:#0d1528;border:1px solid #1e293b;border-radius:16px;padding:14px;margin-bottom:12px}
+.card h2{font-size:.95rem;margin-bottom:10px}
+#apod-img{width:100%;border-radius:12px;display:block}
+#apod-title{font-weight:800;font-size:1rem;margin:10px 0 2px}
+#apod-date{font-size:.72rem;color:#64748b}
+#apod-exp{font-size:.82rem;line-height:1.55;color:#94a3b8;margin-top:8px;text-align:justify}
+#apod-copy{font-size:.68rem;color:#475569;margin-top:6px;word-break:break-all}
+.row{display:flex;gap:8px;margin-top:10px}
+input[type=date]{flex:1;padding:11px;border-radius:10px;border:1.5px solid #334155;background:#070b18;color:#fff;font-size:.85rem}
+button{padding:11px 14px;border:none;border-radius:10px;background:#2563eb;color:#fff;font-weight:700;font-size:.83rem;cursor:pointer}
+button:active{transform:scale(.97)}
+.b-ijo{background:#059669}.b-ungu{background:#7c3aed}
+.iss-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.iss-box{background:#070b18;border:1px solid #1e293b;border-radius:10px;padding:9px;text-align:center}
+.iss-box b{display:block;font-size:1.05rem;color:#38bdf8}
+.iss-box span{font-size:.66rem;color:#64748b}
+#map{height:62vh;border-radius:14px;z-index:1}
+.hint{font-size:.72rem;color:#64748b;margin-top:8px;line-height:1.5}
+.footer{text-align:center;font-size:.66rem;color:#475569;padding:14px 0}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>🚀 BELAJAR NASA × 🗺️ PETA INDRAMAYU</h1>
+    <p>Portal astronomi &amp; peta interaktif — Indramayu Club ⛑️</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" id="tab-nasa" onclick="pilihTab('nasa')">🚀 BELAJAR NASA</div>
+    <div class="tab" id="tab-peta" onclick="pilihTab('peta')">🗺️ PETA INDRAMAYU</div>
+  </div>
+
+  <div id="sec-nasa">
+    <div class="card">
+      <h2>🌌 Foto Astronomi Hari Ini <span style="font-size:.65rem;color:#475569">(APOD — api.nasa.gov)</span></h2>
+      <img id="apod-img" src="" alt="memuat...">
+      <iframe id="apod-video" class="hidden" width="100%" height="220" style="border:0;border-radius:12px" allowfullscreen></iframe>
+      <div id="apod-title">Memuat...</div>
+      <div id="apod-date"></div>
+      <div id="apod-exp"></div>
+      <div id="apod-copy"></div>
+      <div class="row">
+        <input type="date" id="tgl" value="">
+        <button onclick="muatApod()">🔍 LIHAT</button>
+        <button class="b-ungu" onclick="acakTanggal()">🎲 ACAK</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🛰️ ISS — Stasiun Antariksa Internasional <span style="font-size:.65rem;color:#475569">(live)</span></h2>
+      <div class="iss-grid">
+        <div class="iss-box"><b id="iss-lat">-</b><span>LATITUDE</span></div>
+        <div class="iss-box"><b id="iss-lon">-</b><span>LONGITUDE</span></div>
+        <div class="iss-box"><b id="iss-alt">-</b><span>KETINGGIAN km</span></div>
+        <div class="iss-box"><b id="iss-vel">-</b><span>KECEPATAN km/j</span></div>
+      </div>
+      <div class="row"><button class="b-ijo" style="width:100%" onclick="lihatIssDiPeta()">🗺️ LIHAT POSISI ISS DI PETA</button></div>
+    </div>
+
+    <div class="card">
+      <h2>💡 Tahukah Kamu?</h2>
+      <div id="fakta" style="font-size:.84rem;line-height:1.6;color:#94a3b8"></div>
+    </div>
+  </div>
+
+  <div id="sec-peta" class="hidden">
+    <div class="card">
+      <div id="map"></div>
+      <div class="row">
+        <button class="b-ijo" style="flex:1" onclick="lokasiSaya()">📍 LOKASI SAYA</button>
+        <button style="flex:1" onclick="lihatIssDiPeta()">🛰️ POSISI ISS</button>
+      </div>
+      <p class="hint">🛰️ ikon hijau = ISS sedang terbang (posisi nyata). Klik marker = info tempat di Indramayu.</p>
+    </div>
+  </div>
+
+  <div class="footer">Data: api.nasa.gov • wheretheiss.at • OpenStreetMap — Indramayu Club ⛑️</div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+function pilihTab(t){
+  document.getElementById('tab-nasa').classList.toggle('on',t==='nasa');
+  document.getElementById('tab-peta').classList.toggle('on',t==='peta');
+  document.getElementById('sec-nasa').classList.toggle('hidden',t!=='nasa');
+  document.getElementById('sec-peta').classList.toggle('hidden',t!=='peta');
+  if(t==='peta') setTimeout(function(){map.invalidateSize()},100);
+}
+
+/* ===== NASA APOD ===== */
+var KEY='DEMO_KEY';
+async function muatApod(){
+  var tgl=document.getElementById('tgl').value;
+  var u='https://api.nasa.gov/planetary/apod?api_key='+KEY+(tgl?'&date='+tgl:'');
+  try{
+    var r=await fetch(u);
+    var d=await r.json();
+    if(d.error) throw new Error(d.error.message);
+    var img=document.getElementById('apod-img'), vid=document.getElementById('apod-video');
+    document.getElementById('apod-title').textContent=d.title||'-';
+    document.getElementById('apod-date').textContent=(d.date||'')+(d.copyright?' • © '+d.copyright:'');
+    document.getElementById('apod-exp').textContent=d.explanation||'';
+    document.getElementById('apod-copy').textContent=d.hdurl?'🖼️ HD: '+d.hdurl:'';
+    if(d.media_type==='video'){img.classList.add('hidden');vid.src=d.url;vid.classList.remove('hidden');}
+    else{vid.classList.add('hidden');vid.src='';img.src=d.url;img.classList.remove('hidden');}
+  }catch(e){
+    document.getElementById('apod-title').textContent='⚠️ Gagal memuat: '+e.message;
+  }
+}
+function acakTanggal(){
+  var t=new Date(Date.now()-Math.random()*365*8*864e5+864e5);
+  document.getElementById('tgl').value=t.toISOString().slice(0,10);
+  muatApod();
+}
+
+/* ===== FAKTA ACAK ===== */
+var FAKTA=[
+ '🛰️ ISS mengelilingi Bumi setiap ±90 menit — 16 kali sehari!',
+ '🌕 Di Bulan tak ada angin; jejak kaki astronot bisa bertahan jutaan tahun.',
+ '☀️ Cahaya Matahari butuh 8 menit 20 detik untuk sampai ke Bumi.',
+ '🌌 Bima Sakti punya ±200 miliar bintang; Matahari hanya salah satunya.',
+ '🪐 Saturnus begitu ringan — bisa mengapung di air kalau ada lautan secukupnya.',
+ '🔭 Teleskop James Webb menangkap cahaya galaksi berusia 13 miliar tahun.'
+];
+document.getElementById('fakta').textContent=FAKTA[Math.floor(Math.random()*FAKTA.length)];
+
+/* ===== PETA LEAFLET ===== */
+var map=L.map('map').setView([-6.3273,108.3330],12);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+
+var TEMPAT=[
+ {n:'🏛️ Alun-Alun Indramayu',c:[-6.3270,108.3270],d:'Pusat Kota Indramayu'},
+ {n:'⚓ Pelabuhan Kaliwungu',c:[-6.3880,108.3220],d:'Pelabuhan perikanan pantai utara Jabar'},
+ {n:'🏖️ Pantai Pondok Bali',c:[-6.3769,108.2888],d:'Pantai wisata Indramayu'},
+ {n:'🚉 Stasiun Jatibarang',c:[-6.2972,108.3169],d:'Stasiun kereta jalur utara'}
+];
+TEMPAT.forEach(function(t){
+  L.marker(t.c).addTo(map).bindPopup('<b>'+t.n+'</b><br><small>'+t.d+'</small>');
+});
+
+/* ===== ISS LIVE ===== */
+var issMarker=null, issPos=null;
+async function tarikIss(){
+  try{
+    var r=await fetch('https://api.wheretheiss.at/v1/satellites/25544');
+    var d=await r.json();
+    issPos=[d.latitude,d.longitude];
+    document.getElementById('iss-lat').textContent=d.latitude.toFixed(2)+'°';
+    document.getElementById('iss-lon').textContent=d.longitude.toFixed(2)+'°';
+    document.getElementById('iss-alt').textContent=Math.round(d.altitude);
+    document.getElementById('iss-vel').textContent=Math.round(d.velocity).toLocaleString('id-ID');
+    var ikon=L.divIcon({html:'<div style="font-size:26px;filter:drop-shadow(0 0 6px #22c55e)">🛰️</div>',className:'',iconSize:[30,30]});
+    if(!issMarker){issMarker=L.marker(issPos,{icon:ikon}).addTo(map).bindPopup('<b>🛰️ ISS</b><br><small>Ketinggian ±'+Math.round(d.altitude)+' km</small>');}
+    else{issMarker.setLatLng(issPos);}
+  }catch(e){console.log('ISS gagal:',e)}
+}
+tarikIss();
+setInterval(tarikIss,5000);
+
+function lihatIssDiPeta(){
+  pilihTab('peta');
+  if(issPos) map.flyTo(issPos,4,{duration:1.5});
+  if(issMarker) setTimeout(function(){issMarker.openPopup()},1600);
+}
+
+function lokasiSaya(){
+  if(!navigator.geolocation){alert('Browser tidak mendukung GPS');return;}
+  navigator.geolocation.getCurrentPosition(function(p){
+    var pos=[p.coords.latitude,p.coords.longitude];
+    L.marker(pos,{icon:L.divIcon({html:'<div style="font-size:24px">📍</div>',className:'',iconSize:[24,24]})})
+     .addTo(map).bindPopup('<b>Kamu di sini!</b>').openPopup();
+    map.flyTo(pos,15,{duration:1.5});
+  },function(){alert('Gagal ambil lokasi — izinkan akses GPS')});
+}
+
+/* ===== INIT ===== */
+document.getElementById('tgl').max=new Date().toISOString().slice(0,10);
+document.getElementById('tgl').value=new Date().toISOString().slice(0,10);
+muatApod();
+</script>
+
+<script src="/alwi_bubble4.js"></script>
+</body>
+</html>
+

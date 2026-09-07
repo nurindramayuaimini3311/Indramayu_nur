@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang=id><head><meta charset=UTF-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>NURgenerator</title>
+<link rel=stylesheet href=css/style.css>
+</head><body>
+<div class=nav>
+<a href=index.html>🏠 Home</a>
+<a href=pages/streaming.html>📺 Streaming</a>
+<a href=pages/kiblat.html>🧭 Kiblat</a>
+<a href=pages/camera.html>📷 Kamera</a>
+<a href=pages/mic.html>🎤 Mic</a>
+<a href=pages/member.html>👤 Member</a>
+<a href=pages/komentar.html>💬 Komentar</a>
+</div>
+<div class=wrap>
+<h1>🕌 NURgenerator</h1>
+<p>Pilih menu di atas</p>
+<div class=grid>
+<a class=card href=pages/streaming.html>📺<br>Streaming</a>
+<a class=card href=pages/kiblat.html>🧭<br>Kiblat</a>
+<a class=card href=pages/camera.html>📷<br>Kamera</a>
+<a class=card href=pages/mic.html>🎤<br>Mic</a>
+<a class=card href=pages/member.html>👤<br>Member</a>
+<a class=card href=pages/komentar.html>💬<br>Komentar</a>
+</div>
+</div>
+<script src=js/app.js></script>
+</body></html>

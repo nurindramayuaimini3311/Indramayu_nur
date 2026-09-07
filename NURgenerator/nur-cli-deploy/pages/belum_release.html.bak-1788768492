@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Belum Release</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f172a;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;gap:14px}
+.badge{background:#b91c1c;color:#fff;font-weight:900;font-size:13px;padding:8px 18px;border-radius:999px;border:2px solid #fde68a;letter-spacing:1px}
+h1{font-size:1.4rem;color:#fde68a}
+p{color:#94a3b8;font-size:13px;max-width:320px}
+.box{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:18px 24px;width:min(340px,90vw)}
+a{color:#38bdf8;text-decoration:none;font-weight:800;font-size:14px}
+.bubbles{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.bubbles i{position:absolute;bottom:-140px;border-radius:50%;display:block;
+  background:radial-gradient(circle at 30% 30%,#7cffb0,#1f9d55 70%);
+  box-shadow:0 0 12px rgba(42,255,122,.45),inset -6px -8px 18px rgba(0,0,0,.25);
+  animation:naik linear infinite;opacity:.85}
+.bubbles i.gold{background:radial-gradient(circle at 30% 30%,#ffe08a,#d9a406 70%);
+  box-shadow:0 0 14px rgba(255,215,0,.5),inset -6px -8px 18px rgba(0,0,0,.25)}
+.bubbles i.blu{background:radial-gradient(circle at 30% 30%,#9ad6ff,#1d5fa6 70%);
+  box-shadow:0 0 14px rgba(90,180,255,.5),inset -6px -8px 18px rgba(0,0,0,.25)}
+@keyframes naik{
+  0%{transform:translateY(0) translateX(0) scale(1);opacity:.9}
+  50%{transform:translateY(-55vh) translateX(30px) scale(1.08);opacity:.75}
+  100%{transform:translateY(-130vh) translateX(-35px) scale(1.18);opacity:0}}
+.wrap,.nav{position:relative;z-index:1}</style>
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#2aff7a">
+</head>
+<body>
+<div class="bubbles" aria-hidden="true">
+  <i style="left:6%; width:90px;height:90px; animation-duration:11s; animation-delay:0s"></i>
+  <i class="gold" style="left:18%; width:55px;height:55px; animation-duration:9s; animation-delay:2s"></i>
+  <i class="blu" style="left:29%; width:110px;height:110px; animation-duration:14s; animation-delay:1s"></i>
+  <i style="left:42%; width:46px;height:46px; animation-duration:8s; animation-delay:3s"></i>
+  <i class="gold" style="left:55%; width:78px;height:78px; animation-duration:12s; animation-delay:1.5s"></i>
+  <i class="blu" style="left:66%; width:50px;height:50px; animation-duration:9.5s; animation-delay:4s"></i>
+  <i style="left:77%; width:120px;height:120px; animation-duration:15s; animation-delay:.5s"></i>
+  <i class="gold" style="left:88%; width:64px;height:64px; animation-duration:10s; animation-delay:2.5s"></i>
+  <i class="blu" style="left:13%; width:28px;height:28px; animation-duration:7s; animation-delay:5s"></i>
+  <i style="left:71%; width:34px;height:34px; animation-duration:6.5s; animation-delay:6s"></i>
+  <i class="gold" style="left:47%; width:22px;height:22px; animation-duration:6s; animation-delay:7s"></i>
+  <i class="blu" style="left:35%; width:18px;height:18px; animation-duration:5.5s; animation-delay:8s"></i>
+  <i style="left:93%; width:42px;height:42px; animation-duration:8.5s; animation-delay:3.5s"></i>
+  <i class="gold" style="left:4%; width:24px;height:24px; animation-duration:7.5s; animation-delay:9s"></i>
+</div>
+  <div class="box">
+    <div class="badge">⏳ BELUM RELEASE</div>
+    <h1>Konten Ini Masih Draf</h1>
+    <p>Halaman ini masih dalam tahap pengembangan dan belum dirilis ke publik.</p>
+    <p style="margin-top:10px"><a href="/index.html">← Kembali ke Beranda</a></p>
+  </div>
+<script src="../alwi_bubble4_3000.js"></script>
+
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("../sw.js")}</script>
+</body>
+</html>

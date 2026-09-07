@@ -36,3 +36,4 @@ otomatis.sh
 tunneling.sh
 NURgenerator/node_modules/
 node_modules/
+.wrangler

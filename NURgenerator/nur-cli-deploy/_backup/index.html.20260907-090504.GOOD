@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NURgenerator — Ceria Anak</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;font-family:system-ui,sans-serif}
+body{background:radial-gradient(1200px 700px at 20% -10%,#123a2c 0%,#050811 55%,#01040a 100%);color:#fff}
+.bubbles{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+.bubbles i{position:absolute;bottom:-140px;border-radius:50%;display:block;
+  background:radial-gradient(circle at 30% 30%,#7cffb0,#1f9d55 70%);
+  box-shadow:0 0 12px rgba(42,255,122,.45),inset -6px -8px 18px rgba(0,0,0,.25);
+  animation:naik linear infinite;opacity:.85}
+.bubbles i.gold{background:radial-gradient(circle at 30% 30%,#ffe08a,#d9a406 70%);
+  box-shadow:0 0 14px rgba(255,215,0,.5),inset -6px -8px 18px rgba(0,0,0,.25)}
+.bubbles i.blu{background:radial-gradient(circle at 30% 30%,#9ad6ff,#1d5fa6 70%);
+  box-shadow:0 0 14px rgba(90,180,255,.5),inset -6px -8px 18px rgba(0,0,0,.25)}
+@keyframes naik{
+  0%{transform:translateY(0) translateX(0) scale(1);opacity:.9}
+  50%{transform:translateY(-55vh) translateX(30px) scale(1.08);opacity:.75}
+  100%{transform:translateY(-130vh) translateX(-35px) scale(1.18);opacity:0}}
+</style>
+<link rel="stylesheet" href="pages/menu_menu.css">
+<style>
+#alwi-toggle{position:fixed;right:14px;bottom:16px;z-index:10000;background:rgba(5,8,17,.85);border:1px solid rgba(42,255,122,.4);color:#6fffae;font-size:12px;font-family:monospace;font-weight:700;padding:10px 16px;border-radius:999px;cursor:pointer;box-shadow:0 0 18px rgba(42,255,122,.25)}
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2aff7a">
+</head>
+<body>
+<div class="bubbles" aria-hidden="true">
+  <i style="left:6%; width:90px;height:90px; animation-duration:11s; animation-delay:0s"></i>
+  <i class="gold" style="left:18%; width:55px;height:55px; animation-duration:9s; animation-delay:2s"></i>
+  <i class="blu" style="left:29%; width:110px;height:110px; animation-duration:14s; animation-delay:1s"></i>
+  <i style="left:42%; width:46px;height:46px; animation-duration:8s; animation-delay:3s"></i>
+  <i class="gold" style="left:55%; width:78px;height:78px; animation-duration:12s; animation-delay:1.5s"></i>
+  <i class="blu" style="left:66%; width:50px;height:50px; animation-duration:9.5s; animation-delay:4s"></i>
+  <i style="left:77%; width:120px;height:120px; animation-duration:15s; animation-delay:.5s"></i>
+  <i class="gold" style="left:88%; width:64px;height:64px; animation-duration:10s; animation-delay:2.5s"></i>
+  <i class="blu" style="left:13%; width:28px;height:28px; animation-duration:7s; animation-delay:5s"></i>
+  <i style="left:71%; width:34px;height:34px; animation-duration:6.5s; animation-delay:6s"></i>
+  <i class="gold" style="left:47%; width:22px;height:22px; animation-duration:6s; animation-delay:7s"></i>
+  <i class="blu" style="left:35%; width:18px;height:18px; animation-duration:5.5s; animation-delay:8s"></i>
+  <i style="left:93%; width:42px;height:42px; animation-duration:8.5s; animation-delay:3.5s"></i>
+  <i class="gold" style="left:4%; width:24px;height:24px; animation-duration:7.5s; animation-delay:9s"></i>
+</div>
+
+<div id="alwi-overlay">
+  <button id="alwi-toggle" onclick="document.getElementById('alwi-overlay').classList.toggle('hide')">🎮 GAME / MENU</button>
+  <div class="menu-box">
+    <div class="menu-title">
+      <div class="dot"></div>
+      <h1>🎈 NURgenerator — Ceria Anak</h1>
+      <div class="chip">100% CSS</div>
+    </div>
+    <div class="menu-nav">
+      <a href="index.html">🏠 Home</a>
+      <a href="https://fancy-wood-77c8.imahazzah51.workers.dev/" target="_blank" rel="noopener">📺 Streaming</a>
+      <a href="pages/kiblat.html">🧭 Kiblat</a>
+      <a href="pages/camera.html">📷 Kamera</a>
+      <a href="pages/mic.html">🎤 Mic</a>
+      <a href="pages/member.html">👤 Member</a>
+      <a href="pages/komentar.html">💬 Komentar</a>
+      <a href="pages/belum_release.html">🚧 Belum Release</a>
+    </div>
+    <div class="menu-grid">
+      <a class="menu-card" href="https://fancy-wood-77c8.imahazzah51.workers.dev/" target="_blank" rel="noopener"><span class="ic">📺</span><b>Streaming</b></a>
+      <a class="menu-card" href="pages/kiblat.html"><span class="ic">🧭</span><b>Kiblat</b></a>
+      <a class="menu-card" href="pages/camera.html"><span class="ic">📷</span><b>Kamera</b></a>
+      <a class="menu-card" href="pages/mic.html"><span class="ic">🎤</span><b>Mic</b></a>
+      <a class="menu-card" href="pages/member.html"><span class="ic">👤</span><b>Member</b></a>
+      <a class="menu-card" href="pages/komentar.html"><span class="ic">💬</span><b>Komentar</b></a>
+      <a class="menu-card" href="index.html"><span class="ic">🏠</span><b>Home</b></a>
+      <a class="menu-card" href="pages/belum_release.html"><span class="ic">🚧</span><b>Belum Release</b></a>
+      <a class="menu-card" href="https://fancy-wood-77c8.imahazzah51.workers.dev/" target="_blank" rel="noopener"><span class="ic">🌐</span><b>Worker Cloud</b></a>
+    </div>
+    <a class="menu-card" href="pages/bola_bayangan.html"><span class="ic">⚽</span><b>Bola Bayangan</b></a>
+      <div class="menu-foot">BUBBLE CSS TERAPUNG ✨ (tanpa canvas)</div>
+  </div>
+</div>
+
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js")}</script>
+</body>
+</html>

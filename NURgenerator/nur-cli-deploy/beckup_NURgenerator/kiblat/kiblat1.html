@@ -1,0 +1,147 @@
+!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kompas Kiblat</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a1a12;color:#e8f5e9;font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px}
+h1{font-size:1.4rem;margin-bottom:10px;text-align:center}
+#info{font-size:0.85rem;color:#81c784;margin-bottom:15px;text-align:center}
+#compass{position:relative;width:260px;height:260px;margin:10px auto}
+#ring{width:100%;height:100%;border:3px solid #2e7d32;border-radius:50%;position:absolute;transition:transform 0.15s ease-out}
+#ring::before{content:'N';position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:#0a1a12;padding:0 6px;color:#66bb6a;font-weight:bold;font-size:0.9rem}
+#ring::after{content:'S';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);background:#0a1a12;padding:0 6px;color:#888;font-size:0.8rem}
+#needle{position:absolute;top:50%;left:50%;width:4px;height:110px;background:linear-gradient(to top,#e53935 0%,#e53935 50%,#43a047 50%,#43a047 100%);transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);transition:transform 0.1s ease-out;border-radius:2px}
+#qibla-arrow{position:absolute;top:50%;left:50%;width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:40px solid #ffd54f;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);transition:transform 0.2s ease;filter:drop-shadow(0 0 6px rgba(255,213,79,0.6))}
+#kaaba{position:absolute;top:50%;left:50%;width:16px;height:16px;background:#333;border:2px solid #ffd54f;border-radius:2px;transform:translate(-50%,-50%)}
+#status{margin-top:15px;font-size:0.85rem;color:#aaa;text-align:center;max-width:300px}
+#debug{margin-top:8px;font-size:0.72rem;color:#555;text-align:center;max-width:300px;font-family:monospace}
+.btn{background:#2e7d32;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:1rem;cursor:pointer;margin-top:15px}
+.btn:active{background:#1b5e20}
+</style>
+</head>
+<body>
+<h1>🧭 Kompas Kiblat</h1>
+<div id="info">Mencari lokasi & arah kiblat...</div>
+<div id="compass">
+<div id="ring"></div>
+<div id="qibla-arrow"></div>
+<div id="needle"></div>
+<div id="kaaba"></div>
+</div>
+<div id="status">Aktifkan sensor kompas di HP Anda</div>
+<div id="debug"></div>
+<button class="btn" onclick="requestCompass()">🧭 Aktifkan Kompas</button>
+
+<script>
+let qiblaBearing = 0;
+let userLat = 0, userLng = 0;
+let lastEventReceived = false;
+const KAABA_LAT = 21.4225, KAABA_LNG = 39.8262;
+
+function calcQibla(lat, lng) {
+  const dLng = (KAABA_LNG - lng) * Math.PI / 180;
+  const lat1 = lat * Math.PI / 180;
+  const lat2 = KAABA_LAT * Math.PI / 180;
+  const y = Math.sin(dLng);
+  const x = Math.cos(lat1) * Math.tan(lat2) - Math.sin(lat1) * Math.cos(dLng);
+  let bearing = Math.atan2(y, x) * 180 / Math.PI;
+  return (bearing + 360) % 360;
+}
+
+function setInfo(lat, lng) {
+  userLat = lat; userLng = lng;
+  qiblaBearing = calcQibla(lat, lng);
+  const dist = haversine(lat, lng, KAABA_LAT, KAABA_LNG);
+  document.getElementById('info').textContent =
+    `Arah Kiblat: ${qiblaBearing.toFixed(1)}° • Jarak: ${(dist/1000).toFixed(0)} km`;
+}
+
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 6371000, r = Math.PI/180;
+  const dLat = (lat2-lat1)*r, dLng = (lng2-lng1)*r;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*r)*Math.cos(lat2*r)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    pos => setInfo(pos.coords.latitude, pos.coords.longitude),
+    () => {
+      setInfo(-6.2088, 106.8456);
+      document.getElementById('status').textContent = 'Lokasi default: Jakarta. Aktifkan GPS untuk akurat.';
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+} else {
+  setInfo(-6.2088, 106.8456);
+}
+
+function requestCompass() {
+  if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
+    DeviceOrientationEvent.requestPermission().then(state => {
+      if (state === 'granted') startCompass();
+      else document.getElementById('status').textContent = 'Izin sensor ditolak';
+    }).catch(() => document.getElementById('status').textContent = 'Gagal minta izin sensor');
+  } else {
+    startCompass();
+  }
+}
+
+function startCompass() {
+  document.getElementById('status').textContent = 'Kompas aktif — arahkan ke utara';
+  window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+  window.addEventListener('deviceorientation', handleOrientation, true);
+  setTimeout(() => {
+    if (!lastEventReceived) {
+      document.getElementById('status').textContent = '⚠️ Sensor tidak merespons. Coba di Chrome HP.';
+    }
+  }, 3000);
+}
+
+function handleOrientation(e) {
+  lastEventReceived = true;
+  let heading = null;
+
+  // iOS: webkitCompassHeading sudah compass heading (0=Utara)
+  if (typeof e.webkitCompassHeading === 'number' && !isNaN(e.webkitCompassHeading)) {
+    heading = e.webkitCompassHeading;
+    document.getElementById('debug').textContent = 'Mode: iOS webkitCompassHeading';
+  }
+  // Android absolute: alpha = heading relatif, perlu konversi
+  else if (e.absolute === true && typeof e.alpha === 'number' && !isNaN(e.alpha)) {
+    heading = 360 - e.alpha;
+    document.getElementById('debug').textContent = 'Mode: Android absolute';
+  }
+  // Android non-absolute fallback
+  else if (typeof e.alpha === 'number' && !isNaN(e.alpha)) {
+    heading = 360 - e.alpha;
+    document.getElementById('debug').textContent = 'Mode: Android (non-absolute)';
+  }
+
+  if (heading === null || isNaN(heading)) {
+    document.getElementById('status').textContent = 'Sensor kompas tidak tersedia';
+    return;
+  }
+
+  heading = (heading + 360) % 360;
+
+  const ring = document.getElementById('ring');
+  ring.style.transform = `rotate(${-heading}deg)`;
+  const arrow = document.getElementById('qibla-arrow');
+  arrow.style.transform = `translate(-50%,-100%) rotate(${qiblaBearing - heading}deg)`;
+
+  // Notifikasi saat menghadap kiblat
+  const diff = Math.abs(((qiblaBearing - heading + 540) % 360) - 180);
+  if (diff < 5) {
+    document.getElementById('status').textContent = '🎯 Arah Kiblat! Hadap ke panah kuning';
+  } else {
+    document.getElementById('status').textContent = 'Putar HP ke arah panah kuning';
+  }
+}
+</script>
+</body>
+</html>
