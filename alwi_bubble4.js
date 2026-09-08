@@ -38,62 +38,25 @@ menu.innerHTML=`
     <span>📍 NAVIGASI</span>
     <span onclick="document.getElementById('ALWI_DROPUP').style.display='none'" style="cursor:pointer;color:#888;font-weight:bold;font-size:16px;">✕</span>
   </div>
-  <button onclick="bukaIframe('http://35.240.161.189:3000')" style="padding:9px 8px;background:#0284c7;color:#fff;border:1px solid #38bdf8;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🤖 TANYA ALWI (Chat AI)</button>
-  <button onclick="bukaIframe('http://34.170.37.50:3000/Indramayu_nur/meta/video-drive.html')" style="padding:9px 8px;background:#7f1d1d;color:#fff;border:1px solid #f00;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🎬 VIDEO DRIVE (ALWI Tube)</button>
+  <button onclick="window.location.href='http://35.240.161.189:3000'" style="padding:9px 8px;background:#0284c7;color:#fff;border:1px solid #38bdf8;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🤖 TANYA ALWI (Chat AI)</button>
+  <button onclick="window.location.href='http://34.170.37.50:3000/Indramayu_nur/meta/video-drive.html'" style="padding:9px 8px;background:#7f1d1d;color:#fff;border:1px solid #f00;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🎬 VIDEO DRIVE (ALWI Tube)</button>
 
   <div style="color:#fde68a;font-size:11px;font-weight:800;padding:8px 8px 4px;margin-top:6px;border-top:1px dashed #334155;display:flex;justify-content:space-between;align-items:center;"><span>🪄 META CENTER</span></div>
-  <button onclick="bukaIframe('${prefix}meta/ALWIbot.html')" style="padding:8px 8px;background:#164e63;color:#fff;border:1px solid #22d3ee;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🤖 ALWI Bot</button>
-  <button onclick="bukaIframe('${prefix}meta/alwibook.html')" style="padding:8px 8px;background:#451a03;color:#fff;border:1px solid #f59e0b;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">📕 Alwi Book</button>
-  <button onclick="bukaIframe('${prefix}meta/berita-online.html')" style="padding:8px 8px;background:#7f1d1d;color:#fff;border:1px solid #ef4444;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">📰 Berita Online</button>
-  <button onclick="bukaIframe('${prefix}meta/hub.html')" style="padding:8px 8px;background:#7c2d12;color:#fff;border:1px solid #fb923c;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🔴 Hub</button>
-  <button onclick="bukaIframe('${prefix}meta/properti.html')" style="padding:8px 8px;background:#064e3b;color:#fff;border:1px solid #34d399;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🏠 Properti</button>
-  <button onclick="bukaIframe('${prefix}meta/video-drive.html')" style="padding:8px 8px;background:#4c1d95;color:#fff;border:1px solid #8b5cf6;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🎥 Video Drive</button>
-  <button onclick="bukaIframe('${prefix}meta/komentar/')" style="padding:8px 8px;background:#831843;color:#fff;border:1px solid #ec4899;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">💬 Komentar</button>
-  <button onclick="bukaIframe('${prefix}meta/gallery_video/')" style="padding:8px 8px;background:#115e59;color:#fff;border:1px solid #2dd4bf;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🖼️ Gallery Video</button>
-  <button onclick="bukaIframe('${prefix}meta/gambar-streaming/')" style="padding:8px 8px;background:#3f6212;color:#fff;border:1px solid #a3e635;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">📸 Gambar Streaming</button>
-  <button onclick="bukaIframe('${prefix}meta/promosi-streaming/')" style="padding:8px 8px;background:#9f1239;color:#fff;border:1px solid #fb7185;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🎟️ Promosi Streaming</button>
-  <button onclick="bukaIframe('${prefix}meta/promosi-slot/')" style="padding:8px 8px;background:#713f12;color:#fff;border:1px solid #facc15;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🎫 Promosi Slot</button>
-  <button onclick="bukaIframe('${prefix}meta/')" style="padding:8px 8px;background:#312e81;color:#fff;border:1px solid #818cf8;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🧩 Meta Index</button>
+  <button onclick="window.location.href='${prefix}meta/ALWIbot.html'" style="padding:8px 8px;background:#164e63;color:#fff;border:1px solid #22d3ee;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🤖 ALWI Bot</button>
+  <button onclick="window.location.href='${prefix}meta/alwibook.html'" style="padding:8px 8px;background:#451a03;color:#fff;border:1px solid #f59e0b;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">📕 Alwi Book</button>
+  <button onclick="window.location.href='${prefix}meta/berita-online.html'" style="padding:8px 8px;background:#7f1d1d;color:#fff;border:1px solid #ef4444;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">📰 Berita Online</button>
+  <button onclick="window.location.href='${prefix}meta/hub.html'" style="padding:8px 8px;background:#7c2d12;color:#fff;border:1px solid #fb923c;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🔴 Hub</button>
+  <button onclick="window.location.href='${prefix}meta/properti.html'" style="padding:8px 8px;background:#064e3b;color:#fff;border:1px solid #34d399;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🏠 Properti</button>
+  <button onclick="window.location.href='${prefix}meta/video-drive.html'" style="padding:8px 8px;background:#4c1d95;color:#fff;border:1px solid #8b5cf6;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🎥 Video Drive</button>
+  <button onclick="window.location.href='${prefix}meta/komentar/'" style="padding:8px 8px;background:#831843;color:#fff;border:1px solid #ec4899;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">💬 Komentar</button>
+  <button onclick="window.location.href='${prefix}meta/gallery_video/'" style="padding:8px 8px;background:#115e59;color:#fff;border:1px solid #2dd4bf;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🖼️ Gallery Video</button>
+  <button onclick="window.location.href='${prefix}meta/gambar-streaming/'" style="padding:8px 8px;background:#3f6212;color:#fff;border:1px solid #a3e635;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">📸 Gambar Streaming</button>
+  <button onclick="window.location.href='${prefix}meta/promosi-streaming/'" style="padding:8px 8px;background:#9f1239;color:#fff;border:1px solid #fb7185;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🎟️ Promosi Streaming</button>
+  <button onclick="window.location.href='${prefix}meta/promosi-slot/'" style="padding:8px 8px;background:#713f12;color:#fff;border:1px solid #facc15;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🎫 Promosi Slot</button>
+  <button onclick="window.location.href='${prefix}meta/'" style="padding:8px 8px;background:#312e81;color:#fff;border:1px solid #818cf8;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;">🧩 Meta Index</button>
 
 `;
 document.body.appendChild(menu);
-
-// 3. Modal Popup Fullscreen untuk Iframe
-let modal=document.createElement('div');
-modal.id="ALWI_MODAL";
-modal.style.cssText="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.95);z-index:999999997;flex-direction:column;";
-modal.innerHTML=`
-  <div style="height:44px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid #222;">
-    <span id="ALWI_MODAL_TITLE" style="color:#00BFFF;font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">📍 Loading...</span>
-    <button onclick="tutupIframe()" style="background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:11px;transition:all 0.2s;">TUTUP ✕</button>
-  </div>
-  <iframe id="ALWI_IFRAME" style="width:100%;flex:1;border:none;background:#fff;" allow="clipboard-read; clipboard-write; autoplay"></iframe>
-`;
-document.body.appendChild(modal);
-
-let open=false;
-function toggleMenu(){
-  open=!open;
-  menu.style.display=open?'flex':'none';
-  if(open) menu.querySelector('button').focus();
-}
-
-window.goToPage=function(url){
-  window.location.href=url;
-}
-
-window.bukaIframe=function(targetUrl){
-  document.getElementById('ALWI_MODAL_TITLE').textContent="📍 " + (targetUrl.split('/').pop() || targetUrl);
-  document.getElementById('ALWI_IFRAME').src = targetUrl;
-  modal.style.display='flex';
-  open=false;
-  menu.style.display='none';
-}
-
-window.tutupIframe=function(){
-  modal.style.display='none';
-  document.getElementById('ALWI_IFRAME').src = '';
-}
 
 // HOME selalu menuju index.html portal (bebas isRoot)
 window.goHome=function(){
@@ -283,7 +246,7 @@ ball.addEventListener('pointerup',e=>{
     startPhysics();
   } else {
     // Klik biasa - di root buka Chat AI langsung, selain itu buka menu
-    if (isRoot) { bukaIframe(CHAT_AI_URL); }
+    if (isRoot) { window.location.href = CHAT_AI_URL; }
     else { toggleMenu(); }
   }
 });
@@ -459,22 +422,22 @@ function alwiBotRespond(text){
   // GAME
   else if(text.includes('game')||text.includes('main')){
     alwiBotSay('Ayo main game! Saya bukakan game nya.');
-    setTimeout(()=>{bukaIframe(prefix+'game/index.html');},800);
+    setTimeout(()=>{window.location.href=prefix+'game/index.html';},800);
   }
   // BELAJAR
   else if(text.includes('belajar')||text.includes('belajar')){
     alwiBotSay('Semangat belajar! Yuk mulai.');
-    setTimeout(()=>{bukaIframe(prefix+'alwiSD/index.html');},800);
+    setTimeout(()=>{window.location.href=prefix+'alwiSD/index.html';},800);
   }
   // KUIS
   else if(text.includes('kuis')||text.includes('quiz')){
     alwiBotSay('Siap! Kuis menunggu kamu.');
-    setTimeout(()=>{bukaIframe(prefix+'kuis/quiz.html');},800);
+    setTimeout(()=>{window.location.href=prefix+'kuis/quiz.html';},800);
   }
   // AI
   else if(text.includes('ai')||text.includes('pusat')||text.includes('tanya')){
     alwiBotSay('AI ALWI Pusat siap membantu!');
-    setTimeout(()=>{bukaIframe(prefix+'pusat.html');},800);
+    setTimeout(()=>{window.location.href=prefix+'pusat.html';},800);
   }
   // WHATSAPP
   else if(text.includes('whatsapp')||text.includes('wa')){
@@ -669,7 +632,7 @@ updateBallPosition=function(){
       var x=document.createElement('button');
       x.textContent=f[1];
       x.style.cssText="padding:8px;background:#111;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;";
-      x.onclick=function(){ bukaIframe(prefix+f[0]+'/index.html'); };
+      x.onclick=function(){ window.location.href=prefix+f[0]+'/index.html'; };
       frag.appendChild(x);
     });
     var head=menu.firstChild;
