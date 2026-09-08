@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Nur · Tanya Jawab V3 · Dayak Ngaju</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:radial-gradient(1200px 700px at 20% -10%,#123a2c 0%,#050811 55%,#01040a 100%);color:#e8f5e9;font-family:system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+
+.bubbles{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.bubbles i{position:absolute;bottom:-140px;border-radius:50%;display:block;
+  background:radial-gradient(circle at 30% 30%,#7cffb0,#1f9d55 70%);
+  box-shadow:0 0 12px rgba(42,255,122,.45),inset -6px -8px 18px rgba(0,0,0,.25);
+  animation:naik linear infinite;opacity:.85}
+.bubbles i.gold{background:radial-gradient(circle at 30% 30%,#ffe08a,#d9a406 70%);
+  box-shadow:0 0 14px rgba(255,215,0,.5),inset -6px -8px 18px rgba(0,0,0,.25)}
+.bubbles i.blu{background:radial-gradient(circle at 30% 30%,#9ad6ff,#1d5fa6 70%);
+  box-shadow:0 0 14px rgba(90,180,255,.5),inset -6px -8px 18px rgba(0,0,0,.25)}
+@keyframes naik{
+  0%{transform:translateY(0) translateX(0) scale(1);opacity:.9}
+  50%{transform:translateY(-55vh) translateX(30px) scale(1.08);opacity:.75}
+  100%{transform:translateY(-130vh) translateX(-35px) scale(1.18);opacity:0}}
+
+.content,.nav{position:relative;z-index:1}
+
+header{background:rgba(5,8,17,.75);border-bottom:1px solid rgba(42,255,122,.25);padding:14px 20px 12px;text-align:center;backdrop-filter:blur(6px)}
+.bismillah{font-size:14px;color:#81c784;opacity:.7;margin-bottom:4px;letter-spacing:2px}
+header h1{font-size:clamp(18px,5vw,26px);color:#66bb6a;letter-spacing:3px;font-weight:700}
+.header-sub{font-size:10px;color:#81c784;opacity:.6;letter-spacing:4px;margin-top:3px}
+.tab-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding-top:10px}
+.tab{background:rgba(27,58,36,.5);color:#81c784;border:1px solid #2e7d32;padding:7px 14px;border-radius:20px;font-size:11px;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.tab:hover{background:#2e7d32;color:#fff}
+.tab.aktif{background:#66bb6a;color:#fff;border-color:#66bb6a}
+
+.content{width:100%;max-width:680px;margin:0 auto;padding:16px;flex:1;display:flex;flex-direction:column}
+.panel{display:none;flex:1;flex-direction:column;min-height:60vh}
+.panel.aktif{display:flex}
+
+.status-bar{color:#81c784;font-size:12px;margin:4px 0 10px;letter-spacing:1px;text-align:center}
+
+.chat-wrap{flex:1;display:flex;flex-direction:column;background:rgba(10,26,18,.55);border:1px solid #1b3a24;border-radius:14px;overflow:hidden;backdrop-filter:blur(4px)}
+.chat-area{flex:1;padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;min-height:280px;max-height:52vh}
+.msg{max-width:85%;padding:9px 12px;border-radius:14px;font-size:13px;line-height:1.5;word-wrap:break-word}
+.msg.user{align-self:flex-end;background:#2e7d32;color:#fff;border-bottom-right-radius:4px}
+.msg.bot{align-self:flex-start;background:rgba(27,58,36,.9);border:1px solid #2e7d32;border-bottom-left-radius:4px;color:#e8f5e9}
+.msg .lbl{font-size:9px;color:#81c784;letter-spacing:1px;margin-bottom:3px}
+.msg.kamus{border-left:3px solid #c9a84c}
+.msg.dayak{border-left:3px solid #66bb6a}
+.kick{text-align:center;font-size:10px;color:#81c784;opacity:.7;padding:2px 0}
+.chat-input{display:flex;gap:8px;padding:10px;border-top:1px solid #1b3a24;background:rgba(5,8,17,.6)}
+.lang-row{display:flex;gap:8px;padding:8px 12px 0}
+.lang-btn{flex:1;background:rgba(5,8,17,.6);color:#9ab8a4;border:1.5px solid #2d5a3a;border-radius:10px;padding:8px;font-weight:800;font-size:12px;cursor:pointer}
+.lang-btn.aktif{background:#2e8b57;color:#fff;border-color:#2e8b57}
+#chatInput{flex:1;background:#0a1a12;border:1px solid #2e7d32;color:#e8f5e9;font-size:14px;padding:11px 12px;border-radius:10px;outline:none}
+#chatInput::placeholder{color:#81c784;opacity:.5}
+.btn{background:#2e7d32;color:#fff;border:none;cursor:pointer;width:50px;height:50px;border-radius:10px;font-size:19px;transition:transform .2s;flex-shrink:0}
+.btn:hover{transform:scale(1.05)}
+.btn.recording{background:#e53935;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.voice-btn{background:transparent;border:1px solid #2e7d32;color:#81c784;cursor:pointer;font-size:11px;width:30px;height:30px;border-radius:50%;margin-top:6px;line-height:1;transition:all .2s;flex-shrink:0}
+.voice-btn:hover{background:#2e7d32;color:#fff}
+.voice-btn.playing{background:#66bb6a;color:#fff}
+
+.samakan-wrap{display:flex;flex-direction:column;gap:10px;flex:1}
+textarea{width:100%;flex:1;min-height:130px;background:#0a1a12;border:1px solid #2e7d32;color:#e8f5e9;font-size:14px;padding:12px;border-radius:10px;outline:none;resize:vertical;font-family:system-ui}
+textarea::placeholder{color:#81c784;opacity:.5}
+.samakan-btn{background:#2e7d32;color:#fff;border:none;padding:12px;border-radius:10px;font-size:14px;cursor:pointer;font-weight:700}
+.samakan-btn:active{background:#1b5e20}
+.hasil-samakan{flex:1;background:rgba(10,26,18,.55);border:1px solid #1b3a24;border-radius:14px;padding:14px;overflow-y:auto;min-height:220px}
+.item-kata{display:flex;gap:10px;align-items:baseline;padding:8px 10px;border-bottom:1px solid #1b3a24;font-size:13px}
+.item-kata:last-child{border-bottom:none}
+.item-kata .d{color:#66bb6a;font-weight:700;min-width:110px}
+.item-kata .i{color:#c9a84c}
+.chip{display:inline-block;background:#1b3a24;color:#81c784;font-size:9px;padding:2px 8px;border-radius:10px;margin-left:8px;letter-spacing:1px}
+.kosong{color:#81c784;text-align:center;padding:20px;font-size:12px}
+
+.acak-wrap{display:flex;flex-direction:column;gap:10px;flex:1}
+.acak-btn{background:#66bb6a;color:#fff;border:none;padding:14px;border-radius:10px;font-size:14px;cursor:pointer;font-weight:700}
+.acak-btn:active{background:#2e7d32}
+.kartu-acak{background:rgba(27,58,36,.6);border:1px solid #2e7d32;border-radius:14px;padding:22px;text-align:center}
+.kartu-acak .dayak{font-size:30px;font-weight:700;color:#66bb6a;letter-spacing:1px;margin-bottom:6px}
+.kartu-acak .arti{font-size:16px;color:#c9a84c;margin-bottom:4px}
+.kartu-acak .kat{font-size:10px;color:#81c784;letter-spacing:2px}
+.acak-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.mirip-item{background:rgba(27,58,36,.4);border:1px solid #1b3a24;padding:10px;border-radius:10px;cursor:pointer;transition:all .2s}
+.mirip-item:hover{border-color:#2e7d32;background:rgba(27,58,36,.8)}
+.mi-kata{color:#66bb6a;font-weight:700;font-size:14px}
+.mi-arti{color:#81c784;font-size:12px;margin-top:3px}
+
+footer{text-align:center;padding:16px;color:#81c784;font-size:11px;letter-spacing:2px;border-top:1px solid #1b3a24;margin-top:auto;position:relative;z-index:1;background:rgba(5,8,17,.6)}
+</style>
+</head>
+<body>
+
+<div class="bubbles" aria-hidden="true">
+  <i style="left:6%; width:90px;height:90px; animation-duration:11s; animation-delay:0s"></i>
+  <i class="gold" style="left:18%; width:55px;height:55px; animation-duration:9s; animation-delay:2s"></i>
+  <i class="blu" style="left:29%; width:110px;height:110px; animation-duration:14s; animation-delay:1s"></i>
+  <i style="left:42%; width:46px;height:46px; animation-duration:8s; animation-delay:3s"></i>
+  <i class="gold" style="left:55%; width:78px;height:78px; animation-duration:12s; animation-delay:1.5s"></i>
+  <i class="blu" style="left:66%; width:50px;height:50px; animation-duration:9.5s; animation-delay:4s"></i>
+  <i style="left:77%; width:120px;height:120px; animation-duration:15s; animation-delay:.5s"></i>
+  <i class="gold" style="left:88%; width:64px;height:64px; animation-duration:10s; animation-delay:2.5s"></i>
+  <i class="blu" style="left:13%; width:28px;height:28px; animation-duration:7s; animation-delay:5s"></i>
+  <i style="left:71%; width:34px;height:34px; animation-duration:6.5s; animation-delay:6s"></i>
+  <i class="gold" style="left:47%; width:22px;height:22px; animation-duration:6s; animation-delay:7s"></i>
+  <i class="blu" style="left:35%; width:18px;height:18px; animation-duration:5.5s; animation-delay:8s"></i>
+  <i style="left:93%; width:42px;height:42px; animation-duration:8.5s; animation-delay:3.5s"></i>
+  <i class="gold" style="left:4%; width:24px;height:24px; animation-duration:7.5s; animation-delay:9s"></i>
+</div>
+
+<header>
+  <div class="bismillah">🕊️</div>
+  <h1>AI NUR · TANYA JAWAB V3</h1>
+  <div class="header-sub">DAYAK NGAJU · PIRAMID GUARD 2026</div>
+  <div class="tab-row">
+    <button class="tab aktif" data-tab="chat" onclick="gantiTab('chat',this)">💬 Tanya Jawab</button>
+    <button class="tab" data-tab="samakan" onclick="gantiTab('samakan',this)">🔗 Kata Persamaan</button>
+    <button class="tab" data-tab="acak" onclick="gantiTab('acak',this)">🎲 Kamus Acak</button>
+  </div>
+</header>
+
+<main class="content">
+
+  <section class="panel aktif" id="panel-chat">
+    <div class="chat-wrap">
+      <div class="chat-area" id="chatArea"></div>
+      <div class="lang-row">
+        <button class="lang-btn" id="lang-dermayu" onclick="pilihBahasa('dermayu')">🌾 Dermayu</button>
+        <button class="lang-btn" id="lang-dayak" onclick="pilihBahasa('dayak')">🌀 Dayak</button>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="Tanya AI Nur / ketik kata Dermayu…"
+          autocomplete="off" onkeydown="if(event.key==='Enter')kirim()">
+        <button class="btn" id="btnMic" onclick="toggleMic()" title="Bicara / Mic">🎤</button>
+        <button class="btn" onclick="kirim()">▶</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-samakan">
+    <div class="samakan-wrap">
+      <textarea id="inputArtikel" placeholder="Tempel teks / artikel di sini…
+Contoh: Yaku kuman lauk dengang ikau di lewu.
+Ketik: /baca teks ...  juga didukung di chat."></textarea>
+      <button class="samakan-btn" onclick="samakanKata()">🔗 SAMAKAN KATA DENGAN KAMUS</button>
+      <div class="hasil-samakan" id="hasilSamakan">
+        <div class="kosong">Masukkan teks lalu tekan tombol di atas.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-acak">
+    <div class="acak-wrap">
+      <button class="acak-btn" onclick="acakKata()">🎲 AMBIL KATA ACAK</button>
+      <div id="kartuAcak"></div>
+      <div class="browser-grid acak-grid" id="acakGrid"></div>
+    </div>
+  </section>
+
+</main>
+
+<div class="status-bar" id="statusBar">⏳ Memuat kamus...</div>
+
+<footer>
+  ✦ Indramayu Club Makrifat · AI Nur V3 / Piramida Guard 2026 ✦<br>
+  <span style="font-size:10px;opacity:.5;margin-top:4px;display:block;">
+    Belajar Bahasa Dayak Ngaju — Kalimantan Tengah
+  </span>
+</footer>
+
+<script>
+const kamus = {
+  "aba": "bapak / ayah",
+  "abai": "ayah / bapak",
+  "ading": "adik",
+  "aka": "kakak / abang",
+  "akan": "kepadanya / untukmu",
+  "aku": "aku / saya",
+  "alem": "malam",
+  "ambu alem": "larut malam",
+  "amun": "kalau / jika",
+  "andau": "hari / siang hari",
+  "andi": "adik",
+  "andui": "mandi",
+  "apang": "bapak",
+  "apui": "api",
+  "ara": "nama",
+  "aran": "nama",
+  "arei": "banyak",
+  "arwah": "arwah / almarhum",
+  "aseng": "napas",
+  "asu": "anjing",
+  "atei": "hati",
+  "awing": "karena / oleh",
+  "ba": "biar",
+  "baba": "pintu",
+  "badungil": "nakal",
+  "baduruh": "jatuh (gugur) / runtuh / roboh",
+  "bagawi": "bekerja",
+  "gawi": "kerja / pekerjaan",
+  "bahalap": "cantik (bagus) / baik",
+  "bahanyi": "berani",
+  "bakas": "tua / orang tua",
+  "balajang": "bujang",
+  "balau": "rambut",
+  "bale": "balas / ranjang",
+  "balu": "janda / duda",
+  "banae": "suami",
+  "bapa": "bapak",
+  "bara": "dari",
+  "batarung": "terkenal / masyhur",
+  "batiruh": "tidur",
+  "batulak": "berangkat / pergi",
+  "bau": "muka (wajah)",
+  "bujak": "putih",
+  "buli": "pulang",
+  "cangkal": "rajin / tekun",
+  "ceha": "rebus",
+  "ceka": "pelit / kikir",
+  "cici": "cuci",
+  "cingkes": "capung",
+  "cohom": "asam (rasa)",
+  "cokok": "patuk (burung)",
+  "dahiang": "karat",
+  "danum": "air",
+  "dari": "lari",
+  "dawen": "daun",
+  "dengang": "dengan / bersama",
+  "dia": "tidak",
+  "dia purun": "tidak tega",
+  "dinu": "dapat / memperoleh",
+  "dua": "bagi / beri",
+  "due": "dua (angka)",
+  "duhi": "duri",
+  "dumah": "datang",
+  "edan": "dahan",
+  "ehet": "ikat / ketat",
+  "eka": "tempat",
+  "ela": "jangan",
+  "elo": "panggil",
+  "en": "apakah",
+  "esu": "cucu",
+  "eweh": "siapa",
+  "ewen": "mereka",
+  "faham": "sangat / sekali / hebat",
+  "fana": "fana / tidak kekal",
+  "gajah": "gajah",
+  "ganal": "besar",
+  "ganang": "kenang (ingat)",
+  "ganderang": "gendang",
+  "gangan": "sayur",
+  "gatel": "gatal",
+  "gatus": "ratus",
+  "gila": "gila",
+  "gite": "lihat",
+  "gohong": "sungai kecil / jeram",
+  "guang": "kejar",
+  "guha": "goa",
+  "hadari": "berlari",
+  "haguet": "berangkat / pergi",
+  "halemei": "sore",
+  "handau": "hari / siang hari",
+  "hanjak": "suka (senang)",
+  "hanjewu": "pagi",
+  "hatala": "tuhan",
+  "hete": "situ",
+  "hetuh": "sini",
+  "huma": "rumah",
+  "ie": "dia",
+  "ikau": "kamu / kau",
+  "ikaw": "kamu / kau",
+  "ikei": "kami",
+  "imbit": "bawa",
+  "indu": "ibu",
+  "itah": "kita",
+  "iye": "dia",
+  "jagao": "jantan",
+  "jela": "lidah",
+  "jeleng": "segera (cepat)",
+  "jewu": "besok",
+  "kalahi": "berkelahi",
+  "kambe": "hantu",
+  "keleh": "sebaiknya (sembuh)",
+  "ketun": "kalian",
+  "kuluk": "kepala",
+  "kuman": "makan",
+  "kurik": "kecil",
+  "lauk": "ikan",
+  "lenge": "tangan",
+  "lewu": "kampung (desa)",
+  "liau": "arwah / almarhum",
+  "maja": "bertamu",
+  "mampatei": "membunuh",
+  "mandai": "naik",
+  "mandui": "mandi",
+  "mangat": "enak (nyaman)",
+  "mananjung": "berjalan",
+  "manenga": "memberi",
+  "manyurat": "menulis",
+  "matei": "mati",
+  "metu": "hewan (binatang)",
+  "mihup": "minum",
+  "mimbit": "membawa",
+  "misik": "bangun tidur",
+  "munduk": "duduk",
+  "muta": "muntah",
+  "narai": "apa",
+  "nupi": "mimpi",
+  "oloh": "orang",
+  "uluh": "orang",
+  "papa": "jelek (kotor / jahat)",
+  "papa'": "jelek (kotor / jahat)",
+  "penda": "bawah",
+  "pehe": "sakit",
+  "pintar": "pintar",
+  "pire": "berapa",
+  "pusa": "kucing",
+  "rajin": "suka (rajin)",
+  "regan": "harga",
+  "sambil": "sambil",
+  "sangit": "marah",
+  "sawae": "istri",
+  "tabela": "anak-anak (muda)",
+  "tawan": "tahu (paham / kenal)",
+  "tehau": "panggil",
+  "tiruh": "tidur",
+  "tutu": "sangat (benar / asli)",
+  "ubah": "tukar (ganti)",
+  "uka": "untuk / agar",
+  "umba": "ikut",
+  "umbet": "berhenti",
+  "urung": "hidung",
+  "uyat": "leher",
+  "vihara": "vihara / rumah ibadah",
+  "vitamin": "vitamin / nutrisi tambahan",
+  "wahi": "madu / lebah madu",
+  "wakas": "tua / sesepuh (varian dari bakas)",
+  "walang": "belalang",
+  "walas": "balas",
+  "walat": "kualat / kuwalat",
+  "walu": "delapan",
+  "wanci": "waktu / saat",
+  "waras": "sembuh / sehat",
+  "wasi": "besi",
+  "watek": "watak / tabiat",
+  "wayah": "musim / waktu / zaman",
+  "wayang": "wayang / pertunjukan",
+  "yaku": "saya / aku",
+  "yate": "itu (penegasan)",
+  "yeh": "ya / betul (partikel penegas)",
+  "yesus": "yesus (khusus konteks religi)",
+  "yoh": "ya / oke",
+  "zaman": "zaman / masa",
+  "ziarah": "ziarah / mengunjungi makam",
+  "zikir": "zikir / doa"
+};
+const kamusDermayu = {
+  "kula": "saya (kula)",
+  "isun": "aku (reang / isun)",
+  "sira": "kamu (ira / sira)",
+  "rika": "kamu (sopan/tua) (rika)",
+  "sampeyan": "anda (sampeyan)",
+  "deweke": "dia (deweke / wonge)",
+  "reang": "saya/aku (akrab) (reang)",
+  "ira": "kamu (akrab) (ira)",
+  "sapa": "siapa (sapa / sapane)",
+  "pira": "berapa (pira)",
+  "priben": "bagaimana (priben / kepriben / priwe)",
+  "ngendi": "di mana (ngendi / nendi)",
+  "mengkene": "begini (mengkene / ngene)",
+  "mengkonon": "begitu (mengkonon / ngonon)",
+  "kene": "sini (kene)",
+  "kono": "situ (kono)",
+  "kana": "sana (kana)",
+  "iki": "ini (iki / kene)",
+  "kuen": "itu (kuen / kaen)",
+  "mlaku": "berjalan (mlaku)",
+  "turu": "tidur (turu / merem)",
+  "mangan": "makan (mangan / madang / nguntal)",
+  "nginum": "minum (nginum / ngorong)",
+  "adus": "mandi (adus)",
+  "gawe": "kerja / buat (gawe / kerja)",
+  "tuku": "beli (tuku)",
+  "tangi": "bangun tidur (tangi)",
+  "lungguh": "duduk (lungguh / ndodok)",
+  "manjing": "masuk (manjing)",
+  "metu": "keluar (metu / mabor)",
+  "mangkat": "berangkat (mangkat / OTW)",
+  "balik": "pulang (balik / kondur)",
+  "teka": "datang (teka / njedul)",
+  "gawa": "bawa (gawa)",
+  "deleng": "lihat (deleng / ndeleng)",
+  "krungu": "dengar (krungu)",
+  "ngomong": "bicara (ngomong / nggedobos)",
+  "nyilih": "pinjam (nyilih / silih)",
+  "wehi": "beri (keki / wehi / upai)",
+  "luru": "cari (luru / golet)",
+  "ngladeni": "melayani (ngladeni)",
+  "kesasar": "tersesat (kesasar / keblinger)",
+  "cilik": "kecil (cilik / mrenil)",
+  "gede": "besar (gede / gubrag)",
+  "lara": "sakit (lara / ngenes)",
+  "sehat": "sehat (sehat / seger)",
+  "pinter": "pintar (pinter)",
+  "bodo": "bodoh (bodo / gemblung / kenthir)",
+  "nesu": "marah (nesu / berengot)",
+  "seneng": "senang (seneng / demen)",
+  "sedih": "sedih (sedih / mewek)",
+  "anyar": "baru (anyar)",
+  "lawas": "lama/usang (lawas / bengen)",
+  "adoh": "jauh (adoh)",
+  "parek": "dekat (parek / perek)",
+  "ayu": "cantik (ayu / mentes)",
+  "ganteng": "tampan (ganteng / bagus)",
+  "wareg": "kenyang (wareg / mblendung)",
+  "luwe": "lapar (luwe / klenger)",
+  "panas": "panas terik (panas / ngentang-ngentang)",
+  "pegel": "pegal/capek (pegel / linu / puyeng)",
+  "apik": "bagus/keren (apik / becik)",
+  "esuk": "pagi (esuk)",
+  "awan": "siang (awan)",
+  "sore": "sore (sore)",
+  "wengi": "malam (wengi / peteng)",
+  "bengen": "dulu/tadi (bengen / dongen)",
+  "saiki": "sekarang (saiki / kien)",
+  "mengko": "nanti (mengko / ngko)",
+  "wingi": "kemarin (wingi)",
+  "sesuk": "besok (sesuk / suk)",
+  "ora": "tidak (ora / dudu)",
+  "mboten": "tidak (formal) (mboten)",
+  "langka": "tidak ada (langka / laka)",
+  "ana": "ada (ana / na)",
+  "iwak": "ikan / lauk (iwak)",
+  "banyu": "air (banyu)",
+  "umah": "rumah (umah / gubug)",
+  "dalan": "jalan (dalan)",
+  "segara": "laut (segara / laut)",
+  "batur": "teman (batur / jandalan)",
+  "jih": "sih / kok (jih)",
+  "tah": "kah / tah (tah)",
+  "belih": "bukan? / kan? (belih / lah)",
+  "meneng": "diam (meneng / mendelik)",
+  "wedhi": "pasir (wedhi)",
+  "macek": "memasang bata/ubin (macek / masang)",
+  "pancal": "cangkul (pancal / pacul)",
+  "linggis": "linggis (linggis)",
+  "blebeg": "papan kayu panjang (blebeg)"
+};
+const kataKunciDermayu = ["kula", "isun", "sira", "reang", "ira", "sapa", "pira", "priben", "ngendi", "mlaku", "turu", "mangan", "nginum", "adus", "tuku", "tangi", "metu", "teka", "deleng", "ngomong", "lara", "seneng", "nesu", "wengi", "saiki", "banyu", "umah", "dalan", "batur", "iwak"];
+const responsDermayu = ["Sugeng — jenengan mboten salah panggenan! Sistem Piramida Guard nampi kode jenengan ✅.", "Pemeriksaan rampung 🔍. Data jenengan sampun kasimpen kanthi aman ing server Indramayu Club.", "Sistem Piramida Guard 2026 ngamati aktivitas jenengan ⚡. Tetep jaga keamanan server utama.", "Matur nuwun wis nggunakake AI Nur! 🤖 Yen butuh bantuan, sesambung kaliyan Admin Dulkohar."];
+const responsIndo = ["Kode Anda telah diterima oleh sistem Piramida Guard ✅. Saya mendeteksi struktur valid. Pastikan data aman.", "Analisis selesai 🔍. Sistem berfungsi normal, data telah tersinkronisasi ke server Indramayu Club.", "Sistem Piramida Guard 2026 mendeteksi aktivitas Anda ⚡. Tetap amankan koordinat server utama.", "Terima kasih telah menggunakan AI Nur! 🤖 Untuk bantuan sistem lebih lanjut, silakan hubungi Admin Dulkohar."];
+const responsDayak = ["Kabar bahalap! Kode ikau uras jadi imasuk akan sistem Piramida Guard ✅. Struktur data basewut tutu, ela parah takutan salah.", "Pemeriksaan selesai 🔍. Amun tege parah tinai, aman melai layar, data jadi i-upload akan pangkalan data Indramayu Club ih?", "Sistem Piramida Guard 2026 manggawi instruksi ikau ⚡. Jagam tutu-tutu pangkalan data miar melai hureh.", "Terima kasih jadi hureh dengang AI Nur! 🤖 Amun tege pakat parah tinai, laku tolong dengang Abai Dulkohar ih."];
+const kataKunciDayak = ["narai", "ikau", "yaku", "kabar", "gawi", "laok", "bahalap", "bahanyi", "andui", "atei", "aka", "ading", "buli", "dumah", "kuman", "tiruh", "mangat", "lewu", "oloh", "uluh"];
+
+let idxIndo = 0, idxDayak = 0;
+let bahasaTerpilih = 'dermayu';
+
+function pilihBahasa(b){
+  bahasaTerpilih = b;
+  const live = document.querySelectorAll('.lang-btn');
+  for (let i = 0; i < live.length; i++) live[i].classList.remove('aktif');
+  const aktif = document.getElementById('lang-' + b);
+  if (aktif) aktif.classList.add('aktif');
+  const inp = document.getElementById('chatInput');
+  if (inp) inp.placeholder = b === 'dermayu'
+    ? 'Tanya AI Nur / ketik kata Dermayu…'
+    : 'Tanya AI Nur / ketik kata Dayak…';
+  setStatus('🌐 Bahasa: ' + (b === 'dermayu' ? 'Dermayu (Indramayu)' : 'Dayak Ngaju'), 'ok');
+}
+
+function kamusAktif(){ return bahasaTerpilih === 'dermayu' ? kamusDermayu : kamus; }
+
+// ══════════════════════════════════════════════════════
+// SERVER ALWI-BOT (VM3) — sama seperti index4.html
+// ══════════════════════════════════════════════════════
+const ALWI_BOT_URL = 'http://136.85.74.104:4500/api/chat';
+const KALKULATOR_URL = 'http://136.85.74.104:4000/api/kalkulator';
+
+function bersihkan(teks){
+  return teks.toLowerCase().trim().replace(/['’]/g,'');
+}
+
+function cariBahasa(teks){
+  const tb = bersihkan(teks);
+  const k = kamusAktif();
+  const nama = bahasaTerpilih === 'dermayu' ? 'Dermayu' : 'Dayak Ngaju';
+  if (k[tb]) return { tipe:'kamus', pesan:"🤖 AI Nur (Kamus " + nama + "): Arti dari '" + teks + "' adalah: <b>" + k[tb] + "</b>" };
+  const hasil = Object.keys(k).filter(function(x){ return k[x].toLowerCase().indexOf(tb) >= 0; });
+  if (hasil.length) return { tipe:'kamus', pesan:"🤖 AI Nur (Kamus " + nama + "): Kata '" + teks + "' dalam bahasa " + nama + " berarti: <b>" + hasil.join(', ') + "</b>" };
+  return null;
+}
+
+function samakanKata(){
+  const ta = document.getElementById('inputArtikel');
+  const v = ta.value;
+  if (!v || !v.trim()){
+    document.getElementById('hasilSamakan').innerHTML = '<div class="kosong">Masukkan teks dulu!</div>';
+    return;
+  }
+  const kata2 = v.toLowerCase().replace(/[^a-zA-Z\s]/g,' ').split(/\s+/).filter(function(w){ return w.length >= 2; });
+  let ketemu = {}, hasil = [];
+  for (let i = 0; i < kata2.length; i++){
+    const kata = kata2[i];
+    if (ketemu[kata]) continue;
+    if (kamus[kata]){
+      hasil.push({ kata: kata, arah:'d', makna: kamus[kata] });
+      ketemu[kata] = 1;
+    } else {
+      let jod = null;
+      for (const dayak in kamus){
+        const parts = kamus[dayak].toLowerCase().split(/[\s/]+/);
+        if (parts.indexOf(kata) >= 0){ jod = dayak; break; }
+      }
+      if (jod){ hasil.push({ kata: kata, arah:'i', makna: jod }); ketemu[kata] = 1; }
+    }
+  }
+  renderSamakan(hasil, kata2.length);
+}
+
+function renderSamakan(hasil, totalKata){
+  const box = document.getElementById('hasilSamakan');
+  if (!hasil.length){
+    box.innerHTML = '<div class="kosong">❌ Tidak ditemukan kata dari teks yang ada di dalam kamus.</div>';
+    setStatus('🔗 0 kata cocok dari ' + totalKata + ' kata dalam teks','');
+    return;
+  }
+  setStatus('🔗 ' + hasil.length + ' kata cocok dari ' + totalKata + ' kata dalam teks','');
+  let s = '<div class="item-kata" style="font-size:10px;color:#9a8050;letter-spacing:1px;padding-bottom:6px">KATA PERSAMAAN DITEMUKAN (' + hasil.length + ')</div>';
+  for (let i = 0; i < hasil.length; i++){
+    const h = hasil[i];
+    s += h.arah === 'd'
+      ? '<div class="item-kata"><span class="d">' + h.kata + '</span><span class="chip">Dayak</span><span class="i">➤ ' + h.makna + '</span></div>'
+      : '<div class="item-kata"><span class="d">' + h.kata + '</span><span class="chip">Indo</span><span class="i">➤ Dayak: ' + h.makna + '</span></div>';
+  }
+  box.innerHTML = s;
+}
+
+function tambahMsg(tipe, teks, cls){
+  const area = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = 'msg ' + tipe + (cls ? ' ' + cls : '');
+  if (tipe === 'bot'){
+    const bersih = new DOMParser().parseFromString(teks,'text/html').body.textContent;
+    div.innerHTML = '<div class="lbl">🤖 AI NUR</div>' + teks
+      + '<div style="text-align:right"><button class="voice-btn" data-bs="' + bersih.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;') + '" onclick="bacaSuara(this)" title="🔊 Baca suara">🔊</button></div>';
+  } else {
+    div.innerHTML = teks;
+  }
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function kirim(){
+  const inp = document.getElementById('chatInput');
+  const v = inp.value.trim();
+  if (!v) return;
+  tambahMsg('user', v.replace(/</g,'&lt;'));
+  inp.value = '';
+  prosesBot(v);
+}
+
+function tempoProcessing(fn){
+  setTimeout(fn, 500);
+}
+
+// ══════════════════════════════════════════════════════
+// KALKULATOR (server :4000) — pola soal matematika
+// ══════════════════════════════════════════════════════
+const POLA_SOALIN = /^\s*\d+(?:[.,]\d+)?\s*[\+\-\*x/÷]\s*\d+(?:[.,]\d+)?\s*(?:[\+\-\*x/÷]\s*\d+(?:[.,]\d+)?)*\s*$/i;
+
+function cobaKalkulator(prompt){
+  return new Promise(function(resolve){
+    try {
+      if (!POLA_SOALIN.test(prompt.trim())) return resolve(null);
+      const soal = prompt.trim().replace(/,/g,'.').replace(/x/gi,'*').replace(/÷/g,'/');
+      fetch(KALKULATOR_URL + '?soal=' + encodeURIComponent(soal), { method:'GET' })
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          if (data && data.ok && data.hasil !== undefined) resolve('🧮 ' + soal + ' = ' + data.hasil);
+          else resolve(null);
+        })
+        .catch(function(){ resolve(null); });
+    } catch(e){ resolve(null); }
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// PENCARIAN WEB (Google News RSS) — seperti index4.html
+// ══════════════════════════════════════════════════════
+function cariBeritaWeb(q){
+  return new Promise(function(resolve){
+    try {
+      const topik = (q || '').replace(/^(cari|berita)\s+/i,'').trim() || 'berita terbaru Indonesia hari ini';
+      const bypassUrl = 'http://136.85.74.104:8081/ddg-json?q=' + encodeURIComponent(topik);
+      const rssUrl = 'https://news.google.com/rss/search?q=' + encodeURIComponent(topik) + '&hl=id&gl=ID&ceid=ID:id';
+      const matcher = function(b, tag){
+        const mmm = b.match(new RegExp('<' + tag + '[^>]*>([\s\S]*?)</' + tag + '>', 'i'));
+        return mmm ? mmm[1].replace(/<!\[CDATA\[|\]\]>/g,'').replace(/<[^>]+>/g,'').trim() : '';
+      };
+      fetch(bypassUrl, { headers: { 'User-Agent': 'AlwiBot/1.0' } })
+        .then(function(r){ return r.text(); })
+        .then(function(txt){
+          let data = null;
+          try { data = JSON.parse(txt); } catch(e){}
+          const hasil = [];
+          if (data && data.results){
+            for (let i = 0; i < data.results.length && hasil.length < 5; i++){
+              const h = data.results[i];
+              if (h.title) hasil.push('🔎 ' + h.title + (h.snippet ? ' — ' + h.snippet.slice(0,90) : ''));
+            }
+          }
+          if (hasil.length){
+            const NL10 = String.fromCharCode(10);
+            resolve('🔎 *HASIL PENCARIAN: ' + topik + '*' + NL10 + hasil.join(NL10) + NL10 + NL10 + '🌐 Portal: https://nurindramayuaimini3311.github.io/Indramayu_nur/');
+          } else { return null; }
+        })
+        .then(function(fallbackHasil){
+          if (fallbackHasil) { resolve(fallbackHasil); return; }
+          return fetch(rssUrl, { headers: { 'User-Agent': 'AlwiBot/1.0' } }).then(function(r){ return r.text(); }).then(function(xml){
+            const itemRegex = /<item>([\s\S]*?)<\/item>/gi;
+            const hasil2 = [];
+            let mm;
+            while ((mm = itemRegex.exec(xml)) !== null && hasil2.length < 5){
+              const block = mm[1];
+              const title = matcher(block, 'title');
+              const source = matcher(block, 'source');
+              const pubDate = matcher(block, 'pubDate');
+              if (title){
+                let info = '📰 ' + title;
+                if (source) info += ' — ' + source;
+                if (pubDate){
+                  const d = new Date(pubDate);
+                  info += ' (' + d.toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' }) + ')';
+                }
+                hasil2.push(info);
+              }
+            }
+            const NL10 = String.fromCharCode(10);
+            if (hasil2.length) return '📰 *HASIL BERITA: ' + topik + '*' + NL10 + hasil2.join(NL10) + NL10 + NL10 + '🌐 Portal: https://nurindramayuaimini3311.github.io/Indramayu_nur/';
+            return null;
+          });
+        })
+        .then(function(akhir){
+          if (akhir) resolve(akhir);
+          else resolve(null);
+        })
+        .catch(function(){ resolve(null); });
+    } catch(e){ resolve(null); }
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// CHAT SERVER Alwi-Bot (WA :4500) — seperti index4.html
+// ══════════════════════════════════════════════════════
+function tanyaServer(prompt){
+  return fetch(ALWI_BOT_URL, {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json' },
+    body: JSON.stringify({ message: prompt })
+  }).then(function(res){
+    if (!res.ok) throw new Error('Gagal tersambung ke Bot Alwi (WhatsApp)');
+    return res.json();
+  }).then(function(data){
+    return data.reply || '(kosong)';
+  });
+}
+
+function prosesBot(v){
+  const low = v.toLowerCase();
+
+  if (low === 'keluar' || low === 'exit'){
+    tambahMsg('bot','🤖 AI Nur: Mengamankan sistem... Sampai jumpa!','dayak'); return;
+  }
+
+  if (low.indexOf('/baca ') === 0){
+    setTimeout(function(){
+      const k = kamusAktif();
+      const nama = bahasaTerpilih === 'dermayu' ? '[Dermayu]' : '[Dayak]';
+      const artikel = v.slice(6);
+      const kata2 = artikel.toLowerCase().replace(/[^a-zA-Z\s]/g,' ').split(/\s+/).filter(function(w){ return w.length >= 2; });
+      let ketemu = {}, hasil = [];
+      for (let i = 0; i < kata2.length; i++){
+        const kt = kata2[i];
+        if (ketemu[kt]) continue;
+        if (k[kt]){ hasil.push('🟢 ' + nama + ' ' + kt + ' ➤ ' + k[kt]); ketemu[kt] = 1; }
+        else {
+          for (const key in k){
+            if (k[key].toLowerCase().split(/[\s/]+/).indexOf(kt) >= 0){
+              hasil.push('🔵 [Indo] ' + kt + ' ➤ ' + nama + ': ' + key); ketemu[kt] = 1; break;
+            }
+          }
+        }
+      }
+      tambahMsg('bot',
+        hasil.length ? '📖 Ditemukan <b>' + hasil.length + '</b> kosakata dalam teks:<br>&nbsp;&nbsp;' + hasil.join('<br>&nbsp;&nbsp;')
+                     : '❌ Tidak ditemukan kata dari teks yang ada di dalam kamus.', 'kamus');
+    }, 450);
+    return;
+  }
+
+  tempoProcessing(function(){
+    const hasil = cariBahasa(v);
+    if (hasil){ tambahMsg('bot', hasil.pesan, 'kamus'); return; }
+
+    // 1) KALKULATOR — deteksi pola soal
+    cobaKalkulator(v).then(function(kalk){
+      if (kalk){ tambahMsg('bot', kalk, 'kamus'); return; }
+
+      // 2) PENCARIAN WEB — cari/berita
+      return cariBeritaWeb(v);
+    }).then(function(berita){
+      if (berita){ tambahMsg('bot', berita, 'kamus'); return; }
+
+      // 3) DETEKSI BAHASA LOKAL (sesuai pilihan: Dayak/Dermayu)
+      const kataKunci = bahasaTerpilih === 'dermayu' ? kataKunciDermayu : kataKunciDayak;
+      let isLokal = false;
+      for (let i = 0; i < kataKunci.length; i++){
+        if (low.indexOf(kataKunci[i]) >= 0){ isLokal = true; break; }
+      }
+      if (isLokal){
+        const responsLokal = bahasaTerpilih === 'dermayu' ? responsDermayu : responsDayak;
+        const r = responsLokal[idxDayak % responsLokal.length]; idxDayak++;
+        tambahMsg('bot', r, 'dayak'); return;
+      }
+
+      // 4) CHAT SERVER Alwi-Bot (WA :4500)
+      return tanyaServer(v);
+    }).then(function(jawabanServer){
+      if (jawabanServer){ tambahMsg('bot', jawabanServer, 'server'); }
+    }).catch(function(e){
+      tambahMsg('bot', '❌ Error: ' + (e.message || 'terjadi kesalahan'), 'kamus');
+    });
+  });
+}
+
+function acakKata(){
+  const k = kamusAktif();
+  const keys = Object.keys(k);
+  const x = keys[Math.floor(Math.random() * keys.length)];
+  document.getElementById('kartuAcak').innerHTML =
+    '<div class="kartu-acak"><div class="dayak">' + x + '</div><div class="arti">“' + k[x] + '”</div><div class="kat">' + (bahasaTerpilih === 'dermayu' ? 'DERMAYU · ACAK' : 'DAYAK NGAJU · ACAK') + '</div></div>';
+  setStatus('🎲 ' + x + ' = ' + k[x], 'ok');
+}
+
+function lihatSemua(){
+  const k = kamusAktif();
+  const keys = Object.keys(k);
+  let s = '';
+  for (let i = 0; i < keys.length; i++){
+    s += '<div class="mirip-item"><div class="mi-kata">' + keys[i] + '</div><div class="mi-arti">' + k[keys[i]] + '</div></div>';
+  }
+  document.getElementById('acakGrid').innerHTML = keys.length ? s : '<div class="kosong">Kamus kosong.</div>';
+}
+
+function gantiTab(nama, el){
+  const tabs = document.querySelectorAll('.tab');
+  for (let i = 0; i < tabs.length; i++) tabs[i].classList.remove('aktif');
+  const panels = document.querySelectorAll('.panel');
+  for (let i = 0; i < panels.length; i++) panels[i].classList.remove('aktif');
+  document.getElementById('panel-' + nama).classList.add('aktif');
+  el.classList.add('aktif');
+}
+
+// ══════════════════════════════════════════════════════
+// SUARA (TTS) — Web Speech API
+// ══════════════════════════════════════════════════════
+function ttsPlay(teks, btn){
+  if (!('speechSynthesis' in window)){
+    setStatus('⚠️ Browser tidak mendukung suara', 'err'); return;
+  }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(teks);
+  u.lang = 'id-ID'; u.rate = 0.9; u.pitch = 1.0;
+  if (btn){
+    document.querySelectorAll('.voice-btn').forEach(function(b){ b.classList.remove('playing'); });
+    btn.classList.add('playing');
+    u.onend = function(){ btn.classList.remove('playing'); };
+  }
+  setStatus('🔊 Memutar: "' + teks.slice(0,60) + '..."', 'info');
+  window.speechSynthesis.speak(u);
+}
+
+function bacaSuara(btn){
+  const t = btn.getAttribute('data-bs');
+  if (t) ttsPlay(t.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>'), btn);
+}
+
+// ══════════════════════════════════════════════════════
+// MIC (SPEECH RECOGNITION)
+// ══════════════════════════════════════════════════════
+let recognition = null;
+function toggleMic(){
+  const btn = document.getElementById('btnMic');
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
+    setStatus('⚠️ Browser tidak mendukung input suara', 'err'); return;
+  }
+  if (recognition){
+    recognition.stop(); recognition = null;
+    btn.textContent = '🎤'; btn.classList.remove('recording'); return;
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang = 'id-ID'; recognition.interimResults = false;
+  recognition.onstart = function(){
+    btn.textContent = '🔴'; btn.classList.add('recording');
+    setStatus('🎤 Mendengarkan...', 'info');
+  };
+  recognition.onresult = function(e){
+    const kata = e.results[0][0].transcript.trim();
+    document.getElementById('chatInput').value = kata;
+    kirim();
+  };
+  recognition.onerror = function(){
+    btn.textContent = '🎤'; btn.classList.remove('recording'); recognition = null;
+    setStatus('❌ Gagal menangkap suara', 'err');
+  };
+  recognition.onend = function(){
+    btn.textContent = '🎤'; btn.classList.remove('recording'); recognition = null;
+  };
+  recognition.start();
+}
+
+function setStatus(msg, tipe){
+  const el = document.getElementById('statusBar');
+  el.textContent = msg;
+  el.className = 'status-bar ' + (tipe || '');
+}
+
+window.onload = function(){
+  pilihBahasa('dermayu');
+  setStatus('Siap · ' + Object.keys(kamusAktif()).length + ' kata · ' + (bahasaTerpilih === 'dermayu' ? 'Dermayu' : 'Dayak Ngaju') + ' tersedia', 'ok');
+  tambahMsg('bot','Halo! Aku <b>AI Nur · Piramida Guard 2026</b> 🤖<br>Pilih bahasa di atas (🌾 Dermayu / 🌀 Dayak), tanya kata, atau ketik <b>cari &lt;topik&gt;</b> untuk berita web.', 'dayak');
+};
+
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && document.activeElement.id === 'chatInput') kirim();
+});
+</script>
+<script src="alwi_bubble4.js"></script>
+</body>
+</html>
