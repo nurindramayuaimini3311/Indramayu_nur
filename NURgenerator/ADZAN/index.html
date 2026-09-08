@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ADZAN — Audio</title>
+<link rel="stylesheet" href="../css/style.css">
+<style>
+ul{list-style:none;max-width:520px;margin:14px auto;padding:0 12px}
+li{margin-bottom:8px}
+button{width:100%;background:#1b3a24;color:#e8f5e9;border:1px solid #2e7d32;border-radius:10px;padding:12px 14px;font-size:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left}
+button:hover{background:#2e7d32}
+.playing{background:linear-gradient(90deg,#2e7d32,#1b5e20)}
+.now{font-size:11px;color:#81c784}
+audio{width:100%}
+</style>
+</head>
+<body>
+<h1 style="text-align:center;color:#66bb6a">🔊 ADZAN</h1>
+<p style="text-align:center;color:#81c784;font-size:13px">Pilih adzan untuk diputar</p>
+<div id="list"></div>
+<audio id="ap" controls style="position:sticky;bottom:10px;margin-top:10px"></audio>
+
+<script>
+var files=[
+"Adzan-Bosnia.mp3","Adzan-Misyari-Rasyid.mp3","Adzan-Shubuh-Abu-Hazim.mp3",
+"Adzan-imam-Malaysia.mp3","Mecca-Adzan-2.mp3","Pakistan-Adzan.mp3","Syria-Adzan.mp3",
+"adan_madinah_32_16.mp3","adhan_from_hawai_by_abderrahim_ed.mp3","adzan_uea.mp3",
+"alaqsa1_64_22.mp3","alaqsa2_64_22.mp3","athan_egypt.mp3",
+"doa_ketika_mendengarkan_adzan_by_saad_al-ghamidi.mp3","doa_sesudah_adzan.mp3",
+"ezan_from_europe.mp3","fajr_128_44.mp3","iqama.mp3","mecca_56_22.mp3"
+];
+function lb(n){return n.replace(/\.mp3$/,"").replace(/_/g," ").replace(/\b\w/g,function(c){return c.toUpperCase();});}
+var list=document.getElementById("list");
+files.forEach(function(f){
+  var li=document.createElement("li");
+  var b=document.createElement("button");
+  b.innerHTML="<span>"+lb(f)+"</span><span class='now'>▶</span>";
+  b.onclick=function(){
+    var ap=document.getElementById("ap");
+    ap.src="./"+f;
+    ap.play();
+    document.querySelectorAll("button").forEach(function(x){x.classList.remove("playing");});
+    b.classList.add("playing");
+    b.querySelector(".now").textContent="🔊";
+  };
+  li.appendChild(b);list.appendChild(li);
+});
+</script>
+<script src="../alwi_bubble4.js"></script>
+</body>
+</html>

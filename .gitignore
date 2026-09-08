@@ -37,3 +37,6 @@ tunneling.sh
 NURgenerator/node_modules/
 node_modules/
 .wrangler
+
+# mp3 adzan besar — simpan di server, bukan di repo
+NURgenerator/ADZAN/*.mp3
