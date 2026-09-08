@@ -181,8 +181,19 @@
   #vpsDash .bnav.active{ background:var(--muda); color:var(--tua); }
   #vpsDash .bnav span{ font-size:22px; }
 </style>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<div class="bubbles" aria-hidden="true">
+  <i style="left:6%; width:90px;height:90px; animation-duration:11s; animation-delay:0s"></i>
+  <i class="gold" style="left:18%; width:55px;height:55px; animation-duration:9s; animation-delay:2s"></i>
+  <i class="blu" style="left:29%; width:110px;height:110px; animation-duration:14s; animation-delay:1s"></i>
+  <i style="left:55%; width:78px;height:78px; animation-duration:12s; animation-delay:1.5s"></i>
+  <i class="blu" style="left:66%; width:50px;height:50px; animation-duration:9.5s; animation-delay:4s"></i>
+  <i class="gold" style="left:88%; width:64px;height:64px; animation-duration:10s; animation-delay:2.5s"></i>
+  <i class="blu" style="left:13%; width:28px;height:28px; animation-duration:7s; animation-delay:5s"></i>
+  <i class="gold" style="left:4%; width:24px;height:24px; animation-duration:7.5s; animation-delay:9s"></i>
+</div>
 
 <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
 
@@ -336,8 +347,8 @@
 
   <script id="vpsDashJs">
     const FILES = [
-      { name: "FOLDER ADZAN", path: "ADZAN/", icon: "📁", cat: "sholat", desc: "Galeri & Kumpulan Audio Adzan" },
-      { name: "DASHBOARD ADZAN", path: "ADZAN/DASHBOARD.html", icon: "🕋", cat: "sholat", desc: "Dashboard Pemutar Adzan" },
+      { name: "FOLDER ADZAN", path: "ADZAN/", icon: "📁", cat: "sholat", desc: "Dashboard Adzan" },
+      { name: "GALERI ADZAN", path: "ADZAN/gallery_adzan.html", icon: "🖼️", cat: "sholat", desc: "Galeri & Kumpulan Audio" },
       { name: "PLAYER ADZAN", path: "ADZAN/player.html", icon: "🎵", cat: "sholat", desc: "Player Audio Adzan Internal" },
       { name: "JADWAL SHOLAT", path: "JADWAL_sholat.html", icon: "🕌", cat: "sholat", desc: "Jadwal Sholat Indramayu" },
       { name: "AUDIO ADZAN UTAMA", path: "adzan.html", icon: "🔊", cat: "sholat", desc: "Audio Adzan Otomatis" },
@@ -354,7 +365,10 @@
       { name: "LIVE1 ADMIN", path: "LIVE1-ADMIN-082147573665.html", icon: "👑", cat: "live", desc: "Live Admin Indramayu" },
       { name: "LIVE BACKUP", path: "LIVE1-backup.html", icon: "🛡️", cat: "live", desc: "Backup Panggung Live" },
       { name: "MEDIA PLAYER", path: "player.html", icon: "▶️", cat: "media", desc: "Player Audio & Video" },
-      { name: "GALERI GAMBAR", path: "gambar/", icon: "🖼️", cat: "media", desc: "Folder Aset Gambar" }
+      { name: "DASHBOARD ADZAN", path: "adzan-dashboard.html", icon: "📊", cat: "sholat", desc: "Dashboard monitoring adzan" },
+      { name: "KALKULATOR ALWI", path: "alwi_kalkulator.html", icon: "🧮", cat: "media", desc: "Kalkulator mic & suara" },
+      { name: "GOOGLE CALC", path: "google_calc.html", icon: "🔢", cat: "media", desc: "Kalkulator google style" },
+      { name: "MARQUEE ADZAN", path: "marquee_adzan.html", icon: "📜", cat: "adzan", desc: "Teks berjalan jadwal adzan" }
     ];
 
     const META_PAGES = [
@@ -457,6 +471,7 @@
   })();
   if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function(){}); }
 </script>
+<script src="alwi_bubble4.js"></script>
 </body>
 </html>
 

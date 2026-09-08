@@ -3,49 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>📖 Quran — Ibadah</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+<title>📖 Al-Qur'an 114 Surah — Ibadah</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',system-ui,sans-serif;background:#f6f9f4;color:#123524;min-height:100vh;padding:18px}
 .wrap{max-width:760px;margin:0 auto}
 .head{text-align:center;background:linear-gradient(135deg,#14532d,#166534);color:#fff;border-radius:20px;padding:26px 16px;margin-bottom:16px}
-.head .ic{font-size:44px}
+.head .ic{font-size:40px}
 .head h1{font-size:22px;font-weight:900;margin-top:6px}
 .head p{font-size:12px;color:#d9f2e0;margin-top:4px}
-.panel{background:#fff;border:2px solid #dce8d8;border-radius:16px;padding:18px;margin-bottom:14px}
-.panel h2{font-size:16px;font-weight:900;color:#14532d;margin-bottom:10px}
-.ay{display:flex;align-items:center;gap:12px;padding:11px 14px;border:2px solid #eef4ec;border-radius:12px;margin-bottom:8px;background:#fafcf9}
-.ay .num{background:#16a34a;color:#fff;min-width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:12px}
-.ay .txt{font-size:14px;line-height:1.9;font-weight:600}
-.ay .ar{font-size:20px;line-height:2;color:#14532d;text-align:right}
-.back{display:block;text-align:center;background:#123524;color:#fff;text-decoration:none;font-weight:700;padding:13px;border-radius:12px;margin-top:16px;font-size:14px}
-.back:hover{background:#16a34a}
+.search{background:#fff;border:2px solid #dce8d8;border-radius:12px;padding:4px 12px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.search input{flex:1;border:none;outline:none;padding:11px 0;font-size:14px;font-family:inherit;background:transparent;color:#123524}
+.slist{background:#fff;border:2px solid #dce8d8;border-radius:16px;overflow:hidden;margin-bottom:14px}
+.srow{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #eef4ec;cursor:pointer}
+.srow:hover{background:#eef7ef}
+.srow:last-child{border-bottom:none}
+.srow .num{background:#16a34a;color:#fff;min-width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:12px}
+.srow .nm{flex:1}
+.srow .nm b{font-size:14px;font-weight:900;display:block}
+.srow .nm small{font-size:11px;color:#6b7f72}
+.srow .ar{font-family:'Amiri',serif;font-size:20px;color:#14532d}
+.ayah{background:#fff;border:2px solid #dce8d8;border-radius:16px;padding:16px;margin-bottom:10px}
+.ayah .meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.ayah .meta b{color:#14532d;font-size:15px;font-weight:900}
+.ayah .ar{font-family:'Amiri',serif;font-size:24px;line-height:2.1;color:#14532d;text-align:right;margin-bottom:8px}
+.ayah .id{font-size:14px;line-height:1.9;color:#35553f}
+.btns{display:flex;gap:8px;margin:14px 0}
+.btns a{flex:1;text-align:center;background:#123524;color:#fff;text-decoration:none;font-weight:700;padding:13px;border-radius:12px;font-size:14px}
+.btns a:hover{background:#16a34a}
+.btns a.sec{background:#166534}
 </style>
 </head>
 <body>
 <div class="wrap">
-<div class="head"><div class="ic">📖</div><h1>QURAN</h1><p>Pembuka surah — bacaan ringan untuk hati</p></div>
 
-<div class="panel">
-<h2>🕋 QS. Al-Fatihah <span style="color:#f59e0b;font-size:12px">(Pembukaan)</span></h2>
-<div class="ay"><div class="num">1</div><div class="txt">Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.</div></div>
-<div class="ay"><div class="num">2</div><div class="txt">Segala puji bagi Allah, Tuhan seluruh alam.</div></div>
-<div class="ay"><div class="num">3</div><div class="txt">Yang Maha Pengasih, Maha Penyayang.</div></div>
-<div class="ay"><div class="num">4</div><div class="txt">Pemilik hari pembalasan.</div></div>
-<div class="ay"><div class="num">5</div><div class="txt">Hanya kepada-Mu kami menyembah dan hanya kepada-Mu kami mohon pertolongan.</div></div>
-<div class="ay"><div class="num">6</div><div class="txt">Tunjukilah kami jalan yang lurus.</div></div>
-<div class="ay"><div class="num">7</div><div class="txt">Jalan orang-orang yang Engkau beri nikmat, bukan yang Engkau murkai, dan bukan pula yang sesat.</div></div>
+<div class="head"><div class="ic">📖</div><h1>AL-QUR'AN</h1><p id="sub">Memuat 114 surah…</p></div>
+
+<div id="list"></div>
+
+<script>
+var Q=[];
+fetch("quran-114.json").then(function(r){return r.json();}).then(function(d){
+  Q=d;
+  document.getElementById("sub").textContent="105 surah Makkiyah & Madaniyah — "+Q.length+" surah siap dibaca";
+  render(""); render1(Q[0]);
+}).catch(function(e){document.getElementById("list").innerHTML="<p style='text-align:center;color:#dc2626'>Gagal memuat Al-Qur'an.</p>";});
+
+function render(q){
+  var el=document.getElementById("list");
+  if(!Q.length)return;
+  var hit=Q.filter(function(s){return !q || s.name.indexOf(q)>-1 || s.en.toLowerCase().indexOf(q.toLowerCase())>-1;});
+  var html='<div class="search"><input id="q" placeholder="Cari surah (Al-Fatihah / Pembukaan)…" value="'+q+'" oninput="catchp()"><span>🔍</span></div>';
+  html+='<div id="body">'+hit.map(function(s,i){
+    return '<div class="srow" onclick="renderS('+s.number+')"><div class="num">'+s.number+'</div><div class="nm"><b>'+s.name+'</b><small>'+s.en+' · '+s.revel+' · '+s.ayahs.length+' ayat</small></div><div class="ar" style="text-align:right">'+s.name+'</div></div>';
+  }).join('')+'</div>';
+  el.innerHTML=html;
+}
+function catchp(){var v=document.getElementById("q").value;render(v);}
+function renderS(n){
+  var s=Q[n-1];
+  var html='<div style="margin-bottom:12px;display:flex;gap:8px"><button onclick="render(\'\')" style="flex:1;background:#123524;color:#fff;border:none;border-radius:12px;padding:12px;font-weight:700;cursor:pointer">← Daftar Surah</button><button onclick=window.scrollTo({top:0,behavior:"smooth"}) style="flex:1;background:#166534;color:#fff;border:none;border-radius:12px;padding:12px;font-weight:700;cursor:pointer">↑ Atas</button></div>';
+  html+='<div class="head" style="margin-bottom:14px"><div class="ic">📖</div><h1>'+s.name+'</h1><p>'+s.en+' · '+s.revel+' · '+s.ayahs.length+' ayat</p></div>';
+  s.ayahs.forEach(function(a){
+    html+='<div class="ayah"><div class="meta"><b>Ayat '+a.n+'</b><span style="font-size:11px;color:#6b7f72">'+s.name+' : '+a.n+'</span></div><div class="ar">'+a.ar+'</div><div class="id">'+a.id+'</div></div>';
+  });
+  document.getElementById("list").innerHTML=html;
+}
+function render1(s){ if(s) renderS(s.number); }
+</script>
+
+<div class="btns">
+  <a href="diskusi/">💬 Diskusi Al-Quran</a>
+  <a class="sec" href="index.html">🔙 Menu Ibadah</a>
 </div>
 
-<div class="panel">
-<h2>🤲 Doa Setelah Adzan (Ringkas)</h2>
-<p style="font-size:14px;line-height:1.9">"Allahumma rabba hadzihid-da'watit-tammah, was-shalatil-qaimah, ati Muhammadanil-wasilata wal-fadhilah, wab'ats-hu maqamam-mahmudanilladzi wa'attah."</p>
-<p style="font-size:12px;color:#6b7f72;margin-top:8px">Ya Allah, Rabb pemilik seruan yang sempurna dan sholat yang akan ditegakkan ini, berilah Muhammad al-wasilah dan keutamaan, serta bangkitkanlah dia di tempat terpuji yang telah Engkau janjikan. (HR. Bukhari)</p>
-</div>
-
-<a class="back" href="diskusi/">💬 Diskusi Al-Quran</a>
-<a class="back" style="background:#166534" href="index.html">🔙 Kembali ke Menu Ibadah</a>
 </div>
 <script src="../../alwi_bubble4.js"></script>
 </body>
