@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Kartu Alwi — NURgenerator</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="img/icon-512.png" type="image/png">
+<meta name="theme-color" content="#2aff7a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Fredoka',system-ui,sans-serif;background:#0a1a12;color:#e8f5e9;min-height:100vh;padding:16px 12px 90px}
+h1{text-align:center;font-size:1.3rem;color:#66bb6a;margin:12px 0 4px}
+p.sub{text-align:center;font-size:0.8rem;color:#81c784;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:600px;margin:0 auto}
+@media(max-width:480px){.grid{grid-template-columns:repeat(2,1fr)}}
+.card{background:#1b3a24;border:2px solid #2e7d32;border-radius:16px;padding:18px 10px 14px;text-align:center;text-decoration:none;color:#e8f5e9;display:flex;flex-direction:column;align-items:center;gap:6px;transition:transform .12s,box-shadow .12s}
+.card:active{transform:scale(.95)}
+.card .ic{font-size:36px}
+.card b{font-size:0.82rem;line-height:1.2}
+.card small{font-size:0.65rem;color:#a5d6a7}
+</style>
+<script>
+if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(e){console.warn("SW:",e)});}
+</script>
+</head>
+<body>
+
+<h1>⛑️ Kartu Alwi</h1>
+<p class="sub">Pilih menu favoritmu — ringan & cepat!</p>
+
+<div class="grid">
+  <a class="card" href="ibadah/">
+    <div class="ic">📿</div><b>Ibadah</b><small>Sholat & Adzan</small>
+  </a>
+  <a class="card" href="meta/">
+    <div class="ic">☪️</div><b>Meta</b><small>Pusat Video & Fitur</small>
+  </a>
+  <a class="card" href="netflix/">
+    <div class="ic">🎬</div><b>Netflix</b><small>NURFLIX Video</small>
+  </a>
+  <a class="card" href="peta/">
+    <div class="ic">🗺️</div><b>Peta</b><small>Jelajah Dunia</small>
+  </a>
+  <a class="card" href="kalkulator1.html">
+    <div class="ic">🧮</div><b>Kalkulator</b><small>Edukasi & Perhitungan</small>
+  </a>
+  <a class="card" href="meta/ALWIbot.html">
+    <div class="ic">🤖</div><b>ALWI Bot</b><small>Chat & Tanya AI</small>
+  </a>
+  <a class="card" href="meta/hub.html">
+    <div class="ic">👥</div><b>Hub</b><small>Tim & Diskusi</small>
+  </a>
+  <a class="card" href="meta/promosi-streaming/">
+    <div class="ic">🎥</div><b>Promosi</b><small>Live Streaming</small>
+  </a>
+  <a class="card" href="meta/gambar-streaming/">
+    <div class="ic">🖼️</div><b>Gambar</b><small>Streaming Gambar</small>
+  </a>
+</div>
+
+<script src="alwi_bubble4.js"></script>
+</body>
+</html>

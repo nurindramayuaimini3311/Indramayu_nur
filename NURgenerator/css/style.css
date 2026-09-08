@@ -1,0 +1,13 @@
+.bubbles{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+.bubbles i{position:absolute;bottom:-140px;border-radius:50%;display:block;
+  background:radial-gradient(circle at 30% 30%,#7cffb0,#1f9d55 70%);
+  box-shadow:0 0 12px rgba(42,255,122,.45),inset -6px -8px 18px rgba(0,0,0,.25);
+  animation:naik linear infinite;opacity:.85}
+.bubbles i.gold{background:radial-gradient(circle at 30% 30%,#ffe08a,#d9a406 70%);
+  box-shadow:0 0 14px rgba(255,215,0,.5),inset -6px -8px 18px rgba(0,0,0,.25)}
+.bubbles i.blu{background:radial-gradient(circle at 30% 30%,#9ad6ff,#1d5fa6 70%);
+  box-shadow:0 0 14px rgba(90,180,255,.5),inset -6px -8px 18px rgba(0,0,0,.25)}
+@keyframes naik{
+  0%{transform:translateY(0) translateX(0) scale(1);opacity:.9}
+  50%{transform:translateY(-55vh) translateX(30px) scale(1.08);opacity:.75}
+  100%{transform:translateY(-130vh) translateX(-35px) scale(1.18);opacity:0}}

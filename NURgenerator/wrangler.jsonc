@@ -1,0 +1,6 @@
+{
+  "name": "fancy-wood-77c8",
+  "compatibility_date": "2026-09-06",
+  "assets": { "directory": "." },
+  "compatibility_flags": ["nodejs_compat"]
+}

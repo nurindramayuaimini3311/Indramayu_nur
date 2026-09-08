@@ -1,0 +1,15 @@
+{
+  "name": "NURgenerator — Kartu Alwi",
+  "short_name": "Kartu Alwi",
+  "description": "PWA kartu menu NURgenerator — ADZAN, Ibadah, Meta, Netflix, Peta, dan lainnya.",
+  "lang": "id",
+  "start_url": "./pwa.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a1a12",
+  "theme_color": "#2aff7a",
+  "icons": [
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
