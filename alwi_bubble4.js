@@ -1,15 +1,12 @@
 !function(){
 if(window.__ALWI)return;window.__ALWI=1;
 
-// Deteksi path → semua link menuju /Indramayu_nur/
+// Deteksi path → otomatis ke Indramayu_nur (VPS) ATAU INDRAMAYU_CLUB (GitHub Pages)
 let pathParts = window.location.pathname.split('/').filter(Boolean);
-let prefix;
-let isRoot = pathParts[0] !== 'Indramayu_nur'; // true bila di root NURgenerator/index.html
-if (pathParts[0] === 'Indramayu_nur') {
-  prefix = pathParts.length > 2 ? '../' : './';
-} else {
-  prefix = '/Indramayu_nur/';
-}
+let baseIdx = pathParts.findIndex(function(p){ return p === 'Indramayu_nur' || p === 'INDRAMAYU_CLUB'; });
+let prefix = baseIdx >= 0 ? '/' + pathParts.slice(0, baseIdx + 1).join('/') + '/' : '/';
+let isRoot = pathParts.length - (baseIdx + 1) <= 1;
+window.__ALWI_PREFIX = prefix;
 const CHAT_AI_URL = 'http://35.240.161.189:3000';
 
 // 1. Buat Bola Helm ⛑️
@@ -61,8 +58,13 @@ document.body.appendChild(menu);
 // HOME selalu menuju index.html portal (bebas isRoot)
 window.goHome=function(){
   var seg = window.location.pathname.split('/').filter(Boolean);
-  var idx = seg.indexOf('Indramayu_nur');
-  var root = idx !== -1 ? '/' + seg.slice(0, idx + 1).join('/') + '/index.html' : '/index.html';
+  var idx = seg.findIndex(function(s){ return s === 'Indramayu_nur' || s === 'INDRAMAYU_CLUB'; });
+  var root;
+  if (idx !== -1) {
+    root = '/' + seg.slice(0, idx + 1).join('/') + '/index.html';
+  } else {
+    root = '/' + seg.slice(0, seg.length - 1).join('/') + '/index.html';
+  }
   if (window.location.pathname === root || window.location.pathname === root.replace(/\/$/,'')) {
     window.location.reload();
   } else {
@@ -499,6 +501,7 @@ updateBallPosition=function(){
   const AZ = { Subuh:'Adzan-Shubuh-Abu-Hazim.mp3', Dzuhur:'Adzan-Misyari-Rasyid.mp3', Ashar:'Adzan-Misyari-Rasyid.mp3', Maghrib:'Mecca-Adzan-2.mp3', Isya:'Pakistan-Adzan.mp3' };
   const on = () => localStorage.getItem('alwiAdzan') === '1';
   let jadwalAz = null, tglAz = '', audioAz = null;
+  const terkirim = new Set();
   const pill = document.createElement('div');
   pill.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:2147483000;background:#0a3a5a;color:#ffd700;border:1px solid #ffd700;border-radius:99px;padding:6px 12px;font:600 11px system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4)';
   function setPill(){ pill.textContent = on() ? '\uD83D\uDD14 Adzan ON' : '\uD83D\uDD15 Adzan OFF'; }
@@ -509,7 +512,7 @@ updateBallPosition=function(){
     setPill();
     if (on()) { jadwalAz = null; cek(); } // langsung cek saat diaktifkan
   });
-  function pasang(){ if (!isRoot) (document.body || document.documentElement).appendChild(pill); }
+  function pasang(){ (document.body || document.documentElement).appendChild(pill); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', pasang); else pasang();
   async function ambilJadwal(){
     const d = new Date();
@@ -545,8 +548,8 @@ updateBallPosition=function(){
   if (window.__alwiNav) return; window.__alwiNav = true;
   function pasang(){
     var b = document.createElement('a');
-    b.href = '/404.html';
-    b.style.cssText = 'position:fixed;left:12px;bottom:44px;z-index:2147483000;background:#0a3a5a;color:#ffd700;border:1px solid #ffd700;border-radius:99px;padding:6px 12px;font:600 11px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.4)';
+    b.href = (window.__ALWI_PREFIX || '/') + 'navigasi.html';
+    b.style.cssText = 'position:fixed;left:12px;bottom:40px;z-index:2147483000;background:#0a3a5a;color:#ffd700;border:1px solid #ffd700;border-radius:99px;padding:6px 12px;font:600 11px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.4)';
     b.textContent = '\uD83E\uDDED Navigasi';
     (document.body || document.documentElement).appendChild(b);
   }
@@ -567,7 +570,7 @@ updateBallPosition=function(){
 
   function pillBuat(){
     var el = document.createElement('div');
-    el.style.cssText = 'position:fixed;left:12px;bottom:78px;z-index:2147483000;background:#0a3a5a;color:#ffd700;border:1px solid #ffd700;border-radius:99px;padding:6px 12px;font:700 11px system-ui,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.4)';
+    el.style.cssText = 'position:fixed;left:12px;bottom:68px;z-index:2147483000;background:#0a3a5a;color:#ffd700;border:1px solid #ffd700;border-radius:99px;padding:6px 12px;font:700 11px system-ui,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.4)';
     el.title = 'Poin Penjelajah NUR - total keseluruhan: '+tot;
     return el;
   }
@@ -599,7 +602,7 @@ updateBallPosition=function(){
 /* ================= MIC ALWI + FOLDER NAV v2 ================= */
 (function(){
   var pp = location.pathname.split('/').filter(Boolean);
-  var prefix = pp[0]==='Indramayu_nur' ? (pp.length>2?'../':'./') : '/Indramayu_nur/';
+  var prefix = window.__ALWI_PREFIX || (pp[0]==='Indramayu_nur'||pp[0]==='INDRAMAYU_CLUB' ? '/'+pp[0]+'/' : '/');
 
   /* --- deretan tombol SEMUA FOLDER di dropup --- */
   function pasangFolder(){
@@ -646,13 +649,13 @@ updateBallPosition=function(){
   mic.id='ALWI_MIC_BTN';
   mic.innerHTML='\uD83C\uDFA4';
   mic.title='Tanya Alwi pakai suara';
-  mic.style.cssText='position:fixed;bottom:18px;left:14px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0e7490,#00BFFF);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;z-index:999999999;border:3px solid #000;box-shadow:0 4px 14px rgba(0,191,255,.5);user-select:none;-webkit-user-select:none;touch-action:manipulation;';
+  mic.style.cssText='position:fixed;bottom:100px;left:14px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0e7490,#00BFFF);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;z-index:999999999;border:3px solid #000;box-shadow:0 4px 14px rgba(0,191,255,.5);user-select:none;-webkit-user-select:none;touch-action:manipulation;';
   document.body.appendChild(mic);
 
   /* --- balon jawaban --- */
   var bal=document.createElement('div');
   bal.id='ALWI_MIC_BALON';
-  bal.style.cssText='display:none;position:fixed;bottom:82px;left:12px;width:min(330px,88vw);background:#0a1414;border:2px solid #00BFFF;border-radius:14px;padding:12px;z-index:999999999;box-shadow:0 10px 30px rgba(0,191,255,.35);font-family:sans-serif;';
+  bal.style.cssText='display:none;position:fixed;bottom:156px;left:12px;width:min(330px,88vw);background:#0a1414;border:2px solid #00BFFF;border-radius:14px;padding:12px;z-index:999999999;box-shadow:0 10px 30px rgba(0,191,255,.35);font-family:sans-serif;';
   bal.innerHTML='<div id="MIC_HDR" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b style="color:#00BFFF;font-size:12px">\uD83C\uDFA4 TANYA ALWI</b><span id="MIC_X" style="cursor:pointer;color:#888;font-weight:bold">\u2715</span></div>'+
     '<div id="MIC_Q" style="font-size:11px;color:#00BFFF;margin-bottom:6px;display:none"></div>'+
     '<div id="MIC_A" style="font-size:13px;line-height:1.55;color:#e2e8f0;max-height:40vh;overflow-y:auto">Mau tanya apa?</div>'+
@@ -750,4 +753,62 @@ updateBallPosition=function(){
   setInterval(adzanTampil, 300000);
   // tampil 5 detik setelah halaman load
   setTimeout(adzanTampil, 5000);
+})();
+
+/* ============ SINKRON POIN SERVER (upgrade seragam lintas origin) ============ */
+(function(){
+  if (window.__alwiPoinSrv) return; window.__alwiPoinSrv = true;
+  function base(){
+    return (location.protocol==='https:')
+      ? 'https://fancy-wood-77c8.imahazzah51.workers.dev'
+      : 'http://34.170.37.50:80';
+  }
+  function uid(){
+    var u=localStorage.getItem('alwi_uid');
+    if(!u){ u='u'+Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4); localStorage.setItem('alwi_uid',u); }
+    return u;
+  }
+  function tulis(poin){
+    try{
+      localStorage.setItem('alwi_poin',String(poin));
+      localStorage.setItem('alwiPoin',String(poin));
+      var b=document.getElementById('ALWI_POIN_BADGE');
+      if(b) b.textContent='\u2B50 '+poin;
+      var pil=document.querySelector('div[title^="Poin Penjelajah"]');
+      if(pil) pil.textContent='\uD83E\uDE99 '+poin+' / 1000';
+      var pil2=document.querySelector('div[title^="Poin NUR server"]');
+      if(pil2) pil2.textContent='\uD83E\uDE99 '+poin+' / 1000';
+      var p3=document.getElementById('fpsPoin');
+      if(p3) p3.textContent='\uD83E\uDE99 '+poin+' / 1000';
+    }catch(e){}
+  }
+  function dorong(n){
+    if(!n||n<=0) return;
+    fetch(base()+'/api/poin?u='+uid(),{
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({n:n})
+    }).catch(function(){});
+  }
+  function sync(){
+    var lokal=parseInt(localStorage.getItem('alwiPoin')||'0',10)||0;
+    fetch(base()+'/api/poin?u='+uid())
+      .then(function(r){return r.json();})
+      .then(function(j){
+        var srv=(j&&j.p)?j.p:0;
+        if(lokal>srv){ dorong(lokal-srv); }
+        else if(srv>=lokal){ tulis(srv); }
+      })
+      .catch(function(){});
+  }
+  function add(n, cb){
+    fetch(base()+'/api/poin?u='+uid(),{
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({n:n||5})
+    }).then(function(r){return r.json();})
+      .then(function(j){ var p=(j&&j.p)?j.p:0; tulis(p); if(cb)cb(p); })
+      .catch(function(){});
+  }
+  if(!window.poinAdd) window.poinAdd=add;
+  window.poinServerSync=sync;
+  function pasang(){ sync(); setInterval(sync,30000); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',pasang);
+  else setTimeout(pasang,600);
 })();

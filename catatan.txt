@@ -109,7 +109,7 @@ Tunnel trycloudflare dipakai untuk preview cepat / konten dinamis.
 - Kalau tunnel mati -> halaman yang ref-nya trycloudflare ikut 404.
 
 Alwi_bubble4.js (bola ALWI) ada di VM1. Kalau halaman butuh bola, load dari:
-    https://pushing-dept-headset-rep.trycloudflare.com/alwi_bubble4.js
+    alwi_bubble4.js
 
 
 -----------------------------------------------------------------------------
