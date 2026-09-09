@@ -40,3 +40,6 @@ node_modules/
 
 # mp3 adzan besar — simpan di server, bukan di repo
 NURgenerator/ADZAN/*.mp3
+
+# cadangan file kerja
+*.bak*
