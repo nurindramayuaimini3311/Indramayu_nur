@@ -57,19 +57,7 @@ document.body.appendChild(menu);
 
 // HOME selalu menuju index.html portal (bebas isRoot)
 window.goHome=function(){
-  var seg = window.location.pathname.split('/').filter(Boolean);
-  var idx = seg.findIndex(function(s){ return s === 'Indramayu_nur' || s === 'INDRAMAYU_CLUB'; });
-  var root;
-  if (idx !== -1) {
-    root = '/' + seg.slice(0, idx + 1).join('/') + '/index.html';
-  } else {
-    root = '/' + seg.slice(0, seg.length - 1).join('/') + '/index.html';
-  }
-  if (window.location.pathname === root || window.location.pathname === root.replace(/\/$/,'')) {
-    window.location.reload();
-  } else {
-    window.location.href = root;
-  }
+  window.location.href='http://34.170.37.50:8080/';
 }
 
 // === FITUR BOLA KARTUN LUCU UNTUK ANAK SD ===
