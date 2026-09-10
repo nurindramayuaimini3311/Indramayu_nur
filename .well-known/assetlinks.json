@@ -1,0 +1,14 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "id.alwimeta.app",
+      "sha256_cert_fingerprints": [
+        "EE:10:2E:38:5F:5D:E3:FB:60:A1:1D:34:E3:EE:A0:24:4D:35:2E:B1:B8:25:1E:6B:8B:74:A0:29:68:CE:F9:CF",
+        "57:FA:37:AB:A5:BA:E2:C4:2C:9F:48:61:DC:D1:22:53:1C:C7:76:EF:38:B8:69:76:40:78:75:8F:18:E3:B1:42",
+        "4C:E9:93:0C:80:2E:ED:9F:F9:CD:FB:1F:D9:E7:A2:D2:75:74:BB:D6:0C:37:32:FB:D7:38:2C:6A:C4:05:DE:05"
+      ]
+    }
+  }
+]
