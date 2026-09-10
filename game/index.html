@@ -23,6 +23,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GAME ARCADE - Indramayu_nur</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f1115">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="../img/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ALWI Games">
 <style>
   body { background:#0f1115; color:white; font-family: Arial, sans-serif; padding:20px; }
   h1 { text-align:center; letter-spacing:3px; }
@@ -80,6 +87,17 @@ if(location.pathname.includes('alwiSD')){
 <script>poinGame()</script>
 
 <script src="/alwi_bubble4.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').then(function () {
+      console.log('ALWI Games SW registered');
+    }).catch(function (e) {
+      console.warn('ALWI Games SW error:', e);
+    });
+  });
+}
+</script>
 </body>
 </html>
 
