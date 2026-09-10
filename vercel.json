@@ -1,8 +1,20 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
   "rewrites": [
-    { "source": "/login", "destination": "/login.html" }
+    {
+      "source": "/laster",
+      "destination": "http://35.240.161.189:3000"
+    },
+    {
+      "source": "/laster/:path*",
+      "destination": "http://35.240.161.189:3000/:path*"
+    },
+    {
+      "source": "/alwi_bubble4.js",
+      "destination": "http://35.240.161.189:3000/alwi_bubble4.js"
+    },
+    {
+      "source": "/bubble/:path*",
+      "destination": "http://35.240.161.189:3000/:path*"
+    }
   ]
 }
-
