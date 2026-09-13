@@ -63,15 +63,54 @@ body{font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;min-height:
   <a class="tombol" href="meta_AI.html"><div class="ico" style="background:#e879f9">🤖</div><div class="txt">Meta AI<small>Bermain dengan AI</small></div></a>
   <a class="tombol" href="tanya_jawab_v3.html"><div class="ico" style="background:#f97316">🗣️</div><div class="txt">Tanya Jawab<small>2 Bahasa · Dermayu & Dayak Ngaju</small></div></a>
 
-  <div class="sek">🕌 IBADAH</div>
-  <a class="tombol" href="NURgenerator/ibadah/"><div class="ico" style="background:#34d399">🕌</div><div class="txt">Ibadah<small>Sholat, adzan, quran & pesan</small></div></a>
-  <a class="tombol" href="NURgenerator/ADZAN/"><div class="ico" style="background:#fbbf24">📢</div><div class="txt">Player Adzan<small>Koleksi suara adzan dunia</small></div></a>
-
-  <div class="sek">⚙️ LAINNYA</div>
-  <a class="tombol" href="index4.html"><div class="ico" style="background:#f59e0b">🗄️</div><div class="txt">belajar fisika<small>Menu lengkap generator</small></div></a>
-  <a class="tombol" href="alwi_pusat_live.html"><div class="ico" style="background:#ef4444">⛑️</div><div class="txt">wallpaper<small>magnet stick</small></div></a>
-  <a class="tombol" href="bola_bayangan.html"><div class="ico" style="background:#38bdf8">⚽</div><div class="txt">Bola Bayangan<small>Ajak Alwi ngodrol</small></div></a>
-  <a class="tombol" href="pengaturan/"><div class="ico" style="background:#cbd5e1">⚙️</div><div class="txt">Pengaturan<small>Privasi & data</small></div></a>
+  <div class="sek">🖼️ GALERI ALWI</div>
+  <div class="slider" aria-label="Galeri gambar Alwi">
+    <div class="s-track" id="sTrack">
+      <div class="s-slide"><img src="galeri/meta_alwi.png" alt="Alwi"></div>
+      <div class="s-slide"><img src="galeri/alwi_koin.webp" alt="Alwi koin"></div>
+      <div class="s-slide"><img src="galeri/petruk.webp" alt="Petruk"></div>
+      <div class="s-slide"><img src="galeri/rumah_joglo.webp" alt="Rumah joglo"></div>
+      <div class="s-slide"><img src="galeri/nur_light.png" alt="Nur light"></div>
+      <div class="s-slide"><img src="galeri/kuli.jpg" alt="Kuli investigasi"></div>
+    </div>
+    <button class="s-arr s-prev" onclick="sGo(-1)" aria-label="Sebelumnya">‹</button>
+    <button class="s-arr s-next" onclick="sGo(1)" aria-label="Berikutnya">›</button>
+    <div class="s-dots" id="sDots"></div>
+  </div>
+  <div class="kecil">
+    <a href="NURgenerator/ibadah/">🕌 Ibadah</a>
+    <a href="NURgenerator/ADZAN/">📢 Adzan</a>
+    <a href="index4.html">🗄️ Fisika</a>
+    <a href="alwi_pusat_live.html">⛑️ Wallpaper</a>
+    <a href="bola_bayangan.html">⚽ Bola</a>
+    <a href="pengaturan/">⚙️ Pengaturan</a>
+  </div>
+<style>
+.slider{position:relative;margin-top:10px;border-radius:20px;overflow:hidden;border:3px solid #fff;box-shadow:0 4px 0 rgba(0,0,0,.08);background:#fff}
+.s-track{display:flex;transition:transform .5s ease}
+.s-slide{flex:0 0 100%;height:230px}
+.s-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.s-arr{position:absolute;top:50%;transform:translateY(-50%);border:none;background:rgba(255,255,255,.85);color:#075985;font-size:24px;font-weight:900;width:34px;height:34px;border-radius:50%;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2);z-index:2}
+.s-prev{left:8px}
+.s-next{right:8px}
+.s-dots{position:absolute;bottom:8px;left:0;right:0;display:flex;justify-content:center;gap:6px;z-index:2}
+.s-dots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.6);cursor:pointer;border:1px solid rgba(0,0,0,.2)}
+.s-dots span.aktif{background:#0ea5e9}
+.kecil{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:14px}
+.kecil a{background:rgba(255,255,255,.6);border:2px solid #fff;border-radius:99px;padding:7px 12px;text-decoration:none;color:#0c4a6e;font-weight:800;font-size:12px}
+</style>
+<script>
+(function(){
+  var tr=document.getElementById('sTrack'),i=0,n=tr.children.length,dt=document.getElementById('sDots');
+  for(var k=0;k<n;k++){(function(k){var b=document.createElement('span');b.onclick=function(){i=k;sTampil();};dt.appendChild(b);})(k);}
+  var dots=dt.children;
+  function sTampil(){tr.style.transform='translateX(-'+(i*100)+'%)';for(var k=0;k<n;k++){dots[k].className=(k===i?'aktif':'');}}
+  window.sGo=function(a){i=(i+a+n)%n;sTampil();};
+  sTampil();
+  var tm=setInterval(function(){i=(i+1)%n;sTampil();},3500);
+  tr.addEventListener('touchstart',function(){clearInterval(tm);},{passive:true});
+})();
+</script>
 
 </div>
 <script src="alwi_bubble4.js"></script>
