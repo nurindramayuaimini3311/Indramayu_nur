@@ -4,17 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Indramayu Club — Nur System</title>
+<meta name="theme-color" content="#ffffff">
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
 :root {
-  --bg:      #0f0c29;
-  --panel:   rgba(255,255,255,0.08);
-  --panel2:  rgba(255,255,255,0.14);
-  --gold:    #ffd166;
-  --gold2:   #f72585;
-  --border:  rgba(255,255,255,0.18);
-  --muted:   #cfc9ff;
-  --text:    #f4f4ff;
+  --bg:      #eef1f6;
+  --panel:   #ffffff;
+  --panel2:  #f3f6fb;
+  --gold:    #1e293b;
+  --gold2:   #6366f1;
+  --border:  #e2e8f0;
+  --muted:   #64748b;
+  --text:    #0f172a;
   --white:   #ffffff;
+  --accent:  #4f46e5;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
@@ -24,53 +27,29 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f0c29, #4b1248, #8b3a62, #3a1c71);
-  background-size: 300% 300%;
-  animation: alwiGradient 14s ease infinite;
-}
-@keyframes alwiGradient {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* ── BATIK PATTERN ── */
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background-image:
-    repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 50%),
-    repeating-linear-gradient(-45deg, rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 50%);
-  background-size: 20px 20px;
-  pointer-events: none; z-index: 0;
+  background: var(--bg);
 }
 
 /* ── HEADER ── */
 .app-header {
   position: relative; z-index: 10;
   background: var(--panel);
-  border-bottom: 2px solid var(--gold);
+  border-bottom: 2px solid var(--border);
   padding: 10px 14px;
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
 }
 .app-header .brand { display: flex; flex-direction: column; }
-.app-header .brand-title { font-size: 1rem; font-weight: bold; color: var(--gold); letter-spacing: 3px; }
+.app-header .brand-title { font-size: 1rem; font-weight: bold; color: var(--text); letter-spacing: 3px; }
 .app-header .brand-sub   { font-size: 0.65rem; color: var(--muted); letter-spacing: 2px; }
 .batik-line {
   height: 3px;
-  background: linear-gradient(90deg, var(--gold), var(--gold2), #4cc9f0, #f72585, var(--gold));
-  background-size: 300% 100%;
-  animation: alwiBatik 8s linear infinite;
-}
-@keyframes alwiBatik {
-  0%   { background-position: 0% 50%; }
-  100% { background-position: 300% 50%; }
+  background: var(--border);
 }
 
 /* ── TABS ── */
 .tabs {
   position: relative; z-index: 10;
-  display: flex; background: var(--panel2);
+  display: flex; background: var(--panel);
   border-bottom: 1px solid var(--border);
 }
 .tabs button {
@@ -82,7 +61,7 @@ body::before {
   border-bottom: 2px solid transparent;
   font-family: inherit; transition: all 0.2s;
 }
-.tabs button.active { color: var(--gold); border-bottom-color: var(--gold); }
+.tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
 
 /* ── PANES ── */
 main { flex: 1; position: relative; z-index: 1; overflow: hidden; }
@@ -92,7 +71,7 @@ main { flex: 1; position: relative; z-index: 1; overflow: hidden; }
 /* ══════════════════════════════════════════
    PANE 1 — NUR CREATIVE LAB
 ══════════════════════════════════════════ */
-#pane-lab { background: var(--panel2); }
+#pane-lab { background: var(--bg); }
 
 .lab-apibar {
   background: var(--panel); border-bottom: 1px solid var(--border);
@@ -105,11 +84,11 @@ main { flex: 1; position: relative; z-index: 1; overflow: hidden; }
 }
 .lab-apibar input[type=text] { flex: 1; min-width: 100px; }
 .lab-apibar button {
-  background: var(--border); color: var(--text);
+  background: var(--panel2); color: var(--text);
   border: 1px solid var(--border); border-radius: 5px;
   padding: 4px 8px; font-size: 11px; cursor: pointer;
 }
-.lab-apibar .saved { color: #7fbf7f; font-size: 10px; }
+.lab-apibar .saved { color: #16a34a; font-size: 10px; }
 
 .lab-subtabs { display: flex; background: var(--panel); border-bottom: 1px solid var(--border); }
 .lab-subtabs button {
@@ -118,7 +97,7 @@ main { flex: 1; position: relative; z-index: 1; overflow: hidden; }
   letter-spacing: 1px; font-weight: bold; cursor: pointer;
   border-bottom: 2px solid transparent; font-family: inherit;
 }
-.lab-subtabs button.active { color: var(--gold); border-bottom-color: var(--gold); }
+.lab-subtabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
 
 .lab-panes { flex: 1; position: relative; overflow: hidden; }
 .lab-pane { display: none; flex-direction: column; height: 100%; overflow: hidden; }
@@ -134,15 +113,15 @@ main { flex: 1; position: relative; z-index: 1; overflow: hidden; }
   max-width: 85%; padding: 8px 11px;
   border-radius: 10px; font-size: 12px; line-height: 1.5; white-space: pre-wrap;
 }
-.chat-msg.user .chat-bubble { background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #1a1030; }
+.chat-msg.user .chat-bubble { background: var(--accent); color: #fff; }
 .chat-msg.assistant .chat-bubble {
   background: var(--panel); color: var(--text);
   border: 1px solid var(--border);
 }
-.chat-bubble .fname { color: var(--gold); font-size: 10px; display: block; margin-bottom: 3px; }
+.chat-bubble .fname { color: var(--muted); font-size: 10px; display: block; margin-bottom: 3px; }
 
 #labCodeArea {
-  flex: 1; background: var(--panel2); color: var(--text);
+  flex: 1; background: var(--panel); color: var(--text);
   font-family: 'Courier New', monospace; font-size: 12px;
   padding: 14px; border: none; outline: none; resize: none; line-height: 1.6;
 }
@@ -157,20 +136,20 @@ main { flex: 1; position: relative; z-index: 1; overflow: hidden; }
   border: 1px solid var(--border); border-radius: 5px;
   padding: 5px 9px; font-size: 10px; cursor: pointer; font-family: inherit;
 }
-.lab-actions button.keep { background: #1a3060; color: #7ab0ff; border-color: #2a4080; }
+.lab-actions button.keep { background: #eef2ff; color: var(--accent); border-color: #c7d2fe; }
 
 .lab-toolbar {
-  border-top: 2px solid var(--gold); background: var(--panel);
+  border-top: 2px solid var(--border); background: var(--panel);
   padding: 8px 10px; display: flex; gap: 8px; align-items: center;
 }
 .lab-toolbar input[type=text] {
-  flex: 1; background: var(--panel2); color: var(--white);
+  flex: 1; background: var(--panel2); color: var(--text);
   border: 1px solid var(--border); border-radius: 8px;
   padding: 9px 12px; font-size: 13px; outline: none; font-family: inherit;
 }
-.lab-toolbar input[type=text]:focus { border-color: var(--gold); }
+.lab-toolbar input[type=text]:focus { border-color: var(--accent); }
 .lab-toolbar button {
-  background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #1a1030; border: none;
+  background: var(--accent); color: #fff; border: none;
   border-radius: 8px; padding: 9px 14px;
   font-weight: bold; font-size: 12px; cursor: pointer; white-space: nowrap;
   font-family: inherit;
@@ -178,10 +157,10 @@ main { flex: 1; position: relative; z-index: 1; overflow: hidden; }
 .lab-toolbar button:disabled { opacity: 0.5; }
 
 /* Modal */
-.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999; padding: 20px; flex-direction: column; justify-content: center; }
-.modal-box { background: var(--panel); border: 1px solid var(--gold); border-radius: 10px; padding: 14px; max-height: 80vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+.modal { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.5); z-index: 999; padding: 20px; flex-direction: column; justify-content: center; }
+.modal-box { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px; max-height: 80vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
 .modal-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-.modal-head span { font-weight: bold; color: var(--gold); font-size: 13px; }
+.modal-head span { font-weight: bold; color: var(--text); font-size: 13px; }
 .modal-head button { background: var(--panel2); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 3px 8px; cursor: pointer; }
 .keep-item { background: var(--panel2); border: 1px solid var(--border); padding: 8px; border-radius: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 
@@ -192,7 +171,7 @@ main { flex: 1; position: relative; z-index: 1; overflow: hidden; }
   overflow-y: auto; padding: 14px; background: var(--bg);
 }
 .q-header { text-align: center; margin-bottom: 16px; }
-.q-header h2 { font-size: 1rem; color: var(--gold); letter-spacing: 2px; }
+.q-header h2 { font-size: 1rem; color: var(--text); letter-spacing: 2px; }
 .q-header p  { font-size: 0.7rem; color: var(--muted); margin-top: 3px; }
 
 .q-workspace {
@@ -205,48 +184,48 @@ main { flex: 1; position: relative; z-index: 1; overflow: hidden; }
   border: 1px solid var(--border); border-radius: 5px; padding: 4px 7px; font-size: 11px;
 }
 .q-gate-btn {
-  background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #1a1030; border: none;
+  background: var(--accent); color: #fff; border: none;
   padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer;
 }
-.q-gate-btn.reset { background: var(--gold2); color: #fff; }
+.q-gate-btn.reset { background: var(--muted); color: #fff; }
 .q-gate-btn:active { opacity: 0.8; }
 
 .q-board {
-  background: var(--panel2); border: 1px dashed var(--border); border-radius: 8px;
+  background: var(--panel); border: 1px dashed var(--border); border-radius: 8px;
   padding: 14px; min-height: 130px; overflow-x: auto;
   display: grid; grid-template-columns: 56px repeat(20,52px); grid-auto-rows: 50px; gap: 5px 7px;
 }
-.q-label { display: flex; align-items: center; font-weight: bold; color: var(--gold); font-size: 0.8rem; }
+.q-label { display: flex; align-items: center; font-weight: bold; color: var(--text); font-size: 0.8rem; }
 .q-cell  { position: relative; display: flex; align-items: center; justify-content: center; }
 .q-cell::before {
   content: ''; position: absolute; left: 0; right: 0; top: 50%;
   height: 2px; background: var(--border); transform: translateY(-50%); z-index: 0;
 }
 .q-gate-box {
-  background: var(--border); border: 1px solid var(--gold); color: var(--text);
+  background: #c7d2fe; border: 1px solid var(--accent); color: var(--text);
   padding: 4px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; z-index: 1;
 }
 .q-cnot-col { position: relative; grid-row: span 2; }
-.q-cnot-line { position: absolute; left: 50%; top: 25px; bottom: 25px; width: 2px; background: var(--gold2); transform: translateX(-50%); }
-.q-cnot-dot  { position: absolute; left: 50%; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); transform: translate(-50%,-50%); }
-.q-cnot-tgt  { position: absolute; left: 50%; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--gold2); background: var(--panel2); color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: bold; transform: translate(-50%,-50%); }
+.q-cnot-line { position: absolute; left: 50%; top: 25px; bottom: 25px; width: 2px; background: var(--accent); transform: translateX(-50%); }
+.q-cnot-dot  { position: absolute; left: 50%; width: 12px; height: 12px; border-radius: 50%; background: var(--text); transform: translate(-50%,-50%); }
+.q-cnot-tgt  { position: absolute; left: 50%; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--accent); background: var(--panel); color: var(--text); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: bold; transform: translate(-50%,-50%); }
 
 .q-console {
-  margin-top: 12px; background: var(--panel2); border: 1px solid var(--border); border-radius: 8px;
-  padding: 12px; font-family: 'Courier New', monospace; font-size: 0.78rem; color: var(--gold);
+  margin-top: 12px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px; font-family: 'Courier New', monospace; font-size: 0.78rem; color: var(--text);
   max-height: 180px; overflow-y: auto; line-height: 1.5;
 }
 .q-footer-btn { margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px; }
 .q-run-btn {
-  background: linear-gradient(135deg, #4cc9f0, #f72585); color: #fff;
-  border: 1px solid rgba(255,255,255,0.3);
+  background: var(--accent); color: #fff;
+  border: 1px solid transparent;
   padding: 9px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; font-family: inherit;
 }
 .q-run-btn:hover { filter: brightness(1.15); }
 .q-run-btn:disabled { opacity: 0.5; }
 
 .q-chat { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
-.q-chat h3 { font-size: 0.85rem; color: var(--gold); margin-bottom: 4px; }
+.q-chat h3 { font-size: 0.85rem; color: var(--text); margin-bottom: 4px; }
 .q-chat .sub { font-size: 0.7rem; color: var(--muted); margin-bottom: 10px; }
 .q-chat-log {
   background: var(--panel2); border: 1px solid var(--border); border-radius: 8px;
@@ -254,7 +233,7 @@ main { flex: 1; position: relative; z-index: 1; overflow: hidden; }
   display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;
 }
 .q-bubble { max-width: 85%; padding: 8px 10px; border-radius: 8px; font-size: 11px; line-height: 1.45; white-space: pre-wrap; }
-.q-bubble.user { align-self: flex-end; background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #1a1030; }
+.q-bubble.user { align-self: flex-end; background: var(--accent); color: #fff; }
 .q-bubble.ai   { align-self: flex-start; background: var(--panel); border: 1px solid var(--border); }
 .q-bubble.note { align-self: center; color: var(--muted); font-style: italic; font-size: 10px; }
 .q-input-row { display: flex; gap: 8px; }
@@ -262,15 +241,15 @@ main { flex: 1; position: relative; z-index: 1; overflow: hidden; }
   flex: 1; background: var(--panel2); border: 1px solid var(--border); color: var(--text);
   padding: 9px 10px; border-radius: 8px; font-size: 11px; font-family: inherit; outline: none;
 }
-.q-input-row input:focus { border-color: var(--gold); }
+.q-input-row input:focus { border-color: var(--accent); }
 .q-send-btn {
-  background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #1a1030; border: none;
+  background: var(--accent); color: #fff; border: none;
   padding: 0 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: inherit;
 }
 .q-send-btn:disabled { opacity: 0.5; }
 
 /* Ripple */
-.ripple { position: absolute; border-radius: 50%; background: rgba(240,192,64,0.35); transform: scale(0); animation: ripple 0.4s linear; pointer-events: none; }
+.ripple { position: absolute; border-radius: 50%; background: rgba(79,70,229,0.2); transform: scale(0); animation: ripple 0.4s linear; pointer-events: none; }
 @keyframes ripple { to { transform: scale(4); opacity: 0; } }
 
 /* Scrollbar */
@@ -301,7 +280,7 @@ main { flex: 1; position: relative; z-index: 1; overflow: hidden; }
     <span style="color:var(--gold);font-size:11px;font-weight:bold;">🧮 Kalkulator Edukasi</span>
     <button onclick="document.getElementById('kalkIframeWrap').style.display='none'" style="background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:13px;">✕</button>
   </div>
-  <iframe id="kalkIframe" src="kalkulator.html" style="width:100%;height:420px;border:none;display:block;background:#1a1530;"></iframe>
+  <iframe id="kalkIframe" src="kalkulator.html" style="width:100%;height:420px;border:none;display:block;background:#ffffff;"></iframe>
 </div>
 
 <!-- Main Tabs -->
@@ -317,12 +296,9 @@ main { flex: 1; position: relative; z-index: 1; overflow: hidden; }
   <div class="lab-apibar">
     <span style="color:var(--muted);font-size:10px;">Mesin:</span>
     <select id="engineSel">
-      <option value="alwicache">🤖 Alwi Cache (offline)</option>
-      <option value="gemini">Gemini (API key)</option>
+      <option value="ai">✨ AI (Gemini · Ollama)</option>
+      <option value="bot">🤖 Bot (Alwi Cache)</option>
     </select>
-    <input type="text" id="apiKeyIn" placeholder="Gemini API Key" style="display:none">
-    <button id="saveKeyBtn" style="display:none">Simpan</button>
-    <span class="saved" id="keyStat"></span>
   </div>
 
   <div class="lab-subtabs">
@@ -457,8 +433,7 @@ function speak(text){
 // ══════════════════════════════════════════
 // NUR CREATIVE LAB
 // ══════════════════════════════════════════
-const STARTER = '<h1 style="font-family:sans-serif;text-align:center;margin-top:40px;color:#c8a030">Selamat Datang di Nur Lab!</h1><p style="font-family:sans-serif;text-align:center;color:#888">Ketik perintah di bawah lalu tekan ✨ Bikin</p>';
-const KEY_STORE  = 'imclub_gemini_key';
+const STARTER = '<h1 style="font-family:sans-serif;text-align:center;margin-top:40px;color:#4f46e5">Selamat Datang di Nur Lab!</h1><p style="font-family:sans-serif;text-align:center;color:#888">Ketik perintah di bawah lalu tekan ✨ Bikin</p>';
 const KEEP_STORE = 'imclub_keep_notes';
 const MEM_STORE  = 'imclub_memory';
 
@@ -466,25 +441,11 @@ let labCode = STARTER;
 let labHist = [];
 
 const engineSel  = document.getElementById('engineSel');
-const apiKeyIn   = document.getElementById('apiKeyIn');
-const saveKeyBtn = document.getElementById('saveKeyBtn');
-const keyStat    = document.getElementById('keyStat');
 const labChat    = document.getElementById('labChatLog');
 const codeArea   = document.getElementById('labCodeArea');
 const previewFr  = document.getElementById('labPreview');
 const labPrompt  = document.getElementById('labPrompt');
 const labSendBtn = document.getElementById('labSendBtn');
-
-engineSel.addEventListener('change', () => {
-  const g = engineSel.value === 'gemini';
-  apiKeyIn.style.display  = g ? 'inline-block' : 'none';
-  saveKeyBtn.style.display = g ? 'inline-block' : 'none';
-  keyStat.textContent = (g && localStorage.getItem(KEY_STORE)) ? '✓ Key tersimpan' : '';
-});
-saveKeyBtn.addEventListener('click', () => {
-  const v = apiKeyIn.value.trim();
-  if (v){ localStorage.setItem(KEY_STORE, v); apiKeyIn.value=''; keyStat.textContent='✓ Tersimpan'; }
-});
 
 // Lab sub-tabs
 document.querySelectorAll('.lab-subtabs button').forEach(btn => {
@@ -515,11 +476,6 @@ function saveMem(role,text){
   while(m.length>20) m.shift();
   localStorage.setItem(MEM_STORE, JSON.stringify(m));
 }
-function memCtx(){
-  const m = getMemory();
-  if (!m.length) return '';
-  return '\n\nMemori:\n' + m.map(x=>`[${x.role}]: ${x.text}`).join('\n');
-}
 
 function addLabBubble(role, text){
   const row = document.createElement('div');
@@ -548,10 +504,10 @@ function renderLabChat(){
 }
 renderLabChat();
 
-// Alwi Cache sekarang tersambung ke bot-alwi.cjs (WhatsApp bot) via HTTP API
-// VM alwi-bot (asia-southeast1-a) — IP publik, port 4500 dibuka lewat firewall GCP
-const ALWI_BOT_URL = '/api/chat';
-const KALKULATOR_URL = '/api/kalkulator';
+// Endpoint disuntik via server :3000 (server3000.js) — tanpa perlu API key di browser
+// Bot (Alwi Cache) -> /api/bot -> bot-alwi.cjs :4500 ; AI & Kalkulator -> /api/ai, /api/kalkulator
+const ALWI_BOT_URL = 'http://136.85.74.104:3000/api/bot';
+const KALKULATOR_URL = 'http://136.85.74.104:3000/api/kalkulator';
 
 function toggleKalk(){
   const w = document.getElementById('kalkIframeWrap');
@@ -632,23 +588,18 @@ async function alwiGenerate(prompt){
   return reply;
 }
 
-async function geminiGenerate(prompt, instruction){
-  const key = localStorage.getItem(KEY_STORE);
-  if (!key) throw new Error('Gemini API Key belum diisi.');
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+key;
+async function aiGenerate(prompt, instruction){
   saveMem('user', prompt);
-  const res = await fetch(url, {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({
-      system_instruction:{ parts:[{ text: instruction + memCtx() }]},
-      contents:[{role:'user',parts:[{text:prompt}]}],
-      generationConfig:{temperature:0.7,maxOutputTokens:4096}
-    })
+  const res = await fetch('http://136.85.74.104:3000/api/ai', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: (instruction || '') + '\n\n' + prompt })
   });
   const d = await res.json();
-  if (!res.ok) throw new Error(d?.error?.message || 'Gagal Gemini API');
-  const t = d?.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('') || '';
-  if (t) saveMem('assistant', t);
+  if (!res.ok) throw new Error(d?.error || d?.galat || 'Gagal AI');
+  const t = d?.response || '';
+  if (!t) throw new Error('AI tidak memberi jawaban.');
+  saveMem('assistant', t);
   return t;
 }
 
@@ -666,9 +617,9 @@ async function handleLabSend(){
     : 'Kode yang ada:\n\n' + labCode + '\n\nJika revisi, kembalikan HTML lengkap hasil revisi. Jika pertanyaan biasa, jawab singkat teks biasa.';
 
   try {
-    let raw = engineSel.value === 'gemini'
-      ? await geminiGenerate(prompt, instruction)
-      : await alwiGenerate(prompt);
+    let raw = engineSel.value === 'bot'
+      ? await alwiGenerate(prompt)
+      : await aiGenerate(prompt, instruction);
 
     const clean = raw.replace(/```html/gi,'').replace(/```/g,'').trim();
     const isHTML = /^\s*(<!doctype|<html|<head|<body|<div|<style|<h[1-6])/i.test(clean);
@@ -843,15 +794,16 @@ function qRun(){
   },300);
 }
 
-// Quantum AI Chat
-async function callClaude(system, messages){
-  const r=await fetch('https://api.anthropic.com/v1/messages',{
+// Quantum AI Chat — disuntik via server :3000 -> /api/ai (Ollama -> Gemini -> Kalkulator)
+async function callAI(prompt){
+  const r=await fetch('http://136.85.74.104:3000/api/ai',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system,messages})
+    body:JSON.stringify({message:prompt})
   });
   const d=await r.json();
-  return (d.content||[]).map(b=>b.type==='text'?b.text:'').join('\n');
+  if(!r.ok) throw new Error(d?.error||d?.galat||'Gagal AI');
+  return d?.response||'';
 }
 
 const Q_SYSTEM=`Kamu asisten dalam simulator sirkuit kuantum 2-qubit (Q0 dan Q1). Gerbang: H, X, CNOT. Jawab singkat dan ramah dalam Bahasa Indonesia. Jika diminta membuat sirkuit, sertakan di akhir: \`\`\`circuit\n[{...}]\n\`\`\``;
@@ -887,7 +839,7 @@ async function qSendChat(){
   qHistory.push({role:'user',content:msg});
   const t=qAddQBubble('ai','Mengetik...');
   try{
-    const raw=await callClaude(Q_SYSTEM,qHistory);
+    const raw=await callAI(Q_SYSTEM+'\n\nRiwayat:\n'+qHistory.map(m=>`[${m.role}] ${m.content}`).join('\n'));
     const {clean,gates}=qExtractCircuit(raw);
     t.textContent=clean||'(sirkuit diperbarui)';
     qHistory.push({role:'assistant',content:raw});
@@ -899,7 +851,7 @@ async function qAutoExplain(moments,counts){
   const prompt=`Sirkuit: ${JSON.stringify(moments.map(m=>m.type==='CNOT'?{gate:'CNOT',control:m.control,target:m.target}:{gate:m.type,qubit:m.qubit}))}\nHasil: ${JSON.stringify(counts)}\nJelaskan singkat (3-4 kalimat) konsep yang terjadi. Jangan sertakan blok circuit.`;
   const note=qAddQBubble('note','Menganalisis hasil...');
   try{
-    const raw=await callClaude(Q_SYSTEM,[{role:'user',content:prompt}]);
+    const raw=await callAI(Q_SYSTEM+'\n\n'+prompt);
     const{clean}=qExtractCircuit(raw);
     note.remove();qAddQBubble('ai',clean);
     qHistory.push({role:'user',content:prompt},{role:'assistant',content:raw});
