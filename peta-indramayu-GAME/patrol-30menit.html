@@ -28,7 +28,7 @@ body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-a
 #notif{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.8);border:2px solid #ffcf40;padding:16px 24px;border-radius:16px;font-weight:900;font-size:18px;display:none;z-index:20;text-align:center}
 #routeSign{position:fixed;top:50%;left:10px;transform:translateY(-50%);background:rgba(0,0,0,.7);border:1px solid #fff;padding:10px;border-radius:12px;display:none;z-index:6;font-size:11px}
 </style>
-<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<script type="importmap">{"imports":{"three":"./three.module.js","three/addons/":"./addons/"}}</script>
 </head>
 <body>
 <canvas id="c"></canvas>
@@ -38,6 +38,12 @@ body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-a
 <div id="mapLabel">🗺 LIHAT PETA DI ATAS</div>
 <div id="stopPill"></div>
 <div id="notif"></div>
+<div id="bootErr" style="position:fixed;bottom:10px;left:10px;right:10px;background:rgba(150,0,0,.9);padding:10px 14px;border-radius:12px;font-size:12px;display:none;z-index:99"></div>
+<script>
+window.__booted=false;
+window.addEventListener('error',function(e){var b=document.getElementById('bootErr');if(b){b.style.display='block';b.textContent='⚠️ Error: '+(e.message||'gagal load');}});
+setTimeout(function(){if(!window.__booted){var b=document.getElementById('bootErr');if(b){b.style.display='block';b.textContent='⚠️ Game tidak jalan: three.module.js gagal dimuat. Pastikan file three.module.js + folder addons ada di folder yang sama, atau update Chrome/WebView (butuh importmap, Chrome 89+).';}}},8000);
+</script>
 <div id="routeSign">⬅️ RUTE B SAWAH<br>⬆️ RUTE A PANTURA<br>➡️ RUTE C DESA</div>
 <div id="ctrl">
 <button class="rem" id="bRem">◀ REM</button>
@@ -574,8 +580,9 @@ const clock=new THREE.Clock();
   const mx=(car.position.x+50)/100*minimap.width; const mz=(car.position.z+400)/800*minimap.height;
   mctx.fillStyle='#ff0000'; mctx.beginPath(); mctx.arc(mx,mz,5,0,Math.PI*2); mctx.fill();
  }
-  ctl.update();renderer.render(scene,camera);})();
- </script>
+   ctl.update();renderer.render(scene,camera);})();
+  window.__booted=true;
+  </script>
 <!-- bubble 2D real otomatis: 1 kuning, 3 pink, 4 asli -->
 <script src="alwi_bubble1.js"></script>
 <script src="alwi_bubble3.js"></script>
