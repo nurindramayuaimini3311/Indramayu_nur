@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🌊 Laut Eretan 3D - Indramayu</title><style>
+*{box-sizing:border-box;margin:0}body{font-family:Arial;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
+#c{position:fixed;inset:0;display:block}.top{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;z-index:5}
+a.back{background:#00bfff;color:#000;font-weight:900;padding:10px 16px;border-radius:12px;text-decoration:none}
+.pill{background:rgba(0,0,0,.6);border:1px solid #00bfff;border-radius:12px;padding:10px 14px;font-weight:900}</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script></head>
+<body><canvas id="c"></canvas>
+<div class="top"><a class="back" href="index.html">← PETA</a><div class="pill">🌊 LAUT ERETAN - KANDANGHAUR</div></div>
+<script type="module">
+import * as THREE from 'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});
+r.setPixelRatio(Math.min(devicePixelRatio,2));r.shadowMap.enabled=true;
+const s=new THREE.Scene();s.background=new THREE.Color(0x87b5e0);
+const c=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,300);c.position.set(11,7,13);
+const o=new OrbitControls(c,r.domElement);o.target.set(0,0,0);o.enableDamping=true;o.autoRotate=true;o.autoRotateSpeed=.8;
+s.add(new THREE.HemisphereLight(0xffffff,0x334455,.9));
+const d=new THREE.DirectionalLight(0xffffff,1.5);d.position.set(10,15,8);d.castShadow=true;s.add(d);
+// pasir + laut
+const ps=new THREE.Mesh(new THREE.PlaneGeometry(12,60),new THREE.MeshStandardMaterial({color:0xe8d8a0}));ps.rotation.x=-Math.PI/2;ps.position.set(-14,.02,0);ps.receiveShadow=true;s.add(ps);
+const lt=new THREE.Mesh(new THREE.PlaneGeometry(48,60),new THREE.MeshStandardMaterial({color:0x1e90d6,roughness:.3}));lt.rotation.x=-Math.PI/2;lt.position.set(16,.03,0);lt.receiveShadow=true;s.add(lt);
+// ombak
+const om=[];for(let i=0;i<8;i++){const w=new THREE.Mesh(new THREE.PlaneGeometry(10+Math.random()*8,1),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.6}));
+w.rotation.x=-Math.PI/2;w.position.set(-2+Math.random()*8,.06,-26+i*7);s.add(w);om.push(w);}
+// perahu + nelayan
+const pr=new THREE.Group();
+const bd=new THREE.Mesh(new THREE.BoxGeometry(1.8,.7,5.5),new THREE.MeshStandardMaterial({color:0x2244aa}));bd.castShadow=true;pr.add(bd);
+const ti=new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,3,6),new THREE.MeshStandardMaterial({color:0x6b4a1f}));ti.position.y=1.8;pr.add(ti);
+const ly=new THREE.Mesh(new THREE.PlaneGeometry(2.2,1.8),new THREE.MeshStandardMaterial({color:0xffffff,side:THREE.DoubleSide}));ly.position.y=2.2;pr.add(ly);
+pr.position.set(8,.4,0);s.add(pr);
+// ikan
+const ik=[];for(let i=0;i<7;i++){const f=new THREE.Mesh(new THREE.ConeGeometry(.25,1,7),new THREE.MeshStandardMaterial({color:i%2?0xff8800:0xcccccc}));
+f.rotation.z=-Math.PI/2;f.position.set(4+Math.random()*22,.3,-20+Math.random()*40);s.add(f);ik.push({m:f,cx:f.position.x,cz:f.position.z,r:2+Math.random()*3,sp:.6+Math.random(),ph:Math.random()*6});}
+// mercusuar mini
+const mc=new THREE.Mesh(new THREE.CylinderGeometry(.8,1.1,6,10),new THREE.MeshStandardMaterial({color:0xffffff}));mc.position.set(-10,3,-20);mc.castShadow=true;s.add(mc);
+const lp=new THREE.Mesh(new THREE.SphereGeometry(.6,10,8),new THREE.MeshStandardMaterial({color:0xffff88,emissive:0xffdd33,emissiveIntensity:1}));lp.position.set(-10,6.4,-20);s.add(lp);
+addEventListener('resize',()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});r.setSize(innerWidth,innerHeight);
+(function l(){requestAnimationFrame(l);const t=performance.now()/1000;
+om.forEach((w,i)=>{w.position.x=Math.sin(t*.8+i)*2+2;});
+pr.position.y=.4+Math.sin(t*1.5)*.2;pr.rotation.z=Math.sin(t*1.5)*.06;
+ik.forEach(f=>{f.ph+=.02*f.sp;f.m.position.x=f.cx+Math.cos(f.ph)*f.r;f.m.position.z=f.cz+Math.sin(f.ph)*f.r*.6;});
+lp.material.emissiveIntensity=.5+Math.abs(Math.sin(t*3));o.update();r.render(s,c);})();
+</script><script src="alwi_bubble4.js"></script></body></html>

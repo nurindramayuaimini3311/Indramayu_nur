@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🏠 Rumah 3D - Indramayu</title><style>
+*{box-sizing:border-box;margin:0}body{font-family:Arial;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
+#c{position:fixed;inset:0;display:block}.top{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;z-index:5}
+a.back{background:#ff8844;color:#000;font-weight:900;padding:10px 16px;border-radius:12px;text-decoration:none}
+.pill{background:rgba(0,0,0,.6);border:1px solid #ff8844;border-radius:12px;padding:10px 14px;font-weight:900}</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script></head>
+<body><canvas id="c"></canvas>
+<div class="top"><a class="back" href="index.html">← PETA</a><div class="pill">🏠 RUMAH INDRAMAYU</div></div>
+<script type="module">
+import * as THREE from 'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});
+r.setPixelRatio(Math.min(devicePixelRatio,2));r.shadowMap.enabled=true;
+const s=new THREE.Scene();s.background=new THREE.Color(0x87b5e0);
+const c=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,300);c.position.set(9,6,11);
+const o=new OrbitControls(c,r.domElement);o.target.set(0,1.5,0);o.enableDamping=true;o.autoRotate=true;o.autoRotateSpeed=1;
+s.add(new THREE.HemisphereLight(0xffffff,0x334455,.9));
+const d=new THREE.DirectionalLight(0xffffff,1.5);d.position.set(10,15,8);d.castShadow=true;s.add(d);
+const g=new THREE.Mesh(new THREE.PlaneGeometry(60,60),new THREE.MeshStandardMaterial({color:0x4f9a4f}));g.rotation.x=-Math.PI/2;g.receiveShadow=true;s.add(g);
+function B(w,h,dep,co,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,dep),new THREE.MeshStandardMaterial({color:co}));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;return m;}
+// badan + atap limas + pintu + jendela
+s.add(B(6,3,5,0xf5f0e0,0,1.5,0));
+const at=new THREE.Mesh(new THREE.ConeGeometry(4.8,2.6,4),new THREE.MeshStandardMaterial({color:0xa03020}));at.position.y=4.3;at.rotation.y=Math.PI/4;at.castShadow=true;s.add(at);
+s.add(B(1.2,2.2,.2,0x6b4a1f,0,1.1,-2.55));
+s.add(B(1.2,1,.2,0x9fd8ff,-1.8,1.8,-2.55),B(1.2,1,.2,0x9fd8ff,1.8,1.8,-2.55));
+// pagar + pohon
+for(let i=-4;i<=4;i++){s.add(B(.15,1,.15,0xffffff,i*.9,.5,4));}s.add(B(8,.15,.15,0xffffff,0,1,4));
+const bt=new THREE.Mesh(new THREE.CylinderGeometry(.25,.35,3,8),new THREE.MeshStandardMaterial({color:0x7a4a20}));bt.position.set(-5,1.5,1);bt.castShadow=true;s.add(bt);
+const dn=new THREE.Mesh(new THREE.SphereGeometry(1.6,10,8),new THREE.MeshStandardMaterial({color:0x2a8a2a}));dn.position.set(-5,3.6,1);s.add(dn);
+addEventListener('resize',()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});r.setSize(innerWidth,innerHeight);
+(function l(){requestAnimationFrame(l);o.update();r.render(s,c);})();
+</script><script src="alwi_bubble4.js"></script></body></html>

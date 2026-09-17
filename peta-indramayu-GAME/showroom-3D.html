@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Patroli Jatibarang - Laut & Sawah 3D</title>
+<style>
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{font-family:system-ui,Arial;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
+ #c{position:fixed;inset:0;display:block}
+ .pill{background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:8px 12px;font-size:12px}
+ #hud{position:fixed;top:10px;left:10px;right:10px;display:none;justify-content:space-between;gap:8px;pointer-events:none}
+ #ctrl{position:fixed;left:0;right:0;bottom:0;padding:10px;display:none;gap:8px}
+ #ctrl button{flex:1;border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:16px 8px;font-weight:900;font-size:15px;background:rgba(255,255,255,.1);color:#fff}
+ #ctrl button.on{background:#fff;color:#000}
+ #ctrl .gas{background:#22cc55;border-color:#22cc55;color:#00220f}
+ #ctrl .rem{background:#ff3344;border-color:#ff3344;color:#fff}
+ /* START OVERLAY */
+ #start{position:fixed;inset:0;background:radial-gradient(circle at 50% 20%,#1a3a5f,#070b12 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center;z-index:10}
+ #start h1{font-size:28px;letter-spacing:.1em}
+ #start h1 span{color:#ffcf40}
+ #start p{font-size:13px;opacity:.8}
+ #veh{display:flex;gap:8px;overflow-x:auto;max-width:100%;padding:6px}
+ #veh button{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:10px 14px;font-weight:800;font-size:13px;min-width:110px}
+ #veh button.on{background:#fff;color:#000}
+ #bStart{margin-top:8px;width:min(420px,90vw);height:64px;border-radius:999px;border:0;background:#ffcf40;color:#111;font-weight:900;font-size:18px;letter-spacing:.15em}
+ #bShow{width:min(420px,90vw);height:44px;border-radius:999px;background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;font-weight:700}
+ .badge{display:inline-flex;gap:6px;font-size:11px;opacity:.85}
+</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud"><div class="pill" id="pos">📍 JATIBARANG KOTA</div><div class="pill" id="spd">0 KMH</div></div>
+<div id="ctrl">
+  <button class="rem" id="bRem">◀ REM</button>
+  <button id="bStop">■ STOP</button>
+  <button class="gas" id="bGas">GAS ▶</button>
+</div>
+<div id="start">
+  <div class="badge">🚓 PATROLI • JATIBARANG • INDRAMAYU</div>
+  <h1>PATROLI <span>JATIBARANG</span></h1>
+  <p>Start → keliling sirkuit: <b>Sawah</b> 🌾 → <b>Kota</b> 🏠 → <b>Laut</b> 🌊 → balik lagi.<br>Nose mobil = -Z • 60fps HP</p>
+  <div id="veh">
+    <button data-v="mobil">MOBIL</button>
+    <button data-v="bus" class="on">SINAR JAYA BUS</button>
+    <button data-v="truk">PERTAMINA TRUK</button>
+    <button data-v="tebu">TRUK TEBU</button>
+    <button data-v="f1">F1 MERAH</button>
+  </div>
+  <button id="bStart">▶ START PATROLI</button>
+  <button id="bShow">Lihat model dulu (showroom)</button>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const canvas=document.getElementById('c');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x87b5e0);
+scene.fog=new THREE.Fog(0x87b5e0,40,160);
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,600);
+camera.position.set(7,4.5,9);
+const ctl=new OrbitControls(camera,renderer.domElement);
+ctl.target.set(0,1.2,0); ctl.enableDamping=true; ctl.maxPolarAngle=1.52;
+
+scene.add(new THREE.HemisphereLight(0xffffff,0x334455,.95));
+const sun=new THREE.DirectionalLight(0xffffff,1.7); sun.position.set(30,40,20);
+sun.castShadow=true; sun.shadow.mapSize.set(1024,1024);
+Object.assign(sun.shadow.camera,{left:-80,right:80,top:80,bottom:-80,far:150});
+scene.add(sun);
+
+// ===== DUNIA: tanah, laut, sawah =====
+const tanah=new THREE.Mesh(new THREE.PlaneGeometry(400,400),new THREE.MeshStandardMaterial({color:0x5a8a4a,roughness:1}));
+tanah.rotation.x=-Math.PI/2; tanah.receiveShadow=true; scene.add(tanah);
+// LAUT di timur (x +)
+const laut=new THREE.Mesh(new THREE.PlaneGeometry(150,400),new THREE.MeshStandardMaterial({color:0x1e90d6,roughness:.3,metalness:.1}));
+laut.rotation.x=-Math.PI/2; laut.position.set(95,.02,0); laut.receiveShadow=true; scene.add(laut);
+// ombak garis putih
+const ombaks=[];
+for(let i=0;i<12;i++){const o=new THREE.Mesh(new THREE.PlaneGeometry(20+Math.random()*20,1),
+ new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.6}));
+ o.rotation.x=-Math.PI/2;o.position.set(35+Math.random()*20,.05,-90+i*16);scene.add(o);ombaks.push(o);}
+// pasir pantai
+const pasir=new THREE.Mesh(new THREE.PlaneGeometry(12,400),new THREE.MeshStandardMaterial({color:0xe8d8a0,roughness:1}));
+pasir.rotation.x=-Math.PI/2; pasir.position.set(28,.03,0); pasir.receiveShadow=true; scene.add(pasir);
+// SAWAH di barat (x -) petak-petak
+for(let ix=0;ix<5;ix++)for(let iz=0;iz<8;iz++){
+ const c=(ix+iz)%2?0x4fc34f:0xd8c84a;
+ const s=new THREE.Mesh(new THREE.PlaneGeometry(10,12),new THREE.MeshStandardMaterial({color:c,roughness:1}));
+ s.rotation.x=-Math.PI/2; s.position.set(-75+ix*12,.03,-70+iz*18); s.receiveShadow=true; scene.add(s);
+}
+// pematang
+for(let i=0;i<9;i++){const p=new THREE.Mesh(new THREE.BoxGeometry(60,.3,1),new THREE.MeshStandardMaterial({color:0x6b4a1f}));
+ p.position.set(-51,.15,-70+i*18);scene.add(p);}
+
+// Gapura JATIBARANG + pos
+function teksGapura(){
+ const cv=document.createElement('canvas');cv.width=512;cv.height=128;const x=cv.getContext('2d');
+ x.fillStyle='#ff1a1a';x.fillRect(0,0,512,128);x.fillStyle='#fff';x.font='bold 64px Arial';
+ x.textAlign='center';x.fillText('JATIBARANG',256,80);x.font='bold 28px Arial';x.fillText('PATROLI • INDRAMAYU',256,110);
+ const t=new THREE.CanvasTexture(cv);return t;
+}
+const gap=new THREE.Group();
+const gm=new THREE.MeshStandardMaterial({color:0xffffff}); 
+const p1=new THREE.Mesh(new THREE.BoxGeometry(1.5,9,1.5),gm);p1.position.set(-5,4.5,0);p1.castShadow=true;
+const p2=p1.clone();p2.position.x=5;gap.add(p1,p2);
+const papan=new THREE.Mesh(new THREE.BoxGeometry(12,2.5,.5),new THREE.MeshStandardMaterial({map:teksGapura()}));
+papan.position.y=9;gap.add(papan);gap.position.set(0,0,-62);scene.add(gap);
+
+// pohon kelapa simpel + rumah
+function pohon(x,z){const g=new THREE.Group();
+ const b=new THREE.Mesh(new THREE.CylinderGeometry(.25,.35,5,8),new THREE.MeshStandardMaterial({color:0x7a4a20}));
+ b.position.y=2.5;b.castShadow=true;g.add(b);
+ for(let i=0;i<5;i++){const d=new THREE.Mesh(new THREE.ConeGeometry(1.8,1.2,6),new THREE.MeshStandardMaterial({color:0x2a8a2a}));
+  d.position.y=5.2;d.rotation.z=i/5*6.28;d.position.x=Math.cos(i)*1; d.position.z=Math.sin(i)*1;g.add(d);}
+ g.position.set(x,0,z);scene.add(g);}
+for(let i=0;i<14;i++) pohon(32+Math.random()*6,-80+i*13);
+for(let i=0;i<10;i++) pohon(-15-Math.random()*8,-70+i*15);
+function rumah(x,z,c){const g=new THREE.Group();
+ const b=new THREE.Mesh(new THREE.BoxGeometry(6,3.5,5),new THREE.MeshStandardMaterial({color:c}));b.position.y=1.75;b.castShadow=true;g.add(b);
+ const a=new THREE.Mesh(new THREE.ConeGeometry(4.5,2.5,4),new THREE.MeshStandardMaterial({color:0xa03020}));a.position.y=4.7;a.rotation.y=Math.PI/4;g.add(a);
+ g.position.set(x,0,z);scene.add(g);}
+rumah(-8,45,0xf5f5f5);rumah(8,48,0xffe0a0);rumah(-5,-35,0xe0f0ff);rumah(12,-30,0xffffff);
+
+// ===== SIRKUIT JATIBARANG LOOP =====
+const pts=[new THREE.Vector3(0,0,-60),new THREE.Vector3(24,0,-42),new THREE.Vector3(32,0,-8),
+ new THREE.Vector3(24,0,30),new THREE.Vector3(5,0,58),new THREE.Vector3(-22,0,52),
+ new THREE.Vector3(-38,0,18),new THREE.Vector3(-36,0,-20),new THREE.Vector3(-18,0,-48)];
+const curve=new THREE.CatmullRomCurve3(pts,true,'catmullrom',.6);
+// ribbon jalan lebar 8
+(function buildRoad(){
+ const N=300,W=4.2,pos=[],idx=[];
+ for(let i=0;i<=N;i++){const t=i/N,p=curve.getPointAt(t),tan=curve.getTangentAt(t);
+  const nx=-tan.z,nz=tan.x,L=Math.hypot(nx,nz)||1;const ox=nx/L*W,oz=nz/L*W;
+  pos.push(p.x-ox,.06,p.z-oz,p.x+ox,.06,p.z+oz);
+  if(i<N){const a=i*2;idx.push(a,a+1,a+2,a+1,a+3,a+2);}}
+ const g=new THREE.BufferGeometry();
+ g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();
+ const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:0x24282e,roughness:.9}));
+ m.receiveShadow=true;scene.add(m);
+ // garis tengah kuning
+ for(let i=0;i<60;i++){const t=i/60,p=curve.getPointAt(t);
+  const d=new THREE.Mesh(new THREE.PlaneGeometry(.35,2.2),new THREE.MeshBasicMaterial({color:0xffdd33}));
+  d.rotation.x=-Math.PI/2;const tan=curve.getTangentAt(t);d.rotation.z=-Math.atan2(tan.x,tan.z);
+  d.position.set(p.x,.09,p.z);scene.add(d);}
+ // garis tepi putih
+ for(const s of [-1,1]) for(let i=0;i<150;i++){const t=i/150,p=curve.getPointAt(t),tan=curve.getTangentAt(t);
+  const nx=-tan.z,nz=tan.x,L=Math.hypot(nx,nz)||1;
+  const e=new THREE.Mesh(new THREE.PlaneGeometry(.3,1.2),new THREE.MeshBasicMaterial({color:0xffffff}));
+  e.rotation.x=-Math.PI/2;e.rotation.z=-Math.atan2(tan.x,tan.z);
+  e.position.set(p.x+nx/L*W*s,.09,p.z+nz/L*W*s);scene.add(e);}
+})();
+// garis START
+(function(){const p=curve.getPointAt(0),tan=curve.getTangentAt(0);
+ const s=new THREE.Mesh(new THREE.PlaneGeometry(8.4,2),new THREE.MeshStandardMaterial({color:0xffffff}));
+ s.rotation.x=-Math.PI/2;s.rotation.z=-Math.atan2(tan.x,tan.z);s.position.set(p.x,.1,p.z);scene.add(s);})();
+
+// ===== MODEL KENDARAAN (real, bukan PNG kotak) =====
+function M(c,r=.6,m=.3){return new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});}
+function box(w,h,d,c,x=0,y=0,z=0){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),c);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;return o;}
+function cyl(rt,rb,h,c,x=0,y=0,z=0,rx=0,rz=0,seg=18){const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),c);o.position.set(x,y,z);o.rotation.x=rx;o.rotation.z=rz;o.castShadow=true;return o;}
+function wheel(r,w,x,y,z){const g=new THREE.Group();
+ const t=new THREE.Mesh(new THREE.CylinderGeometry(r,r,w,20),M(0x111111,.9,0));t.rotation.z=Math.PI/2;t.castShadow=true;g.add(t);
+ const v=new THREE.Mesh(new THREE.CylinderGeometry(r*.55,r*.55,w+.02,12),M(0xcccccc,.4,.8));v.rotation.z=Math.PI/2;g.add(v);
+ g.position.set(x,y,z);g.userData.spin=t;return g;}
+function kaca(w,h,d,x,y,z){return box(w,h,d,new THREE.MeshStandardMaterial({color:0x9fd8ff,roughness:.1,metalness:.6,transparent:true,opacity:.85}),x,y,z);}
+function lampu(x,y,z,c=0xfff6b0){const o=new THREE.Mesh(new THREE.SphereGeometry(.14,12,12),new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:1}));o.position.set(x,y,z);return o;}
+function buildMobil(color=0xd21f26){const G=new THREE.Group(),B=M(color,.5,.4);
+ G.add(box(1.9,.55,4.2,B,0,.65,0),box(1.7,.55,2.2,B,0,1.15,-.2),kaca(1.72,.4,1.1,0,1.15,.55),kaca(1.5,.35,.08,0,1.2,-1.32));
+ G.add(box(1.92,.18,4.25,M(0x111111,.8,0),0,.42,0),lampu(-.6,.7,-2.11),lampu(.6,.7,-2.11));
+ [[-.95,-1.35],[.95,-1.35],[-.95,1.35],[.95,1.35]].forEach(([x,z])=>G.add(wheel(.38,.3,x,.38,z)));return G;}
+function buildBus(color=0xff1a1a){const G=new THREE.Group(),B=M(color,.55,.2);
+ G.add(box(2.5,1.9,10,B,0,1.55,0),box(2.52,.5,10.02,M(0xffffff,.6,.1),0,.75,0),kaca(2.3,1,.9,0,1.9,-4.6));
+ for(let s of[-1,1])for(let i=0;i<4;i++)G.add(kaca(.06,.8,1.4,s*1.26,1.9,-1.2+i*1.7));
+ G.add(lampu(-.9,.7,-5.01),lampu(.9,.7,-5.01));
+ [[-1.1,-3.3],[1.1,-3.3],[-1.1,3.3],[1.1,3.3]].forEach(([x,z])=>G.add(wheel(.5,.4,x,.5,z)));return G;}
+function buildTruk(color=0x1a8a2a){const G=new THREE.Group();
+ G.add(box(2.4,1.6,2.6,M(color,.5,.3),0,1.4,-3.6),kaca(2,.7,.2,0,1.7,-4.92));
+ G.add(cyl(1.15,1.15,6.5,M(0xdfe6ea,.35,.7),0,1.55,.8,Math.PI/2,0,24),box(2,.5,.3,M(0xff3300,.5,.2),0,1.5,-2.2));
+ [[-1,-3.6],[1,-3.6],[-1,1.2],[1,1.2],[-1,3.2],[1,3.2]].forEach(([x,z])=>G.add(wheel(.5,.4,x,.5,z)));return G;}
+function buildTebu(){const G=new THREE.Group();
+ G.add(box(2.3,1.5,2.4,M(0x2a7a2a,.6,.2),0,1.3,-5.2),kaca(1.9,.6,.2,0,1.6,-6.42));
+ const bak=M(0x6b4a1f,.8,.1);G.add(box(2.4,.3,7,bak,0,.9,-.5));
+ for(let s of[-1,1])G.add(box(.12,1.6,7,bak,s*1.2,1.8,-.5));
+ const tm=M(0xd8c56a,.9,0);
+ for(let i=0;i<12;i++)G.add(cyl(.14,.14,6.2,tm,(Math.random()-.5)*1.3,1.6+Math.random()*.8,-.5,Math.PI/2,0,8));
+ [[-1,-5.2],[1,-5.2],[-1,-1],[1,-1],[-1,1.5],[1,1.5]].forEach(([x,z])=>G.add(wheel(.5,.4,x,.5,z)));return G;}
+function buildF1(color=0xff0000){const G=new THREE.Group(),B=M(color,.35,.6);
+ G.add(box(.7,.4,4.4,B,0,.5,-.3),box(.28,.28,1.8,B,0,.45,-2.8),box(1.9,.12,.6,B,0,.65,2.35),box(1.8,.1,.45,B,0,.75,-3.4),kaca(.5,.35,.9,0,.85,.1));
+ const halo=new THREE.Mesh(new THREE.TorusGeometry(.38,.06,10,20),M(0x111111,.5,.6));halo.position.set(0,1,.1);halo.rotation.x=1.35;G.add(halo);
+ [[-.95,-2.9],[.95,-2.9],[-1,1.9],[1,1.9]].forEach(([x,z],i)=>G.add(wheel(i<2?.42:.48,.55,x,i<2?.42:.48,z)));return G;}
+const builders={mobil:buildMobil,bus:buildBus,truk:buildTruk,tebu:buildTebu,f1:buildF1};
+const names={mobil:'MOBIL',bus:'SINAR JAYA BUS',truk:'PERTAMINA TRUK',tebu:'TRUK TEBU',f1:'F1 MERAH'};
+
+let cur='bus',car=new THREE.Group(),mode='menu',t=0,speed=0,gas=false,rem=false;
+function setCar(id){cur=id;scene.remove(car);car=new THREE.Group();car.add(builders[id]());scene.add(car);
+ document.querySelectorAll('#veh button').forEach(b=>b.classList.toggle('on',b.dataset.v===id));
+ if(mode!=='patroli'){car.position.set(0,.05,0);car.rotation.y=.6;}}
+document.querySelectorAll('#veh button').forEach(b=>b.onclick=()=>setCar(b.dataset.v));
+setCar('bus');
+
+const startEl=document.getElementById('start'),hud=document.getElementById('hud'),ctrl=document.getElementById('ctrl');
+document.getElementById('bShow').onclick=()=>{startEl.style.display='none';};
+document.getElementById('bStart').onclick=()=>{
+ mode='patroli';t=0;speed=8;startEl.style.display='none';hud.style.display='flex';ctrl.style.display='flex';
+ ctl.enabled=false; // chase cam
+ const p=curve.getPointAt(0);car.position.copy(p);
+};
+document.getElementById('bStop').onclick=()=>{mode='menu';hud.style.display='none';ctrl.style.display='none';startEl.style.display='flex';ctl.enabled=true;setCar(cur);};
+const bGas=document.getElementById('bGas'),bRem=document.getElementById('bRem');
+bGas.onpointerdown=()=>gas=true;bGas.onpointerup=bGas.onpointerleave=()=>gas=false;
+bRem.onpointerdown=()=>rem=true;bRem.onpointerup=bRem.onpointerleave=()=>rem=false;
+addEventListener('keydown',e=>{if(e.key==='ArrowUp')gas=true;if(e.key==='ArrowDown')rem=true;});
+addEventListener('keyup',e=>{if(e.key==='ArrowUp')gas=false;if(e.key==='ArrowDown')rem=false;});
+
+function zona(p){if(p.x>28)return'🌊 LAUT JATIBARANG';if(p.x<-15)return'🌾 SAWAH JATIBARANG';if(Math.abs(p.z+60)<12)return'⛩ GAPURA JATIBARANG';return'📍 JATIBARANG KOTA';}
+function resize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);}
+addEventListener('resize',resize);resize();
+const clock=new THREE.Clock();
+(function loop(){requestAnimationFrame(loop);
+ const dt=Math.min(clock.getDelta(),.05);
+ ombaks.forEach((o,i)=>{o.position.x=38+Math.sin(performance.now()/900+i)*3;});
+ if(mode==='menu'){car.rotation.y+=dt*.5;}
+ else{
+  if(gas)speed=Math.min(speed+dt*14,38);if(rem)speed=Math.max(speed-dt*22,0);
+  speed=Math.max(6,speed-dt*1.2); // patrol jalan terus pelan
+  const len=curve.getLength();t=(t+speed*dt/len)%1;
+  const p=curve.getPointAt(t),tan=curve.getTangentAt(t);
+  car.position.set(p.x,.05,p.z);car.rotation.y=Math.atan2(-tan.x,-tan.z);
+  car.traverse(o=>{if(o.userData.spin)o.rotation.x-=dt*speed*.8;});
+  // chase cam
+  const back=new THREE.Vector3().copy(p).addScaledVector(tan,-9);back.y=4.5;
+  camera.position.lerp(back,1-Math.pow(.001,dt));
+  ctl.target.lerp(new THREE.Vector3(p.x,1.5,p.z),1-Math.pow(.001,dt));
+  document.getElementById('pos').textContent=zona(p);
+  document.getElementById('spd').textContent=Math.round(speed*3.2)+' KMH';
+ }
+ ctl.update();renderer.render(scene,camera);})();
+</script>
+</body>
+</html>

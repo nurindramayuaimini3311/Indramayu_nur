@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>3D Pantai ALWI + Bubble Tanya Jawab</title>
+<style>
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{font-family:system-ui,Arial;background:#87ceeb;color:#fff;overflow:hidden;touch-action:none}
+ #c{position:fixed;inset:0;display:block}
+ .pill{background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:8px 12px;font-size:12px}
+ #info{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;pointer-events:none;flex-wrap:wrap}
+ /* kartu tanya jawab */
+ #kartu{display:none;position:fixed;top:60px;right:10px;width:min(300px,86vw);background:#0a1414f2;border:2px solid #00BFFF;border-radius:16px;padding:12px;z-index:40;box-shadow:0 10px 30px rgba(0,191,255,.35)}
+ #kartu h3{font-size:13px;color:#00BFFF;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+ #kartu h3 span{cursor:pointer;color:#888}
+ #isi{font-size:13px;line-height:1.55;max-height:38vh;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+ .b{padding:8px 10px;border-radius:12px;max-width:90%}
+ .bot{background:#123;color:#e2e8f0;align-self:flex-start;border:1px solid #00BFFF55}
+ .me{background:#00BFFF;color:#000;align-self:flex-end;font-weight:700}
+ /* menu bawah */
+ #menu{position:fixed;left:8px;right:8px;bottom:8px;display:flex;gap:6px;z-index:30;overflow-x:auto;padding:4px}
+ #menu button{flex:1;min-width:110px;padding:12px 8px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.6);color:#fff;font-weight:800;font-size:12px}
+ /* D-pad panah HP */
+ #dpad{position:fixed;right:10px;bottom:70px;z-index:35;display:grid;grid-template-columns:repeat(3,54px);grid-template-rows:repeat(3,54px);gap:4px;opacity:.95}
+ #dpad button{border-radius:14px;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.6);color:#fff;font-size:22px;font-weight:900;touch-action:none}
+ #dpad button:active{background:#00BFFF;color:#000}
+ #dpad .lbl{grid-column:1/4;text-align:center;font-size:10px;font-weight:800;background:rgba(0,0,0,.55);border-radius:8px;padding:3px}
+</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="info"><div class="pill">🏖️ Pantai ALWI 3D</div><div class="pill">ketuk bubble → kartu Q&A • lempar → icon lucu 😜</div></div>
+
+<div id="kartu">
+ <h3>🤖 <span id="judul">Bubble Bot</span> <span id="x">✕</span></h3>
+ <div id="isi"></div>
+</div>
+
+<div id="menu">
+ <button data-t="halo">👋 Halo</button>
+ <button data-t="kenal">🤝 Salam kenal</button>
+ <button data-t="rindu">🥺 Lama tak jumpa</button>
+ <button data-t="kabar">😊 Apa kabar?</button>
+ <button data-t="main">🎮 Main yuk</button>
+</div>
+
+<!-- panah maju / kiri / kanan / mundur -->
+<div id="dpad">
+ <div></div><button data-arah="maju">⬆️</button><div></div>
+ <button data-arah="kiri">⬅️</button><button data-arah="mundur">⬇️</button><button data-arah="kanan">➡️</button>
+ <div class="lbl" id="mode">🎥 gerak: kamera</div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const canvas=document.getElementById('c');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x87ceeb);
+scene.fog=new THREE.Fog(0x87ceeb,45,140);
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,400);
+camera.position.set(0,7,14);
+const ctl=new OrbitControls(camera,renderer.domElement);
+ctl.target.set(0,1.5,0); ctl.enableDamping=true; ctl.maxPolarAngle=1.52;
+ctl.touches={ONE:THREE.TOUCH.ROTATE,TWO:THREE.TOUCH.DOLLY_PAN};
+
+scene.add(new THREE.HemisphereLight(0xffffff,0x3a6a8a,1));
+const sun=new THREE.DirectionalLight(0xffffff,1.6); sun.position.set(20,30,10); scene.add(sun);
+
+// ===== PANTAI: pasir + laut + buih =====
+const pasir=new THREE.Mesh(new THREE.PlaneGeometry(200,60),
+ new THREE.MeshStandardMaterial({color:0xe8d8a0,roughness:1}));
+pasir.rotation.x=-Math.PI/2; pasir.position.set(0,0,20); scene.add(pasir);
+const rumput=new THREE.Mesh(new THREE.PlaneGeometry(200,80),
+ new THREE.MeshStandardMaterial({color:0x5a8a4a,roughness:1}));
+rumput.rotation.x=-Math.PI/2; rumput.position.set(0,-.02,75); scene.add(rumput);
+const laut=new THREE.Mesh(new THREE.PlaneGeometry(200,70),
+ new THREE.MeshStandardMaterial({color:0x1e90d6,roughness:.3,metalness:.1,transparent:true,opacity:.92}));
+laut.rotation.x=-Math.PI/2; laut.position.set(0,.05,-35); scene.add(laut);
+const buihs=[];
+for(let i=0;i<10;i++){
+ const b=new THREE.Mesh(new THREE.PlaneGeometry(14+Math.random()*14,1),
+  new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.65}));
+ b.rotation.x=-Math.PI/2; b.position.set(-60+Math.random()*120,.08,-8-Math.random()*6);
+ scene.add(b); buihs.push(b);
+}
+
+// ===== IKAN 🐟 =====
+const ikans=[];
+function ikan(warna){
+ const g=new THREE.Group();
+ const badan=new THREE.Mesh(new THREE.ConeGeometry(.35,.9,8),
+  new THREE.MeshStandardMaterial({color:warna}));
+ badan.rotation.x=Math.PI/2; g.add(badan);
+ const ekor=new THREE.Mesh(new THREE.ConeGeometry(.25,.4,4),
+  new THREE.MeshStandardMaterial({color:warna}));
+ ekor.rotation.x=-Math.PI/2; ekor.position.z=.6; g.add(ekor);
+ g.position.set(-50+Math.random()*100,.1+Math.random()*.3,-20-Math.random()*30);
+ g.userData={s:.5+Math.random(),o:Math.random()*9};
+ scene.add(g); ikans.push(g);
+}
+[0xff6a00,0xffd166,0xff4d6d,0x8affda,0xffffff,0x00FF88,0xFF4DFF,0x7ec8ff].forEach(ikan);
+
+// ===== POHON BANYAK 🌳🌲🌴 =====
+function palem(x,z,s=1){
+ const g=new THREE.Group();
+ const bt=new THREE.Mesh(new THREE.CylinderGeometry(.18*s,.28*s,4*s,7),
+  new THREE.MeshStandardMaterial({color:0x7a4a20}));
+ bt.position.y=2*s; bt.rotation.z=.08; g.add(bt);
+ for(let i=0;i<6;i++){
+  const d=new THREE.Mesh(new THREE.ConeGeometry(.5*s,2.6*s,5),
+   new THREE.MeshStandardMaterial({color:0x2a9a2a}));
+  const a=i/6*Math.PI*2;
+  d.position.set(Math.cos(a)*1.1*s,4.1*s,Math.sin(a)*1.1*s);
+  d.rotation.set(Math.PI/2.3*Math.sin(a),0,-Math.PI/2.3*Math.cos(a));
+  g.add(d);
+ }
+ const klp=new THREE.Mesh(new THREE.SphereGeometry(.3*s,8,8),
+  new THREE.MeshStandardMaterial({color:0x6b4a1f}));
+ klp.position.y=3.9*s; g.add(klp);
+ g.position.set(x,0,z); scene.add(g);
+}
+function pinus(x,z,s=1){
+ const g=new THREE.Group();
+ const bt=new THREE.Mesh(new THREE.CylinderGeometry(.2*s,.25*s,1.5*s,7),
+  new THREE.MeshStandardMaterial({color:0x5a3a1a}));
+ bt.position.y=.7*s; g.add(bt);
+ for(let i=0;i<3;i++){
+  const c=new THREE.Mesh(new THREE.ConeGeometry((1.6-i*.4)*s,1.8*s,8),
+   new THREE.MeshStandardMaterial({color:0x1f6a2a}));
+  c.position.y=(1.8+i*1.1)*s; g.add(c);
+ }
+ g.position.set(x,0,z); scene.add(g);
+}
+function bulat(x,z,s=1){
+ const g=new THREE.Group();
+ const bt=new THREE.Mesh(new THREE.CylinderGeometry(.2*s,.3*s,2*s,7),
+  new THREE.MeshStandardMaterial({color:0x6b4a1f}));
+ bt.position.y=1*s; g.add(bt);
+ const daun=new THREE.Mesh(new THREE.SphereGeometry(1.4*s,10,10),
+  new THREE.MeshStandardMaterial({color:0x3a8a3a}));
+ daun.position.y=2.8*s; g.add(daun);
+ g.position.set(x,0,z); scene.add(g);
+}
+for(let i=0;i<10;i++) palem(-45+i*10+Math.random()*3,8+Math.random()*6,.9+Math.random()*.5); // barisan pantai 🌴
+for(let i=0;i<8;i++) pinus(-50+Math.random()*100,45+Math.random()*25,.8+Math.random()*.8); // pinus 🌲
+for(let i=0;i<8;i++) bulat(-50+Math.random()*100,60+Math.random()*20,.8+Math.random()*.7); // rindang 🌳
+
+// ===== BUBBLE 3D (bisa diketuk & dilempar) =====
+function texWajah(emoji){
+ const cv=document.createElement('canvas'); cv.width=cv.height=128;
+ const x=cv.getContext('2d'); x.font='72px serif'; x.textAlign='center'; x.textBaseline='middle';
+ x.fillText(emoji,64,70);
+ return new THREE.CanvasTexture(cv);
+}
+const LUCU=['😅','🤪','😵‍💫','🥴','😜','😝','🫠'];
+const bubbles=[];
+function bubble3D(nama,warna,emissive,x,emoji){
+ const g=new THREE.Group();
+ const bola=new THREE.Mesh(new THREE.SphereGeometry(1,28,28),
+  new THREE.MeshStandardMaterial({color:warna,emissive,emissiveIntensity:.4,roughness:.3}));
+ bola.position.y=2; bola.name=nama; g.add(bola);
+ const face=new THREE.Mesh(new THREE.PlaneGeometry(1,1),
+  new THREE.MeshBasicMaterial({map:texWajah(emoji),transparent:true}));
+ face.position.set(0,2,1.02); face.name=nama+'_face'; g.add(face);
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(1.25,.06,10,36),
+  new THREE.MeshBasicMaterial({color:0x00BFFF,transparent:true,opacity:.8}));
+ ring.position.y=2; ring.rotation.x=1.4; g.add(ring);
+ g.position.set(x,0,6);
+ g.userData={bola,face,emoji,vel:new THREE.Vector3(),baseY:0};
+ scene.add(g); bubbles.push(g);
+ return g;
+}
+bubble3D('b1',0xFFEB3B,0xFFEB3B,-4,'💛');
+bubble3D('b3',0xFF4DFF,0xFF4DFF,0,'💖');
+bubble3D('b4',0x7ec8ff,0x00BFFF,4,'⛑️');
+
+// ===== KARTU TANYA JAWAB =====
+const kartu=document.getElementById('kartu'), isi=document.getElementById('isi'),
+ judul=document.getElementById('judul');
+document.getElementById('x').onclick=()=>kartu.style.display='none';
+const JAWAB={
+ halo:['Halo juga! 👋','Senang ketemu kamu di pantai! 🏖️'],
+ kenal:['Salam kenal! 🤝','Namaku Bubble ALWI dari Indramayu! ⛑️'],
+ rindu:['Iyaa, lama tak jumpa 🥺','Kamu ke mana aja? Kangen nih 💞'],
+ kabar:['Aku baik, sehat! 😊','Kamu apa kabar? Semoga ceria 💙'],
+ main:['Ayo main! 🎮','Lempar aku ya, nanti mukaku jadi lucu 😜'],
+};
+function tulis(t,me){
+ const d=document.createElement('div'); d.className='b '+(me?'me':'bot'); d.textContent=t;
+ isi.appendChild(d); isi.scrollTop=isi.scrollHeight;
+}
+function botBalas(kunci,nama){
+ const arr=JAWAB[kunci]||JAWAB.halo;
+ judul.textContent='Bubble '+nama;
+ kartu.style.display='block';
+ setTimeout(()=>tulis(arr[0]),250);
+ setTimeout(()=>tulis(arr[1]),900);
+}
+document.querySelectorAll('#menu button').forEach(b=>{
+ b.onclick=()=>{ tulis(b.textContent,true); botBalas(b.dataset.t,'3D'); };
+});
+
+// ketuk vs lempar
+const ray=new THREE.Raycaster(), ptr=new THREE.Vector2();
+let downX=0,downY=0,downT=0,kena=null;
+function wajahLucu(g){
+ g.userData.face.material.map=texWajah(LUCU[Math.floor(Math.random()*LUCU.length)]);
+ g.userData.face.material.needsUpdate=true;
+ setTimeout(()=>{ g.userData.face.material.map=texWajah(g.userData.emoji);
+  g.userData.face.material.needsUpdate=true; },900);
+}
+canvas.addEventListener('pointerdown',e=>{
+ downX=e.clientX;downY=e.clientY;downT=performance.now();kena=null;
+ ptr.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);
+ ray.setFromCamera(ptr,camera);
+ const h=ray.intersectObjects(bubbles.map(b=>b.userData.bola));
+ if(h.length) kena=bubbles.find(b=>b.userData.bola===h[0].object);
+});
+canvas.addEventListener('pointerup',e=>{
+ if(!kena){
+  // ketuk area kosong = lepas pilihan → panah gerakkan kamera lagi
+  if(Math.hypot(e.clientX-downX,e.clientY-downY)<12) setPilih(null);
+  return;
+ }
+ const dx=e.clientX-downX, dy=e.clientY-downY, dt=performance.now()-downT;
+ const jauh=Math.hypot(dx,dy);
+ if(jauh<12 && dt<600){
+  // KETUK → popup kartu + pilih bubble untuk D-pad
+  setPilih(kena);
+  tulis('👆 Ketuk '+kena.userData.bola.name,true);
+  const kunci=['halo','kenal','rindu','kabar','main'][Math.floor(Math.random()*5)];
+  botBalas(kunci,kena.userData.bola.name);
+ } else {
+  // LEMPAR → icon lucu + mental
+  wajahLucu(kena);
+  kena.userData.vel.set(dx*.02,Math.max(.15,-dy*.02),-dy*.01);
+  tulis('😜 Bola '+kena.userData.bola.name+' dilempar!',true);
+  kartu.style.display='block';
+ }
+ kena=null;
+});
+
+// ===== D-PAD: ketuk bubble dulu untuk pilih, lalu panah gerakkan dia. Kalau belum pilih → kamera jalan =====
+let dipilih=null;
+const modeEl=document.getElementById('mode');
+function setPilih(g){
+ dipilih=g;
+ modeEl.textContent=g?('🫧 gerak: '+g.userData.bola.name+' (ketuk laut = lepas)'):'🎥 gerak: kamera';
+}
+function gerak(arah){
+ const s=.7;
+ if(dipilih){
+  const p=dipilih.position;
+  if(arah==='maju') p.z-=s;
+  if(arah==='mundur') p.z+=s;
+  if(arah==='kiri') p.x-=s;
+  if(arah==='kanan') p.x+=s;
+  p.x=Math.max(-14,Math.min(14,p.x));
+  p.z=Math.max(-20,Math.min(14,p.z));
+  dipilih.userData.vel.set(0,0,0);
+ } else {
+  const f=new THREE.Vector3(); camera.getWorldDirection(f); f.y=0; f.normalize();
+  const r=new THREE.Vector3(f.z,0,-f.x); // kanan
+  const v=new THREE.Vector3();
+  if(arah==='maju') v.copy(f);
+  if(arah==='mundur') v.copy(f).negate();
+  if(arah==='kanan') v.copy(r);
+  if(arah==='kiri') v.copy(r).negate();
+  v.multiplyScalar(s);
+  camera.position.add(v); ctl.target.add(v);
+ }
+}
+// tahan tombol = jalan terus, ketuk = selangkah. Ketuk laut/pasir = lepas pilihan
+let tahan=null;
+document.querySelectorAll('#dpad button').forEach(b=>{
+ const arah=b.dataset.arah;
+ const mulai=e=>{e.preventDefault();gerak(arah);clearInterval(tahan);tahan=setInterval(()=>gerak(arah),120);};
+ const berhenti=()=>clearInterval(tahan);
+ b.addEventListener('pointerdown',mulai);
+ b.addEventListener('pointerup',berhenti);
+ b.addEventListener('pointerleave',berhenti);
+ b.addEventListener('pointercancel',berhenti);
+});
+
+// ===== LOOP =====
+function resize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);}
+addEventListener('resize',resize);resize();
+const jam=new THREE.Clock();
+(function loop(){
+ requestAnimationFrame(loop);
+ const dt=Math.min(jam.getDelta(),.05), t=performance.now()/1000;
+ buihs.forEach((b,i)=>{ b.position.x+=Math.sin(t+i)*.01; b.material.opacity=.45+Math.sin(t*2+i)*.2; });
+ ikans.forEach(f=>{
+  f.position.x+=Math.sin(t*.7+f.userData.o)*dt*2+f.userData.s*dt*2;
+  f.position.y=.15+Math.sin(t*2+f.userData.o)*.15;
+  if(f.position.x>60) f.position.x=-60;
+  f.rotation.y=Math.PI/2+Math.sin(t+f.userData.o)*.3;
+ });
+ bubbles.forEach((g,i)=>{
+  const u=g.userData;
+  if(u.vel.lengthSq()>.0001){
+   g.position.addScaledVector(u.vel,dt*10);
+   u.vel.multiplyScalar(.96); u.vel.y-=.02;
+   if(g.position.y<0){g.position.y=0;u.vel.y*=-.6;u.vel.x*=.8;u.vel.z*=.8;wajahLucu(g);}
+   if(Math.abs(g.position.x)>14){u.vel.x*=-.8;g.position.x=Math.sign(g.position.x)*14;}
+  } else {
+   g.position.y=Math.sin(t*2+i*2)*.25;
+  }
+  g.rotation.y+=dt*.6;
+ });
+ ctl.update();renderer.render(scene,camera);
+})();
+</script>
+<!-- bubble 2D real otomatis -->
+<script src="./alwi_bubble1.js"></script>
+<script src="./alwi_bubble3.js"></script>
+<script src="./alwi_bubble4.js"></script>
+</body>
+</html>

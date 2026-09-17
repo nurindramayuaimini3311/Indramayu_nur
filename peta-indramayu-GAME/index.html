@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Peta Indramayu 3D - Index Titik</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+ *{box-sizing:border-box;font-family:Arial,sans-serif}
+ html,body{height:100%;margin:0;background:#121212;color:#e0e0e0;display:flex;flex-direction:column}
+ .header{text-align:center;padding:10px}
+ .header h1{color:#ffd700;font-size:18px;margin:0 0 3px}
+ .header p{color:#a0a0a0;font-size:12px;margin:0}
+ #map{flex:1;min-height:300px;width:100%}
+ .tombol{background:#1e1e1e;border-top:1px solid #333;padding:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+ .tombol a{display:block;text-align:center;padding:12px 4px;border-radius:10px;font-weight:bold;font-size:13px;color:#000;text-decoration:none}
+ .leaflet-popup-content-wrapper{background:#1e1e1e;color:#fff;border:1px solid #ffd700;border-radius:10px}
+ .leaflet-popup-tip{background:#1e1e1e}
+ .masuk{display:inline-block;margin-top:6px;background:#ffd700;color:#000;font-weight:bold;padding:8px 14px;border-radius:8px;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="header">
+ <h1>🗺️ PETA INDRAMAYU 3D</h1>
+ <p><b style="color:#fff">HITAM</b>=A Pantura 30mnt • <b style="color:#ffcf40">KUNING</b>=B Sawah • <b style="color:#60a5fa">BIRU</b>=C Desa • Tap titik / tombol untuk masuk 3D</p>
+</div>
+<div id="map"></div>
+<div class="tombol">
+ <a style="background:#ff3333;grid-column:1/-1" href="patrol-30menit.html">🚓 MAIN PATROLI 30 MENIT - 3 RUTE</a>
+ <a style="background:#00ff88;grid-column:1/-1" href="showroom-3D.html">🚗 SHOWROOM 3D (BUS-TRUK-F1-TEBU)</a>
+ <a style="background:#ff8844" href="rumah.html">🏠 RUMAH</a>
+ <a style="background:#22cc55" href="masjid.html">🕌 MASJID</a>
+ <a style="background:#cccccc" href="gereja.html">⛪ GEREJA</a>
+ <a style="background:#ff3333" href="klenteng.html">🏮 KLENTENG</a>
+ <a style="background:#ffcf40" href="sawah.html">🌾 SAWAH</a>
+ <a style="background:#00bfff" href="laut.html">🌊 LAUT ERETAN</a>
+ <a style="background:#a78bfa;grid-column:1/-1" href="3D_MODEL.html">🏖 CONTOH 3D_MODEL (PANTAI + BUBBLE TANYA JAWAB)</a>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// TITIK INDRAMAYU (demo, bisa digeser sesuai lokasi asli)
+const T={
+ rumah:{n:'🏠 Rumah',c:[-6.4780,108.3120],f:'rumah.html',w:'#ff8844'},
+ masjid:{n:'🕌 Masjid',c:[-6.4740,108.3090],f:'masjid.html',w:'#22cc55'},
+ gereja:{n:'⛪ Gereja',c:[-6.4720,108.3150],f:'gereja.html',w:'#cccccc'},
+ klenteng:{n:'🏮 Klenteng',c:[-6.4700,108.3050],f:'klenteng.html',w:'#ff3333'},
+ sawah:{n:'🌾 Sawah',c:[-6.4600,108.2800],f:'sawah.html',w:'#ffcf40'},
+ laut:{n:'🌊 Laut Eretan',c:[-6.2730,108.0620],f:'laut.html',w:'#00bfff'}
+};
+const map=L.map('map').setView([-6.38,108.20],10);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+// JALAN 30 MENIT dari game patrol: 3 rute bercabang Jatibarang → Laut Eretan
+const RUTE_A=[[-6.4758,108.3104],[-6.44,108.27],[-6.40,108.22],[-6.35,108.16],[-6.31,108.10],[-6.2730,108.0620]];
+const RUTE_B=[[-6.4758,108.3104],[-6.46,108.25],[-6.42,108.18],[-6.36,108.10],[-6.30,108.07],[-6.2730,108.0620]];
+const RUTE_C=[[-6.4758,108.3104],[-6.43,108.32],[-6.38,108.30],[-6.32,108.24],[-6.28,108.14],[-6.2730,108.0620]];
+// RUTE HITAM PANJANG = Rute A Pantura (jalan utama 30 menit)
+L.polyline(RUTE_A,{color:'#000',weight:6,opacity:.9}).addTo(map);
+L.polyline(RUTE_A,{color:'#fff',weight:1.5,dashArray:'8,8',opacity:.8}).addTo(map);
+// Rute B SAWAH (kuning, shortcut) + Rute C DESA (biru)
+L.polyline(RUTE_B,{color:'#ffcf40',weight:4,opacity:.9}).addTo(map);
+L.polyline(RUTE_C,{color:'#60a5fa',weight:4,opacity:.9}).addTo(map);
+const rute=[...RUTE_A];
+// MARKER tiap titik → popup tombol masuk html
+Object.values(T).forEach((t,i)=>{
+ const icon=L.divIcon({className:'',html:`<div style="background:${t.w};width:26px;height:26px;border-radius:50%;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#000;">${i+1}</div>`,iconSize:[26,26]});
+ L.marker(t.c,{icon}).addTo(map).bindPopup(`<b>${t.n}</b><br><a class="masuk" href="${t.f}">▶ MASUK 3D</a>`);
+});
+map.fitBounds(L.latLngBounds([...RUTE_A,...RUTE_B,...RUTE_C,...Object.values(T).map(t=>t.c)]),{padding:[30,30]});
+</script>
+<script src="alwi_bubble4.js"></script>
+</body>
+</html>
