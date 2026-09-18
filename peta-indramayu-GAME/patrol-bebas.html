@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>🚗 Bebas Eretan - Setir + Suara</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
+#c{position:fixed;inset:0;display:block}
+.pill{background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:8px 12px;font-size:12px}
+#hud{position:fixed;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:6px;z-index:5;pointer-events:none}
+#ctrl{position:fixed;left:0;right:0;bottom:0;padding:10px;display:flex;gap:8px;z-index:5}
+#ctrl button{flex:1;border-radius:16px;padding:20px 8px;font-weight:900;font-size:20px;border:1px solid;color:#fff;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);user-select:none;-webkit-user-select:none}
+#btnGas{background:#22cc55!important;border-color:#22cc55!important;color:#00220f!important}
+#gate{position:fixed;inset:0;z-index:10;background:radial-gradient(circle at 50% 30%,#123, #05080f 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}
+#gate h1{font-size:28px}#gate h1 span{color:#ffcf40}
+#veh{display:flex;gap:8px;overflow-x:auto;max-width:100%;padding:6px}
+#veh button{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:10px 14px;font-weight:800;font-size:12px;min-width:100px}
+#veh button.on{background:#fff;color:#000}
+#bMain{width:min(420px,90vw);height:64px;border-radius:999px;border:0;background:#ffcf40;color:#111;font-weight:900;font-size:18px}
+#bootErr{position:fixed;bottom:110px;left:10px;right:10px;background:rgba(150,0,0,.9);padding:10px 14px;border-radius:12px;font-size:12px;display:none;z-index:99}
+</style>
+<script async src="./es-module-shims.js"></script>
+<script type="importmap-shim">{"imports":{"three":"./three.module.js","three/addons/":"./addons/"}}</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud"><div class="pill" id="spd">0 KMH</div><div class="pill" id="zona">BEBAS</div><div class="pill" style="pointer-events:auto"><span id="mute" style="cursor:pointer">🔊</span> <a href="index.html" style="color:#ffcf40;text-decoration:none;font-weight:900">🗺 PETA</a></div></div>
+<div id="ctrl">
+<button id="btnL">◀</button><button id="btnR">▶</button><button id="btnRem">▼ REM</button><button id="btnGas">▲ GAS</button>
+</div>
+<div id="gate">
+<div style="font-size:11px;opacity:.8">🚗 MODE BEBAS • TANPA START • TANPA WAKTU • TANPA FINISH</div>
+<h1>BEBAS <span>ERETAN</span></h1>
+<p style="font-size:12px;opacity:.85">Stik ◀ ▶ buat belok, GAS/REM buat laju. Keliling dunia mini sepuasnya. Ada suara mesin!</p>
+<div id="veh">
+<button data-v="mobil">MOBIL</button>
+<button data-v="bus" class="on">BUS</button>
+<button data-v="truk">TRUK</button>
+<button data-v="tebu">TEBU</button>
+<button data-v="f1">F1 MERAH</button>
+</div>
+<button id="bMain">▶ MAIN + SUARA 🔊</button>
+</div>
+<div id="bootErr"></div>
+<script>
+window.__booted=false;
+window.addEventListener('error',function(e){var b=document.getElementById('bootErr');if(b){b.style.display='block';b.textContent='⚠️ Error: '+(e.message||'gagal load');}});
+setTimeout(function(){if(!window.__booted){var b=document.getElementById('bootErr');if(b){b.style.display='block';b.textContent='⚠️ Game tidak jalan. HARD REFRESH.';}}},25000);
+</script>
+<script type="module-shim">
+import * as THREE from 'three';
+// ===== SUARA MESIN (pasti ada!) =====
+let AC=null,osc=null,flt=null,gn=null,muted=false;
+const MESIN={mobil:{f:80,s:8,w:'sawtooth',lp:900},bus:{f:55,s:5,w:'square',lp:420},truk:{f:45,s:4,w:'square',lp:350},tebu:{f:65,s:5,w:'sawtooth',lp:600},f1:{f:200,s:25,w:'sawtooth',lp:3200}};
+function sndInit(){if(AC){AC.resume();return;}try{AC=new(window.AudioContext||window.webkitAudioContext)();osc=AC.createOscillator();flt=AC.createBiquadFilter();flt.type='lowpass';gn=AC.createGain();gn.gain.value=.08;osc.connect(flt);flt.connect(gn);gn.connect(AC.destination);osc.start();sndSet(cur);}catch(e){}}
+function sndSet(v){if(!osc)return;const m=MESIN[v]||MESIN.mobil;osc.type=m.w;flt.frequency.value=m.lp;osc.frequency.value=m.f;}
+function sndGo(sp){if(!AC||!osc||muted)return;const m=MESIN[cur]||MESIN.mobil;osc.frequency.setTargetAtTime(m.f+Math.abs(sp)*m.s*.6,AC.currentTime,.06);gn.gain.setTargetAtTime(.05+Math.min(.06,Math.abs(sp)*.004),AC.currentTime,.1);}
+// ===== DUNIA MINI =====
+const canvas=document.getElementById('c');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:false});
+renderer.setPixelRatio(1);renderer.shadowMap.enabled=false;
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x87b5e0);
+scene.fog=new THREE.Fog(0x87b5e0,50,260);
+const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,600);
+scene.add(new THREE.HemisphereLight(0xffffff,0x334455,.95));
+const sun=new THREE.DirectionalLight(0xffffff,1.5);sun.position.set(30,40,20);scene.add(sun);
+const tanah=new THREE.Mesh(new THREE.PlaneGeometry(900,900),new THREE.MeshStandardMaterial({color:0x4f9a4f,roughness:1}));
+tanah.rotation.x=-Math.PI/2;tanah.receiveShadow=true;scene.add(tanah);
+function M(c,r=.7,mt=.1){return new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:mt});}
+function box(w,h,d,c,x=0,y=0,z=0){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),c);o.position.set(x,y,z);return o;}
+// jalan loop oval (sirkuit kampung)
+const loopPts=[new THREE.Vector3(0,0,-120),new THREE.Vector3(70,0,-80),new THREE.Vector3(90,0,0),new THREE.Vector3(60,0,80),new THREE.Vector3(0,0,110),new THREE.Vector3(-70,0,70),new THREE.Vector3(-90,0,-10),new THREE.Vector3(-60,0,-90)];
+const loop=new THREE.CatmullRomCurve3(loopPts,true);
+(function(){const N=160,W=4.5,pos=[],idx=[];
+ for(let i=0;i<=N;i++){const t=i/N,p=loop.getPointAt(t),tan=loop.getTangentAt(t);
+  let nx=-tan.z,nz=tan.x;const L=Math.hypot(nx,nz)||1,ox=nx/L*W,oz=nz/L*W;
+  pos.push(p.x-ox,.06,p.z-oz,p.x+ox,.06,p.z+oz);
+  if(i<N){const a=i*2;idx.push(a,a+1,a+2,a+1,a+3,a+2);}}
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();
+ scene.add(new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:0x2a2e35,roughness:.9})));
+ for(let i=0;i<40;i++){const t=i/40,p=loop.getPointAt(t),tan=loop.getTangentAt(t);
+  const d=new THREE.Mesh(new THREE.PlaneGeometry(.35,2.2),new THREE.MeshBasicMaterial({color:0xffdd33}));
+  d.rotation.x=-Math.PI/2;d.rotation.z=-Math.atan2(tan.x,tan.z);d.position.set(p.x,.09,p.z);scene.add(d);}
+})();
+function teks(t,bg){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const x=cv.getContext('2d');
+ x.fillStyle=bg;x.fillRect(0,0,512,128);x.fillStyle='#fff';x.font='bold 52px Arial';x.textAlign='center';x.fillText(t,256,82);return new THREE.CanvasTexture(cv);}
+// gapura + SPBU + pasar + sawah + laut Eretan mini
+const pp0=new THREE.Mesh(new THREE.BoxGeometry(12,2.6,.5),new THREE.MeshStandardMaterial({map:teks('🚗 BEBAS ERETAN','#226622')}));pp0.position.set(0,8,-128);scene.add(pp0);
+for(const sx of[-6,6])scene.add(box(1,8,1,M(0xdddddd),sx,4,-128));
+(function(){const g=new THREE.Group();g.position.set(40,0,-40);scene.add(g);
+ g.add(box(12,.7,9,M(0xcc0000),0,4.8,0));
+ for(const sx of[-5,5])for(const sz of[-3,3])g.add(box(.5,4.5,.5,M(0xffffff),sx,2.25,sz));
+ for(let i=-1;i<=1;i+=2)g.add(box(1,1.6,.7,M(0xcc0000),i*3,.9,0));
+ const s=new THREE.Mesh(new THREE.BoxGeometry(7,2,.4),new THREE.MeshStandardMaterial({map:teks('SPBU','#cc0000')}));s.position.set(0,8,-4);g.add(s);})();
+for(let i=0;i<3;i++){const g=new THREE.Group();g.position.set(-45,0,20+i*14);scene.add(g);
+ g.add(box(4,.15,2.6,M(0x8a5a2a),0,1,0));
+ const td=box(4.6,.15,3.4,M([0xff3333,0xffdd33,0x22cc55][i]),0,3,0);td.rotation.x=-.2;g.add(td);
+ for(let k=0;k<4;k++){const f=new THREE.Mesh(new THREE.SphereGeometry(.2,8,8),M([0xff2222,0xff8800,0x33cc33,0xffdd44][k],.7));f.position.set(-1.2+k*.8,1.25,0);g.add(f);}}
+for(let ix=0;ix<4;ix++)for(let iz=0;iz<3;iz++){const s=new THREE.Mesh(new THREE.PlaneGeometry(10,10),M((ix+iz)%2?0x4fc34f:0xd8c84a,1));s.rotation.x=-Math.PI/2;s.position.set(-120+ix*11,.03,-60+iz*11);scene.add(s);}
+for(let i=0;i<14;i++){const t=new THREE.Mesh(new THREE.CylinderGeometry(.25,.35,5,7),M(0x7a4a20));const px=Math.cos(i*2.4)*130,pz=Math.sin(i*1.7)*130;t.position.set(px,2.5,pz);scene.add(t);
+ const d=new THREE.Mesh(new THREE.SphereGeometry(2.2,8,6),M(0x2a8a2a));d.position.set(px,6,pz);scene.add(d);}
+for(let i=0;i<8;i++)scene.add(box(6,3.5,5,M([0xf5f5f5,0xffe0a0,0xe0f0ff][i%3]),-140+(i%4)*16,1.75,90+Math.floor(i/4)*16));
+(function(){const lt=new THREE.Mesh(new THREE.PlaneGeometry(200,80),M(0x1e90d6,.3));lt.rotation.x=-Math.PI/2;lt.position.set(0,.02,220);scene.add(lt);
+ const g=new THREE.Group();for(const s of[-4,4])g.add(box(1,8,1,M(0xdddddd),s,4,0));
+ const q=new THREE.Mesh(new THREE.BoxGeometry(11,2.4,.4),new THREE.MeshStandardMaterial({map:teks('🌊 LAUT ERETAN','#0044aa')}));q.position.y=7;g.add(q);
+ g.position.set(0,0,175);scene.add(g);})();
+// ===== MOBIL =====
+function wheel(r,w,x,y,z){const g=new THREE.Group();
+ const t=new THREE.Mesh(new THREE.CylinderGeometry(r,r,w,16),M(0x111111,.9,0));t.rotation.z=Math.PI/2;g.add(t);
+ const v=new THREE.Mesh(new THREE.CylinderGeometry(r*.55,r*.55,w+.02,10),M(0xcccccc,.4,.8));v.rotation.z=Math.PI/2;g.add(v);
+ g.position.set(x,y,z);g.userData.spin=t;return g;}
+function kaca(w,h,d,x,y,z){return box(w,h,d,new THREE.MeshStandardMaterial({color:0x9fd8ff,roughness:.15,metalness:.5,transparent:true,opacity:.85}),x,y,z);}
+const BUILD={
+ mobil(c=0xd21f26){const G=new THREE.Group(),B=M(c,.5,.4);
+  G.add(box(1.9,.55,4.2,B,0,.65,0),box(1.7,.55,2.2,B,0,1.15,-.2),kaca(1.72,.4,1.1,0,1.15,.55));
+  [[-.95,-1.35],[.95,-1.35],[-.95,1.35],[.95,1.35]].forEach(([x,z])=>G.add(wheel(.38,.3,x,.38,z)));return G;},
+ bus(c=0xff1a1a){const G=new THREE.Group(),B=M(c,.55,.2);
+  G.add(box(2.5,1.9,10,B,0,1.55,0),kaca(2.3,1,.9,0,1.9,-4.6));
+  [[-1.1,-3.3],[1.1,-3.3],[-1.1,3.3],[1.1,3.3]].forEach(([x,z])=>G.add(wheel(.5,.4,x,.5,z)));return G;},
+ truk(c=0x1a8a2a){const G=new THREE.Group();
+  G.add(box(2.4,1.6,2.6,M(c,.5,.3),0,1.4,-3.6),kaca(2,.7,.2,0,1.7,-4.92));
+  const t=new THREE.Mesh(new THREE.CylinderGeometry(1.15,1.15,6.5,16),M(0xdfe6ea,.35,.7));t.rotation.x=Math.PI/2;t.position.set(0,1.55,.8);G.add(t);
+  [[-1,-3.6],[1,-3.6],[-1,3.2],[1,3.2]].forEach(([x,z])=>G.add(wheel(.5,.4,x,.5,z)));return G;},
+ tebu(){const G=new THREE.Group();
+  G.add(box(2.3,1.5,2.4,M(0x2a7a2a,.6,.2),0,1.3,-5.2),kaca(1.9,.6,.2,0,1.6,-6.42));
+  G.add(box(2.4,.3,7,M(0x6b4a1f,.8,.1),0,.9,-.5));
+  [[-1,-5.2],[1,-5.2],[-1,1.5],[1,1.5]].forEach(([x,z])=>G.add(wheel(.5,.4,x,.5,z)));return G;},
+ f1(c=0xff0000){const G=new THREE.Group(),B=M(c,.35,.6);
+  G.add(box(.7,.4,4.4,B,0,.5,-.3),box(1.9,.12,.6,B,0,.65,2.35),box(1.8,.1,.45,B,0,.75,-3.4));
+  [[-.95,-2.9],[.95,-2.9],[-1,1.9],[1,1.9]].forEach(([x,z],i)=>G.add(wheel(i<2?.42:.48,.55,x,i<2?.42:.48,z)));return G;}
+};
+const STAT={mobil:{top:40,acc:9},bus:{top:32,acc:7},truk:{top:30,acc:6},tebu:{top:27,acc:5},f1:{top:52,acc:12}};
+let cur='bus',car=new THREE.Group(),px=0,pz=0,hd=0,sp=0;
+let iL=false,iR=false,iG=false,iR2=false;
+function setCar(id){cur=id;scene.remove(car);car=new THREE.Group();car.add(BUILD[id]());scene.add(car);sndSet(cur);
+ document.querySelectorAll('#veh button').forEach(b=>b.classList.toggle('on',b.dataset.v===id));}
+document.querySelectorAll('#veh button').forEach(b=>b.onclick=()=>setCar(b.dataset.v));
+setCar('bus');
+function bind(id,set){const b=document.getElementById(id);
+ b.onpointerdown=e=>{e.preventDefault();set(true);};b.onpointerup=b.onpointerleave=b.onpointercancel=()=>set(false);}
+bind('btnL',v=>iL=v);bind('btnR',v=>iR=v);bind('btnGas',v=>iG=v);bind('btnRem',v=>iR2=v);
+addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='a')iL=true;if(e.key==='ArrowRight'||e.key==='d')iR=true;if(e.key==='ArrowUp'||e.key==='w')iG=true;if(e.key==='ArrowDown'||e.key==='s')iR2=true;});
+addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a')iL=false;if(e.key==='ArrowRight'||e.key==='d')iR=false;if(e.key==='ArrowUp'||e.key==='w')iG=false;if(e.key==='ArrowDown'||e.key==='s')iR2=false;});
+document.getElementById('bMain').onclick=()=>{sndInit();document.getElementById('gate').style.display='none';};
+document.getElementById('mute').onclick=e=>{muted=!muted;e.target.textContent=muted?'🔇':'🔊';};
+function onRoad(x,z){return Math.abs(x)<140&&Math.abs(z)<160;}
+function resize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);}
+addEventListener('resize',resize);resize();
+const clock=new THREE.Clock();
+(function loop(){requestAnimationFrame(loop);
+ const dt=Math.min(clock.getDelta(),.05);
+ const st=STAT[cur];
+ if(iG)sp=Math.min(sp+st.acc*dt*2.2,st.top);
+ else if(iR2)sp=Math.max(sp-22*dt,sp>0?0:sp-8*dt);
+ else sp-=sp*1.2*dt;
+ if(iL)hd+=dt*(1.6-Math.min(1,sp/60));
+ if(iR)hd-=dt*(1.6-Math.min(1,sp/60));
+ const off=!onRoad(px,pz);
+ const v=sp*(off?0.45:1);
+ px-=Math.sin(hd)*v*dt;pz-=Math.cos(hd)*v*dt;
+ px=Math.max(-220,Math.min(220,px));pz=Math.max(-220,Math.min(220,pz));
+ car.position.set(px,.05,pz);car.rotation.y=hd;
+ car.traverse(o=>{if(o.userData.spin)o.rotation.x-=dt*v;});
+ sndGo(v);
+ document.getElementById('spd').textContent=Math.round(Math.abs(v)*3.6)+' KMH';
+ document.getElementById('zona').textContent=off?'🌿 LUAR JALAN':'🛣️ JALAN';
+ const bx=px+Math.sin(hd)*9,bz=pz+Math.cos(hd)*9;
+ camera.position.lerp(new THREE.Vector3(bx,4.2,bz),1-Math.pow(.005,dt));
+ camera.lookAt(px,1.2,pz);
+ renderer.render(scene,camera);})();
+window.__booted=true;
+</script>
+</body>
+</html>
