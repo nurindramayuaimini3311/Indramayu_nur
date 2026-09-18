@@ -1,0 +1,17 @@
+{
+  "name": "Peta Indramayu 3D",
+  "short_name": "Peta3D",
+  "description": "Game peta Indramayu 3D: patrol, sawah, pasar, masjid & 11 titik 3D",
+  "start_url": "index.html",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#121212",
+  "theme_color": "#161616",
+  "icons": [
+    { "src": "img/icon-72.png", "sizes": "72x72", "type": "image/png" },
+    { "src": "img/icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
