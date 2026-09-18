@@ -11,7 +11,10 @@ body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-a
 .pill{background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:8px 12px;font-size:12px}
 #hud{position:fixed;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:6px;z-index:5;pointer-events:none}
 #ctrl{position:fixed;left:0;right:0;bottom:0;padding:10px;display:flex;gap:8px;z-index:5}
-#ctrl button{flex:1;border-radius:16px;padding:20px 8px;font-weight:900;font-size:20px;border:1px solid;color:#fff;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);user-select:none;-webkit-user-select:none}
+#ctrl button{flex:1;border-radius:14px;padding:20px 4px;font-weight:900;font-size:17px;border:1px solid;color:#fff;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);user-select:none;-webkit-user-select:none}
+#rpmwrap{position:fixed;top:54px;left:10px;right:10px;z-index:5;pointer-events:none}
+#rpmbar{height:12px;border-radius:7px;background:#222;border:1px solid #555;overflow:hidden}
+#rpmfill{height:100%;width:0%;background:linear-gradient(90deg,#22cc55,#ffdd33 70%,#ff2222)}
 #btnGas{background:#22cc55!important;border-color:#22cc55!important;color:#00220f!important}
 #gate{position:fixed;inset:0;z-index:10;background:radial-gradient(circle at 50% 30%,#123, #05080f 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}
 #gate h1{font-size:28px}#gate h1 span{color:#ffcf40}
@@ -27,8 +30,9 @@ body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-a
 <body>
 <canvas id="c"></canvas>
 <div id="hud"><div class="pill" id="spd">0 KMH</div><div class="pill" id="zona">BEBAS</div><div class="pill" style="pointer-events:auto"><span id="mute" style="cursor:pointer">🔊</span> <a href="index.html" style="color:#ffcf40;text-decoration:none;font-weight:900">🗺 PETA</a></div></div>
+<div id="rpmwrap"><div id="rpmbar"><div id="rpmfill"></div></div></div>
 <div id="ctrl">
-<button id="btnL">◀</button><button id="btnR">▶</button><button id="btnRem">▼ REM</button><button id="btnGas">▲ GAS</button>
+<button id="btnL">◀</button><button id="btnR">▶</button><button id="btnGDown" style="flex:.7">G▼</button><button id="btnGUp" style="flex:.7">G▲</button><button id="btnRem">▼</button><button id="btnGas">▲</button>
 </div>
 <div id="gate">
 <div style="font-size:11px;opacity:.8">🚗 MODE BEBAS • TANPA START • TANPA WAKTU • TANPA FINISH</div>
@@ -56,7 +60,7 @@ let AC=null,osc=null,flt=null,gn=null,muted=false;
 const MESIN={mobil:{f:80,s:8,w:'sawtooth',lp:900},bus:{f:55,s:5,w:'square',lp:420},truk:{f:45,s:4,w:'square',lp:350},tebu:{f:65,s:5,w:'sawtooth',lp:600},f1:{f:200,s:25,w:'sawtooth',lp:3200}};
 function sndInit(){if(AC){AC.resume();return;}try{AC=new(window.AudioContext||window.webkitAudioContext)();osc=AC.createOscillator();flt=AC.createBiquadFilter();flt.type='lowpass';gn=AC.createGain();gn.gain.value=.08;osc.connect(flt);flt.connect(gn);gn.connect(AC.destination);osc.start();sndSet(cur);}catch(e){}}
 function sndSet(v){if(!osc)return;const m=MESIN[v]||MESIN.mobil;osc.type=m.w;flt.frequency.value=m.lp;osc.frequency.value=m.f;}
-function sndGo(sp){if(!AC||!osc||muted)return;const m=MESIN[cur]||MESIN.mobil;osc.frequency.setTargetAtTime(m.f+Math.abs(sp)*m.s*.6,AC.currentTime,.06);gn.gain.setTargetAtTime(.05+Math.min(.06,Math.abs(sp)*.004),AC.currentTime,.1);}
+function sndGo(sp,rpm){if(!AC||!osc||muted)return;const m=MESIN[cur]||MESIN.mobil;osc.frequency.setTargetAtTime(m.f+(rpm||0)*m.s*14,AC.currentTime,.06);gn.gain.setTargetAtTime(.05+Math.min(.06,Math.abs(sp)*.004),AC.currentTime,.1);}
 // ===== DUNIA MINI =====
 const canvas=document.getElementById('c');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:false});
@@ -132,7 +136,8 @@ const BUILD={
   [[-.95,-2.9],[.95,-2.9],[-1,1.9],[1,1.9]].forEach(([x,z],i)=>G.add(wheel(i<2?.42:.48,.55,x,i<2?.42:.48,z)));return G;}
 };
 const STAT={mobil:{top:40,acc:9},bus:{top:32,acc:7},truk:{top:30,acc:6},tebu:{top:27,acc:5},f1:{top:52,acc:12}};
-let cur='bus',car=new THREE.Group(),px=0,pz=0,hd=0,sp=0;
+const GEAR_FRAC=[.22,.4,.6,.8,1];
+let cur='bus',car=new THREE.Group(),px=0,pz=0,hd=0,sp=0,gear=1,rpm=.2;
 let iL=false,iR=false,iG=false,iR2=false;
 function setCar(id){cur=id;scene.remove(car);car=new THREE.Group();car.add(BUILD[id]());scene.add(car);sndSet(cur);
  document.querySelectorAll('#veh button').forEach(b=>b.classList.toggle('on',b.dataset.v===id));}
@@ -141,6 +146,8 @@ setCar('bus');
 function bind(id,set){const b=document.getElementById(id);
  b.onpointerdown=e=>{e.preventDefault();set(true);};b.onpointerup=b.onpointerleave=b.onpointercancel=()=>set(false);}
 bind('btnL',v=>iL=v);bind('btnR',v=>iR=v);bind('btnGas',v=>iG=v);bind('btnRem',v=>iR2=v);
+document.getElementById('btnGUp').onclick=()=>{if(gear<5){gear++;rpm=Math.max(.3,rpm-.4);}};
+document.getElementById('btnGDown').onclick=()=>{if(gear>1){gear--;}};
 addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='a')iL=true;if(e.key==='ArrowRight'||e.key==='d')iR=true;if(e.key==='ArrowUp'||e.key==='w')iG=true;if(e.key==='ArrowDown'||e.key==='s')iR2=true;});
 addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a')iL=false;if(e.key==='ArrowRight'||e.key==='d')iR=false;if(e.key==='ArrowUp'||e.key==='w')iG=false;if(e.key==='ArrowDown'||e.key==='s')iR2=false;});
 document.getElementById('bMain').onclick=()=>{sndInit();document.getElementById('gate').style.display='none';};
@@ -152,9 +159,13 @@ const clock=new THREE.Clock();
 (function loop(){requestAnimationFrame(loop);
  const dt=Math.min(clock.getDelta(),.05);
  const st=STAT[cur];
- if(iG)sp=Math.min(sp+st.acc*dt*2.2,st.top);
- else if(iR2)sp=Math.max(sp-22*dt,sp>0?0:sp-8*dt);
- else sp-=sp*1.2*dt;
+ const maxV=st.top*GEAR_FRAC[gear-1];
+ if(iG){if(sp<maxV)sp=Math.min(sp+st.acc*dt*2.6,maxV);}
+ else if(iR2)sp=Math.max(sp-24*dt,0);
+ else sp-=sp*1.4*dt;
+ if(sp<0)sp=0;
+ rpm=.22+.78*Math.min(1,maxV>0?sp/maxV:0);
+ if(iG&&sp>=maxV-.01)rpm=1;
  if(iL)hd+=dt*(1.6-Math.min(1,sp/60));
  if(iR)hd-=dt*(1.6-Math.min(1,sp/60));
  const off=!onRoad(px,pz);
@@ -163,8 +174,9 @@ const clock=new THREE.Clock();
  px=Math.max(-220,Math.min(220,px));pz=Math.max(-220,Math.min(220,pz));
  car.position.set(px,.05,pz);car.rotation.y=hd;
  car.traverse(o=>{if(o.userData.spin)o.rotation.x-=dt*v;});
- sndGo(v);
- document.getElementById('spd').textContent=Math.round(Math.abs(v)*3.6)+' KMH';
+ sndGo(v,rpm);
+ document.getElementById('spd').textContent=Math.round(Math.abs(v)*3.6)+' KMH • G'+gear;
+ document.getElementById('rpmfill').style.width=Math.min(100,rpm*100)+'%';
  document.getElementById('zona').textContent=off?'🌿 LUAR JALAN':'🛣️ JALAN';
  const bx=px+Math.sin(hd)*9,bz=pz+Math.cos(hd)*9;
  camera.position.lerp(new THREE.Vector3(bx,4.2,bz),1-Math.pow(.005,dt));
