@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>PATROL JALAN - 1 FILE OFFLINE</title>
+<title>PATROL MALAM - 1 FILE OFFLINE</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
@@ -1111,9 +1111,9 @@ setTimeout(function(){if(!window.__booted){var b=document.getElementById('bootEr
 <button class="gas" id="bGas">GAS ▶</button>
 </div>
 <div id="start">
-<div style="font-size:11px;opacity:.8">🚓 PATROLI PANJANG • 9 GERBANG • JATIBARANG - PATROL</div>
-<h1>PATROLI PANJANG<br><span>JATIBARANG - PATROL</span></h1>
-<p style="font-size:12px;opacity:.9;max-width:400px">Jalan diperpanjang! Santai saja, tanpa batas waktu - hanya 9 gerbang berhenti:<br><b style="color:#22cc55">A PANTURA</b> padat truk • <b style="color:#ffcf40">B SAWAH</b> shortcut sempit • <b style="color:#60a5fa">C DESA</b> warung & polisi tidur<br>Pilih rute bercabang di persimpangan - kumpulkan penumpang!</p>
+<div style="font-size:11px;opacity:.8">🚓 PATROLI MALAM • 9 GERBANG • JATIBARANG - PATROL</div>
+<h1>PATROLI MALAM<br><span>JATIBARANG - PATROL 🌙</span></h1>
+<p style="font-size:12px;opacity:.9;max-width:400px">Malam hari di Indramayu! Menyala di gelap, bus punya lampu sorot:<br><b style="color:#22cc55">A PANTURA</b> padat truk • <b style="color:#ffcf40">B SAWAH</b> shortcut sempit • <b style="color:#60a5fa">C DESA</b> warung & polisi tidur<br>Pilih rute bercabang di persimpangan - kumpulkan penumpang!</p>
 <div id="veh">
 <button data-v="mobil">MOBIL 3P</button>
 <button data-v="bus" class="on">BUS 9P</button>
@@ -1134,21 +1134,25 @@ const canvas=document.getElementById('c');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:false});
 renderer.setPixelRatio(1);
 renderer.shadowMap.enabled=false;
-const scene=new THREE.Scene(); scene.background=new THREE.Color(0x87b5e0);
-scene.fog=new THREE.Fog(0x87b5e0,150,3000);
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x070b1a);
+scene.fog=new THREE.Fog(0x070b1a,150,3000);
  const camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,16000);
 camera.position.set(10,6,12);
 const ctl=new THREE.OrbitControls(camera,renderer.domElement);
 ctl.target.set(0,1.2,0); ctl.enableDamping=true;
-scene.add(new THREE.HemisphereLight(0xffffff,0x334455,.9));
-const sun=new THREE.DirectionalLight(0xffffff,1.5); sun.position.set(40,50,30); sun.castShadow=true;
-sun.shadow.mapSize.set(1024,1024);
-Object.assign(sun.shadow.camera,{left:-120,right:120,top:120,bottom:-120,far:200});
-scene.add(sun);
-const tanah=new THREE.Mesh(new THREE.PlaneGeometry(1800,12000),new THREE.MeshStandardMaterial({color:0x5a8a4a,roughness:1}));
+scene.add(new THREE.HemisphereLight(0x3a4a7a,0x0a0a18,.45));
+const gelap=new THREE.AmbientLight(0x182444,.7);
+scene.add(gelap);
+const moon=new THREE.DirectionalLight(0x8899ff,.8); moon.position.set(40,50,30); moon.castShadow=true;
+moon.shadow.mapSize.set(1024,1024);
+Object.assign(moon.shadow.camera,{left:-120,right:120,top:120,bottom:-120,far:200});
+scene.add(moon);
+const lampuBus=new THREE.PointLight(0xfff6cc,2.2,80,1.4); lampuBus.position.set(0,1.6,4.2);
+const lampuBus2=new THREE.PointLight(0xffbb33,1.6,50,1.6); lampuBus2.position.set(0,2.2,-3.5);
+const tanah=new THREE.Mesh(new THREE.PlaneGeometry(1800,12000),new THREE.MeshStandardMaterial({color:0x2c4a2c,roughness:1}));
 tanah.rotation.x=-Math.PI/2; tanah.receiveShadow=true; scene.add(tanah);
 for(let ix=0;ix<14;ix++)for(let iz=0;iz<90;iz++){
- const c=(ix+iz)%2?0x4fc34f:0xc8b63f;
+ const c=(ix+iz)%2?0x2f6b2f:0x7a6a1e;
  const s=new THREE.Mesh(new THREE.PlaneGeometry(22,28),new THREE.MeshStandardMaterial({color:c,roughness:1}));
  s.rotation.x=-Math.PI/2; s.position.set(-160+ix*22,.02,-5280+iz*110); s.receiveShadow=true; scene.add(s);
 }
@@ -1380,7 +1384,7 @@ function makePerson(e,c){const g=new THREE.Group();
  const ring=new THREE.Mesh(new THREE.RingGeometry(.66,1.0,24),new THREE.MeshBasicMaterial({color:0xfff000,transparent:true,opacity:.9,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.y=-.55;g.add(ring);
  return g;}
 function clearWaiters(){for(const w of waiters)scene.remove(w);waiters=[];boardQueue=[];if(boardAnim){scene.remove(boardAnim.mesh);boardAnim=null;}}
-function setCar(id){cur=id;scene.remove(car);car=new THREE.Group();car.add(builders[id]());scene.add(car);
+function setCar(id){cur=id;scene.remove(car);car=new THREE.Group();car.add(builders[id]());car.add(lampuBus,lampuBus2);scene.add(car);
  document.querySelectorAll('#veh button').forEach(b=>b.classList.toggle('on',b.dataset.v===id));
  if(mode!=='patroli'){car.position.set(0,.05,0);car.rotation.y=.6;}
  basePax=car.children[0]?.userData?.pax||0;boarded=0;updPax();}
