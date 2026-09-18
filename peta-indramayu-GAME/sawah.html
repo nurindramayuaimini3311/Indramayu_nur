@@ -34,11 +34,40 @@ const tg=new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,2.4,6),new THREE.Mesh
 const ca=new THREE.Mesh(new THREE.BoxGeometry(1.4,.25,.25),new THREE.MeshStandardMaterial({color:0xaa2222}));ca.position.y=1.9;og.add(ca);
 const kp=new THREE.Mesh(new THREE.SphereGeometry(.22,8,8),new THREE.MeshStandardMaterial({color:0xffdbac}));kp.position.y=2.2;og.add(kp);
 og.position.set(-4,0,6);s.add(og);
+// 9 PETANI menanam padi
+const PETANI=[];
+const BAJU=[0x2288cc,0xcc3322,0x33aa33,0xcc9933,0x8833cc,0x33cccc,0xcc3388,0x666666,0x99cc33];
+function petani(x,z,c){
+ const g=new THREE.Group();
+ const baju=new THREE.MeshStandardMaterial({color:c,roughness:.9});
+ const kulit=new THREE.MeshStandardMaterial({color:0xc8956c,roughness:.9});
+ const cln=new THREE.MeshStandardMaterial({color:0x333333,roughness:.9});
+ const l1=new THREE.Mesh(new THREE.BoxGeometry(.16,.5,.16),cln);l1.position.set(-.12,.25,0);g.add(l1);
+ const l2=l1.clone();l2.position.x=.12;g.add(l2);
+ const bd=new THREE.Mesh(new THREE.BoxGeometry(.5,.6,.3),baju);bd.position.set(0,.78,0);bd.rotation.x=.9;g.add(bd);
+ const kp=new THREE.Mesh(new THREE.SphereGeometry(.2,10,10),kulit);kp.position.set(0,.98,.35);g.add(kp);
+ const cap=new THREE.Mesh(new THREE.ConeGeometry(.42,.25,12),new THREE.MeshStandardMaterial({color:0xd8b545,roughness:.9}));cap.position.set(0,1.15,.35);g.add(cap);
+ const a1=new THREE.Mesh(new THREE.BoxGeometry(.12,.55,.12),baju);a1.position.set(-.3,.62,.3);a1.rotation.x=-.9;a1.rotation.z=.3;g.add(a1);
+ const a2=a1.clone();a2.position.x=.3;a2.rotation.z=-.3;g.add(a2);
+ g.position.set(x,0,z);g.rotation.y=Math.PI/2;s.add(g);
+ PETANI.push({m:g,bd,a1,a2,ph:Math.random()*6,x0:x,dir:1,sp:.35+Math.random()*.3,mode:0,t:Math.random()*2});
+}
+for(let i=0;i<9;i++)petani(-9+(i%3)*7,-8+Math.floor(i/3)*7,BAJU[i]);
+const TUNAS=[];
+function tanam(x,z){let m;if(TUNAS.length>=70){m=TUNAS.shift();}else{m=new THREE.Mesh(new THREE.ConeGeometry(.09,.5,5),new THREE.MeshStandardMaterial({color:0x7ddf5a}));s.add(m);TUNAS.push(m);}m.position.set(x,.25,z);}
 // padi goyang (instanced cones)
 const padis=[];
 const pg=new THREE.ConeGeometry(.12,.9,5),pm=new THREE.MeshStandardMaterial({color:0x7ddf5a});
 for(let i=0;i<60;i++){const m=new THREE.Mesh(pg,pm);m.position.set(-13+Math.random()*21,.45,-13+Math.random()*21);s.add(m);padis.push({m,ph:Math.random()*6});}
 addEventListener('resize',()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});r.setSize(innerWidth,innerHeight);
 (function l(){requestAnimationFrame(l);const t=performance.now()/1000;
-padis.forEach(p=>{p.m.rotation.z=Math.sin(t*2+p.ph)*.15;});og.rotation.y+=.005;o.update();r.render(s,c);})();
+padis.forEach(p=>{p.m.rotation.z=Math.sin(t*2+p.ph)*.15;});
+const dt=0.016;
+for(const f of PETANI){f.t+=dt;
+ if(f.mode===0){f.m.position.x+=f.dir*f.sp*dt;f.m.position.y=Math.abs(Math.sin(t*6+f.ph))*.06;
+  if(Math.abs(f.m.position.x-f.x0)>2.5){f.mode=1;f.t=0;}}
+ else{f.bd.rotation.x=.9+Math.sin(t*5+f.ph)*.25;
+  if(f.t>1.2){tanam(f.m.position.x+(Math.random()-.5),f.m.position.z+(Math.random()-.5)*2);f.t=0;f.dir*=-1;if(Math.random()<.4)f.mode=0;}}
+ f.a1.rotation.x=-.9+Math.sin(t*5+f.ph)*.4;f.a2.rotation.x=-.9-Math.sin(t*5+f.ph)*.4;}
+og.rotation.y+=.005;o.update();r.render(s,c);})();
 </script><script src="alwi_bubble4.js"></script></body></html>
