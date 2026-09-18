@@ -28,7 +28,8 @@ body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-a
 #notif{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.8);border:2px solid #ffcf40;padding:16px 24px;border-radius:16px;font-weight:900;font-size:18px;display:none;z-index:20;text-align:center}
 #routeSign{position:fixed;top:50%;left:10px;transform:translateY(-50%);background:rgba(0,0,0,.7);border:1px solid #fff;padding:10px;border-radius:12px;display:none;z-index:6;font-size:11px}
 </style>
-<script type="importmap">{"imports":{"three":"./three.module.js","three/addons/":"./addons/"}}</script>
+<script async src="./es-module-shims.js"></script>
+<script type="importmap-shim">{"imports":{"three":"./three.module.js","three/addons/":"./addons/"}}</script>
 </head>
 <body>
 <canvas id="c"></canvas>
@@ -66,7 +67,7 @@ setTimeout(function(){if(!window.__booted){var b=document.getElementById('bootEr
 </div>
 <p style="font-size:10px;opacity:.6">Gerbang: Celeng → Larangan → Jangga → Muntur → Karangsinom → Legok → Patrol → Jatibarang Finish<br>🛑 Otomatis berhenti di tiap gerbang — 🫧 Bubble 1-4 naik di cekpoin!</p>
 </div>
-<script type="module">
+<script type="module-shim">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 const canvas=document.getElementById('c');
