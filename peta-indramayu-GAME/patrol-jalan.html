@@ -172,7 +172,9 @@ document.getElementById('bStart').onclick=()=>{
  document.getElementById('gear').style.display='block';
  document.getElementById('ctrl').style.display='flex';
  document.getElementById('lampu').style.display='flex';
- ctl.enabled=false;mode='count';phase='stage';phaseT=0;pS={v:0,d:0,g:1,rpm:0};fS.v=0;fS.d=0;hasil=false;
+ ctl.enabled=false;
+ camera.position.set(-2.6,3.2,13);ctl.target.set(-2.6,1,-6);camera.lookAt(-2.6,1,-6);
+ mode='count';phase='stage';phaseT=0;pS={v:0,d:0,g:1,rpm:0};fS.v=0;fS.d=0;hasil=false;
 };
 function finish(menang,alasan){
  if(hasil)return;hasil=true;mode='done';sndStop();
@@ -186,7 +188,7 @@ addEventListener('resize',resize);resize();
 const clock=new THREE.Clock();
 (function loop(){requestAnimationFrame(loop);
  const dt=Math.min(clock.getDelta(),.05);
- if(mode==='menu'){const t=performance.now()/1000;camera.position.set(Math.sin(t*.3)*10,4,12+Math.cos(t*.3)*3);camera.lookAt(0,1,-4);}
+ if(mode==='menu'){ctl.autoRotate=true;ctl.autoRotateSpeed=1;ctl.target.set(0,1,-4);ctl.update();}
  else if(mode==='count'){
   phaseT+=dt;
   const n=Math.floor(phaseT/.7);
@@ -226,7 +228,7 @@ const clock=new THREE.Clock();
    else finish(false,`Kalah ${Math.abs(dl)}m dari ${fS.foe.toUpperCase()}. Coba gigi lebih pas! `);
   }
  }
- ctl.update();renderer.render(scene,camera);})();
+ renderer.render(scene,camera);})();
 window.__booted=true;
 </script>
 </body>
