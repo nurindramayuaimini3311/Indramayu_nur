@@ -66,7 +66,6 @@ setTimeout(function(){if(!window.__booted){var b=document.getElementById('bootEr
 </script>
 <script type="module-shim">
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 // ===== SUARA: mesin + beep + menang (Web Audio, offline) =====
 let AC=null,osc=null,flt=null,gn=null;
 const MESIN={mobil:{f:80,s:8,w:'sawtooth',lp:900},bus:{f:55,s:5,w:'square',lp:420},truk:{f:45,s:4,w:'square',lp:350},tebu:{f:65,s:5,w:'sawtooth',lp:600},f1:{f:200,s:25,w:'sawtooth',lp:3200}};
@@ -83,7 +82,7 @@ const scene=new THREE.Scene();scene.background=new THREE.Color(0x87b5e0);
 scene.fog=new THREE.Fog(0x87b5e0,60,400);
 const camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,800);
 camera.position.set(0,4,12);
-const ctl=new OrbitControls(camera,renderer.domElement);ctl.enableDamping=true;
+let menuA=0;
 scene.add(new THREE.HemisphereLight(0xffffff,0x334455,.9));
 const sun=new THREE.DirectionalLight(0xffffff,1.4);sun.position.set(30,40,20);scene.add(sun);
 const tanah=new THREE.Mesh(new THREE.PlaneGeometry(300,600),new THREE.MeshStandardMaterial({color:0x4f9a4f,roughness:1}));
@@ -172,8 +171,7 @@ document.getElementById('bStart').onclick=()=>{
  document.getElementById('gear').style.display='block';
  document.getElementById('ctrl').style.display='flex';
  document.getElementById('lampu').style.display='flex';
- ctl.enabled=false;
- camera.position.set(-2.6,3.2,13);ctl.target.set(-2.6,1,-6);camera.lookAt(-2.6,1,-6);
+ camera.position.set(-2.6,3.2,13);camera.lookAt(-2.6,1,-6);
  mode='count';phase='stage';phaseT=0;pS={v:0,d:0,g:1,rpm:0};fS.v=0;fS.d=0;hasil=false;
 };
 function finish(menang,alasan){
@@ -188,7 +186,7 @@ addEventListener('resize',resize);resize();
 const clock=new THREE.Clock();
 (function loop(){requestAnimationFrame(loop);
  const dt=Math.min(clock.getDelta(),.05);
- if(mode==='menu'){ctl.autoRotate=true;ctl.autoRotateSpeed=1;ctl.target.set(0,1,-4);ctl.update();}
+ if(mode==='menu'){menuA+=dt*.4;camera.position.set(Math.sin(menuA)*11,4.5,4+Math.cos(menuA)*11);camera.lookAt(0,1,-4);}
  else if(mode==='count'){
   phaseT+=dt;
   const n=Math.floor(phaseT/.7);
