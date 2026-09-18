@@ -45,3 +45,4 @@ NURgenerator/ADZAN/*.mp3
 *.bak*
 .vercel
 .env*
+sdcard

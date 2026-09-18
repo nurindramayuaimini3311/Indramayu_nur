@@ -50,6 +50,7 @@
  <a style="background:#ff3333" href="patrol-jalan.html">🏁 Drag Race Eretan 400M</a>
  <a style="background:#22cc55;color:#000" href="patrol-bebas.html">🚗 Bebas: Setir + Suara</a>
  <a style="background:#ff8800" href="patrol-offline.html">📱 Patroli 1 File (tanpa server)</a>
+ <a style="background:#1a1a6b;color:#fff" href="patrol-malam.html">🌙 Patroli Malam</a>
  <a style="background:#00ff88" href="showroom-3D.html">🚗 Showroom 3D</a>
  <a style="background:#c084fc" href="petak-umpet.html">🫣 Petak Umpet 3D</a>
  <a style="background:#222;color:#0f0" href="kamera-hantu.html">📷 Kamera Hantu</a>
@@ -59,8 +60,9 @@
  <a style="background:#22cc55" href="masjid.html">🕌 Masjid</a>
  <a style="background:#cccccc" href="gereja.html">⛪ Gereja</a>
  <a style="background:#ff5555;color:#fff" href="klenteng.html">🏮 Klenteng</a>
- <a style="background:#ffcf40" href="sawah.html">🌾 Sawah</a>
- <a style="background:#88ff44" href="sawah2.html">👨‍🌾 Sawah2</a>
+<a style="background:#ffcf40" href="sawah.html">🌾 Sawah</a>
+  <a style="background:#ffcf40" href="larangan.html">🏡 Larangan</a>
+  <a style="background:#88ff44" href="sawah2.html">👨‍🌾 Sawah2</a>
  <a style="background:#00bfff" href="laut.html">🌊 Laut</a>
  <a style="background:#888;color:#fff" href="kuburan.html">🪦 Kuburan</a>
  <a style="background:#ffdd33" href="mancing.html">🎣 Mancing</a>
@@ -74,19 +76,23 @@
 <script>
 // TITIK INDRAMAYU (demo, bisa digeser sesuai lokasi asli)
 const T={
- rumah:{n:'🏠 Rumah',c:[-6.4780,108.3120],f:'rumah.html',w:'#ff8844'},
+ rumah:{n:'🏠 Rumah',c:[-6.4780,108.3120],f:'rumah.html',w:'#ff8844',m:1},
  masjid:{n:'🕌 Masjid',c:[-6.4740,108.3090],f:'masjid.html',w:'#22cc55'},
  gereja:{n:'⛪ Gereja',c:[-6.4720,108.3150],f:'gereja.html',w:'#cccccc'},
- klenteng:{n:'🏮 Klenteng',c:[-6.4700,108.3050],f:'klenteng.html',w:'#ff3333'},
- sawah:{n:'🌾 Sawah',c:[-6.4600,108.2800],f:'sawah.html',w:'#ffcf40'},
- laut:{n:'🌊 Laut Eretan',c:[-6.2730,108.0620],f:'laut.html',w:'#00bfff'},
+klenteng:{n:'🏮 Klenteng',c:[-6.4700,108.3050],f:'klenteng.html',w:'#ff3333'},
+  sawah:{n:'🌾 Sawah',c:[-6.4600,108.2800],f:'sawah.html',w:'#ffcf40'},
+ laut:{n:'🌊 Laut Eretan',c:[-6.2730,108.0620],f:'laut.html',w:'#00bfff',m:1},
  kubur:{n:'🪦 Makam Wiralodra',c:[-6.3980,108.3020],f:'kuburan.html',w:'#888888'},
  mancing:{n:'🎣 Orang Mancing',c:[-6.3480,108.1900],f:'mancing.html',w:'#ffdd33'},
  spbu:{n:'⛽ SPBU Isi Bensin',c:[-6.4030,108.2500],f:'spbu.html',w:'#ff2222'},
- pasar:{n:'🏪 Pasar Patrol',c:[-6.4300,108.2900],f:'pasar.html',w:'#22cc55'},
+ larangan:{n:'🏡 Desa Larangan',c:[-6.4490,108.2500],f:'larangan.html',w:'#ffcf40'},  pasar:{n:'🏪 Pasar Patrol',c:[-6.4300,108.2900],f:'pasar.html',w:'#22cc55'},
  bukit:{n:'⛰️ Bukit Eretan',c:[-6.3000,108.1200],f:'patrol-jalan.html',w:'#2a7a3a'},
  tani:{n:'👨‍🌾 Petani 9 Orang',c:[-6.4550,108.2720],f:'sawah.html',w:'#228800'},
- tani2:{n:'👨‍🌾 Sawah2 Petani Bubble 🎩',c:[-6.4490,108.2640],f:'sawah2.html',w:'#88ff44'}
+ tani2:{n:'👨‍🌾 Sawah2 Petani Bubble 🎩',c:[-6.4490,108.2640],f:'sawah2.html',w:'#88ff44'},
+ rumah4:{n:'🏠 Rumah H.Abas',c:[-6.4900,108.3300],f:'rumah4.html',w:'#ffb347',m:1},
+ rumah5:{n:'🏠 Mbah Sam',c:[-6.4200,108.1700],f:'rumah5.html',w:'#ffb347',m:1},
+ rumah6:{n:'🏠 Kang Darto',c:[-6.3300,108.0900],f:'rumah6.html',w:'#ffb347',m:1},
+ rumah7:{n:'🏠 Mad Amin',c:[-6.4600,108.1200],f:'rumah7.html',w:'#ffb347',m:1}
 };
 const map=L.map('map').setView([-6.38,108.20],10);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
@@ -102,7 +108,7 @@ L.polyline(RUTE_B,{color:'#ffcf40',weight:4,opacity:.9}).addTo(map);
 L.polyline(RUTE_C,{color:'#60a5fa',weight:4,opacity:.9}).addTo(map);
 // MARKER tiap titik → popup tombol masuk html
 Object.values(T).forEach((t,i)=>{
- const icon=L.divIcon({className:'',html:`<div style="background:${t.w};width:26px;height:26px;border-radius:50%;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#000;">${i+1}</div>`,iconSize:[26,26]});
+ const icon=L.divIcon({className:'',html: t.m ? `<div style="background:${t.w};width:30px;height:30px;border-radius:50%;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;">🏠<span style="position:absolute;right:-5px;bottom:-5px;background:#FFD700;color:#000;font-weight:bold;font-size:10px;border-radius:50%;width:15px;height:15px;display:flex;align-items:center;justify-content:center;border:2px solid #000;">${i+1}</span></div>` : `<div style="background:${t.w};width:26px;height:26px;border-radius:50%;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#000;">${i+1}</div>`,iconSize:t.m?[30,30]:[26,26]});
  L.marker(t.c,{icon}).addTo(map).bindPopup(`<b>${t.n}</b><br><a class="masuk" href="${t.f}">▶ MASUK 3D</a>`);
 });
 map.fitBounds(L.latLngBounds([...RUTE_A,...RUTE_B,...RUTE_C,...Object.values(T).map(t=>t.c)]),{padding:[30,30]});
