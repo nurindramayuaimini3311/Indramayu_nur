@@ -1,6 +1,6 @@
 !function(){
-if(window.__ALWI1)return;window.__ALWI1=1;
-// VERSI 1 - kuning terang, ringan, bisa jalan bareng bubble4
+if(window.__ALWI2)return;window.__ALWI2=1;
+// VERSI 2 - hijau terang, ringan, bisa jalan bareng bubble lain
 // SUARA BAYI (Web Audio, offline): tekan = "outhhh" 👶, lempar = ketawa bayi 😂
 function ac(){try{if(!window.__alwiAC)window.__alwiAC=new(window.AudioContext||window.webkitAudioContext)();if(window.__alwiAC.state==='suspended')window.__alwiAC.resume();return window.__alwiAC;}catch(e){return null;}}
 function bayiOuth(base){const a=ac();if(!a)return;const t=a.currentTime;
@@ -15,11 +15,11 @@ function bayiKetawa(base){const a=ac();if(!a)return;const t0=a.currentTime;
   o.type='sine';o.frequency.setValueAtTime(f*1.5,t);o.frequency.exponentialRampToValueAtTime(f*.8,t+.09);
   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.18,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+.11);
   o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+.13);}}
-let x=80,y=220,vx=0,vy=0,vxp=0,vyp=0,isDrag=false,sx,sy,rot=0;
+let x=280,y=130,vx=0,vy=0,vxp=0,vyp=0,isDrag=false,sx,sy,rot=0;
 let b=document.createElement('div');
-b.id='ALWI_BOLA1';
-b.style.cssText=`position:fixed;left:${x}px;top:${y}px;z-index:999999991;width:60px;height:60px;background:radial-gradient(circle at 30% 30%,#FFF9C4,#FFEB3B 60%,#FBC02D);border-radius:50%;border:3px solid #FFF176;box-shadow:0 0 20px rgba(255,235,59,.8);font-size:32px;display:flex;align-items:center;justify-content:center;cursor:grab;user-select:none;touch-action:none;`;
-b.innerHTML='<span>💛</span>';
+b.id='ALWI_BOLA2';
+b.style.cssText=`position:fixed;left:${x}px;top:${y}px;z-index:999999992;width:60px;height:60px;background:radial-gradient(circle at 30% 30%,#D6FFD6,#00FF88 60%,#00994D);border-radius:50%;border:3px solid #8AFFB0;box-shadow:0 0 20px rgba(0,255,136,.8);font-size:32px;display:flex;align-items:center;justify-content:center;cursor:grab;user-select:none;touch-action:none;`;
+b.innerHTML='<span>💚</span>';
 document.body.appendChild(b);
 function upd(){b.style.left=x+'px';b.style.top=y+'px';b.style.transform=`rotate(${rot}deg)`;}
 let anim=false;
@@ -40,11 +40,10 @@ b.addEventListener('pointermove',e=>{if(!isDrag)return;let dx=e.clientX-sx,dy=e.
 b.addEventListener('pointerup',()=>{
  isDrag=false;
  let p=Math.sqrt(vx*vx+vy*vy);
- if(p>4){vxp=vx*2.2;vyp=vy*2.2-4;phys();bayiKetawa(750);}
- else if(p>1.5){vxp=vx*1.4;vyp=vy*1.4-2;phys();bayiKetawa(750);}
- else bayiOuth(520);
+ if(p>4){vxp=vx*2.2;vyp=vy*2.2-4;phys();bayiKetawa(650);}
+ else if(p>1.5){vxp=vx*1.4;vyp=vy*1.4-2;phys();bayiKetawa(650);}
+ else bayiOuth(460);
 });
-// idle mengambang otomatis
-setInterval(()=>{if(!isDrag&&!anim){y+=Math.sin(Date.now()/600)*1.2;upd();}},50);
+setInterval(()=>{if(!isDrag&&!anim){y+=Math.sin(Date.now()/700+2)*1.2;upd();}},50);
 addEventListener('resize',()=>{if(x>innerWidth-60)x=innerWidth-60;if(y>innerHeight-60)y=innerHeight-60;upd();});
 }();

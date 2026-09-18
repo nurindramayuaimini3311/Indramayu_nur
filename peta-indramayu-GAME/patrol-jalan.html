@@ -42,13 +42,15 @@ body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-a
 <div id="bootErr" style="position:fixed;bottom:10px;left:10px;right:10px;background:rgba(150,0,0,.9);padding:10px 14px;border-radius:12px;font-size:12px;display:none;z-index:99"></div>
 <script>
 window.__booted=false;
+(function(){var b=document.getElementById('bootErr');if(b){b.style.display='block';b.style.background='rgba(0,80,0,.9)';b.textContent='⏳ Loading game... tunggu HP selesai download (sekali saja, lalu offline).';}})();
 window.addEventListener('error',function(e){var b=document.getElementById('bootErr');if(b){b.style.display='block';b.textContent='⚠️ Error: '+(e.message||'gagal load');}});
-setTimeout(function(){if(!window.__booted){var b=document.getElementById('bootErr');if(b){b.style.display='block';b.textContent='⚠️ Game tidak jalan. HARD REFRESH / hapus cache lalu muat ulang.';}}},8000);
+setTimeout(function(){if(!window.__booted){var b=document.getElementById('bootErr');if(b){b.style.display='block';b.textContent='⚠️ Game tidak jalan. HARD REFRESH / hapus cache lalu muat ulang.';}}},25000);
 </script>
 <div id="routeSign">⬅️ RUTE B SAWAH<br>⬆️ RUTE A PANTURA<br>➡️ RUTE C DESA</div>
 <div id="ctrl">
 <button class="rem" id="bRem">◀ REM</button>
 <button id="bStop">■ STOP</button>
+<button id="bSnd">🔊</button>
 <button class="gas" id="bGas">GAS ▶</button>
 </div>
 <div id="start">
@@ -416,7 +418,7 @@ function clearWaiters(){for(const w of waiters)scene.remove(w);waiters=[];boardQ
 function setCar(id){cur=id;scene.remove(car);car=new THREE.Group();car.add(builders[id]());scene.add(car);
  document.querySelectorAll('#veh button').forEach(b=>b.classList.toggle('on',b.dataset.v===id));
  if(mode!=='patroli'){car.position.set(0,.05,0);car.rotation.y=.6;}
- basePax=car.children[0]?.userData?.pax||0;boarded=0;updPax();}
+  basePax=car.children[0]?.userData?.pax||0;boarded=0;updPax();mesinSet(id);}
 document.querySelectorAll('#veh button').forEach(b=>b.onclick=()=>setCar(b.dataset.v));
 setCar('bus');
 const traffics=[]; const trafficTypes=['mobil','bus','truk','tebu'];
@@ -431,8 +433,15 @@ for(let i=0;i<10;i++){
 const startEl=document.getElementById('start'),hud=document.getElementById('hud'),hud2=document.getElementById('hud2'),ctrl=document.getElementById('ctrl');
 const minimap=document.getElementById('minimap'); const mctx=minimap.getContext('2d'); const notif=document.getElementById('notif');
 function showNotif(txt){ notif.textContent=txt; notif.style.display='block'; setTimeout(()=>notif.style.display='none',2500); }
-document.getElementById('bStop').onclick=()=>{mode='menu';hud.style.display='none';hud2.style.display='none';ctrl.style.display='none';minimap.style.display='none';startEl.style.display='flex';ctl.enabled=true;clearWaiters();setCar(cur);};
+document.getElementById('bStop').onclick=()=>{mode='menu';hud.style.display='none';hud2.style.display='none';ctrl.style.display='none';minimap.style.display='none';startEl.style.display='flex';ctl.enabled=true;clearWaiters();setCar(cur);if(AC)AC.suspend();};
 const bGas=document.getElementById('bGas'),bRem=document.getElementById('bRem');
+// ===== SUARA MESIN sesuai mobil player (Web Audio, tanpa file = offline) =====
+const MESIN={mobil:{f:80,s:8,w:'sawtooth',lp:900},bus:{f:55,s:5,w:'square',lp:420},truk:{f:45,s:4,w:'square',lp:350},tebu:{f:65,s:5,w:'sawtooth',lp:600},f1:{f:200,s:25,w:'sawtooth',lp:3200}};
+let AC=null,osc=null,flt=null,gn=null,sndOn=true;
+function mesinInit(){if(AC){AC.resume();return;}try{AC=new(window.AudioContext||window.webkitAudioContext)();osc=AC.createOscillator();flt=AC.createBiquadFilter();flt.type='lowpass';gn=AC.createGain();gn.gain.value=0;osc.connect(flt);flt.connect(gn);gn.connect(AC.destination);osc.start();mesinSet(cur);showNotif('🔊 Suara mesin nyala');}catch(e){showNotif('🔇 Audio diblokir browser');}}
+function mesinSet(v){if(!osc)return;const m=MESIN[v]||MESIN.mobil;osc.type=m.w;flt.frequency.value=m.lp;osc.frequency.value=m.f;}
+function mesinUpdate(){if(!AC||!osc)return;const m=MESIN[cur]||MESIN.mobil;osc.frequency.setTargetAtTime(m.f+speed*m.s,AC.currentTime,.08);gn.gain.setTargetAtTime((mode==='patroli'&&sndOn)?.09+Math.min(.06,speed*.005):0,AC.currentTime,.1);}
+document.getElementById('bSnd').onclick=e=>{sndOn=!sndOn;e.target.textContent=sndOn?'🔊':'🔇';};
 bGas.onpointerdown=()=>gas=true;bGas.onpointerup=bGas.onpointerleave=()=>gas=false;
 bRem.onpointerdown=()=>rem=true;bRem.onpointerup=bRem.onpointerleave=()=>rem=false;
 addEventListener('keydown',e=>{if(e.key==='ArrowUp'||e.key==='w')gas=true;if(e.key==='ArrowDown'||e.key==='s')rem=true;if(e.key==='1'){activeCurve=curve;currentRoute='A';showNotif('RUTE A PANTURA');}if(e.key==='2'){activeCurve=curveB;currentRoute='B';showNotif('RUTE B SAWAH');}if(e.key==='3'){activeCurve=curveC;currentRoute='C';showNotif('RUTE C DESA');}});
@@ -442,8 +451,9 @@ document.getElementById('bStart').onclick=()=>{
  startEl.style.display='none';hud.style.display='flex';hud2.style.display='flex';ctrl.style.display='flex';minimap.style.display='block';
  ctl.enabled=false;
  const p=activeCurve.getPointAt(0);car.position.copy(p);
- showNotif('START PATROLI - 30 MENIT MENUJU JATIBARANG');
- localStorage.setItem('alwi_last_gate','0');
+  showNotif('START PATROLI - 30 MENIT MENUJU JATIBARANG');
+  localStorage.setItem('alwi_last_gate','0');
+  mesinInit();
 };
 function zona(p){
  let best=gates[0],d=9999;
@@ -474,8 +484,9 @@ const clock=new THREE.Clock();
   elapsed+=dt;
   const len=activeCurve.getLength();if(dwell<=0)t=(t+speed*dt/len)%1;
   const p=activeCurve.getPointAt(t),tan=activeCurve.getTangentAt(t);
-  car.position.set(p.x,.05,p.z);car.rotation.y=Math.atan2(-tan.x,-tan.z);
-  car.traverse(o=>{if(o.userData.spin)o.rotation.x-=dt*speed*2;});
+   car.position.set(p.x,.05,p.z);car.rotation.y=Math.atan2(-tan.x,-tan.z);
+   car.traverse(o=>{if(o.userData.spin)o.rotation.x-=dt*speed*2;});
+   mesinUpdate();
   const back=new THREE.Vector3().copy(p).addScaledVector(tan,-9);back.y=4.5;
   camera.position.lerp(back,1-Math.pow(.001,dt));
   ctl.target.lerp(new THREE.Vector3(p.x,1.5,p.z),1-Math.pow(.001,dt));
@@ -562,8 +573,9 @@ const clock=new THREE.Clock();
      if(stopNaik>=stopTarget)showNotif('🎉 9 PENUMPANG NAIK SEMUA! 👥');boardAnim=null;}
    }
  }
- ctl.update();renderer.render(scene,camera);})();
-  window.__booted=true;
+  ctl.update();renderer.render(scene,camera);})();
+   window.__booted=true;
+   (function(){var b=document.getElementById('bootErr');if(b)b.style.display='none';})();
 </script>
 </body>
 </html>
