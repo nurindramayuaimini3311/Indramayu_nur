@@ -362,6 +362,23 @@ for(let i=0;i<3;i++){const ger=new THREE.Mesh(new THREE.BoxGeometry(3,3,9),
  new THREE.MeshStandardMaterial({color:i==0?0x2244cc:0xdddddd}));ger.position.set(0,2,i*-10);kereta2.add(ger);}
 kereta2.position.set(relX,0,-400);scene.add(kereta2);
 let keretaZ2=-400;
+// ---- PASAR PATROL: 3 kios + pedagang + pembeli ----
+(function(){const pp=curve.getPointAt(0.2),tan=curve.getTangentAt(0.2);
+ let nx=-tan.z,nz=tan.x;const L=Math.hypot(nx,nz)||1;
+ const bx=pp.x-nx/L*14,bz=pp.z-nz/L*14;
+ const TC=[0xff3333,0xffdd33,0x22cc55];
+ for(let i=0;i<3;i++){
+  const g=new THREE.Group();g.position.set(bx,0,bz-8+i*8);g.rotation.y=Math.atan2(tan.x,tan.z);scene.add(g);
+  const mj=new THREE.Mesh(new THREE.BoxGeometry(4,.15,2.6),new THREE.MeshStandardMaterial({color:0x8a5a2a}));mj.position.y=1;g.add(mj);
+  const td=new THREE.Mesh(new THREE.BoxGeometry(4.6,.15,3.4),new THREE.MeshStandardMaterial({color:TC[i]}));td.position.set(0,3,0);td.rotation.x=-.2;g.add(td);
+  for(const sx of[-2,2]){const ti=new THREE.Mesh(new THREE.BoxGeometry(.15,3,.15),new THREE.MeshStandardMaterial({color:0x666666}));ti.position.set(sx,1.5,0);g.add(ti);}
+  for(let k=0;k<4;k++){const f=new THREE.Mesh(new THREE.SphereGeometry(.2,8,8),new THREE.MeshStandardMaterial({color:[0xff2222,0xff8800,0x33cc33,0xffdd44][k]}));f.position.set(-1.2+k*.8,1.25,0);g.add(f);}
+  const pd=new THREE.Group();
+  const pb=new THREE.Mesh(new THREE.BoxGeometry(.5,.75,.3),new THREE.MeshStandardMaterial({color:TC[i]}));pb.position.y=.85;pd.add(pb);
+  const pk=new THREE.Mesh(new THREE.SphereGeometry(.2,10,10),new THREE.MeshStandardMaterial({color:0xffdbac}));pk.position.y=1.45;pd.add(pk);
+  pd.position.set(0,0,-2.2);g.add(pd);
+ }
+ const sgn=new THREE.Mesh(new THREE.BoxGeometry(9,2,.4),new THREE.MeshStandardMaterial({map:teks('🏪 PASAR PATROL','#228822')}));sgn.position.set(bx,7,bz);scene.add(sgn);})();
 // ---- 9 PETANI menanam padi (badan membungkuk + caping + tunas) ----
 const PETANI=[];
 const BAJU=[0x2288cc,0xcc3322,0x33aa33,0xcc9933,0x8833cc,0x33cccc,0xcc3388,0x666666,0x99cc33];

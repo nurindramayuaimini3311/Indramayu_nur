@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🏪 Pasar 3D - Indramayu</title><style>
+*{box-sizing:border-box;margin:0}body{font-family:Arial;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
+#c{position:fixed;inset:0;display:block}.top{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;z-index:5;flex-wrap:wrap}
+a.back{background:#22cc55;color:#000;font-weight:900;padding:10px 16px;border-radius:12px;text-decoration:none}
+.pill{background:rgba(0,0,0,.6);border:1px solid #22cc55;border-radius:12px;padding:10px 14px;font-weight:900;font-size:13px}</style>
+<script type="importmap">{"imports":{"three":"./three.module.js","three/addons/":"./addons/"}}</script></head>
+<body><canvas id="c"></canvas>
+<div class="top"><a class="back" href="index.html">← PETA</a><div class="pill">🏪 PASAR PATROL - RAMAI</div></div>
+<script type="module">
+import * as THREE from 'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});
+r.setPixelRatio(Math.min(devicePixelRatio,2));r.shadowMap.enabled=true;
+const s=new THREE.Scene();s.background=new THREE.Color(0x87b5e0);
+const c=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,300);c.position.set(12,8,15);
+const o=new OrbitControls(c,r.domElement);o.target.set(0,1,0);o.enableDamping=true;o.autoRotate=true;o.autoRotateSpeed=.7;
+s.add(new THREE.HemisphereLight(0xffffff,0x334455,.9));
+const d=new THREE.DirectionalLight(0xffffff,1.5);d.position.set(10,15,8);d.castShadow=true;s.add(d);
+function M(co,r=.8,m=0){return new THREE.MeshStandardMaterial({color:co,roughness:r,metalness:m});}
+function B(w,h,dep,co,x,y,z){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,dep),typeof co==='number'?M(co):co);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;return o;}
+const g=new THREE.Mesh(new THREE.PlaneGeometry(60,44),M(0x9a9a8a,1));g.rotation.x=-Math.PI/2;g.receiveShadow=true;s.add(g);
+// atap pasar besar
+for(const x of[-9,0,9])for(const z of[-6,6])s.add(B(.4,6,.4,0x666666,x,3,z));
+s.add(B(26,.4,18,0x2266aa,0,6.2,0));
+// KIOS berderet + tenda garis + dagangan
+const TEND=[0xff3333,0xffdd33,0x22cc55,0x3388ff];
+const DAG=[0xff2222,0xff8800,0x33cc33,0xffdd44,0x8833cc];
+const orgs=[];
+function orang(x,z,cbaju,hdg=0){const gr=new THREE.Group();
+ const bd=new THREE.Mesh(new THREE.BoxGeometry(.5,.75,.3),M(cbaju));bd.position.y=.85;gr.add(bd);
+ const kp=new THREE.Mesh(new THREE.SphereGeometry(.2,10,10),M(0xffdbac));kp.position.y=1.45;gr.add(kp);
+ gr.position.set(x,0,z);gr.rotation.y=hdg;gr.traverse(o=>{o.castShadow=true;});s.add(gr);orgs.push({m:gr,ph:Math.random()*6});return gr;}
+for(let i=0;i<4;i++){
+ const x=-12+i*8, tc=TEND[i%4];
+ s.add(B(5,.15,3.4,0x8a5a2a,x,1,0)); // meja
+ for(const px of[-2,2])s.add(B(.25,1,.25,0x6b4a1f,x+px,.5,0));
+ // tenda garis-garis
+ const cv=document.createElement('canvas');cv.width=128;cv.height=32;const cx=cv.getContext('2d');
+ for(let k=0;k<8;k++){cx.fillStyle=k%2?'#ffffff':['#ff0000','#cc9900','#009900','#0044cc'][i%4];cx.fillRect(k*16,0,16,32);}
+ const td=new THREE.Mesh(new THREE.PlaneGeometry(6,4),new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(cv),side:THREE.DoubleSide}));
+ td.rotation.x=-.5;td.position.set(x,3.4,0);s.add(td);
+ for(const px of[-2.8,2.8])s.add(B(.15,3.4,.15,0x666666,x+px,1.7,0));
+ // dagangan: tumpukan sayur-buah
+ for(let k=0;k<6;k++){const f=new THREE.Mesh(new THREE.SphereGeometry(.22,8,8),M(DAG[(i+k)%5],.7));
+  f.position.set(x-1.8+k*.7,1.25,(k%2)*.8-.4);f.castShadow=true;s.add(f);}
+ orang(x,0,-2.6,TEND[i%4],Math.PI); // pedagang
+ orang(x+(Math.random()-.5)*3,0,3.5+Math.random()*2,0xeeeeee,Math.PI+(Math.random()-.5)); // pembeli
+}
+// gapura PASAR
+function papan(txt,bg){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const x=cv.getContext('2d');
+ x.fillStyle=bg;x.fillRect(0,0,512,128);x.fillStyle='#fff';x.font='bold 60px Arial';x.textAlign='center';x.fillText(txt,256,82);
+ return new THREE.CanvasTexture(cv);}
+const pp=new THREE.Mesh(new THREE.BoxGeometry(10,2.2,.4),new THREE.MeshStandardMaterial({map:papan('🏪 PASAR PATROL','#228822')}));pp.position.set(0,7,-10);s.add(pp);
+for(const x of[-5,5])s.add(B(1,8,1,0xdddddd,x,4,-10));
+addEventListener('resize',()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});r.setSize(innerWidth,innerHeight);
+(function l(){requestAnimationFrame(l);const t=performance.now()/1000;
+orgs.forEach(o2=>{o2.m.position.y=Math.abs(Math.sin(t*3+o2.ph))*.07;o2.m.rotation.y+=Math.sin(t+o2.ph)*.002;});
+o.update();r.render(s,c);})();
+</script><script src="alwi_bubble4.js"></script></body></html>

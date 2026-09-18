@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🎣 Mancing 3D - Indramayu</title><style>
+*{box-sizing:border-box;margin:0}body{font-family:Arial;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
+#c{position:fixed;inset:0;display:block}.top{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;z-index:5;flex-wrap:wrap}
+a.back{background:#ffdd33;color:#000;font-weight:900;padding:10px 16px;border-radius:12px;text-decoration:none}
+.pill{background:rgba(0,0,0,.6);border:1px solid #ffdd33;border-radius:12px;padding:10px 14px;font-weight:900;font-size:13px}</style>
+<script type="importmap">{"imports":{"three":"./three.module.js","three/addons/":"./addons/"}}</script></head>
+<body><canvas id="c"></canvas>
+<div class="top"><a class="back" href="index.html">← PETA</a><div class="pill">🎣 ORANG MANCING DI SUNGAI</div></div>
+<script type="module">
+import * as THREE from 'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});
+r.setPixelRatio(Math.min(devicePixelRatio,2));r.shadowMap.enabled=true;
+const s=new THREE.Scene();s.background=new THREE.Color(0x87b5e0);
+const c=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,300);c.position.set(10,7,13);
+const o=new OrbitControls(c,r.domElement);o.target.set(0,0,0);o.enableDamping=true;o.autoRotate=true;o.autoRotateSpeed=.8;
+s.add(new THREE.HemisphereLight(0xffffff,0x334455,.9));
+const d=new THREE.DirectionalLight(0xffffff,1.5);d.position.set(10,15,8);d.castShadow=true;s.add(d);
+function M(co,r=.8,m=0){return new THREE.MeshStandardMaterial({color:co,roughness:r,metalness:m});}
+// tanah + sungai
+const g=new THREE.Mesh(new THREE.PlaneGeometry(60,40),M(0x4f9a4f,1));g.rotation.x=-Math.PI/2;g.receiveShadow=true;s.add(g);
+const sg=new THREE.Mesh(new THREE.PlaneGeometry(60,9),M(0x2aa5d6,.3));sg.rotation.x=-Math.PI/2;sg.position.set(0,.04,3);sg.receiveShadow=true;s.add(sg);
+// ORANG MANCING duduk di pinggir
+const org=new THREE.Group();
+const bd=new THREE.Mesh(new THREE.BoxGeometry(.6,.8,.4),M(0x2244aa));bd.position.y=.4;bd.castShadow=true;org.add(bd);
+const kp=new THREE.Mesh(new THREE.SphereGeometry(.25,12,12),M(0xffdbac));kp.position.y=1;org.add(kp);
+const tp=new THREE.Mesh(new THREE.CylinderGeometry(.26,.26,.12,12),M(0x883311));tp.position.y=1.22;org.add(tp);
+const l1=new THREE.Mesh(new THREE.BoxGeometry(.14,.6,.14),M(0x2244aa));l1.position.set(.35,.6,.2);l1.rotation.x=-1;l1.rotation.z=-.3;org.add(l1);
+const l2=l1.clone();l2.position.x=-.35;l2.rotation.z=.3;org.add(l2);
+const k1=new THREE.Mesh(new THREE.BoxGeometry(.16,.16,.7),M(0x333333));k1.position.set(.15,.1,.3);org.add(k1);
+const k2=k1.clone();k2.position.x=-.15;org.add(k2);
+org.position.set(0,0,-3.5);s.add(org);
+// joran + senar + pelampung
+const jr=new THREE.Mesh(new THREE.CylinderGeometry(.04,.04,5,6),M(0x6b4a1f));jr.position.set(1.2,2.4,-1.5);jr.rotation.x=.9;jr.rotation.z=-.25;s.add(jr);
+const sn=new THREE.Mesh(new THREE.BoxGeometry(.02,2.6,.02),M(0xffffff));sn.position.set(1.9,1.2,1.2);sn.rotation.x=.25;s.add(sn);
+const pl=new THREE.Mesh(new THREE.SphereGeometry(.14,8,8),new THREE.MeshStandardMaterial({color:0xff2222,emissive:0xff0000,emissiveIntensity:.7}));pl.position.set(2.1,.25,2.4);s.add(pl);
+// papan MANCING
+function papan(txt,bg){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const x=cv.getContext('2d');
+ x.fillStyle=bg;x.fillRect(0,0,512,128);x.fillStyle='#000';x.font='bold 56px Arial';x.textAlign='center';x.fillText(txt,256,84);
+ return new THREE.CanvasTexture(cv);}
+const pp=new THREE.Mesh(new THREE.BoxGeometry(6,1.6,.3),new THREE.MeshStandardMaterial({map:papan('🎣 MANCING','#ffdd33')}));pp.position.set(-8,3,-6);s.add(pp);
+for(const sx of[-10.5,-5.5]){const ti=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,3,6),M(0x6b4a1f));ti.position.set(sx,1.5,-6);s.add(ti);}
+// ember ikan
+const em=new THREE.Mesh(new THREE.CylinderGeometry(.4,.3,.6,12),M(0x2266cc));em.position.set(-1.5,.3,-3);em.castShadow=true;s.add(em);
+// ikan berenang
+const ik=[];for(let i=0;i<7;i++){const f=new THREE.Group();
+ const b=new THREE.Mesh(new THREE.ConeGeometry(.28,1.1,8),M(i%2?0xff8800:0xcccccc));b.rotation.z=-Math.PI/2;f.add(b);
+ const e=new THREE.Mesh(new THREE.ConeGeometry(.2,.45,6),M(0xcc5500));e.rotation.z=Math.PI/2;e.position.x=.65;f.add(e);
+ f.position.set(-20+Math.random()*40,.4,1+Math.random()*4);s.add(f);
+ ik.push({m:f,cx:f.position.x,cz:f.position.z,r:2+Math.random()*3,sp:.5+Math.random(),ph:Math.random()*6});}
+addEventListener('resize',()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});r.setSize(innerWidth,innerHeight);
+(function l(){requestAnimationFrame(l);const t=performance.now()/1000;
+ik.forEach(f=>{f.ph+=.02*f.sp;f.m.position.x=f.cx+Math.cos(f.ph)*f.r;f.m.position.z=f.cz+Math.sin(f.ph)*f.r*.5;f.m.rotation.y=-f.ph;});
+pl.position.y=.25+Math.abs(Math.sin(t*3))*.3; // pelampung naik-turun: ada ikan!
+l1.rotation.x=-1+Math.sin(t*2)*.1;
+o.update();r.render(s,c);})();
+</script><script src="alwi_bubble4.js"></script></body></html>
