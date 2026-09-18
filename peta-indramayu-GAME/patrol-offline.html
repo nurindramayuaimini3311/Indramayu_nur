@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>ALWI 30 MENIT - 3 RUTE JATIBARANG PATROL</title>
+<title>JATIBARANG PATROL JALAN - 1 FILE OFFLINE</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
@@ -1096,7 +1096,7 @@ body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-a
 <script>
 window.__booted=false;
 window.addEventListener('error',function(e){var b=document.getElementById('bootErr');if(b){b.style.display='block';b.textContent='⚠️ Error: '+(e.message||'gagal load');}});
-setTimeout(function(){if(!window.__booted){var b=document.getElementById('bootErr');if(b){b.style.display='block';b.textContent='⚠️ Game tidak jalan: three.module.js gagal dimuat. Pastikan file file rusak. Download ulang patrol-offline.html.';}}},8000);
+setTimeout(function(){if(!window.__booted){var b=document.getElementById('bootErr');if(b){b.style.display='block';b.textContent='⚠️ Game tidak jalan: three.module.js gagal dimuat. Pastikan file three.module.js + folder addons ada di folder yang sama, atau update Chrome/WebView (butuh importmap, Chrome 89+).';}}},8000);
 </script>
 <div id="routeSign">⬅️ RUTE B SAWAH<br>⬆️ RUTE A PANTURA<br>➡️ RUTE C DESA</div>
 <div id="ctrl">
@@ -1106,7 +1106,7 @@ setTimeout(function(){if(!window.__booted){var b=document.getElementById('bootEr
 </div>
 <div id="start">
 <div style="font-size:11px;opacity:.8">🚓 30 MENIT PATROLI • 3 RUTE BERCABANG • JATIBARANG PATROL</div>
-<h1>30 MENIT<br><span>JATIBARANG - PATROL</span></h1>
+<h1>30 MENIT 🛣️<br><span>JATIBARANG - PATROL</span><br><span id="qmode" style="font-size:11px;opacity:.7"></span></h1>
 <p style="font-size:12px;opacity:.9;max-width:400px">Pilih rute bercabang di persimpangan:<br><b style="color:#22cc55">A PANTURA</b> padat truk • <b style="color:#ffcf40">B SAWAH</b> shortcut sempit • <b style="color:#60a5fa">C DESA</b> warung & polisi tidur<br>Timer 30 menit harus sampai Jatibarang!</p>
 <div id="veh">
 <button data-v="mobil">MOBIL 3P</button>
@@ -1124,9 +1124,11 @@ setTimeout(function(){if(!window.__booted){var b=document.getElementById('bootEr
 
 
 const canvas=document.getElementById('c');
-const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));
-renderer.shadowMap.enabled=true;
+const QRY=new URLSearchParams(location.search);
+const LOW=QRY.has('penuh')?false:(QRY.has('lite')||Math.min(screen.width,screen.height)<500);
+const renderer=new THREE.WebGLRenderer({canvas,antialias:!LOW});
+renderer.setPixelRatio(LOW?1:Math.min(devicePixelRatio,1.8));
+renderer.shadowMap.enabled=!LOW;
 const scene=new THREE.Scene(); scene.background=new THREE.Color(0x87b5e0);
 scene.fog=new THREE.Fog(0x87b5e0,80,320);
 const camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,800);
@@ -1146,7 +1148,7 @@ laut.rotation.x=-Math.PI/2; laut.position.set(220,.015,0); laut.receiveShadow=tr
 const pasir=new THREE.Mesh(new THREE.PlaneGeometry(28,1000),new THREE.MeshStandardMaterial({color:0xe8d8a0,roughness:1}));
 pasir.rotation.x=-Math.PI/2; pasir.position.set(52,.025,0); pasir.receiveShadow=true; scene.add(pasir);
 const ombaks=[];
-for(let i=0;i<24;i++){const o=new THREE.Mesh(new THREE.PlaneGeometry(14+Math.random()*18,1.1),
+for(let i=0;i<(LOW?10:24);i++){const o=new THREE.Mesh(new THREE.PlaneGeometry(14+Math.random()*18,1.1),
  new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.55}));
  o.rotation.x=-Math.PI/2;o.position.set(70+Math.random()*60,.04,-480+i*42);scene.add(o);ombaks.push(o);}
 // ===== TANDA LAUT ERETAN: papan + TPI/pelabuhan ikan =====
@@ -1165,16 +1167,16 @@ for(let i=0;i<24;i++){const o=new THREE.Mesh(new THREE.PlaneGeometry(14+Math.ran
  const tpi=new THREE.Mesh(new THREE.BoxGeometry(14,5,10),new THREE.MeshStandardMaterial({color:0x2266aa}));tpi.position.set(48,2.5,-28);tpi.castShadow=true;scene.add(tpi);
  const at=new THREE.Mesh(new THREE.BoxGeometry(15,1,11),new THREE.MeshStandardMaterial({color:0xffffff}));at.position.set(48,5.5,-28);scene.add(at);
  // kapal Eretan sandar berderet
- for(let i=0;i<5;i++){const k=new THREE.Group();
+ for(let i=0;i<(LOW?3:5);i++){const k=new THREE.Group();
   const b=new THREE.Mesh(new THREE.BoxGeometry(2.4,.8,7),new THREE.MeshStandardMaterial({color:i%2?0x2244aa:0x228822}));b.castShadow=true;k.add(b);
   k.position.set(75+i*7,.4,-60+i*9);k.rotation.y=.4;scene.add(k);}
 })();
 // perahu nelayan (kelihatan dari atas)
-for(let i=0;i<8;i++){const g=new THREE.Group();const b=new THREE.Mesh(new THREE.BoxGeometry(2,0.6,6),new THREE.MeshStandardMaterial({color:i%2?0x2244aa:0xaa3322}));
+for(let i=0;i<(LOW?4:8);i++){const g=new THREE.Group();const b=new THREE.Mesh(new THREE.BoxGeometry(2,0.6,6),new THREE.MeshStandardMaterial({color:i%2?0x2244aa:0xaa3322}));
  b.castShadow=true;g.add(b);
  g.position.set(110+Math.random()*120,.3,-400+Math.random()*800);g.rotation.y=Math.random()*3;scene.add(g);}
 // SAWAH real: petak hijau/kuning + pematang + gubuk (barat, x negatif)
-for(let ix=0;ix<8;ix++)for(let iz=0;iz<20;iz++){
+for(let ix=0;ix<(LOW?4:8);ix++)for(let iz=0;iz<(LOW?10:20);iz++){
  const c=(ix+iz)%3==0?0x6fd66f:(ix+iz)%3==1?0xd8c84a:0x3fa33f;
  const s=new THREE.Mesh(new THREE.PlaneGeometry(16,20),new THREE.MeshStandardMaterial({color:c,roughness:1}));
  s.rotation.x=-Math.PI/2; s.position.set(-220+ix*18,.02,-400+iz*22); s.receiveShadow=true; scene.add(s);
@@ -1187,14 +1189,14 @@ function gubuk(x,z){const g=new THREE.Group();
  const b=new THREE.Mesh(new THREE.BoxGeometry(3,2.2,3),new THREE.MeshStandardMaterial({color:0x8a5a2a}));b.position.y=1.1;b.castShadow=true;g.add(b);
  const a=new THREE.Mesh(new THREE.ConeGeometry(2.6,1.6,4),new THREE.MeshStandardMaterial({color:0x5a3a10}));a.position.y=3;a.rotation.y=Math.PI/4;g.add(a);
  g.position.set(x,0,z);scene.add(g);}
-for(let i=0;i<10;i++)gubuk(-200+Math.random()*120,-380+i*75);
+for(let i=0;i<(LOW?5:10);i++)gubuk(-200+Math.random()*120,-380+i*75);
 // pohon kelapa pinggir pantai + pinggir sawah
 function pohon(x,z){const g=new THREE.Group();
  const b=new THREE.Mesh(new THREE.CylinderGeometry(.3,.45,6,7),new THREE.MeshStandardMaterial({color:0x7a4a20}));b.position.y=3;b.castShadow=true;g.add(b);
  const d=new THREE.Mesh(new THREE.SphereGeometry(2.2,8,6),new THREE.MeshStandardMaterial({color:0x2a8a2a}));d.position.y=6.4;g.add(d);
  g.position.set(x,0,z);scene.add(g);}
-for(let i=0;i<30;i++)pohon(40+Math.random()*8,-480+i*33);
-for(let i=0;i<20;i++)pohon(-80-Math.random()*10,-400+i*42);
+for(let i=0;i<(LOW?10:30);i++)pohon(40+Math.random()*8,-480+i*33);
+for(let i=0;i<(LOW?8:20);i++)pohon(-80-Math.random()*10,-400+i*42);
 // ===== SUNGAI mengalir ke laut + JEMBATAN di 3 rute + IKAN =====
 const riverPts=[];
 for(let i=0;i<=60;i++){const x=-300+i*6; riverPts.push(new THREE.Vector3(x,0,100+Math.sin(i*0.35)*12+Math.sin(i*0.12)*8));}
@@ -1238,8 +1240,8 @@ function ikan(x,z,sea,c=0xff8800){
  g.position.set(x,.35,z);scene.add(g);
  fishes.push({m:g,cx:x,cz:z,r:2+Math.random()*4,sp:.6+Math.random()*.8,ph:Math.random()*6,sea});
 }
-for(let i=0;i<10;i++)ikan(-280+Math.random()*320,100+(Math.random()-.5)*8,false,i%2?0xff8800:0xcccccc);
-for(let i=0;i<6;i++)ikan(100+Math.random()*100,-300+Math.random()*600,true,i%2?0xffdd44:0x88ddff);
+for(let i=0;i<(LOW?5:10);i++)ikan(-280+Math.random()*320,100+(Math.random()-.5)*8,false,i%2?0xff8800:0xcccccc);
+for(let i=0;i<(LOW?3:6);i++)ikan(100+Math.random()*100,-300+Math.random()*600,true,i%2?0xffdd44:0x88ddff);
 const gates=[
  {name:'JATIBARANG KOTA', t:0, color:'#ffffff', stop:false},
  {name:'GERBANG CELENG', t:0.12, color:'#ffcf40', stop:true, bubble:1},
@@ -1311,6 +1313,59 @@ function makeRoad(curve,color=0x2a2a2a){
 makeRoad(curve,0x333333);
 makeRoad(curveB,0x4a3f2a);
 makeRoad(curveC,0x3a3a4a);
+// ===== UPGRADE JALAN: strip tepi, garis tengah, median pantura, zebra, rambu =====
+function strip(curveJ,off,sw,color,y=0.075){
+ const N=160,pos=[],idx=[];
+ for(let i=0;i<=N;i++){const t=i/N,p=curveJ.getPointAt(t),tan=curveJ.getTangentAt(t);
+  let nx=-tan.z,nz=tan.x;const L=Math.hypot(nx,nz)||1;nx/=L;nz/=L;
+  // arah tegak lurus: kanan = (nx,nz)
+  pos.push(p.x+nx*(off-sw/2),y,p.z+nz*(off-sw/2),p.x+nx*(off+sw/2),y,p.z+nz*(off+sw/2));
+  if(i<N){const a=i*2;idx.push(a,a+1,a+2,a+1,a+3,a+2);}}
+ const g=new THREE.BufferGeometry();
+ g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();
+ const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color}));scene.add(m);return m;
+}
+function dashes(curveJ,off,color,n=70,len=2.2,w=0.35){
+ for(let i=0;i<n;i++){const t=i/n,p=curveJ.getPointAt(t),tan=curveJ.getTangentAt(t);
+  let nx=-tan.z,nz=tan.x;const L=Math.hypot(nx,nz)||1;nx/=L;nz/=L;
+  const d=new THREE.Mesh(new THREE.PlaneGeometry(w,len),new THREE.MeshBasicMaterial({color}));
+  d.rotation.x=-Math.PI/2;d.rotation.z=-Math.atan2(tan.x,tan.z);
+  d.position.set(p.x+nx*off,0.08,p.z+nz*off);scene.add(d);}
+}
+// Rute A PANTURA: tepi putih + doble garis kuning tengah (median)
+strip(curve,-3.9,0.3,0xffffff);strip(curve,3.9,0.3,0xffffff);
+strip(curve,-0.28,0.22,0xffdd33);strip(curve,0.28,0.22,0xffdd33);
+dashes(curve,-2.1,0xffffff,LOW?35:70);dashes(curve,2.1,0xffffff,LOW?35:70);
+// Rute B/C desa: tepi putih + tengah putih putus
+for(const cj of [curveB,curveC]){strip(cj,-3.2,0.25,0xffffff);strip(cj,3.2,0.25,0xffffff);dashes(cj,0,0xffffff,50);}
+// garis START papan catur
+(function(){const cv=document.createElement('canvas');cv.width=128;cv.height=32;
+ const x=cv.getContext('2d');for(let ix=0;ix<8;ix++)for(let iz=0;iz<2;iz++){x.fillStyle=(ix+iz)%2?'#000':'#fff';x.fillRect(ix*16,iz*16,16,16);}
+ const t0=curve.getPointAt(0),tn=curve.getTangentAt(0);
+ const s=new THREE.Mesh(new THREE.PlaneGeometry(8.4,2),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv)}));
+ s.rotation.x=-Math.PI/2;s.rotation.z=-Math.atan2(tn.x,tn.z);s.position.set(t0.x,0.1,t0.z);scene.add(s);})();
+// zebra dekat tiap gerbang (rute A)
+for(let gi=1;gi<gates.length-1;gi++){const gp=curve.getPointAt(gates[gi].t),gt=curve.getTangentAt(gates[gi].t);
+ for(let k=-3;k<=3;k++){const z=new THREE.Mesh(new THREE.PlaneGeometry(0.6,2.4),new THREE.MeshBasicMaterial({color:0xffffff}));
+  z.rotation.x=-Math.PI/2;z.rotation.z=-Math.atan2(gt.x,gt.z);
+  let nx=-gt.z,nz=gt.x;const L=Math.hypot(nx,nz)||1;
+  z.position.set(gp.x+nx/L*k*1.1- gt.x*7,0.08,gp.z+nz/L*k*1.1-gt.z*7);scene.add(z);}}
+// patok KM tiap 1/8 rute
+for(let i=0;i<8;i++){const t=i/8,p=curve.getPointAt(t),tan=curve.getTangentAt(t);
+ let nx=-tan.z,nz=tan.x;const L=Math.hypot(nx,nz)||1;
+ const km=new THREE.Mesh(new THREE.BoxGeometry(0.5,1.1,0.3),new THREE.MeshStandardMaterial({color:0xffdd33}));
+ km.position.set(p.x+nx/L*5.2,0.55,p.z+nz/L*5.2);km.castShadow=true;scene.add(km);}
+// tiang lampu hemat (emissive, tanpa lampu dinamis) tiap ~1/12 rute
+for(let i=0;i<12;i++){const t=i/12,p=curve.getPointAt(t),tan=curve.getTangentAt(t);
+ let nx=-tan.z,nz=tan.x;const L=Math.hypot(nx,nz)||1;const s=i%2?1:-1;
+ const ti=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.12,7,6),new THREE.MeshStandardMaterial({color:0x333333}));
+ ti.position.set(p.x+nx/L*6*s,3.5,p.z+nz/L*6*s);scene.add(ti);
+ const lb=new THREE.Mesh(new THREE.SphereGeometry(0.35,8,8),new THREE.MeshStandardMaterial({color:0xffee88,emissive:0xffdd33,emissiveIntensity:0.9}));
+ lb.position.set(p.x+nx/L*6*s,7,p.z+nz/L*6*s);scene.add(lb);}
+// panah cabang (kuning) di titik belok rute
+for(const tt of [0.45,0.6,0.72]){const p=curve.getPointAt(tt);
+ const ar=new THREE.Mesh(new THREE.CircleGeometry(1.4,3),new THREE.MeshBasicMaterial({color:0xffdd33,side:THREE.DoubleSide}));
+ ar.rotation.x=-Math.PI/2;ar.position.set(p.x,0.09,p.z);scene.add(ar);}
 // ===== JALAN RAYA PANTURA: pembatas + lampu + zebra =====
 for(let i=0;i<100;i++){const tt=i/100,p=curve.getPointAt(tt),tan=curve.getTangentAt(tt);
  const right=new THREE.Vector3(-tan.z,0,tan.x).normalize();
@@ -1341,17 +1396,7 @@ for(let i=0;i<4;i++){const ger=new THREE.Mesh(new THREE.BoxGeometry(3,3,9),
  new THREE.MeshStandardMaterial({color:i==0?0x2244cc:0xdddddd}));ger.position.set(0,2,i*-10);ger.castShadow=true;kereta.add(ger);}
 kereta.position.set(relX,0,-400);scene.add(kereta);
 let keretaZ=-400;
-(function(){
- const geo=new THREE.BufferGeometry(); const verts=[];
- for(let i=0;i<200;i+=2){
-  const t=i/200; const p=curve.getPointAt(t); const p2=curve.getPointAt(Math.min(1,(i+1)/200));
-  const tan=curve.getTangentAt(t); const right=new THREE.Vector3(-tan.z,0,tan.x).normalize();
-  verts.push(p.x+right.x*0.05,0.07,p.z+right.z*0.05, p.x-right.x*0.05,0.07,p.z-right.z*0.05, p2.x-right.x*0.05,0.07,p2.z-right.z*0.05,
-             p.x+right.x*0.05,0.07,p.z+right.z*0.05, p2.x-right.x*0.05,0.07,p2.z-right.z*0.05, p2.x+right.x*0.05,0.07,p2.z+right.z*0.05);
- }
- geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));
- const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0xffffff})); scene.add(m);
-})();
+
 const gapuras=[];
 function teks(name,color){
  const cv=document.createElement('canvas');cv.width=512;cv.height=128;const x=cv.getContext('2d');
@@ -1391,11 +1436,11 @@ function rumah(x,z,c,atap=0xa03020,w=6,d=5){const g=new THREE.Group();
  const a=new THREE.Mesh(new THREE.ConeGeometry(Math.max(w,d)*0.75,2.5,4),new THREE.MeshStandardMaterial({color:atap}));a.position.y=4.7;a.rotation.y=Math.PI/4;a.castShadow=true;g.add(a);
  g.position.set(x,0,z);scene.add(g);return g;}
 const ataps=[0xa03020,0x2255aa,0x22aa55,0xcc7700,0x6633aa];
-for(let i=0;i<26;i++){const tt2=0.4+Math.random()*0.5;
+for(let i=0;i<(LOW?12:26);i++){const tt2=0.4+Math.random()*0.5;
  const pc=curveC.getPointAt(tt2);
  const sx=pc.x-12-Math.random()*25, sz=pc.z+(Math.random()-.5)*20;
  rumah(sx,sz,0xf5f0e0,ataps[i%ataps.length]);}
-for(let i=0;i<12;i++){const tt2=Math.random();
+for(let i=0;i<(LOW?6:12);i++){const tt2=Math.random();
  const pa=curve.getPointAt(tt2);
  rumah(pa.x+10+Math.random()*12,pa.z+(Math.random()-.5)*16,0xffffff,ataps[(i+2)%ataps.length],5,4);}
 // warung pinggir jalan + masjid kubah
@@ -1473,6 +1518,13 @@ function buildF1(color=0xff0000){const G=new THREE.Group(),B=M(color,.35,.6);
 const builders={mobil:buildMobil,bus:buildBus,truk:buildTruk,tebu:buildTebu,f1:buildF1};
 let cur='bus',car=new THREE.Group(),mode='menu',t=0,speed=0,gas=false,rem=false,elapsed=0;
 let lastGate=0, dwell=0, dwellGate=null, basePax=9, boarded=0, boardAnim=null;
+let waiters=[], boardQueue=[], stopNaik=0, stopTarget=9;
+const PASS_EMOJI=['🧕','🥷','👮‍♀️','👷','🕵️','🧔','👵','👦','👩'];
+const PASS_COLOR=[0xFFEB3B,0x00FF88,0xFF4DFF,0x7ec8ff,0xff8844,0x44ffcc,0xff4466,0xaaaaff,0x88ff88];
+function makePerson(e,c){const g=new THREE.Group();
+ const b=new THREE.Mesh(new THREE.SphereGeometry(.5,16,14),new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:.45,roughness:.35}));g.add(b);
+ const f=new THREE.Mesh(new THREE.PlaneGeometry(.68,.68),new THREE.MeshBasicMaterial({map:wajahTex(e),transparent:true}));f.position.z=.51;g.add(f);return g;}
+function clearWaiters(){for(const w of waiters)scene.remove(w);waiters=[];boardQueue=[];if(boardAnim){scene.remove(boardAnim.mesh);boardAnim=null;}}
 function updPax(){document.getElementById('pax').textContent='👥 '+(basePax+boarded)+' PENUMPANG';}
 function setCar(id){cur=id;scene.remove(car);car=new THREE.Group();car.add(builders[id]());scene.add(car);
  document.querySelectorAll('#veh button').forEach(b=>b.classList.toggle('on',b.dataset.v===id));
@@ -1481,7 +1533,7 @@ function setCar(id){cur=id;scene.remove(car);car=new THREE.Group();car.add(build
 document.querySelectorAll('#veh button').forEach(b=>b.onclick=()=>setCar(b.dataset.v));
 setCar('bus');
 const traffics=[]; const trafficTypes=['mobil','bus','truk','tebu'];
-for(let i=0;i<40;i++){
+for(let i=0;i<(LOW?8:40);i++){
  const type=trafficTypes[Math.floor(Math.random()*trafficTypes.length)];
  const g=new THREE.Group(); g.add(builders[type]());
  const tt=Math.random(); const lane=(Math.random()>0.5?1:-1)*1.8; const dir=Math.random()>0.45?1:-1;
@@ -1492,7 +1544,7 @@ for(let i=0;i<40;i++){
 const startEl=document.getElementById('start'),hud=document.getElementById('hud'),hud2=document.getElementById('hud2'),ctrl=document.getElementById('ctrl');
 const minimap=document.getElementById('minimap'); const mctx=minimap.getContext('2d'); const notif=document.getElementById('notif');
 function showNotif(txt){ notif.textContent=txt; notif.style.display='block'; setTimeout(()=>notif.style.display='none',2500); }
-document.getElementById('bStop').onclick=()=>{mode='menu';hud.style.display='none';hud2.style.display='none';ctrl.style.display='none';minimap.style.display='none';document.getElementById('mapLabel').style.display='none';document.getElementById('stopPill').style.display='none';startEl.style.display='flex';ctl.enabled=true;setCar(cur);};
+document.getElementById('bStop').onclick=()=>{mode='menu';hud.style.display='none';hud2.style.display='none';ctrl.style.display='none';minimap.style.display='none';document.getElementById('mapLabel').style.display='none';document.getElementById('stopPill').style.display='none';startEl.style.display='flex';ctl.enabled=true;clearWaiters();setCar(cur);};
 const bGas=document.getElementById('bGas'),bRem=document.getElementById('bRem');
 bGas.onpointerdown=()=>gas=true;bGas.onpointerup=bGas.onpointerleave=()=>gas=false;
 bRem.onpointerdown=()=>rem=true;bRem.onpointerup=bRem.onpointerleave=()=>rem=false;
@@ -1539,11 +1591,10 @@ const clock=new THREE.Clock();
     dwell-=dt; speed=0;
     if(gas) dwell=0;
     if(dwellGate){
-     const bb=BUBBLES[dwellGate.userData.bubble];
      stopPill.style.display='block';
-     stopPill.innerHTML='🛑 '+dwellGate.userData.name+'<br>'+bb.e+' '+bb.nama+' naik... '+Math.max(0,Math.ceil(dwell))+' (GAS ▶ berangkat)';
+     stopPill.innerHTML='🛑 '+dwellGate.userData.name+'<br>🧍 '+stopNaik+'/'+stopTarget+' naik... '+Math.max(0,Math.ceil(dwell))+' dtk (GAS ▶ berangkat)';
     }
-    if(dwell<=0){stopPill.style.display='none';dwellGate=null;speed=3;showNotif('▶ BERANGKAT LAGI!');}
+    if(dwell<=0){stopPill.style.display='none';dwellGate=null;clearWaiters();speed=3;showNotif('▶ BERANGKAT LAGI!');}
    }else{
     if(gas)speed=Math.min(speed+dt*6,12);if(rem)speed=Math.max(speed-dt*10,0);
     speed=Math.max(2,speed-dt*0.4);
@@ -1571,36 +1622,37 @@ const clock=new THREE.Clock();
      // 🛑 cekpoin: bus/truk/F1 berhenti, bubble 1-4 naik
      if(g.userData.stop && !g.userData.boarded && dwell<=0){
       g.userData.boarded=true;
-      dwell=3.5; dwellGate=g;
-      const bn=g.userData.bubble, bb=BUBBLES[bn];
-      // bubble terbang dari gerbang ke mobil
+      dwell=15; dwellGate=g; stopNaik=0; stopTarget=9;
       const gp=g.position.clone();
-      const bm=new THREE.Group();
-      const bola=new THREE.Mesh(new THREE.SphereGeometry(.55,18,18),
-       new THREE.MeshStandardMaterial({color:bb.c,emissive:bb.c,emissiveIntensity:.5,roughness:.3}));
-      bm.add(bola);
-      const face=new THREE.Mesh(new THREE.PlaneGeometry(.7,.7),
-       new THREE.MeshBasicMaterial({map:wajahTex(bb.e),transparent:true}));
-      face.position.z=.56; bm.add(face);
-      bm.position.set(gp.x+3,6,gp.z);
-      scene.add(bm);
-      boardAnim={mesh:bm,from:bm.position.clone(),t0:0,dur:2.4,bn,gate:g.userData.name};
+      // 9 penumpang nunggu berderet + loncat-loncat
+      for(let k=0;k<9;k++){
+       const pm=makePerson(PASS_EMOJI[k%PASS_EMOJI.length],PASS_COLOR[k%PASS_COLOR.length]);
+       pm.position.set(gp.x-4+k*1.1,1.1,gp.z+4+((k%2)*0.9));
+       pm.userData.ph=Math.random()*6;
+       scene.add(pm); waiters.push(pm); boardQueue.push(pm);
+      }
+      showNotif('🛑 '+g.userData.name+': 9 PENUMPANG NUNGGU! (15 detik)');
      }
     }
    }
-   // animasi bubble naik ke mobil
+   // antre naik: bubble loncat satu-satu ke mobil
+   for(const w of waiters){w.position.y=1.1+Math.abs(Math.sin(performance.now()/500+w.userData.ph))*0.45;w.rotation.y+=dt*1.5;}
+   if(!boardAnim&&boardQueue.length&&dwell>0){
+    const pm=boardQueue.shift();
+    const wi=waiters.indexOf(pm);if(wi>=0)waiters.splice(wi,1);
+    boardAnim={mesh:pm,from:pm.position.clone(),t0:0,dur:1.3,gate:dwellGate?dwellGate.userData.name:''};
+   }
    if(boardAnim){
     boardAnim.t0+=dt;
     const k=Math.min(1,boardAnim.t0/boardAnim.dur);
     const target=new THREE.Vector3(car.position.x,2.2,car.position.z);
     boardAnim.mesh.position.lerpVectors(boardAnim.from,target,k);
-    boardAnim.mesh.position.y+=Math.sin(k*Math.PI)*1.5;
-    boardAnim.mesh.rotation.y+=dt*4;
+    boardAnim.mesh.position.y+=Math.sin(k*Math.PI)*1.8;
+    boardAnim.mesh.rotation.y+=dt*6;
     if(k>=1){
      scene.remove(boardAnim.mesh);
-     boarded++; updPax();
-     const bb=BUBBLES[boardAnim.bn];
-     showNotif(bb.e+' '+bb.nama+' NAIK di '+boardAnim.gate+'! 👥');
+     boarded++;stopNaik++;updPax();
+     if(stopNaik>=stopTarget)showNotif('🎉 9 PENUMPANG NAIK SEMUA! 👥');
      boardAnim=null;
     }
    }
@@ -1636,6 +1688,7 @@ const clock=new THREE.Clock();
  }
    ctl.update();renderer.render(scene,camera);})();
   window.__booted=true;
+  document.getElementById('qmode').textContent=LOW?'📱 MODE RINGAN OTOMATIS (HP) — tambah ?penuh di URL untuk versi penuh':'🖥️ MODE PENUH (?lite untuk ringan)';
   </script>
 <!-- bubble 2D real otomatis: 1 kuning, 3 pink, 4 asli -->
 <script>
