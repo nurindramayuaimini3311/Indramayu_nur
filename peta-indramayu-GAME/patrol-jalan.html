@@ -452,7 +452,7 @@ document.getElementById('bStart').onclick=()=>{
  ctl.enabled=false;
  const p=activeCurve.getPointAt(0);car.position.copy(p);
   showNotif('START PATROLI - 30 MENIT MENUJU JATIBARANG');
-  localStorage.setItem('alwi_last_gate','0');
+  try{localStorage.setItem('alwi_last_gate','0');}catch(e){}
   mesinInit();
 };
 function zona(p){
