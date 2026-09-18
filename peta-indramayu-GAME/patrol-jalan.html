@@ -362,6 +362,27 @@ for(let i=0;i<3;i++){const ger=new THREE.Mesh(new THREE.BoxGeometry(3,3,9),
  new THREE.MeshStandardMaterial({color:i==0?0x2244cc:0xdddddd}));ger.position.set(0,2,i*-10);kereta2.add(ger);}
 kereta2.position.set(relX,0,-400);scene.add(kereta2);
 let keretaZ2=-400;
+// ---- 9 PETANI menanam padi (badan membungkuk + caping + tunas) ----
+const PETANI=[];
+const BAJU=[0x2288cc,0xcc3322,0x33aa33,0xcc9933,0x8833cc,0x33cccc,0xcc3388,0x666666,0x99cc33];
+function petani(x,z,c){
+ const g=new THREE.Group();
+ const baju=new THREE.MeshStandardMaterial({color:c,roughness:.9});
+ const kulit=new THREE.MeshStandardMaterial({color:0xc8956c,roughness:.9});
+ const cln=new THREE.MeshStandardMaterial({color:0x333333,roughness:.9});
+ const l1=new THREE.Mesh(new THREE.BoxGeometry(.16,.5,.16),cln);l1.position.set(-.12,.25,0);g.add(l1);
+ const l2=l1.clone();l2.position.x=.12;g.add(l2);
+ const bd=new THREE.Mesh(new THREE.BoxGeometry(.5,.6,.3),baju);bd.position.set(0,.78,0);bd.rotation.x=.9;g.add(bd);
+ const kp=new THREE.Mesh(new THREE.SphereGeometry(.2,10,10),kulit);kp.position.set(0,.98,.35);g.add(kp);
+ const cap=new THREE.Mesh(new THREE.ConeGeometry(.42,.25,12),new THREE.MeshStandardMaterial({color:0xd8b545,roughness:.9}));cap.position.set(0,1.15,.35);g.add(cap);
+ const a1=new THREE.Mesh(new THREE.BoxGeometry(.12,.55,.12),baju);a1.position.set(-.3,.62,.3);a1.rotation.x=-.9;a1.rotation.z=.3;g.add(a1);
+ const a2=a1.clone();a2.position.x=.3;a2.rotation.z=-.3;g.add(a2);
+ g.position.set(x,0,z);g.rotation.y=Math.PI/2;scene.add(g);
+ PETANI.push({m:g,bd,a1,a2,ph:Math.random()*6,x0:x,dir:1,sp:.35+Math.random()*.3,mode:0,t:Math.random()*2});
+}
+for(let i=0;i<9;i++)petani(26+(i%3)*8,-30+Math.floor(i/3)*16,BAJU[i]);
+const TUNAS=[];
+function tanam(x,z){let s;if(TUNAS.length>=70){s=TUNAS.shift();}else{s=new THREE.Mesh(new THREE.ConeGeometry(.09,.5,5),new THREE.MeshStandardMaterial({color:0x7ddf5a}));scene.add(s);TUNAS.push(s);}s.position.set(x,.25,z);}
 let cur='bus',car=new THREE.Group(),mode='menu',t=0,speed=0,gas=false,rem=false,elapsed=0;
 let lastGate=0, dwell=0, dwellGate=null, basePax=9, boarded=0, boardAnim=null;
 let waiters=[], boardQueue=[], stopNaik=0, stopTarget=9;
@@ -472,6 +493,17 @@ const clock=new THREE.Clock();
   }else document.getElementById('routeSign').style.display='none';
   if(timeLeft<=0){showNotif('⏰ WAKTU HABIS! PATROLI GAGAL'); mode='menu'; setTimeout(()=>document.getElementById('bStop').click(),2000);}
   const tmA=performance.now()/1000;
+  for(const f of PETANI){f.t+=dt;
+   if(f.mode===0){
+    f.m.position.x+=f.dir*f.sp*dt;
+    f.m.position.y=Math.abs(Math.sin(tmA*6+f.ph))*.06;
+    if(Math.abs(f.m.position.x-f.x0)>3){f.mode=1;f.t=0;}
+   }else{
+    f.bd.rotation.x=.9+Math.sin(tmA*5+f.ph)*.25;
+    if(f.t>1.2){tanam(f.m.position.x+(Math.random()-.5),f.m.position.z+(Math.random()-.5)*2);f.t=0;f.dir*=-1;if(Math.random()<.4)f.mode=0;}
+   }
+   f.a1.rotation.x=-.9+Math.sin(tmA*5+f.ph)*.4;f.a2.rotation.x=-.9-Math.sin(tmA*5+f.ph)*.4;
+  }
   for(const f of fishes2){f.ph+=.02*f.sp;f.m.position.x=f.cx+Math.cos(f.ph)*f.r;f.m.position.z=f.cz+Math.sin(f.ph)*f.r*.6;f.m.rotation.y=-f.ph;}
   ombaks2.forEach((o,i)=>{o.position.x+=Math.sin(tmA+i)*.02;});
   keretaZ2+=dt*22; if(keretaZ2>480)keretaZ2=-480; kereta2.position.z=keretaZ2;
