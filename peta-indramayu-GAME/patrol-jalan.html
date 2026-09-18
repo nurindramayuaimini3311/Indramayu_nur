@@ -9,7 +9,8 @@
 body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
 #c{position:fixed;inset:0;display:block}
 .pill{background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:8px 12px;font-size:12px}
-#hud{position:fixed;top:10px;left:10px;right:10px;display:none;justify-content:space-between;gap:6px;z-index:5;pointer-events:none}
+#hud{position:fixed;top:8px;left:8px;right:8px;display:none;justify-content:space-between;gap:4px;z-index:5;pointer-events:none}
+.pill{padding:6px 8px!important;font-size:11px!important}
 #rpmwrap{position:fixed;top:56px;left:10px;right:10px;display:none;z-index:5;pointer-events:none}
 #rpmbar{height:14px;border-radius:8px;background:#222;border:1px solid #555;overflow:hidden}
 #rpmfill{height:100%;width:0%;background:linear-gradient(90deg,#22cc55,#ffdd33 70%,#ff2222)}
@@ -79,7 +80,7 @@ const renderer=new THREE.WebGLRenderer({canvas,antialias:false});
 renderer.setPixelRatio(1);renderer.shadowMap.enabled=false;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x87b5e0);
 scene.fog=new THREE.Fog(0x87b5e0,60,400);
-const camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,800);
+const camera=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.1,800);
 camera.position.set(0,4,12);
 let menuA=0;
 scene.add(new THREE.HemisphereLight(0xffffff,0x334455,.9));
@@ -173,7 +174,7 @@ document.getElementById('bStart').onclick=()=>{
  document.getElementById('gear').style.display='block';
  document.getElementById('ctrl').style.display='flex';
  document.getElementById('lampu').style.display='flex';
- camera.position.set(-4.2,3.2,13);camera.lookAt(-4.2,1,-6);
+ camera.position.set(-4.2,4.2,17);camera.lookAt(-4.2,1,-6);
  mode='count';phase='stage';phaseT=0;pS={v:0,d:0,g:1,rpm:0};foes.forEach(o=>{o.v=0;o.d=0;});hasil=false;
 };
 function finish(menang,alasan){
@@ -223,7 +224,7 @@ const clock=new THREE.Clock();
   document.getElementById('rpmfill').style.width=Math.min(100,pS.rpm*100)+'%';
   document.getElementById('gear').textContent=pS.g;
   // kamera ikut
-  camera.position.lerp(new THREE.Vector3(player.position.x,3.2,player.position.z+9),1-Math.pow(.01,dt));
+  camera.position.lerp(new THREE.Vector3(player.position.x,4.2,player.position.z+13),1-Math.pow(.01,dt));
   camera.lookAt(player.position.x,1,player.position.z-10);
   const doneF=foes.filter(o=>o.d>=400).length;
   if(pS.d>=400||doneF===3){
