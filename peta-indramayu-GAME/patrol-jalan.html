@@ -62,7 +62,6 @@ body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-a
 <script>
 window.__booted=false;
 window.addEventListener('error',function(e){var b=document.getElementById('bootErr');if(b){b.style.display='block';b.textContent='⚠️ Error: '+(e.message||'gagal load');}});
-setTimeout(function(){if(!window.__booted){var b=document.getElementById('bootErr');if(b){b.style.display='block';b.textContent='⚠️ Game tidak jalan. HARD REFRESH / hapus cache.';}}},25000);
 </script>
 <script type="module-shim">
 import * as THREE from 'three';
@@ -143,18 +142,21 @@ const BUILD={
 };
 const STAT={mobil:{top:46,acc:11},bus:{top:34,acc:8},truk:{top:32,acc:7},tebu:{top:29,acc:6},f1:{top:58,acc:14}};
 // ===== BALAP =====
-let cur='bus',player=null,foe=null,mode='menu',gas=false;
-let pS={v:0,d:0,g:1,rpm:0},fS={v:0,d:0,skill:.85+Math.random()*.15,react:.4+Math.random()*.5};
+let cur='bus',player=null,mode='menu',gas=false;
+let pS={v:0,d:0,g:1,rpm:0},foes=[];
 let phase='',phaseT=0,hasil=false;
+const LANES=[-4.2,-1.4,1.4,4.2];
 function setCar(id){cur=id;
  document.querySelectorAll('#veh button').forEach(b=>b.classList.toggle('on',b.dataset.v===id));}
 document.querySelectorAll('#veh button').forEach(b=>b.onclick=()=>setCar(b.dataset.v));
-function spawn(){scene.remove(player,foe);
- player=new THREE.Group();player.add(BUILD[cur]());player.position.set(-2.6,.05,4);scene.add(player);
- const keys=Object.keys(BUILD).filter(k=>k!==cur);
- const fk=keys[Math.floor(Math.random()*keys.length)];
- foe=new THREE.Group();foe.add(BUILD[fk]());foe.position.set(2.6,.05,4);scene.add(foe);
- fS.foe=fk;fS.skill=.85+Math.random()*.15;fS.react=.4+Math.random()*.5;}
+function spawn(){scene.remove(player);foes.forEach(f=>scene.remove(f.mesh));foes=[];
+ player=new THREE.Group();player.add(BUILD[cur]());player.position.set(LANES[0],.05,4);scene.add(player);
+ const keys=Object.keys(BUILD).filter(k=>k!==cur).sort(()=>Math.random()-.5);
+ for(let i=0;i<3;i++){
+  const fk=keys[i%keys.length];
+  const m=new THREE.Group();m.add(BUILD[fk]());m.position.set(LANES[i+1],.05,4);scene.add(m);
+  foes.push({mesh:m,v:0,d:0,skill:.82+Math.random()*.2,react:.4+Math.random()*.6,vk:fk});
+ }}
 spawn();
 const bGas=document.getElementById('btnGas'),bSh=document.getElementById('btnShift');
 bGas.onpointerdown=e=>{e.preventDefault();gas=true;};bGas.onpointerup=bGas.onpointerleave=()=>gas=false;
@@ -171,13 +173,13 @@ document.getElementById('bStart').onclick=()=>{
  document.getElementById('gear').style.display='block';
  document.getElementById('ctrl').style.display='flex';
  document.getElementById('lampu').style.display='flex';
- camera.position.set(-2.6,3.2,13);camera.lookAt(-2.6,1,-6);
- mode='count';phase='stage';phaseT=0;pS={v:0,d:0,g:1,rpm:0};fS.v=0;fS.d=0;hasil=false;
+ camera.position.set(-4.2,3.2,13);camera.lookAt(-4.2,1,-6);
+ mode='count';phase='stage';phaseT=0;pS={v:0,d:0,g:1,rpm:0};foes.forEach(o=>{o.v=0;o.d=0;});hasil=false;
 };
 function finish(menang,alasan){
  if(hasil)return;hasil=true;mode='done';sndStop();
  document.getElementById('hJudul').textContent=menang?'🏆 MENANG!':'😅 KALAH';
- document.getElementById('hIsi').textContent=alasan+` Jarak tempuhmu ${Math.round(pS.d)}m lawan ${Math.round(fS.d)}m.`;
+ document.getElementById('hIsi').textContent=alasan+` Jarakmu ${Math.round(Math.min(pS.d,400))}m.`;
  document.getElementById('hasil').style.display='flex';
  if(menang){beep(660,.15);setTimeout(()=>beep(880,.2),180);}else beep(220,.4);
 }
@@ -206,24 +208,28 @@ const clock=new THREE.Clock();
   player.position.z=4-pS.d*(380/400);
   player.traverse(o=>{if(o.userData.spin)o.rotation.x-=dt*pS.v;});
   sndRPM(Math.min(pS.rpm,1));
-  // lawan AI
-  if(phaseT>fS.react){fS.v=Math.min(fS.v+STAT[fS.foe].acc*fS.skill*dt*3.2,STAT[fS.foe].top*fS.skill);}
-  fS.d+=fS.v*dt;
-  foe.position.z=4-fS.d*(380/400);
-  foe.traverse(o=>{if(o.userData.spin)o.rotation.x-=dt*fS.v;});
+  // 3 MUSUH AI
+  for(const o of foes){
+   if(phaseT>o.react){o.v=Math.min(o.v+STAT[o.vk].acc*o.skill*dt*3.2,STAT[o.vk].top*o.skill);}
+   o.d+=o.v*dt;
+   o.mesh.position.z=4-o.d*(380/400);
+   o.mesh.traverse(w=>{if(w.userData.spin)w.rotation.x-=dt*o.v;});
+  }
   // HUD
   document.getElementById('spd').textContent=Math.round(pS.v*3.6)+' KMH';
   document.getElementById('jarak').textContent=Math.round(Math.min(pS.d,400))+' M';
-  const dl=Math.round(pS.d-fS.d);
-  document.getElementById('lawan').textContent='LAWAN '+(dl>=0?'+':'')+dl+'M';
+  const rank=1+foes.filter(o=>o.d>pS.d).length;
+  document.getElementById('lawan').textContent='P'+rank+'/4';
   document.getElementById('rpmfill').style.width=Math.min(100,pS.rpm*100)+'%';
   document.getElementById('gear').textContent=pS.g;
   // kamera ikut
   camera.position.lerp(new THREE.Vector3(player.position.x,3.2,player.position.z+9),1-Math.pow(.01,dt));
   camera.lookAt(player.position.x,1,player.position.z-10);
-  if(pS.d>=400||fS.d>=400){
-   if(pS.d>=400&&pS.d>=fS.d)finish(true,`Gasss! Menang ${Math.abs(dl)}m atas ${fS.foe.toUpperCase()}! `);
-   else finish(false,`Kalah ${Math.abs(dl)}m dari ${fS.foe.toUpperCase()}. Coba gigi lebih pas! `);
+  const doneF=foes.filter(o=>o.d>=400).length;
+  if(pS.d>=400||doneF===3){
+   const rank=1+foes.filter(o=>o.d>pS.d).length;
+   if(rank===1)finish(true,`JUARA 1 dari 4! Gasss! `);
+   else finish(false,`Finis P${rank} dari 4. ${foes.map(o=>o.vk.toUpperCase()).join(', ')} angel! Coba gigi lebih pas! `);
   }
  }
  renderer.render(scene,camera);})();
