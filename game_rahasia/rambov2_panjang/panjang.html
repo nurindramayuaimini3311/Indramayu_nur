@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>RAMBO PANJANG 1 — Misi 25 Menit</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a1a2e;color:#fff;font-family:'Press Start 2P',monospace;display:flex;flex-direction:column;align-items:center;min-height:100vh;overflow:hidden}
+#gameWrap{position:relative;margin-top:6px;box-shadow:0 0 0 4px #000,0 0 0 8px #ff4400,0 20px 40px rgba(0,0,0,.5)}
+canvas{display:block;background:#87CEEB;image-rendering:pixelated;max-width:100vw;max-height:68vh;width:960px;height:540px}
+#hud{position:absolute;top:0;left:0;right:0;height:54px;background:linear-gradient(#000,#111);display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:3px solid #ff4400;z-index:5;font-size:10px;line-height:1.2}
+.hudLeft,.hudRight{display:flex;gap:14px;align-items:center}
+.powerBar{width:92px;height:14px;background:#222;border:2px solid #fff;position:relative}
+.powerFill{height:100%;background:#00ffff;width:100%;transition:width .2s}
+.heart{color:#ff2222}
+#controls{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;user-select:none;-webkit-user-select:none}
+.btn{background:#222;border:3px solid #fff;color:#fff;font-family:'Press Start 2P',monospace;font-size:14px;padding:10px 14px;border-radius:6px;box-shadow:0 4px 0 #000;cursor:pointer}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #000}
+.btn.shoot{background:#ff4400;border-color:#ffff00}
+.btn.jump{background:#0088ff}
+#touch{display:none;position:fixed;bottom:6px;left:0;right:0;justify-content:space-between;padding:0 10px;z-index:20;pointer-events:none}
+.tGroup{display:flex;gap:8px;pointer-events:auto}
+.tBtn{width:56px;height:56px;background:rgba(0,0,0,.6);border:3px solid #fff;border-radius:12px;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;touch-action:none}
+.tBtn.active{background:rgba(255,68,0,.8)}
+#overlay{position:absolute;inset:0;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;text-align:center;padding:20px}
+#overlay h1{font-size:22px;color:#ffff00;text-shadow:4px 4px 0 #ff4400;margin-bottom:12px;line-height:1.4}
+#overlay p{font-size:10px;line-height:1.8;max-width:560px;margin-bottom:16px;color:#ddd}
+#startBtn{font-family:'Press Start 2P',monospace;background:#ff4400;color:#fff;border:4px solid #fff;padding:14px 26px;font-size:12px;cursor:pointer;box-shadow:0 6px 0 #000}
+#startBtn:hover{background:#ffff00;color:#000}
+.blink{animation:blink .6s infinite}
+@keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
+@media(max-width:800px){
+  #touch{display:flex}
+  #controls{display:none}
+  #gameWrap{margin-top:4px}
+  canvas{width:min(92vw,calc((100vh - 190px)*16/9));height:auto;max-height:none}
+  canvas{width:min(92vw,calc((100dvh - 190px)*16/9))}
+}
+</style>
+</head>
+<body>
+<div id="gameWrap">
+  <canvas id="c" width="960" height="540"></canvas>
+  <div id="hud">
+    <div class="hudLeft">
+      <div>PANJANG<br><span style="color:#ffff00">25MT</span></div>
+      <div style="color:#ff8844">ALWI<br><span id="hearts" class="heart">♥♥♥</span></div>
+      <div>KILL<br><span id="killTxt" style="color:#00ff88">0/40</span></div>
+      <div>🪙<br><span id="koinTxt" style="color:#ffd700">0</span></div>
+    </div>
+    <div class="hudRight">
+      <div id="fBox" style="display:flex;align-items:center;gap:6px"><span style="background:#8a2be2;color:#ffff00;border:2px solid #fff;padding:2px 5px;font-size:12px">F</span><div class="powerBar"><div id="pFill" class="powerFill"></div></div></div>
+      <div>SCORE<br><span id="scoreTxt" style="color:#ffff00">00000</span></div><div>⏱️<br><span id="timeTxt" style="color:#8ab4ff">0:00</span></div>
+    </div>
+  </div>
+  <div id="overlay">
+    <h1>ALWI - LEVEL 1<br>ALWI CONTRA WAR</h1>
+    <p>Musuh 👹👾🥷👻💀 + <span style="color:#c77dff">pasukan ☠️ 7 detik</span> menyerbu! Setelah 40 kill BOSS LABA-LABA 🕷️ muncul. Kalahkan boss terus sampai <b>25 MENIT</b> habis!<br><br>PC: A/D gerak, W/↑ Lompat, SPASI Tembak<br>HP: Gunakan tombol bawah</p>
+    <button id="startBtn">▶ MULAI PERANG</button>
+    <p style="margin-top:12px;font-size:8px" class="blink">▼ TEKAN MULAI ▼</p>
+  </div>
+</div>
+
+<div id="controls">
+  <button class="btn" data-k="left">◀ A</button>
+  <button class="btn" data-k="right">D ▶</button>
+  <button class="btn jump" data-k="up">LOMPAT W</button>
+  <button class="btn shoot" data-k="fire">TEMBAK [SPASI]</button>
+</div>
+
+<div id="touch">
+  <div class="tGroup">
+    <div class="tBtn" data-t="left">◀</div>
+    <div class="tBtn" data-t="right">▶</div>
+  </div>
+  <div class="tGroup">
+    <div class="tBtn" data-t="up">▲</div>
+    <div class="tBtn" data-t="fire" style="background:rgba(255,68,0,.85);width:72px">●</div>
+  </div>
+</div>
+
+<script>
+window.GAME={title:'ALWI - LEVEL 1',sub:'ALWI CONTRA WAR NORMAL',durSec:1500,
+  soldierVolley:1,soldierCd:1500,bossVolley:3,bossCd:300,bossSpeed:3};
+</script>
+<script src="game.js"></script>
+<script>
+(function(){var c=null;function init(){if(c){if(c.state==="suspended")c.resume();return;}
+try{c=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+document.addEventListener("pointerdown",function(){init();if(!c)return;
+try{var o=c.createOscillator(),g=c.createGain();o.type="sine";
+o.frequency.setValueAtTime(660,c.currentTime);
+o.frequency.exponentialRampToValueAtTime(990,c.currentTime+0.08);
+g.gain.setValueAtTime(0.08,c.currentTime);
+g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.12);
+o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+0.13);}catch(e){}},{passive:true});})();
+</script>
+<script>
+(function(){function buka(){try{document.querySelectorAll("canvas").forEach(function(c){c.style.touchAction="pinch-zoom";});}catch(e){}}
+if(document.readyState!=="loading")buka();else document.addEventListener("DOMContentLoaded",buka);
+setTimeout(buka,2000);setTimeout(buka,5000);})();
+</script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>🎁 HELI BONUS — Hujan Koin</title>
+<style>
+  /* BONUS HELI — HTML polos. KONFIG: DURASI, KOIN_PER_DETIK, NILAI */
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;height:100dvh;background:#0b1626;overflow:hidden;
+    font-family:Arial,sans-serif;color:#fff;display:flex;align-items:center;justify-content:center;
+    touch-action:pan-x pan-y pinch-zoom;-webkit-user-select:none;user-select:none}
+  #wrap{position:relative;width:100%;max-width:480px;height:100vh;height:100dvh;max-height:900px;
+    background:linear-gradient(#0b1626,#13294a);overflow:hidden}
+  canvas{display:block;width:100%;height:100%;touch-action:pan-x pan-y}
+  #hud{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;
+    padding:12px 14px;font-weight:bold;text-shadow:0 2px 6px #000;z-index:5;pointer-events:none}
+  #hud .koin{color:#ffd700;font-size:22px}
+  #hud .waktu{color:#8ab4ff;font-size:18px}
+  #overlay{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px;
+    background:rgba(4,8,16,.9)}
+  #overlay.hide{display:none}
+  #overlay h1{font-size:28px;color:#ffd700}
+  #overlay p{font-size:14px;line-height:1.8;opacity:.9;max-width:300px}
+  #overlay p b{color:#ffd700}
+  #btnMulai{background:#ffd700;color:#3a2800;border:0;font-weight:bold;font-size:16px;
+    padding:14px 30px;border-radius:12px;cursor:pointer}
+  #btnMulai:active{transform:scale(.95)}
+  #rotHint{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:50%;
+    transform:translateX(-50%);font-size:11px;color:#ffffff99;background:rgba(0,0,0,.5);
+    padding:6px 12px;border-radius:20px;pointer-events:none;white-space:nowrap;z-index:9}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game"></canvas>
+  <div id="hud">
+    <div class="koin">🪙 <span id="skor">0</span></div>
+    <div class="waktu">⏱️ <span id="waktu">60</span></div>
+  </div>
+  <div id="rotHint">🚁 Geser heli • tangkap koin!</div>
+  <div id="overlay">
+    <div style="font-size:64px">🎁</div>
+    <h1>BONUS HELI!</h1>
+    <p><b>Hujan koin berlimpah!</b><br>Geser heli 🚁, tangkap koin<br>selama <b>60 detik</b>. Tanpa musuh!<br>Lanjut ke <b>LEVEL 5: Alien Besar</b> 👾</p>
+    <button id="btnMulai">▶ MULAI</button>
+  </div>
+</div>
+<script>
+"use strict";
+/* KONFIG */
+const DURASI = 60, KOIN_PER_DETIK = 7, NILAI = 10;
+const NEXT = 'heli-level5.html';
+
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('wrap');
+let W = 0, H = 0;
+function resize(){ W = canvas.width = wrap.clientWidth; H = canvas.height = wrap.clientHeight; }
+resize();
+window.addEventListener('resize', resize);
+window.addEventListener('orientationchange', () => setTimeout(resize, 150));
+
+let heli, koinJatuh, partikel, skor, sisa, jalan, acc;
+
+function reset(){
+  heli = { x: W/2, y: H*0.75, w: 64, h: 30 };
+  koinJatuh = []; partikel = [];
+  skor = 0; sisa = DURASI; jalan = true; acc = 0;
+  document.getElementById('skor').textContent = '0';
+  document.getElementById('waktu').textContent = DURASI;
+}
+
+const Suara = (function(){
+  let c = null;
+  function init(){ if(c){ if(c.state==='suspended')c.resume(); return; }
+    try{ c = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+  function blip(f, dur){
+    if(!c) return;
+    try{
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(0.12, c.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+      o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime + dur);
+    }catch(e){}
+  }
+  return { init, tangkap: () => blip(1200 + Math.random()*600, 0.12),
+           menang: () => [523,659,784,1047].forEach((f,i) => setTimeout(() => blip(f,0.25), i*150)) };
+})();
+
+function gerakKe(cx){
+  const r = canvas.getBoundingClientRect();
+  heli.x = Math.max(heli.w/2, Math.min(W - heli.w/2, (cx - r.left) * (W / r.width)));
+}
+function gerakKeY(cy){
+  const r = canvas.getBoundingClientRect();
+  heli.y = Math.max(H*0.3, Math.min(H - 40, (cy - r.top) * (H / r.height)));
+}
+canvas.addEventListener('touchstart', e => { gerakKe(e.touches[0].clientX); gerakKeY(e.touches[0].clientY); }, {passive:true});
+canvas.addEventListener('touchmove', e => { e.preventDefault(); gerakKe(e.touches[0].clientX); gerakKeY(e.touches[0].clientY); }, {passive:false});
+canvas.addEventListener('mousedown', e => { gerakKe(e.clientX); gerakKeY(e.clientY); });
+window.addEventListener('mousemove', e => { if(e.buttons){ gerakKe(e.clientX); gerakKeY(e.clientY); } });
+
+function update(dt){
+  const dtk = dt/1000;
+  acc += KOIN_PER_DETIK * dtk;
+  while(acc >= 1){
+    acc -= 1;
+    koinJatuh.push({ x: 20 + Math.random()*(W-40), y: -20,
+      vy: (2.2 + Math.random()*3)*(H/700), r: 11 + Math.random()*7,
+      putar: Math.random()*6.28, emas: Math.random() < 0.12 });
+  }
+  for(let i = koinJatuh.length-1; i >= 0; i--){
+    const k = koinJatuh[i];
+    k.y += k.vy * (dt*60/16.7); k.putar += 0.15;
+    if(Math.abs(k.x - heli.x) < heli.w/2 + k.r*0.5 && Math.abs(k.y - heli.y) < heli.h/2 + k.r){
+      koinJatuh.splice(i, 1);
+      skor += k.emas ? NILAI*5 : NILAI;
+      Suara.tangkap();
+      document.getElementById('skor').textContent = skor;
+      continue;
+    }
+    if(k.y > H + 30) koinJatuh.splice(i, 1);
+  }
+  sisa -= dtk;
+  document.getElementById('waktu').textContent = Math.max(0, Math.ceil(sisa));
+  if(sisa <= 0) akhir();
+}
+
+function drawHeli(t){
+  const x = heli.x, y = heli.y + Math.sin(t/200)*2;
+  ctx.fillStyle = 'rgba(0,0,0,.25)';
+  ctx.beginPath(); ctx.ellipse(x, y + 22, 30, 6, 0, 0, Math.PI*2); ctx.fill();
+  // baling-baling
+  const a = t/40;
+  ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(x - Math.cos(a)*34, y - 14 - Math.sin(a)*4);
+  ctx.lineTo(x + Math.cos(a)*34, y - 14 + Math.sin(a)*4);
+  ctx.stroke();
+  ctx.fillStyle = '#333'; ctx.fillRect(x - 3, y - 16, 6, 8);
+  // badan
+  ctx.fillStyle = '#ff9500';
+  ctx.beginPath(); ctx.ellipse(x, y + 4, 30, 12, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#b36a00';
+  ctx.beginPath(); ctx.ellipse(x, y + 8, 30, 7, 0, 0, Math.PI); ctx.fill();
+  // kaca
+  ctx.fillStyle = '#bfe9ff';
+  ctx.beginPath(); ctx.ellipse(x + 14, y + 1, 10, 7, 0, 0, Math.PI*2); ctx.fill();
+  // ekor + kaki
+  ctx.fillStyle = '#cc7700'; ctx.fillRect(x - 30, y - 2, 14, 6);
+  ctx.fillStyle = '#333'; ctx.fillRect(x - 14, y + 14, 5, 8); ctx.fillRect(x + 9, y + 14, 5, 8);
+}
+
+function draw(t){
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#0b1626'); g.addColorStop(1, '#13294a');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#fff';
+  for(let i = 0; i < 30; i++){
+    ctx.globalAlpha = 0.25 + ((i*13)%5)*0.1;
+    ctx.fillRect((i*137)%W, (i*97 + t*0.03)%H, 2, 2);
+  }
+  ctx.globalAlpha = 1;
+  for(const k of koinJatuh){
+    const rx = Math.max(Math.abs(Math.cos(k.putar))*k.r, 2);
+    ctx.fillStyle = k.emas ? '#ff9500' : '#ffd700';
+    ctx.beginPath(); ctx.ellipse(k.x, k.y, rx, k.r, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = k.emas ? '#a04d00' : '#a07000';
+    ctx.font = 'bold ' + Math.round(k.r) + 'px monospace';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    if(rx > 6) ctx.fillText(k.emas ? '5x' : 'Rp', k.x, k.y);
+  }
+  if(jalan || true) drawHeli(t);
+}
+
+function akhir(){
+  jalan = false;
+  Suara.menang();
+  const ov = document.getElementById('overlay');
+  ov.classList.remove('hide');
+  ov.innerHTML = '<div style="font-size:64px">🏆</div><h1>PANEN SELESAI!</h1>'
+    + '<p>Koin: <b>🪙 ' + skor + '</b><br>Lanjut: <b>LEVEL 5 Alien Besar</b> 👾</p>'
+    + '<button id="btnMulai">➜ LEVEL 5</button>';
+  document.getElementById('btnMulai').onclick = () => { location.href = NEXT; };
+}
+
+let last = 0;
+function loop(ts){
+  const dt = Math.min(50, ts - (last || ts));
+  last = ts;
+  if(jalan) update(dt);
+  draw(ts);
+  requestAnimationFrame(loop);
+}
+
+document.getElementById('btnMulai').onclick = () => {
+  document.getElementById('overlay').classList.add('hide');
+  Suara.init();
+  reset();
+};
+setTimeout(() => { const h = document.getElementById('rotHint'); if(h) h.style.display = 'none'; }, 7000);
+
+reset(); jalan = false;
+draw(0);
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

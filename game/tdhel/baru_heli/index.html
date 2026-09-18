@@ -153,8 +153,13 @@
 
   function spawnEnemy(n){
     for(var i=0;i<n;i++){
+      if(Math.random()<0.15){
+        enemies.push({x:30+Math.random()*(innerWidth-130),y:-100-Math.random()*80,w:88,h:88,
+          vy:0.7+Math.random()*0.4,cd:70+Math.random()*60,life:1,hp:5,maxhp:5,type:0,big:true});
+      } else {
       enemies.push({x:20+Math.random()*(innerWidth-70),y:-50-Math.random()*80,w:44,h:44,
-        vy:1.1+Math.random()*1.3,cd:40+Math.random()*80,life:1,type:Math.random()<.15?2:0});
+        vy:1.1+Math.random()*1.3,cd:40+Math.random()*80,life:1,hp:1,maxhp:1,type:Math.random()<.15?2:0});
+      }
     }
   }
 
@@ -227,15 +232,21 @@
       if(b.cd<=0){
         b.cd=34;
         var cx=b.x+b.w/2,cy=b.y+b.h/2;
+        b.alt=(b.alt||0)+1;
+        var hujan=(b.alt%3===0);
+        if(hujan){
+          for(var rc=0;rc<5;rc++){var rx=20+rc*(innerWidth-40)/4;for(var rr=0;rr<4;rr++)eb.push({x:rx-4,y:cy-4-rr*48,w:8,h:8,vx:0,vy:3.4});}
+          sfx(140,.5,'sawtooth',.22,-60);
+        }
         function aim(off,sp){
           var dx=hero.x+hero.w/2-cx+off,dy=hero.y+hero.h/2-cy;
           var len=Math.hypot(dx,dy)||1;
           eb.push({x:cx-4,y:cy-4,w:8,h:8,vx:dx/len*sp,vy:dy/len*sp});
         }
-        if(b.pattern===1){  // BIG BOSS: aimed spread + beam bawah
+        if(!hujan&&b.pattern===1){  // BIG BOSS: aimed spread + beam bawah
           for(var a=-1;a<=1;a++)aim(a*110,4.4);
           for(var k=0;k<3;k++)eb.push({x:cx-3+(k-1)*28,y:cy,w:6,h:14,vx:0,vy:4.8});
-        } else if(b.pattern===2){ // CRAB UFO: capit shotgun + ring plasma kepiting + laser mata
+        } else if(!hujan&&b.pattern===2){ // CRAB UFO: capit shotgun + ring plasma kepiting + laser mata
           // tembakan capit kiri kanan
           var sideX = b.w*0.45;
           eb.push({x:cx-sideX-4,y:cy+10,w:10,h:10,vx:-1.5+ (Math.random()-0.5),vy:3.2});
@@ -252,11 +263,12 @@
             var len=Math.hypot(dx,dy)||1;
             eb.push({x:cx-3,y:cy-15,w:7,h:12,vx:dx/len*5.0,vy:dy/len*5.0});
           }
-        } else if(b.pattern===3){ // DISCO: spiral berputar + aimed
+        } else if(!hujan&&b.pattern===3){ // DISCO: spiral berputar + aimed
           for(var i3=0;i3<5;i3++){var ag3=b.spA+i3*1.26;eb.push({x:cx-4,y:cy-4,w:8,h:8,vx:Math.cos(ag3)*3.2,vy:Math.sin(ag3)*3.2});}
           b.spA+=0.22;
           aim(0,4.2);aim(-80,3.8);aim(80,3.8);
         }
+        if(!hujan)sfx(180,.15,'square',.1,-60);
       }
     });
 
@@ -268,7 +280,7 @@
         m.cd=60+Math.random()*40;
         var dx=hero.x+hero.w/2-(m.x+m.w/2),dy=hero.y+hero.h/2-(m.y+m.h/2);
         var len=Math.hypot(dx,dy)||1,sp=3.6;
-        eb.push({x:m.x+m.w/2-3,y:m.y+m.h/2-3,w:7,h:7,vx:dx/len*sp,vy:dy/len*sp});
+        eb.push({x:m.x+m.w/2-3,y:m.y+m.h/2-3,w:7,h:7,vx:dx/len*sp,vy:dy/len*sp});sfx(520,.07,'square',.05,-200);
       }
     });
     mb.forEach(function(b){b.y+=b.vy;});
@@ -280,7 +292,7 @@
     // peluru pemain -> musuh & boss
     mb.forEach(function(b){
       enemies.forEach(function(m){
-        if(m.life&&hit(b,m)){m.life=0;b.y=-99;skor+=20;sfx(200,.18,'sawtooth',.2,-80);}
+        if(m.life&&hit(b,m)){b.y=-99;m.hp=(m.hp==null?1:m.hp)-1;if(m.hp<=0){m.life=0;skor+=m.big?100:20;}sfx(200,.18,'sawtooth',.2,-80);}
       });
       bosses.forEach(function(B){
         if(B.life&&hit(b,B)){
@@ -515,7 +527,16 @@
     // musuh
     enemies.forEach(function(m){
       var cx=m.x+m.w/2,cy=m.y+m.h/2,r=m.w/2-2;
-      if(m.type===2){
+      if(m.big){
+        poly(cx,cy,r,6,frame*0.05,'rgba(20,80,30,.4)');
+        poly(cx,cy,r*0.95,6,frame*0.05+Math.PI/6,'#34c759');
+        disc(cx-r*0.35,cy-r*0.15,r*0.2,'#fff');
+        disc(cx+r*0.35,cy-r*0.15,r*0.2,'#fff');
+        disc(cx-r*0.35,cy-r*0.1,r*0.09,'#111');
+        disc(cx+r*0.35,cy-r*0.1,r*0.09,'#111');
+        g.fillStyle='#700';g.fillRect(m.x,cy-r-12,m.w,7);
+        g.fillStyle='#0f0';g.fillRect(m.x,cy-r-12,m.w*(m.hp/m.maxhp),7);
+      } else if(m.type===2){
         // "tangan" = segitiga runcing agresif (oranye)
         poly(cx,cy,r,3,(m.y*0.05)+3.14,'#ff4d00');
         disc(cx,cy,r*0.28,'#ffe');

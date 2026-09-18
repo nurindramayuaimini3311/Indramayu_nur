@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🏮 Klenteng 3D - Indramayu</title><style>
+*{box-sizing:border-box;margin:0}body{font-family:Arial;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
+#c{position:fixed;inset:0;display:block}.top{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;z-index:5}
+a.back{background:#ff3333;color:#fff;font-weight:900;padding:10px 16px;border-radius:12px;text-decoration:none}
+.pill{background:rgba(0,0,0,.6);border:1px solid #ff3333;border-radius:12px;padding:10px 14px;font-weight:900}</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script></head>
+<body><canvas id="c"></canvas>
+<div class="top"><a class="back" href="index.html">← PETA</a><div class="pill">🏮 KLENTENG INDRAMAYU</div></div>
+<script type="module">
+import * as THREE from 'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});
+r.setPixelRatio(Math.min(devicePixelRatio,2));r.shadowMap.enabled=true;
+const s=new THREE.Scene();s.background=new THREE.Color(0x1a2a4a);
+s.fog=new THREE.Fog(0x1a2a4a,25,70);
+const c=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,300);c.position.set(10,6,12);
+const o=new OrbitControls(c,r.domElement);o.target.set(0,2,0);o.enableDamping=true;o.autoRotate=true;o.autoRotateSpeed=1;
+s.add(new THREE.HemisphereLight(0xffe0b0,0x332211,.9));
+const d=new THREE.DirectionalLight(0xffe0b0,1.3);d.position.set(10,15,8);d.castShadow=true;s.add(d);
+const g=new THREE.Mesh(new THREE.PlaneGeometry(60,60),new THREE.MeshStandardMaterial({color:0x555560}));g.rotation.x=-Math.PI/2;g.receiveShadow=true;s.add(g);
+function B(w,h,dep,co,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,dep),new THREE.MeshStandardMaterial({color:co}));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;return m;}
+const RED=0xcc1111,GOLD=0xffd700;
+// panggung + tiang + badan
+s.add(B(9,.6,7,0x888888,0,.3,0));
+for(const x of[-3.5,3.5])for(const z of[-2.5,2.5]){const t=new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,3.4,10),new THREE.MeshStandardMaterial({color:RED}));t.position.set(x,2.3,z);t.castShadow=true;s.add(t);}
+s.add(B(8,2.6,6,new THREE.MeshStandardMaterial({color:0x881111}),0,2.2,0));
+// atap susun 2 melengkung (iman + atas)
+function atap(w,y,z){const a=new THREE.Mesh(new THREE.CylinderGeometry(.1,w,1.6,4,1),new THREE.MeshStandardMaterial({color:0x114411}));a.position.set(0,y,z);a.rotation.y=Math.PI/4;a.scale.z=.7;a.castShadow=true;s.add(a);
+for(const x of[-w*.62,w*.62]){const u=new THREE.Mesh(new THREE.ConeGeometry(.35,.9,6),new THREE.MeshStandardMaterial({color:GOLD,emissive:GOLD,emissiveIntensity:.4}));u.position.set(x,y+.9,z);s.add(u);}}
+atap(5.4,4.4,0);atap(3.4,5.9,0);
+// lampion kiri-kanan menyala
+const lants=[];
+for(const x of[-4.6,4.6]){const l=new THREE.Mesh(new THREE.SphereGeometry(.55,12,10),new THREE.MeshStandardMaterial({color:0xff4400,emissive:0xff2200,emissiveIntensity:1}));l.position.set(x,3.4,2);s.add(l);lants.push(l);
+const tg=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,1.4,6),new THREE.MeshStandardMaterial({color:0x222222}));tg.position.set(x,4.4,2);s.add(tg);}
+s.add(B(1.4,2.4,.3,0x3a1a0a,0,1.8,-3.05)); // pintu
+const tm=performance.now();
+addEventListener('resize',()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});r.setSize(innerWidth,innerHeight);
+(function l(){requestAnimationFrame(l);const t=performance.now()/1000;
+lants.forEach((l,i)=>{l.position.y=3.4+Math.sin(t*2+i*2)*.15;});o.update();r.render(s,c);})();
+</script><script src="../alwi_bubble4.js"></script></body></html>

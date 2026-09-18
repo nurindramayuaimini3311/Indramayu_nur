@@ -7,22 +7,22 @@ let baseIdx = pathParts.findIndex(function(p){ return p === 'Indramayu_nur' || p
 let prefix = baseIdx >= 0 ? '/' + pathParts.slice(0, baseIdx + 1).join('/') + '/' : '/';
 let isRoot = pathParts.length - (baseIdx + 1) <= 1;
 window.__ALWI_PREFIX = prefix;
-const CHAT_AI_URL = 'http://35.240.161.189:3000';
+const CHAT_AI_URL = 'http://35.240.161.189:3000/';
 
 // 1. Buat Bola Helm ⛑️
 let isDragging=false, startX, startY, vx=0, vy=0, x=window.innerWidth-80, y=window.innerHeight-120;
 let ball=document.createElement('div');
 ball.id="ALWI_BOLA";
 ball.style.cssText=`position:fixed;left:${x}px;top:${y}px;z-index:999999999;width:60px;height:60px;background:radial-gradient(circle at 30% 30%,#7ec8ff,#0e7490);border-radius:50%;border:3px solid #00BFFF;box-shadow:0 0 20px rgba(0,191,255,0.5),0 0 40px rgba(0,191,255,0.3);font-size:32px;display:flex;align-items:center;justify-content:center;cursor:grab;user-select:none;transition:transform 0.1s;will-change:transform,left,top;`;
-      ball.innerHTML=`<img src="img/icon-72.png" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">`;
+      ball.innerHTML=`<img src="/img/icon-72.png" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">`;
 document.body.appendChild(ball);
 
-// 1b. Tombol HOME di atas bola (index utama)
+// 1b. Tombol HOME mengambang kiri atas (semua halaman NURgenerator)
 let homeBtn=document.createElement('div');
 homeBtn.id="ALWI_HOME_BTN";
-homeBtn.style.cssText=`position:fixed;left:${x-5}px;top:${y-50}px;z-index:999999998;width:70px;height:36px;background:#0891b2;color:#fff;border:none;border-radius:18px;font-weight:800;font-size:11px;cursor:pointer;box-shadow:0 4px 15px rgba(0,191,255,0.4);transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:4px;`;
+homeBtn.style.cssText=`position:fixed;left:12px;top:12px;z-index:999999998;width:90px;height:40px;background:#0891b2;color:#fff;border:2px solid #38bdf8;border-radius:20px;font-weight:800;font-size:12px;cursor:pointer;box-shadow:0 4px 15px rgba(0,191,255,0.4);transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:5px;`;
 homeBtn.innerHTML="🏠 HOME";
-homeBtn.onclick=function(){ goHome(); };
+homeBtn.onclick=function(){ window.location.href='http://34.170.37.50:8080/index.html'; };
 homeBtn.onpointerdown=function(e){ e.stopPropagation(); };
 document.body.appendChild(homeBtn);
 
@@ -35,20 +35,21 @@ menu.innerHTML=`
     <span>📍 NAVIGASI</span>
     <span onclick="document.getElementById('ALWI_DROPUP').style.display='none'" style="cursor:pointer;color:#888;font-weight:bold;font-size:16px;">✕</span>
   </div>
+  <button onclick="window.location.href='http://35.240.161.189:3000/'" style="padding:9px 8px;background:#16a34a;color:#fff;border:1px solid #4ade80;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🤖 CHAT AI</button>
   <button onclick="window.location.href='https://fancy-wood-77c8.imahazzah51.workers.dev/'" style="padding:9px 8px;background:#0284c7;color:#fff;border:1px solid #38bdf8;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🌐 Worker Utama (Cloud)</button>
   <button onclick="window.location.href='https://belajar-bermain.imahazzah51.workers.dev/'" style="padding:9px 8px;background:#0f766e;color:#fff;border:1px solid #2dd4bf;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🎮 Belajar Bermain</button>
   <button onclick="window.location.href='https://belajar-agama.imahazzah51.workers.dev/'" style="padding:9px 8px;background:#14532d;color:#fff;border:1px solid #34d399;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">📖 Belajar Agama</button>
   <button onclick="window.location.href='https://fancy-wood-77c8.imahazzah51.workers.dev/meta/gambar-streaming/'" style="padding:9px 8px;background:#7f1d1d;color:#fff;border:1px solid #f00;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🔴 Streaming</button>
   <button onclick="window.location.href='https://belajar-agama.imahazzah51.workers.dev/ibadah/diskusi/'" style="padding:9px 8px;background:#064e3b;color:#fff;border:1px solid #34d399;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">📖 Diskusi Al-Quran</button>
   <button onclick="window.location.href='https://nurindramayuaimini3311.github.io/Indramayu_nur/'" style="padding:9px 8px;background:#1e3a8a;color:#fff;border:1px solid #818cf8;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🏠 Rumah Alwi (GitHub)</button>
-  <button onclick="window.location.href='http://34.170.37.50:8080/'" style="padding:9px 8px;background:#155e75;color:#fff;border:1px solid #22d3ee;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🏠 HOME (Server 8080)</button>
+  <button onclick="window.location.href='http://34.170.37.50:8080/index.html'" style="padding:9px 8px;background:#155e75;color:#fff;border:1px solid #22d3ee;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🏠 HOME (Server 8080)</button>
 
 `;
 document.body.appendChild(menu);
 
 // HOME selalu menuju index.html portal (bebas isRoot)
 window.goHome=function(){
-  window.location.href='http://34.170.37.50:8080/';
+  window.location.href='http://34.170.37.50:8080/index.html';
 }
 
 // === FITUR BOLA KARTUN LUCU UNTUK ANAK SD ===
@@ -92,8 +93,6 @@ function updateBallPosition(){
   ball.style.left=x+'px';
   ball.style.top=y+'px';
   ball.style.transform=`rotate(${rotation}deg) scale(${squishX},${squishY})`;
-  homeBtn.style.left=(x-5)+'px';
-  homeBtn.style.top=(y-50)+'px';
   ring.style.left=x+'px';
   ring.style.top=y+'px';
   if(!isDragging && !isAnimating){
@@ -165,7 +164,7 @@ function showFunnyFace(){
     let originalSrc=img.src;
     ball.innerHTML='<span style="font-size:40px;">'+faceEmojis[Math.floor(Math.random()*faceEmojis.length)]+'</span>';
     setTimeout(()=>{
-ball.innerHTML=`<img src="img/icon-72.png" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">`;
+ball.innerHTML=`<img src="/img/icon-72.png" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">`;
     },800);
   }
 }
@@ -189,7 +188,6 @@ ball.addEventListener('pointerdown',e=>{
   vx=0; vy=0; 
   vxPhysical=0; vyPhysical=0;
   ball.style.transition='none'; 
-  homeBtn.style.transition='none'; 
   ball.style.cursor='grabbing';
   ball.style.transform='scale(1.1)';
 });
@@ -226,14 +224,19 @@ ball.addEventListener('pointerup',e=>{
     spinSpeed=vx*4;
     startPhysics();
   } else {
-    // Klik biasa - di root buka Chat AI langsung, selain itu buka menu
-    if (isRoot) { window.location.href = CHAT_AI_URL; }
-    else { toggleMenu(); }
+    // Klik biasa - SELALU buka Chat AI
+    window.location.href = CHAT_AI_URL;
   }
 });
 
+let open=false;
+function toggleMenu(){
+  open=!open;
+  menu.style.display=open?'flex':'none';
+}
+
 document.addEventListener('click',e=>{
-  if(!ball.contains(e.target) && !menu.contains(e.target) && !homeBtn.contains(e.target) && open){
+  if(!ball.contains(e.target) && !menu.contains(e.target) && open){
     open=false;
     menu.style.display='none';
   }

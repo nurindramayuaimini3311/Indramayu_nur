@@ -2,7 +2,9 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>ALWI - Level 1 Mario World</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
@@ -451,6 +453,25 @@ loop();
 document.body.addEventListener('touchmove',e=>{if(e.target.closest('#controls')) e.preventDefault()}, {passive:false});
 </script>
 
-<script src="/alwi_bubble4.js"></script>
+<!-- BUBBLE OFF game rahasia (menutupi layar) -->
+<!-- <script src="/alwi_bubble4.js"></script> -->
+<!-- SUARA SENTUH ringan (Web Audio, tanpa file) -->
+<script>
+(function(){var c=null;function init(){if(c){if(c.state==="suspended")c.resume();return;}
+try{c=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+document.addEventListener("pointerdown",function(){init();if(!c)return;
+try{var o=c.createOscillator(),g=c.createGain();o.type="sine";
+o.frequency.setValueAtTime(660,c.currentTime);
+o.frequency.exponentialRampToValueAtTime(990,c.currentTime+0.08);
+g.gain.setValueAtTime(0.08,c.currentTime);
+g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.12);
+o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+0.13);}catch(e){}},{passive:true});})();
+</script>
+<!-- CUBIT 2 JARI (webkit/pinch): 1 jari tetap untuk main, 2 jari = zoom -->
+<script>
+(function(){function buka(){try{document.querySelectorAll("canvas").forEach(function(c){c.style.touchAction="pinch-zoom";});}catch(e){}}
+if(document.readyState!=="loading")buka();else document.addEventListener("DOMContentLoaded",buka);
+setTimeout(buka,2000);setTimeout(buka,5000);})();
+</script>
 </body>
 </html>

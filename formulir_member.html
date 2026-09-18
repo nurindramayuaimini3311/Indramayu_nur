@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Formulir Member — Indramayu PETA</title>
+<meta name="theme-color" content="#1a1005">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;min-height:100vh;padding:12px 12px 80px}
+.wrap{max-width:430px;margin:0 auto}
+.hdr{text-align:center;padding:16px 0 8px}
+.hdr h1{font-size:19px;color:#FFD700;letter-spacing:1px}
+.hdr .sub{font-size:12px;color:#aaa;margin-top:4px}
+
+/* kartu syarat wajib */
+.syarat{background:#111;border:1.5px solid #333;border-radius:14px;padding:14px 16px;margin-top:14px}
+.syarat h3{color:#FFD700;font-size:14px;margin-bottom:10px}
+.syarat .req{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;margin-bottom:6px;font-size:13px;background:#161616;border:1px solid #222}
+.syarat .req .ico{font-size:20px;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
+.syarat .req .t{flex:1}
+.syarat .req .badge{font-size:10px;font-weight:900;color:#000;background:#FFD700;border-radius:99px;padding:3px 8px}
+
+/* form */
+.form-box{background:#111;border:1.5px solid #333;border-radius:14px;padding:16px;margin-top:14px}
+.form-box h3{color:#FFD700;font-size:15px;margin-bottom:12px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:#ccc;margin-bottom:5px;font-weight:600}
+.field label .wajib{color:#f03;font-weight:900}
+.field input,.field textarea{width:100%;padding:10px 12px;background:#1a1a1a;border:1.5px solid #333;border-radius:10px;color:#fff;font-size:14px;outline:none}
+.field input:focus,.field textarea:focus{border-color:#FFD700;box-shadow:0 0 8px rgba(255,215,0,.2)}
+.field .hint{font-size:11px;color:#777;margin-top:4px}
+
+/* WA bubble input */
+.wa-input-wrap{display:flex;align-items:center;gap:8px}
+.wa-preview{width:52px;height:52px;border-radius:50%;overflow:hidden;display:grid;place-items:center;flex-shrink:0;border:2px solid #25D366}
+.wa-preview img{width:100%;height:100%;object-fit:cover;display:block}
+.wa-preview .ph{font-size:22px}
+.wa-foto{position:relative;overflow:hidden;background:#1a1a1a;border:1.5px solid #333;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;color:#ccc;cursor:pointer;flex:1;text-align:center}
+.wa-foto input{position:absolute;inset:0;opacity:0;cursor:pointer}
+
+/* tombol */
+.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;text-transform:uppercase;transition:transform .1s}
+.btn:active{transform:scale(.97)}
+.btn-wa{background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px}
+.btn-gold{background:linear-gradient(135deg,#C9A84C,#FFD700);color:#000}
+.btn-gh{background:#171717;border:1.5px solid #333;color:#ddd;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px}
+
+/* kartu hasil */
+.preview-box{display:none;margin-top:16px}
+.card-member{background:#111;border:2px solid #FFD700;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(255,215,0,.1)}
+.card-foto{width:100%;height:150px;background:#1a1a1a;display:grid;place-items:center;overflow:hidden}
+.card-foto img{width:100%;height:100%;object-fit:cover}
+.card-foto .ph{font-size:50px;color:#333}
+.card-body{padding:14px 16px}
+.card-nama{font-size:18px;font-weight:800;color:#fff}
+.card-desa{font-size:12px;color:#FFD700;margin-top:2px}
+.card-hp{display:flex;align-items:center;gap:8px;margin-top:10px;background:#0f2a1f;border:1.5px solid #25D366;border-radius:12px;padding:9px 12px}
+.card-hp .wa{width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#fff;display:grid;place-items:center}
+.card-hp .wa img{width:100%;height:100%;object-fit:cover}
+.card-hp .wa .ph{font-size:14px}
+.card-hp .num{font-size:13px;color:#25D366;font-weight:800;flex:1}
+.card-hp .buka{color:#25D366;text-decoration:none;font-weight:900;font-size:12px}
+.card-gh{margin-top:8px;background:#1a1a1a;border:1.5px solid #333;border-radius:12px;padding:9px 12px;display:flex;align-items:center;gap:8px}
+.card-gh .ico{width:30px;height:30px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:15px;flex-shrink:0}
+.card-gh .url{font-size:11px;color:#888;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-gh .buka{color:#fff;text-decoration:none;font-weight:900;font-size:12px}
+.card-deskripsi{margin-top:10px;font-size:12px;color:#ccc}
+.rating{display:flex;align-items:center;gap:10px;margin-top:12px;padding-top:10px;border-top:1px solid #222}
+.btn-like{background:none;border:1.5px solid #444;color:#aaa;padding:6px 14px;border-radius:8px;font-size:12px;cursor:pointer}
+.btn-like.liked{border-color:#FFD700;color:#FFD700;background:rgba(255,215,0,.1)}
+.rating .lk{font-size:13px;color:#aaa}
+
+/* embed code */
+.embed-box{display:none;margin-top:16px;background:#111;border:1.5px solid #333;border-radius:14px;padding:14px}
+.embed-box h3{color:#FFD700;font-size:13px;margin-bottom:8px}
+.embed-box textarea{width:100%;height:90px;background:#1a1a1a;border:1px solid #333;border-radius:8px;color:#0f0;font-size:11px;padding:8px;font-family:monospace}
+.embed-box .tomb{display:flex;gap:8px;margin-top:8px}
+.embed-box .tomb a{flex:1;text-align:center;padding:9px;border-radius:8px;text-decoration:none;font-weight:800;font-size:12px}
+.cop{background:#25D366;color:#fff}
+.kopi{background:#171717;border:1.5px solid #333;color:#ddd}
+
+.list-section{margin-top:16px;display:none}
+.list-section h3{color:#FFD700;font-size:14px;margin-bottom:10px}
+.member-row{display:flex;align-items:center;gap:10px;background:#111;border:1px solid #222;border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.member-row .avatar{width:42px;height:42px;border-radius:50%;border:2px solid #FFD700;overflow:hidden;background:#222;flex-shrink:0}
+.member-row .avatar img{width:100%;height:100%;object-fit:cover}
+.member-row .avatar .ph{font-size:18px;color:#444;display:grid;place-items:center;width:100%;height:100%}
+.member-row .info{flex:1;min-width:0}
+.member-row .info .nm{font-size:14px;font-weight:700;color:#fff}
+.member-row .info .ds{font-size:11px;color:#FFD700}
+.member-row .lk{font-size:12px;color:#666;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="hdr">
+    <h1>📇 FORMULIR MEMBER</h1>
+    <div class="sub">Indramayu PETA · Niaga &amp; Servis</div>
+  </div>
+
+  <!-- SYARAT WAJIB -->
+  <div class="syarat">
+    <h3>⚠️ WAJIB DIPENUHI</h3>
+    <div class="req"><div class="ico" style="background:#25D366">🟢</div><div class="t">Bubble <b>WhatsApp</b> (link chat)</div><div class="badge">WAJIB</div></div>
+    <div class="req"><div class="ico" style="background:#FFD700">📷</div><div class="t">Foto profil / dagangan</div><div class="badge">WAJIB</div></div>
+    <div class="req"><div class="ico" style="background:#fff">🐙</div><div class="t">Web <b>GitHub</b> (link profil)</div><div class="badge">WAJIB</div></div>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-box" id="formBox">
+    <h3>➕ Daftar Member</h3>
+
+    <div class="field">
+      <label>Nama / Panggilan <span class="wajib">*</span></label>
+      <input id="inputNama" placeholder="Contoh: Kang Alwi">
+    </div>
+    <div class="field">
+      <label>Desa <span class="wajib">*</span></label>
+      <input id="inputDesa" placeholder="Contoh: Larangan / Jangga / Patrol">
+    </div>
+    <div class="field">
+      <label>Jenis Usaha</label>
+      <input id="inputJenis" placeholder="Niaga / Servis / Kuliner / Jasa">
+    </div>
+    <div class="field">
+      <label>Barang / Layanan (koma)</label>
+      <textarea id="inputBarang" rows="2" placeholder="Beras, Sayur, Servis HP, Bengkel..."></textarea>
+    </div>
+    <div class="field">
+      <label>Nomor HP / WhatsApp <span class="wajib">*</span></label>
+      <input id="inputWA" type="tel" placeholder="08xxxxxxxxxx">
+      <div class="hint">Buat chat bubble WhatsApp ke nomor ini</div>
+    </div>
+    <div class="field">
+      <label>Web GitHub <span class="wajib">*</span></label>
+      <input id="inputGH" placeholder="https://github.com/username">
+    </div>
+    <div class="field">
+      <label>Foto (profil / dagangan) <span class="wajib">*</span></label>
+      <div class="wa-input-wrap">
+        <div class="wa-preview" id="waPreview"><div class="ph">👤</div></div>
+        <label class="wa-foto">📷 Pilih Foto<input type="file" id="fotoInput" accept="image/*" capture="user"></label>
+      </div>
+    </div>
+    <div class="field">
+      <label>Deskripsi</label>
+      <input id="inputDesc" placeholder="Cerita singkat usaha / layanan">
+    </div>
+
+    <button class="btn btn-wa" onclick="bukaWA()">💬 JALANKAN</button>
+    <button class="btn btn-gold" onclick="simpan()">💾 SIMPAN KARTU MEMBER</button>
+    <button class="btn btn-gh" onclick="bukaGithub()">🐙 BUKA GITHUB</button>
+  </div>
+
+  <!-- KARTU HASIL -->
+  <div class="preview-box" id="previewBox">
+    <div class="card-member" id="cardMember"></div>
+    <button class="btn btn-gh" onclick="edit()" style="margin-top:10px">✏️ Edit Profil</button>
+    <button class="btn btn-cop kopi" onclick="lihatKode()" style="margin-top:8px">🪄 Lihat Kode Suntik</button>
+  </div>
+
+  <!-- KODE SUNTIK -->
+  <div class="embed-box" id="embedBox">
+    <h3>🧩 KODE SUNTIK (tempel di peta)</h3>
+    <textarea id="embedCode" readonly spellcheck="false"></textarea>
+    <div class="tomb">
+      <a class="cop" onclick="salin()">📋 Salin</a>
+      <a class="kopi" onclick="document.getElementById('embedBox').style.display='none'">✕ Tutup</a>
+    </div>
+    <div class="hint" style="margin-top:8px;font-size:11px;color:#888">Kode ini berisi kartu + bubble WA + link GitHub — siap disuntik ke halaman peta desa mana pun.</div>
+  </div>
+
+  <!-- LIST MEMBER -->
+  <div class="list-section" id="listSection">
+    <h3>👥 Member Terdaftar</h3>
+    <div id="memberList"></div>
+  </div>
+</div>
+
+<script>
+/* =========== STATE =========== */
+const KEY='member_peta'; const LIKES='member_likes';
+let fotoData=null;
+function load(){return JSON.parse(localStorage.getItem(KEY)||'[]');}
+function save(l){localStorage.setItem(KEY,JSON.stringify(l));}
+function lLikes(){return JSON.parse(localStorage.getItem(LIKES)||'{}');}
+function sLikes(d){localStorage.setItem(LIKES,JSON.stringify(d));}
+
+/* =========== FOTO =========== */
+document.getElementById('fotoInput').addEventListener('change',function(e){
+  const f=e.target.files[0]; if(!f)return;
+  if(f.size>512000){alert('Foto maks 500KB');return;}
+  const r=new FileReader();
+  r.onload=function(ev){
+    fotoData=ev.target.result;
+    const p=document.getElementById('waPreview');
+    p.innerHTML=fotoData?'<img src="'+fotoData+'">':'<div class="ph">👤</div>';
+  };
+  r.readAsDataURL(f);
+});
+
+/* =========== VALIDASI WAJIB =========== */
+function validasi(){
+  const nama=document.getElementById('inputNama').value.trim();
+  const desa=document.getElementById('inputDesa').value.trim();
+  const wa=document.getElementById('inputWA').value.replace(/\D/g,'');
+  const gh=document.getElementById('inputGH').value.trim();
+  if(!nama){alert('Nama wajib diisi');return null;}
+  if(!desa){alert('Desa wajib diisi');return null;}
+  if(wa.length<8){alert('Nomor WhatsApp wajib diisi (min 8 angka)');return null;}
+  if(!gh){alert('Web GitHub wajib diisi');return null;}
+  if(!/github\.com/.test(gh)){if(!confirm('Link bukan github.com. Tetap simpan?'))return null;}
+  if(!fotoData){alert('Foto wajib dipilih');return null;}
+  return {nama,desa,wa,gh};
+}
+
+/* =========== SIMPAN =========== */
+function simpan(){
+  const v=validasi(); if(!v)return;
+  const jenis=document.getElementById('inputJenis').value.trim();
+  const barang=document.getElementById('inputBarang').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const desc=document.getElementById('inputDesc').value.trim();
+
+  let list=load();
+  const idx=list.findIndex(m=>m.wa===v.wa);
+  const profil={nama:v.nama,desa:v.desa,jenis,barang,desc,wa:v.wa,gh:v.gh,foto:fotoData,waktu:new Date().toISOString()};
+  if(idx>=0){profil.like=list[idx].like||0;profil.id=list[idx].id;list[idx]=profil;}
+  else{profil.id='P'+Date.now().toString(36);profil.like=0;list.unshift(profil);}
+  save(list);
+  localStorage.setItem('member_my_wa',v.wa);
+  tampil(profil);
+}
+
+/* =========== TAMPIL KARTU =========== */
+function buatWA(wa){return 'https://wa.me/62'+wa.replace(/^0?8/,'8');}
+function tampil(m){
+  document.getElementById('formBox').style.display='none';
+  document.getElementById('previewBox').style.display='block';
+  document.getElementById('embedBox').style.display='none';
+  const lk=lLikes(), liked=lk[m.wa];
+  const card=document.getElementById('cardMember');
+  card.innerHTML=`
+    <div class="card-foto">${m.foto?'<img src="'+m.foto+'" alt="">':'<div class="ph">👤</div>'}</div>
+    <div class="card-body">
+      <div class="card-nama">${esc(m.nama)}</div>
+      <div class="card-desa">🏠 ${esc(m.desa)}${m.jenis?' · '+esc(m.jenis):''}</div>
+      ${m.barang&&m.barang.length?'<div style="margin-top:8px">'+m.barang.map(b=>'<span style="display:inline-block;background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:4px 10px;margin:3px 3px 0 0;font-size:11px">'+esc(b)+'</span>').join('')+'</div>':''}
+      ${m.desc?'<div class="card-deskripsi">'+esc(m.desc)+'</div>':''}
+      <div class="card-hp">
+        <div class="wa">${m.foto?'<img src="'+m.foto+'">':'<div class="ph">🟢</div>'}</div>
+        <div class="num">📱 ${esc(m.wa)}</div>
+        <a class="buka" href="${buatWA(m.wa)}" target="_blank">💬 CHAT</a>
+      </div>
+      <div class="card-gh">
+        <div class="ico">🐙</div>
+        <div class="url">${esc(m.gh)}</div>
+        <a class="buka" href="${esc(m.gh)}" target="_blank">↗ BUka</a>
+      </div>
+      <div class="rating">
+        <button class="btn-like ${liked?'liked':''}" onclick="like('${m.wa}')">${liked?'💛':'🤍'} Like</button>
+        <span class="lk">${m.like||0} suka</span>
+      </div>
+    </div>`;
+  renderList(m.wa);
+}
+
+/* =========== LIST =========== */
+function renderList(myWa){
+  const list=load().filter(m=>m.wa!==myWa);
+  const sec=document.getElementById('listSection');
+  if(!list.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  const lk=lLikes();
+  document.getElementById('memberList').innerHTML=list.map(m=>`
+    <div class="member-row" onclick="pilih('${m.wa}')">
+      <div class="avatar">${m.foto?'<img src="'+m.foto+'">':'<div class="ph">👤</div>'}</div>
+      <div class="info"><div class="nm">${esc(m.nama)}</div><div class="ds">🏠 ${esc(m.desa)} · 📱 ${esc(m.wa)}</div></div>
+      <div class="lk">${m.like||0} ♡</div>
+    </div>`).join('');
+}
+function pilih(wa){const m=load().find(x=>x.wa===wa);if(m)tampil(m);}
+
+/* =========== LIKE =========== */
+function like(wa){
+  const lk=lLikes();let list=load();
+  const m=list.find(x=>x.wa===wa);if(!m)return;
+  if(lk[wa]){delete lk[wa];m.like=Math.max(0,(m.like||1)-1);}
+  else{lk[wa]=true;m.like=(m.like||0)+1;}
+  save(list);sLikes(lk);tampil(m);
+}
+
+/* =========== TOMBOL EKSTRA =========== */
+function bukaWA(){const wa=document.getElementById('inputWA').value.replace(/\D/g,'');if(wa.length>=8)window.open(buatWA(wa),'_blank');else alert('Isi nomor HP dulu');}
+function bukaGithub(){const gh=document.getElementById('inputGH').value.trim();if(gh)window.open(gh,'_blank');else alert('Isi link GitHub dulu');}
+
+/* =========== NAV =========== */
+function edit(){
+  const wa=localStorage.getItem('member_my_wa');
+  const m=load().find(x=>x.wa===wa);if(!m)return;
+  document.getElementById('formBox').style.display='block';
+  document.getElementById('previewBox').style.display='none';
+  document.getElementById('inputNama').value=m.nama||'';
+  document.getElementById('inputDesa').value=m.desa||'';
+  document.getElementById('inputJenis').value=m.jenis||'';
+  document.getElementById('inputBarang').value=(m.barang||[]).join(', ');
+  document.getElementById('inputWA').value=m.wa||'';
+  document.getElementById('inputGH').value=m.gh||'';
+  document.getElementById('inputDesc').value=m.desc||'';
+  fotoData=m.foto||null;
+  const p=document.getElementById('waPreview');
+  p.innerHTML=fotoData?'<img src="'+fotoData+'">':'<div class="ph">👤</div>';
+}
+
+/* =========== KODE SUNTIK =========== */
+function lihatKode(){
+  const wa=localStorage.getItem('member_my_wa');
+  const m=load().find(x=>x.wa===wa);if(!m)return;
+  const html=`<div style="border:2px solid #FFD700;border-radius:16px;overflow:hidden;background:#111;max-width:340px;margin:6px auto;font-family:Arial,sans-serif">
+  <div style="height:110px;background:#1a1a1a center/cover no-repeat;background-image:url('${m.foto}')"></div>
+  <div style="padding:12px 14px">
+    <div style="color:#fff;font-weight:800;font-size:15px">${esc(m.nama)}</div>
+    <div style="color:#FFD700;font-size:11px;margin-top:2px">🏠 ${esc(m.desa)}${m.jenis?' · '+esc(m.jenis):''}</div>
+    ${m.barang&&m.barang.length?`<div style="margin-top:8px">${m.barang.map(b=>`<span style="display:inline-block;background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:3px 8px;margin:2px;font-size:11px;color:#ccc">${esc(b)}</span>`).join('')}</div>`:''}
+    <div style="display:flex;align-items:center;gap:8px;margin-top:10px;background:#0f2a1f;border:1px solid #25D366;border-radius:10px;padding:8px 10px">
+      <div style="width:26px;height:26px;border-radius:50%;overflow:hidden;background:#fff;flex-shrink:0">${m.foto?`<img src="${m.foto}" style="width:100%;height:100%;object-fit:cover">`:'<div style="display:grid;place-items:center;width:100%;height:100%">🟢</div>'}</div>
+      <a href="${buatWA(m.wa)}" target="_blank" style="color:#25D366;font-weight:800;font-size:12px;text-decoration:none;flex:1">💬 ${esc(m.wa)}</a>
+      <a href="${esc(m.gh)}" target="_blank" style="color:#fff;font-weight:800;font-size:12px;text-decoration:none">🐙 GH</a>
+    </div>
+  </div>
+</div>`;
+  const kode=`<!-- KARTU MEMBER ${esc(m.nama)} (${esc(m.desa)}) -->\n`+html;
+  document.getElementById('embedCode').value=kode;
+  document.getElementById('embedBox').style.display='block';
+}
+function salin(){
+  const t=document.getElementById('embedCode');
+  t.select();t.setSelectionRange(0,99999);
+  try{navigator.clipboard.writeText(t.value);}catch(e){document.execCommand('copy');}
+  alert('Kode disalin ✅');
+}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+/* =========== INIT =========== */
+(function(){
+  const wa=localStorage.getItem('member_my_wa');
+  if(wa){const m=load().find(x=>x.wa===wa);if(m){tampil(m);return;}}
+  document.getElementById('formBox').style.display='block';
+  document.getElementById('previewBox').style.display='none';
+})();
+</script>
+</body>
+</html>

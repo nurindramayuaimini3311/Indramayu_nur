@@ -2,7 +2,10 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Pencuri Robi — Hub Ruangan</title>
 <style>
   :root{
@@ -47,6 +50,13 @@
   .card.done .status{color:var(--safe);}
   footer{text-align:center; color:var(--moon-dim); font-size:11px; margin-top:26px; line-height:1.6;}
   footer .legend{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:8px;}
+
+  /* === FIX CUBIT + ROTATE (webkit) === */
+  html,body{ -webkit-text-size-adjust:100%; overscroll-behavior:none; touch-action:pan-x pan-y pinch-zoom; }
+  body{ padding-bottom:env(safe-area-inset-bottom, 0px); }
+  #alwi-rl{ bottom:calc(18px + env(safe-area-inset-bottom, 0px)) !important; }
+  #rooms{ padding-bottom:90px; }
+  @media (orientation:landscape){ #rooms{ max-width:640px; } }
 </style>
 </head>
 <body>
@@ -140,6 +150,7 @@ if(location.pathname.includes('alwiSD')){
 })();
 </script>
 
-<script src="/alwi_bubble4.js"></script>
+<!-- BUBBLE OFF utk game pencuri (menutupi layar) -->
+<!-- <script src="/alwi_bubble4.js"></script> -->
 </body>
 </html>

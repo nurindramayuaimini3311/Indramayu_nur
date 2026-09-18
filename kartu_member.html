@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kartu Member — Indramayu PETA</title>
+<meta name="theme-color" content="#1a1005">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;min-height:100vh;padding:12px 12px 80px}
+.wrap{max-width:420px;margin:0 auto}
+
+/* HEADER */
+.hdr{text-align:center;padding:16px 0 8px}
+.hdr h1{font-size:20px;color:#FFD700;letter-spacing:1px}
+.hdr .sub{font-size:12px;color:#aaa;margin-top:4px}
+
+/* FORM REGISTRASI */
+.form-box{background:#111;border:1.5px solid #333;border-radius:14px;padding:16px;margin-top:14px}
+.form-box h3{color:#FFD700;font-size:15px;margin-bottom:12px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:#ccc;margin-bottom:5px;font-weight:600}
+.field input,.field textarea{width:100%;padding:10px 12px;background:#1a1a1a;border:1.5px solid #333;border-radius:10px;color:#fff;font-size:14px;outline:none}
+.field input:focus,.field textarea:focus{border-color:#FFD700;box-shadow:0 0 8px rgba(255,215,0,.2)}
+
+/* FOTO PROFIL */
+.foto-wrap{width:100px;height:100px;border-radius:50%;border:3px solid #FFD700;margin:0 auto 14px;overflow:hidden;background:#222;display:grid;place-items:center;cursor:pointer;position:relative}
+.foto-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.foto-wrap .placeholder{font-size:36px;color:#555}
+.foto-wrap input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.foto-label{text-align:center;font-size:11px;color:#888;margin-bottom:14px}
+
+/* TOMBOL */
+.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;text-transform:uppercase;transition:transform .1s}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:linear-gradient(135deg,#C9A84C,#FFD700);color:#000}
+.btn-soft{background:#1a1a1a;border:1.5px solid #333;color:#ccc;margin-top:8px}
+
+/* KARTU HASIL */
+.preview-box{display:none;margin-top:16px}
+.card-member{background:#111;border:2px solid #FFD700;border-radius:16px;padding:0;overflow:hidden;box-shadow:0 4px 24px rgba(255,215,0,.1)}
+.card-foto{width:100%;height:160px;background:#1a1a1a;display:grid;place-items:center;overflow:hidden}
+.card-foto img{width:100%;height:100%;object-fit:cover}
+.card-foto .ph{font-size:52px;color:#333}
+.card-body{padding:14px 16px}
+.card-nama{font-size:18px;font-weight:800;color:#fff}
+.card-hp{font-size:13px;color:#FFD700;margin-top:2px}
+.card-barang{margin-top:10px;font-size:12px;color:#ccc}
+.card-barang span{display:inline-block;background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:4px 10px;margin:3px 3px 0 0}
+.card-rating{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid #222}
+.card-rating .likes{font-size:13px;color:#aaa;cursor:pointer}
+.card-rating .likes.liked{color:#FFD700}
+.btn-like{background:none;border:1.5px solid #444;color:#aaa;padding:6px 14px;border-radius:8px;font-size:12px;cursor:pointer}
+.btn-like.liked{border-color:#FFD700;color:#FFD700;background:rgba(255,215,0,.1)}
+
+/* LIST MEMBER */
+.list-section{margin-top:18px}
+.list-section h3{color:#FFD700;font-size:14px;margin-bottom:10px}
+.member-row{display:flex;align-items:center;gap:10px;background:#111;border:1px solid #222;border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.member-row:hover{border-color:#FFD700}
+.member-row .avatar{width:42px;height:42px;border-radius:50%;border:2px solid #FFD700;overflow:hidden;background:#222;flex-shrink:0}
+.member-row .avatar img{width:100%;height:100%;object-fit:cover}
+.member-row .avatar .ph{font-size:18px;color:#444;display:grid;place-items:center;width:100%;height:100%}
+.member-row .info{flex:1;min-width:0}
+.member-row .info .nm{font-size:14px;font-weight:700;color:#fff}
+.member-row .info .hp{font-size:11px;color:#FFD700}
+.member-row .info .brg{font-size:11px;color:#888;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.member-row .lk{font-size:12px;color:#666;flex-shrink:0}
+.member-row .lk.liked{color:#FFD700}
+
+.empty{text-align:center;padding:28px;color:#444;font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="hdr">
+    <h1>📇 KARTU MEMBER</h1>
+    <div class="sub">Indramayu PETA · Niaga antar warga</div>
+  </div>
+
+  <!-- FORM REGISTRASI -->
+  <div class="form-box" id="formBox">
+    <h3>➕ Daftar / Ubah Profil</h3>
+
+    <div class="foto-wrap" id="fotoWrap">
+      <img id="fotoPreview" style="display:none" alt="Profil">
+      <div class="placeholder" id="fotoPlaceholder">📷</div>
+      <input type="file" id="fotoInput" accept="image/*" capture="user">
+    </div>
+    <div class="foto-label">Ketuk untuk pasang foto profil</div>
+
+    <div class="field">
+      <label>Nama / Panggilan</label>
+      <input id="inputNama" placeholder="Contoh: Kang Alwi">
+    </div>
+    <div class="field">
+      <label>Nomor HP (ID utama)</label>
+      <input id="inputHP" type="tel" placeholder="08xxxxxxxxxx">
+    </div>
+    <div class="field">
+      <label>Barang Dagangan (koma)</label>
+      <textarea id="inputBarang" rows="2" placeholder="Beras, Ikan, Gula, Sayur"></textarea>
+    </div>
+    <div class="field">
+      <label>Deskripsi singkat</label>
+      <input id="inputDesc" placeholder="Petani, Pedagang Pasar, dll.">
+    </div>
+
+    <button class="btn btn-gold" onclick="simpanProfil()">💾 SIMPAN KARTU</button>
+    <button class="btn btn-soft" onclick="batal()">Batal</button>
+  </div>
+
+  <!-- KARTU HASIL -->
+  <div class="preview-box" id="previewBox">
+    <div class="card-member" id="cardMember"></div>
+    <button class="btn btn-soft" onclick="bukaEdit()" style="margin-top:10px">✏️ Edit Profil</button>
+  </div>
+
+  <!-- LIST MEMBER LAIN -->
+  <div class="list-section" id="listSection" style="display:none">
+    <h3>👥 Member Lain di Sekitar</h3>
+    <div id="memberList"></div>
+  </div>
+</div>
+
+<script>
+/* =========== STATE =========== */
+const STORAGE_KEY = 'kartu_member';
+const LIKES_KEY = 'kartu_likes';
+
+function loadMembers() { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+function saveMembers(list) { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+function loadLikes() { return JSON.parse(localStorage.getItem(LIKES_KEY) || '{}'); }
+function saveLikes(d) { localStorage.setItem(LIKES_KEY, JSON.stringify(d)); }
+
+/* =========== FOTO =========== */
+let fotoData = null;
+document.getElementById('fotoInput').addEventListener('change', function(e) {
+  const file = e.target.files[0]; if (!file) return;
+  if (file.size > 512000) { alert('Maks 500KB'); return; }
+  const r = new FileReader();
+  r.onload = function(ev) {
+    fotoData = ev.target.result;
+    document.getElementById('fotoPreview').src = fotoData;
+    document.getElementById('fotoPreview').style.display = 'block';
+    document.getElementById('fotoPlaceholder').style.display = 'none';
+  };
+  r.readAsDataURL(file);
+});
+
+/* =========== SIMPAN =========== */
+function simpanProfil() {
+  const hp = document.getElementById('inputHP').value.replace(/\D/g,'').trim();
+  const nama = document.getElementById('inputNama').value.trim();
+  if (!hp || hp.length < 8) { alert('Isi nomor HP yang benar'); return; }
+  if (!nama) { alert('Isi nama dulu'); return; }
+
+  const barang = document.getElementById('inputBarang').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const desc = document.getElementById('inputDesc').value.trim();
+
+  let list = loadMembers();
+  const idx = list.findIndex(m => m.hp === hp);
+
+  const profil = { hp, nama, barang, desc, foto: fotoData, waktu: new Date().toISOString() };
+  if (idx >= 0) { profil.like = list[idx].like || 0; profil.id = list[idx].id; list[idx] = profil; }
+  else { profil.id = 'M' + Date.now().toString(36); profil.like = 0; list.unshift(profil); }
+
+  saveMembers(list);
+  tampilKartu(profil);
+}
+
+/* =========== TAMPIL =========== */
+function tampilKartu(m) {
+  document.getElementById('formBox').style.display = 'none';
+  document.getElementById('previewBox').style.display = 'block';
+
+  const likes = loadLikes();
+  const liked = likes[m.hp];
+
+  document.getElementById('cardMember').innerHTML = `
+    <div class="card-foto">${m.foto ? '<img src="'+m.foto+'" alt="">' : '<div class="ph">👤</div>'}</div>
+    <div class="card-body">
+      <div class="card-nama">${esc(m.nama)}</div>
+      <div class="card-hp">📱 ${esc(m.hp)}</div>
+      ${m.desc ? '<div style="margin-top:4px;font-size:12px;color:#888">'+esc(m.desc)+'</div>' : ''}
+      <div class="card-barang">${(m.barang||[]).map(b=>'<span>'+esc(b)+'</span>').join('')||'<span style="color:#555">Belum isi</span>'}</div>
+      <div class="card-rating">
+        <button class="btn-like ${liked?'liked':''}" onclick="toggleLike('${m.hp}')">${liked?'💛':'🤍'} Like</button>
+        <span class="likes ${liked?'liked':''}">${m.like||0} suka</span>
+      </div>
+    </div>`;
+
+  renderList(m.hp);
+}
+
+/* =========== LIST =========== */
+function renderList(myHp) {
+  const list = loadMembers();
+  const others = list.filter(m => m.hp !== myHp);
+  const sec = document.getElementById('listSection');
+  if (!others.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+
+  const likes = loadLikes();
+  document.getElementById('memberList').innerHTML = others.map(m => `
+    <div class="member-row" onclick="lihatMember('${m.hp}')">
+      <div class="avatar">${m.foto ? '<img src="'+m.foto+'" alt="">': '<div class="ph">👤</div>'}</div>
+      <div class="info">
+        <div class="nm">${esc(m.nama)}</div>
+        <div class="hp">📱 ${esc(m.hp)}</div>
+        <div class="brg">${(m.barang||[]).slice(0,4).join(', ')||'—'}</div>
+      </div>
+      <div class="lk ${likes[m.hp]?'liked':''}">${m.like||0} ♡</div>
+    </div>`).join('');
+}
+
+function lihatMember(hp) {
+  const list = loadMembers();
+  const m = list.find(x => x.hp === hp);
+  if (m) tampilKartu(m);
+}
+
+/* =========== LIKE =========== */
+function toggleLike(hp) {
+  const likes = loadLikes();
+  let list = loadMembers();
+  const m = list.find(x => x.hp === hp);
+  if (!m) return;
+
+  if (likes[hp]) { delete likes[hp]; m.like = Math.max(0, (m.like||1)-1); }
+  else { likes[hp] = true; m.like = (m.like||0)+1; }
+
+  saveMembers(list); saveLikes(likes);
+  tampilKartu(m);
+}
+
+/* =========== NAV =========== */
+function bukaEdit() {
+  const myHp = localStorage.getItem('kartu_my_hp');
+  if (!myHp) return;
+  const m = loadMembers().find(x => x.hp === myHp);
+  if (!m) return;
+  document.getElementById('formBox').style.display = 'block';
+  document.getElementById('previewBox').style.display = 'none';
+  document.getElementById('inputNama').value = m.nama || '';
+  document.getElementById('inputHP').value = m.hp || '';
+  document.getElementById('inputBarang').value = (m.barang||[]).join(', ');
+  document.getElementById('inputDesc').value = m.desc || '';
+  if (m.foto) { document.getElementById('fotoPreview').src = m.foto; document.getElementById('fotoPreview').style.display='block'; document.getElementById('fotoPlaceholder').style.display='none'; }
+}
+
+function batal() {
+  document.getElementById('formBox').style.display = 'none';
+  document.getElementById('previewBox').style.display = 'block';
+}
+
+function esc(s) { const d=document.createElement('div');d.textContent=s;return d.innerHTML; }
+
+/* =========== INIT =========== */
+(function(){
+  const myHp = localStorage.getItem('kartu_my_hp');
+  if (myHp) {
+    const m = loadMembers().find(x => x.hp === myHp);
+    if (m) { tampilKartu(m); return; }
+  }
+  // Form kosong = registrasi baru
+  document.getElementById('formBox').style.display = 'block';
+  document.getElementById('previewBox').style.display = 'none';
+})();
+
+// Simpan hp aktif saat simpan
+const origSimpan = simpanProfil;
+simpanProfil = function() {
+  const hp = document.getElementById('inputHP').value.replace(/\D/g,'').trim();
+  if (hp && hp.length >= 8) localStorage.setItem('kartu_my_hp', hp);
+  origSimpan();
+};
+</script>
+</body>
+</html>

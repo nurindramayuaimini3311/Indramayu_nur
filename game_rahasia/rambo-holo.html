@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>🪖 RAMBO HOLOGRAM 3D</title>
+<style>
+  /* RAMBO HOLOGRAM — three.js lokal (offline). KONFIG di bawah: TARGET_KILL, NYAWA, LAJU */
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;height:100dvh;background:#0a1a3a;overflow:hidden;
+    font-family:'Courier New',monospace;color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    touch-action:pan-x pan-y pinch-zoom;-webkit-user-select:none;user-select:none}
+  #wrap{position:relative;width:100%;max-width:560px;height:100vh;height:100dvh;max-height:940px;
+    background:linear-gradient(#0e2450,#0a1a3a);overflow:hidden}
+  #game3d{position:absolute;inset:0}
+  #game3d canvas{display:block;width:100%!important;height:100%!important;touch-action:pan-x pan-y}
+  /* efek hologram: garis scan + vignette */
+  #scan{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.5;
+    background:repeating-linear-gradient(0deg,rgba(0,255,255,.06) 0 1px,transparent 1px 3px)}
+  #vig{position:absolute;inset:0;z-index:4;pointer-events:none;
+    box-shadow:inset 0 0 90px rgba(0,255,255,.25)}
+  #hud{position:absolute;top:0;left:0;right:0;z-index:6;display:flex;
+    justify-content:space-between;align-items:flex-start;padding:10px 12px;
+    font-size:11px;pointer-events:none;text-shadow:0 0 8px #0ff}
+  #hud .t{color:#0ff;opacity:.7;font-size:9px;letter-spacing:2px}
+  #hud .v{color:#ff0;font-size:15px}
+  #hearts{color:#f55;font-size:14px}
+  #hudBtns{display:flex;gap:8px;pointer-events:auto}
+  #hudBtns button{width:36px;height:36px;border-radius:50%;font-size:17px;
+    background:rgba(0,255,255,.1);border:2px solid #0ff;color:#0ff}
+  #overlay{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px;
+    background:rgba(10,25,60,.88)}
+  #overlay.hide{display:none}
+  #overlay h1{color:#0ff;font-size:24px;letter-spacing:3px;text-shadow:0 0 18px #0ff}
+  #overlay p{font-size:12px;line-height:1.9;color:#c8f4ff;max-width:340px}
+  #overlay p b{color:#ff0}
+  #btnMulai{background:#0ff;color:#012;border:0;font-family:inherit;font-weight:bold;
+    font-size:14px;letter-spacing:2px;padding:14px 30px;border-radius:8px;cursor:pointer;
+    box-shadow:0 0 24px rgba(0,255,255,.7)}
+  #btnMulai:active{transform:scale(.95)}
+  /* kontrol sentuh: kiri-kanan + maju-mundur (depth ala dingdong) + tembak */
+  #touch{position:absolute;bottom:calc(10px + env(safe-area-inset-bottom,0px));left:0;right:0;
+    z-index:6;display:flex;justify-content:space-between;padding:0 12px}
+  .tGroup{display:flex;gap:8px;align-items:flex-end}
+  .tBtn{width:58px;height:58px;border-radius:12px;font-size:20px;color:#0ff;
+    background:rgba(0,255,255,.08);border:2px solid #0ff;font-family:inherit;touch-action:none}
+  .tBtn.active{background:rgba(0,255,255,.35)}
+  #btnFire{width:76px;height:76px;border-radius:50%;font-size:28px;color:#f55;
+    background:rgba(255,60,60,.12);border:2px solid #f55}
+  #rotHint{position:absolute;bottom:calc(92px + env(safe-area-inset-bottom,0px));left:50%;
+    transform:translateX(-50%);z-index:6;font-size:10px;color:#9df;
+    background:rgba(0,20,30,.6);padding:5px 12px;border-radius:20px;
+    pointer-events:none;white-space:nowrap}
+  @media (orientation:landscape){#wrap{max-width:900px}#rotHint{display:none}}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="game3d"></div>
+  <div id="scan"></div>
+  <div id="vig"></div>
+  <div id="hud">
+    <div><div class="t">KILL</div><div class="v" id="hudKill">0/15</div>
+      <div id="hearts">♥♥♥</div></div>
+    <div style="text-align:center"><div class="t">SKOR</div><div class="v" id="hudSkor">0</div>
+      <div class="t">🪙 <span class="v" id="hudKoin">0</span></div></div>
+    <div id="hudBtns"><button id="sndBtn">🔊</button></div>
+  </div>
+  <div id="rotHint">◀ ▶ gerak • ▲ maju • ▼ mundur • ● tembak</div>
+  <div id="touch">
+    <div class="tGroup">
+      <div class="tBtn" data-t="left">◀</div>
+      <div class="tGroup" style="flex-direction:column">
+        <div class="tBtn" data-t="fwd">▲</div>
+        <div class="tBtn" data-t="back">▼</div>
+      </div>
+      <div class="tBtn" data-t="right">▶</div>
+    </div>
+    <div class="tGroup"><div class="tBtn" id="btnFire" data-t="fire">●</div></div>
+  </div>
+  <div id="overlay">
+    <h1>🪖 RAMBO<br>HOLOGRAM 3D</h1>
+    <p>Arena hologram! Rambo bebas bergerak:<br>
+      <b>◀ ▶</b> kiri-kanan, <b>▲▼</b> maju-mundur (depth ala dingdong)!<br>
+      Kalahkan <b>15 MUSUH</b> 🟣 pelompat & 🟠 penembak.<br>
+      Tembak <b>kubus emas ?</b> untuk koin +200!</p>
+    <button id="btnMulai">▶ MULAI</button>
+    <p id="errMsg" style="color:#f88;font-size:10px"></p>
+  </div>
+</div>
+
+<script src="three.min.js"></script>
+<script>
+/* diagnosa boot: tampilkan error di layar HP */
+window.addEventListener('error', function(e){
+  var el = document.getElementById('errMsg');
+  if(el) el.textContent = '⚠️ ' + (e.message || 'error');
+});
+</script>
+<script>
+(function(){
+"use strict";
+if(typeof THREE === 'undefined'){
+  document.getElementById('errMsg').textContent = '⚠️ three.min.js tidak ketemu (harus satu folder)';
+  return;
+}
+/* ================= KONFIG (edit di sini) ================= */
+var TARGET_KILL = 15;   // kill untuk menang
+var NYAWA = 3;          // nyawa hero
+var LAJU_MUSUH = 1.0;   // pengali kecepatan musuh (makin besar makin sulit)
+
+/* ================= SUARA RINGAN ================= */
+var Suara = (function(){
+  var c = null, bisu = false;
+  function init(){
+    if(c){ if(c.state==='suspended')c.resume(); return; }
+    try{ c = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){}
+  }
+  function blip(f,dur,tipe,vol,f2){
+    if(!c||bisu) return;
+    try{
+      var o=c.createOscillator(),g=c.createGain();
+      o.type=tipe; o.frequency.setValueAtTime(f,c.currentTime);
+      if(f2)o.frequency.exponentialRampToValueAtTime(f2,c.currentTime+dur);
+      g.gain.setValueAtTime(vol,c.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+dur);
+      o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+dur);
+    }catch(e){}
+  }
+  return { init:init,
+    tembak:function(){ blip(880,0.08,'square',0.07); },
+    musuh:function(){ blip(300,0.1,'square',0.05); },
+    meledak:function(){ blip(120,0.3,'sawtooth',0.16,45); },
+    kena:function(){ blip(150,0.3,'sawtooth',0.18); },
+    koin:function(){ blip(1320,0.1,'sine',0.12); setTimeout(function(){blip(1760,0.16,'sine',0.12);},80); },
+    menang:function(){ var s=[523,659,784,1047]; for(var i=0;i<s.length;i++)(function(f,k){setTimeout(function(){blip(f,0.22,'square',0.12);},k*150);})(s[i],i); },
+    toggle:function(){ bisu=!bisu; return bisu; } };
+})();
+
+/* ================= THREE SETUP ================= */
+var wrap = document.getElementById('wrap');
+var scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0e2450);
+scene.fog = new THREE.Fog(0x0e2450, 26, 70); // musuh muncul dari kabut terang
+
+var camera = new THREE.PerspectiveCamera(62, 1, 0.1, 120);
+camera.position.set(0, 7, 14);
+camera.lookAt(0, 1.5, -8);
+
+var renderer;
+try{
+  renderer = new THREE.WebGLRenderer({ antialias:true });
+}catch(e){
+  document.querySelector('#overlay p').innerHTML = 'HP ini tidak mendukung WebGL 😢<br>Coba browser lain / Chrome.';
+  return;
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+document.getElementById('game3d').appendChild(renderer.domElement);
+
+function aturUkuran(){
+  var w = wrap.clientWidth, h = wrap.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w/h;
+  camera.updateProjectionMatrix();
+}
+aturUkuran();
+window.addEventListener('resize', aturUkuran);
+window.addEventListener('orientationchange', function(){ setTimeout(aturUkuran, 200); });
+
+/* lantai grid hologram (terang) */
+var grid = new THREE.GridHelper(80, 40, 0x66ffff, 0x2a9ab0);
+scene.add(grid);
+/* garis batas arena kiri-kanan */
+function garisBatas(x, warna){
+  var g = new THREE.BufferGeometry().setFromPoints(
+    [new THREE.Vector3(x,0,10), new THREE.Vector3(x,0,-40)]);
+  scene.add(new THREE.Line(g, new THREE.LineBasicMaterial({ color:warna })));
+}
+garisBatas(-8.5, 0xff00ff); garisBatas(8.5, 0xff00ff);
+
+function bahan(warna){ return new THREE.MeshBasicMaterial({ color:warna, wireframe:true }); }
+
+/* ================= HERO ================= */
+var hero, heroMuzzle = 0;
+function buatHero(){
+  var g = new THREE.Group();
+  var badan = new THREE.Mesh(new THREE.BoxGeometry(0.9,1.3,0.6), bahan(0x00ffff));
+  badan.position.y = 1.1; g.add(badan);
+  var kepala = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.5,0.5), bahan(0x00ffff));
+  kepala.position.y = 2.05; g.add(kepala);
+  var senapan = new THREE.Mesh(new THREE.BoxGeometry(0.18,0.18,1.4), bahan(0xffff00));
+  senapan.position.set(0.35, 1.2, -0.7); g.add(senapan);
+  g.position.set(0, 0, 6);
+  scene.add(g);
+  return { obj:g, x:0, z:6, shootCd:0, invul:0 };
+}
+
+/* ================= MUSUH ================= */
+var musuh = [];   // {obj,x,z,tipe,hp,shootCd,hop,hidup}
+var GEO_RUN = new THREE.BoxGeometry(1,1.6,1);
+var GEO_SHOOT = new THREE.BoxGeometry(1.2,1.2,1.2);
+var GEO_JUMP = new THREE.OctahedronGeometry(0.9);
+var MAT_RUN = bahan(0x39ff88);
+var MAT_SHOOT = bahan(0xff9500);
+var MAT_JUMP = bahan(0xc77dff);
+
+function spawnMusuh(){
+  var r = Math.random();
+  var tipe = r < 0.45 ? 'run' : (r < 0.75 ? 'shoot' : 'jump');
+  var mesh;
+  if(tipe === 'run'){ mesh = new THREE.Mesh(GEO_RUN, MAT_RUN); }
+  else if(tipe === 'shoot'){ mesh = new THREE.Mesh(GEO_SHOOT, MAT_SHOOT); }
+  else { mesh = new THREE.Mesh(GEO_JUMP, MAT_JUMP); }
+  var x = -7 + Math.random()*14;
+  mesh.position.set(x, tipe === 'jump' ? 2 : 0.9, -32 - Math.random()*6);
+  scene.add(mesh);
+  musuh.push({ obj:mesh, x:x, z:mesh.position.z, tipe:tipe,
+    hp: tipe === 'run' ? 2 : 1, shootCd: 60 + Math.random()*90,
+    hop: Math.random()*6, hidup:true });
+}
+
+/* ================= PELURU / KOIN / KUBUS ================= */
+var peluruHero = [];  // {obj,vz}
+var peluruMusuh = []; // {obj,vx,vz}
+var kubus = [];       // {obj}
+var koinTerbang = []; // {obj,vx,vy,vz}
+var partikel = [];    // {obj,vx,vy,vz,life}
+var GEO_BOLT = new THREE.BoxGeometry(0.16,0.16,0.9);
+var MAT_BOLT = new THREE.MeshBasicMaterial({ color:0x00ffff });
+var GEO_EBOLT = new THREE.SphereGeometry(0.22, 8, 8);
+var MAT_EBOLT = new THREE.MeshBasicMaterial({ color:0xff3333, wireframe:true });
+var GEO_CUBE = new THREE.BoxGeometry(1.3,1.3,1.3);
+var MAT_CUBE = new THREE.MeshBasicMaterial({ color:0xffd700, wireframe:true });
+var GEO_COIN = new THREE.OctahedronGeometry(0.35);
+var MAT_COIN = new THREE.MeshBasicMaterial({ color:0xffd700, wireframe:true });
+
+function tembakHero(){
+  var m = new THREE.Mesh(GEO_BOLT, MAT_BOLT);
+  m.position.set(hero.x + 0.35, 1.2, hero.z - 1);
+  scene.add(m);
+  peluruHero.push({ obj:m, vz:-0.9 });
+  Suara.tembak();
+}
+function tembakMusuh(e){
+  var m = new THREE.Mesh(GEO_EBOLT, MAT_EBOLT);
+  m.position.set(e.x, 1.1, e.z);
+  scene.add(m);
+  var dx = hero.x - e.x, dz = hero.z - e.z;
+  var d = Math.max(0.1, Math.hypot(dx, dz));
+  peluruMusuh.push({ obj:m, vx:dx/d*0.28, vz:dz/d*0.28 });
+  Suara.musuh();
+}
+function spawnKubus(){
+  if(kubus.length >= 2) return;
+  var m = new THREE.Mesh(GEO_CUBE, MAT_CUBE);
+  m.position.set(-6 + Math.random()*12, 1.6, -20 - Math.random()*8);
+  scene.add(m);
+  kubus.push({ obj:m, putar:Math.random()*3 });
+}
+function hujanKoin(x, y, z, n){
+  for(var i = 0; i < n; i++){
+    var m = new THREE.Mesh(GEO_COIN, MAT_COIN);
+    m.position.set(x, y, z);
+    scene.add(m);
+    koinTerbang.push({ obj:m,
+      vx:(Math.random()-0.5)*0.2, vy:0.08+Math.random()*0.12, vz:(Math.random()-0.5)*0.2,
+      life:90 });
+  }
+}
+function ledakan(x, y, z, warna, n){
+  var mat = new THREE.MeshBasicMaterial({ color:warna, wireframe:true });
+  for(var i = 0; i < n; i++){
+    var m = new THREE.Mesh(GEO_EBOLT, mat);
+    m.position.set(x, y, z);
+    scene.add(m);
+    partikel.push({ obj:m,
+      vx:(Math.random()-0.5)*0.25, vy:Math.random()*0.2, vz:(Math.random()-0.5)*0.25,
+      life:30 });
+  }
+}
+function bersih(obj){ scene.remove(obj); }
+
+/* ================= STATE ================= */
+var jalan = false, gameOver = false;
+var skor = 0, kills = 0, nyawa = NYAWA, koin = 0, spawnTimer = 0, kubusTimer = 300, rapidTimer = 0;
+var tekan = {};
+
+function updateHud(){
+  document.getElementById('hudKill').textContent = kills + '/' + TARGET_KILL;
+  document.getElementById('hudSkor').textContent = skor;
+  document.getElementById('hudKoin').textContent = koin;
+  var h = '';
+  for(var i = 0; i < NYAWA; i++) h += i < nyawa ? '♥' : '♡';
+  document.getElementById('hearts').textContent = h;
+}
+
+function startGame(){
+  // bersihkan sisa lama
+  [musuh, peluruHero, peluruMusuh, kubus, koinTerbang, partikel].forEach(function(arr){
+    arr.forEach(function(o){ bersih(o.obj); }); arr.length = 0;
+  });
+  if(!hero) hero = buatHero();
+  hero.x = 0; hero.z = 6; hero.invul = 0;
+  hero.obj.position.set(0, 0, 6);
+  skor = 0; kills = 0; nyawa = NYAWA; koin = 0;
+  spawnTimer = 40; kubusTimer = 300; rapidTimer = 0;
+  gameOver = false; jalan = true;
+  Suara.init();
+  document.getElementById('overlay').classList.add('hide');
+  updateHud();
+}
+
+function endGame(menang){
+  jalan = false; gameOver = true;
+  if(menang) Suara.menang();
+  var ov = document.getElementById('overlay');
+  ov.classList.remove('hide');
+  ov.innerHTML = menang
+    ? '<h1>MISI SELESAI!</h1><p>Kamu kalahkan ' + TARGET_KILL + ' musuh hologram!<br>Skor: <b>' + skor + '</b> • Koin: <b>🪙' + koin + '</b></p><button id="btnMulai">↻ MAIN LAGI</button>'
+    : '<h1 style="color:#f55">GAME OVER</h1><p>Kill: ' + kills + '/' + TARGET_KILL + '<br>Skor: ' + skor + '</p><button id="btnMulai">↻ COBA LAGI</button>';
+  document.getElementById('btnMulai').onclick = startGame;
+}
+
+function kenaHero(){
+  if(hero.invul > 0) return;
+  nyawa--;
+  hero.invul = 90;
+  Suara.kena();
+  ledakan(hero.x, 1.2, hero.z, 0xff3333, 8);
+  updateHud();
+  if(nyawa <= 0) endGame(false);
+}
+
+/* ================= UPDATE ================= */
+function update(){
+  // --- gerak hero: kiri-kanan + MAJU-MUNDUR (depth) ---
+  var sp = 0.16;
+  if(tekan.left) hero.x -= sp;
+  if(tekan.right) hero.x += sp;
+  if(tekan.fwd) hero.z -= sp;    // maju ke dalam layar
+  if(tekan.back) hero.z += sp;   // mundur ke kamera
+  hero.x = Math.max(-7.5, Math.min(7.5, hero.x));
+  hero.z = Math.max(-4, Math.min(7.5, hero.z));
+  hero.obj.position.x += (hero.x - hero.obj.position.x) * 0.4;
+  hero.obj.position.z = hero.z;
+  hero.obj.rotation.y = (tekan.left ? 0.25 : 0) + (tekan.right ? -0.25 : 0);
+  if(hero.invul > 0){ hero.invul--; hero.obj.visible = (hero.invul % 10 < 6); }
+  else hero.obj.visible = true;
+  // kamera ikut sedikit (rasa dingdong)
+  camera.position.x += (hero.x * 0.35 - camera.position.x) * 0.08;
+  camera.lookAt(hero.x * 0.3, 1.5, -8);
+
+  // --- tembak ---
+  if(heroMuzzle > 0) heroMuzzle--;
+  if((tekan.fire) && heroMuzzle <= 0){
+    heroMuzzle = rapidTimer > 0 ? 6 : 13;
+    tembakHero();
+  }
+  if(rapidTimer > 0) rapidTimer--;
+
+  // --- spawn ---
+  spawnTimer--;
+  if(spawnTimer <= 0 && musuh.length < 5){
+    spawnMusuh();
+    spawnTimer = Math.max(35, 95 - kills * 3);
+  }
+  kubusTimer--;
+  if(kubusTimer <= 0){ spawnKubus(); kubusTimer = 700; }
+
+  // --- musuh ---
+  for(var i = musuh.length-1; i >= 0; i--){
+    var e = musuh[i];
+    if(!e.hidup) continue;
+    if(e.tipe === 'run'){
+      e.z += 0.09 * LAJU_MUSUH;
+      e.x += (hero.x > e.x ? 0.02 : -0.02);
+    } else if(e.tipe === 'shoot'){
+      if(e.z < -6) e.z += 0.07 * LAJU_MUSUH;
+      else {
+        e.shootCd--;
+        if(e.shootCd <= 0){ e.shootCd = 110; tembakMusuh(e); }
+      }
+    } else { // jump: melompat + maju
+      e.hop += 0.12;
+      e.z += 0.08 * LAJU_MUSUH;
+      e.obj.position.y = Math.abs(Math.sin(e.hop)) * 2;
+    }
+    e.obj.position.x = e.x; e.obj.position.z = e.z;
+    e.obj.rotation.y += 0.02;
+    // sampai garis hero?
+    if(e.z > hero.z + 0.6){
+      musuh.splice(i, 1); bersih(e.obj);
+      kenaHero();
+      continue;
+    }
+    // tabrakan badan
+    if(Math.hypot(e.x - hero.x, e.z - hero.z) < 1.2){ kenaHero(); }
+    if(gameOver) return;
+  }
+
+  // --- peluru hero ---
+  for(var j = peluruHero.length-1; j >= 0; j--){
+    var b = peluruHero[j];
+    b.obj.position.z += b.vz;
+    if(b.obj.position.z < -42){ peluruHero.splice(j, 1); bersih(b.obj); continue; }
+    var kena = false;
+    for(var k = musuh.length-1; k >= 0; k--){
+      var m = musuh[k];
+      if(!m.hidup) continue;
+      var my = m.tipe === 'jump' ? m.obj.position.y + 0.5 : 0.9;
+      if(Math.hypot(b.obj.position.x - m.x, b.obj.position.z - m.z) < 1.0 &&
+         Math.abs(1.2 - my) < 1.4){
+        m.hp--;
+        peluruHero.splice(j, 1); bersih(b.obj); kena = true;
+        if(m.hp <= 0){
+          m.hidup = false;
+          musuh.splice(k, 1); bersih(m.obj);
+          kills++; skor += m.tipe === 'jump' ? 150 : 100;
+          ledakan(m.x, 1, m.z, m.tipe === 'run' ? 0x39ff88 : (m.tipe === 'shoot' ? 0xff9500 : 0xc77dff), 10);
+          Suara.meledak();
+          updateHud();
+          if(kills >= TARGET_KILL){ endGame(true); return; }
+        }
+        break;
+      }
+    }
+    if(kena) continue;
+    // kena kubus emas?
+    for(var q = kubus.length-1; q >= 0; q--){
+      var ku = kubus[q];
+      if(Math.hypot(b.obj.position.x - ku.obj.position.x, b.obj.position.z - ku.obj.position.z) < 1.2){
+        peluruHero.splice(j, 1); bersih(b.obj);
+        kubus.splice(q, 1); bersih(ku.obj);
+        skor += 200; koin += 5;
+        hujanKoin(ku.obj.position.x, ku.obj.position.y, ku.obj.position.z, 6);
+        Suara.koin();
+        updateHud();
+        break;
+      }
+    }
+  }
+
+  // --- peluru musuh ---
+  for(var n = peluruMusuh.length-1; n >= 0; n--){
+    var eb = peluruMusuh[n];
+    eb.obj.position.x += eb.vx;
+    eb.obj.position.z += eb.vz;
+    if(eb.obj.position.z > 12 || Math.abs(eb.obj.position.x) > 12){
+      peluruMusuh.splice(n, 1); bersih(eb.obj); continue;
+    }
+    if(Math.hypot(eb.obj.position.x - hero.x, eb.obj.position.z - hero.z) < 0.9){ kenaHero(); }
+  }
+
+  // --- kubus melayang ---
+  for(var w = kubus.length-1; w >= 0; w--){
+    var kb = kubus[w];
+    kb.obj.rotation.y += 0.03; kb.obj.rotation.x += 0.01;
+    kb.obj.position.z += 0.01;
+    if(kb.obj.position.z > 9){ kubus.splice(w, 1); bersih(kb.obj); }
+  }
+
+  // --- koin magnet ke hero ---
+  for(var v = koinTerbang.length-1; v >= 0; v--){
+    var kn = koinTerbang[v];
+    kn.life--;
+    var dx = hero.x - kn.obj.position.x, dz = hero.z - kn.obj.position.z;
+    var d = Math.max(0.2, Math.hypot(dx, dz));
+    kn.obj.position.x += dx/d * 0.15 + kn.vx;
+    kn.obj.position.y += kn.vy;
+    kn.obj.position.z += dz/d * 0.15 + kn.vz;
+    kn.obj.rotation.y += 0.15;
+    if(d < 1.0 || kn.life <= 0){
+      if(d < 1.0){ skor += 50; Suara.koin(); updateHud(); }
+      koinTerbang.splice(v, 1); bersih(kn.obj);
+    }
+  }
+
+  // --- partikel ---
+  for(var p = partikel.length-1; p >= 0; p--){
+    var pt = partikel[p];
+    pt.obj.position.x += pt.vx;
+    pt.obj.position.y += pt.vy;
+    pt.obj.position.z += pt.vz;
+    pt.vy -= 0.008;
+    pt.life--;
+    if(pt.life <= 0){ partikel.splice(p, 1); bersih(pt.obj); }
+  }
+}
+
+/* ================= LOOP ================= */
+function loop(){
+  requestAnimationFrame(loop);
+  if(jalan && !gameOver) update();
+  // grid jalan + hero idle
+  grid.position.z = (grid.position.z + 0.08) % 2;
+  renderer.render(scene, camera);
+}
+
+/* ================= INPUT ================= */
+var TOMBOL = { left:'a', right:'d', fwd:'w', back:'s', fire:' ' };
+window.addEventListener('keydown', function(e){
+  var k = e.key.toLowerCase();
+  tekan[{a:'left',d:'right',w:'fwd',s:'back',' ':'fire',
+    arrowleft:'left',arrowright:'right',arrowup:'fwd',arrowdown:'back'}[k] || ''] = true;
+  if(k === ' ') e.preventDefault();
+});
+window.addEventListener('keyup', function(e){
+  var k = e.key.toLowerCase();
+  tekan[{a:'left',d:'right',w:'fwd',s:'back',' ':'fire',
+    arrowleft:'left',arrowright:'right',arrowup:'fwd',arrowdown:'back'}[k] || ''] = false;
+});
+document.querySelectorAll('.tBtn').forEach(function(b){
+  var k = b.dataset.t;
+  b.addEventListener('touchstart', function(e){ e.preventDefault(); tekan[k] = true; b.classList.add('active'); Suara.init(); }, {passive:false});
+  b.addEventListener('touchend', function(){ tekan[k] = false; b.classList.remove('active'); });
+  b.addEventListener('touchcancel', function(){ tekan[k] = false; b.classList.remove('active'); });
+  b.addEventListener('mousedown', function(){ tekan[k] = true; });
+  b.addEventListener('mouseup', function(){ tekan[k] = false; });
+});
+document.getElementById('btnMulai').onclick = startGame;
+document.getElementById('sndBtn').onclick = function(){
+  Suara.init();
+  this.textContent = Suara.toggle() ? '🔇' : '🔊';
+};
+setTimeout(function(){ var h = document.getElementById('rotHint'); if(h) h.style.display = 'none'; }, 7000);
+
+updateHud();
+loop();
+})();
+</script>
+
+<!-- BUBBLE OFF game holo (menutupi layar) -->
+<!-- <script src="/alwi_bubble4.js"></script> -->
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ Generator Video — AI Image → Video 30s</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px}
+h1{color:#facc15;font-size:1.5em;text-align:center;margin-bottom:4px}
+.sub{color:#94a3b8;font-size:12px;text-align:center;margin-bottom:20px}
+.card{background:#1e293b;padding:18px 16px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.3);width:100%;max-width:540px;margin-bottom:16px}
+label{display:block;font-size:12px;color:#cbd5e1;margin-bottom:5px;font-weight:700}
+textarea,input[type=text],select{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;font-size:13px;background:#0f172a;color:#e2e8f0;resize:vertical;margin-bottom:12px}
+textarea{min-height:60px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn-row>div{flex:1}
+button{border:none;border-radius:8px;padding:12px 8px;cursor:pointer;font-weight:700;font-size:14px;width:100%;margin-top:6px}
+.btn-gen{background:#facc15;color:#0f172a}
+.btn-upload{background:#6366f1;color:#fff}
+.btn-green{background:#22c55e;color:#0f172a}
+.btn-red{background:#ef4444;color:#fff}
+.btn-gray{background:#334155;color:#e2e8f0}
+button:disabled{opacity:.4;cursor:not-allowed}
+.progress{margin-top:12px;padding:14px;background:#0f172a;border:1px dashed #334155;border-radius:8px;text-align:center;font-size:13px;color:#94a3b8;display:none}
+.result{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:14px;margin-top:14px;display:none;width:100%;max-width:540px}
+.result video{width:100%;border-radius:8px;background:#000}
+.result a{display:inline-block;margin-top:10px;background:#22c55e;color:#0f172a;padding:10px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px}
+.file-input{position:relative;overflow:hidden;display:inline-block}
+.file-input input[type=file]{position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:12px}
+.gallery img{width:100%;border-radius:8px;border:2px solid transparent;cursor:pointer;aspect-ratio:3/4;object-fit:cover}
+.gallery img.selected{border-color:#facc15}
+.gallery .remove{position:absolute;top:2px;right:2px;background:#ef4444;color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
+.frame-wrap{position:relative;display:inline-block;width:100%}
+.timeline{font-size:12px;color:#94a3b8;background:#0f172a;padding:10px;border-radius:8px;margin-top:10px;text-align:left;white-space:pre-line}
+.sep{border-top:1px solid #334155;margin:14px 0}
+.save-status{font-size:11px;color:#7fbf7f;margin-top:8px;min-height:14px}
+</style>
+</head>
+<body>
+
+<h1>⚡ Generator Video</h1>
+<p class="sub">Generate gambar AI atau upload → Video 30 detik (FFmpeg di browser)</p>
+
+<div class="card">
+  <label for="keywords">Prompt / Deskripsi (Bahasa Indonesia)</label>
+  <textarea id="keywords" rows="3" placeholder="Contoh: Hantu feminim menakutkan di koridor sekolah malam, cahaya bulan remang, suasana horor sinematik"></textarea>
+
+  <label for="negative">Negative Prompt</label>
+  <textarea id="negative" rows="2" placeholder="blurry, low quality, bad anatomy, watermark"></textarea>
+
+  <div class="btn-row">
+    <div><label for="style">Style</label>
+      <select id="style"><option value="">--</option><option value="photorealistic">Photorealistic</option><option value="horror cinematic">Horror Cinematic</option><option value="fantasy art">Fantasy Art</option><option value="cyberpunk">Cyberpunk</option><option value="anime">Anime</option></select>
+    </div>
+    <div><label for="lighting">Lighting</label>
+      <select id="lighting"><option value="">--</option><option value="cinematic lighting">Cinematic</option><option value="dramatic lighting">Dramatic</option><option value="moonlight">Moonlight</option><option value="foggy, volumetric light">Foggy Volumetric</option></select>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <div><label for="jumlah">Jumlah Foto</label>
+      <select id="jumlah"><option value="5">5</option><option value="8">8</option><option value="10">10</option></select>
+    </div>
+    <div><label for="durasi">Durasi per Foto</label>
+      <select id="durasi"><option value="3">3 detik</option><option selected value="6">6 detik</option></select>
+    </div>
+  </div>
+
+  <button id="genBtn" class="btn-gen" onclick="generateImages()">✨ Generate Gambar AI</button>
+
+  <div class="sep"></div>
+  <label>Atau upload foto sendiri <span style="font-weight:400;color:#64748b">(max 10 foto)</span></label>
+  <div class="file-input btn-upload" style="border-radius:8px">
+    📤 Pilih Foto
+    <input type="file" id="fileInput" accept="image/*" multiple>
+  </div>
+  <div id="chips" style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0"></div>
+</div>
+
+<div class="card">
+  <p style="font-weight:700;font-size:13px">🎬 Timeline Video</p>
+  <div class="gallery" id="gallery"></div>
+  <div class="timeline" id="timelineInfo">Belum ada gambar. Generate atau upload dulu.</div>
+  <button id="buildBtn" class="btn-green" onclick="buildVideo()" disabled>🎥 Buat Video (FFmpeg WASM)</button>
+  <button class="btn-red" onclick="clearAll()">🗑️ Kosongkan Semua</button>
+  <button class="btn-gray" onclick="copyCmd()" style="margin-top:8px">📋 Copy FFmpeg Command</button>
+  <div class="save-status" id="videoStatus"></div>
+</div>
+
+<div class="progress" id="progress">⏳ Memproses...</div>
+
+<div class="result" id="result">
+  <video id="previewVideo" controls playsinline></video>
+  <a id="downloadBtn" href="#" download="video-alwi.mp4">⬇️ Download Video</a>
+</div>
+
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.7/dist/ffmpeg.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const keywords=$('keywords'),negative=$('negative'),styleEl=$('style'),lightingEl=$('lighting');
+const jumlah=$('jumlah'),durasi=$('durasi');
+const genBtn=$('genBtn'),buildBtn=$('buildBtn'),previewVideo=$('previewVideo'),videoStatus=$('videoStatus');
+
+let videoFrames=[]; // [{url,blob}]
+let ffmpegInstance=null;
+let ffmpegLoaded=false;
+
+function buildPrompt(){
+  let p=[];
+  if(keywords.value.trim()) p.push(keywords.value.trim());
+  if(styleEl.value) p.push(styleEl.value);
+  if(lightingEl.value) p.push(lightingEl.value);
+  p.push("highly detailed, sharp focus, cinematic, 8k");
+  return p.join(", ");
+}
+
+$('fileInput').addEventListener('change', async e=>{
+  const files=Array.from(e.target.files).slice(0,10);
+  for(const f of files){
+    if(videoFrames.length>=10) break;
+    const blob=f;
+    const url=URL.createObjectURL(blob);
+    videoFrames.push({url,blob});
+  }
+  renderGallery();
+});
+
+function renderGallery(){
+  $('gallery').innerHTML='';
+  videoFrames.forEach((f,i)=>{
+    const wrap=document.createElement('div');
+    wrap.className='frame-wrap';
+    const img=document.createElement('img');
+    img.src=f.url;
+    img.onclick=()=>{ videoFrames.splice(i,1); renderGallery(); };
+    const rm=document.createElement('button');
+    rm.className='remove';rm.textContent='✕';
+    rm.onclick=()=>{ videoFrames.splice(i,1); renderGallery(); };
+    wrap.appendChild(img);wrap.appendChild(rm);
+    $('gallery').appendChild(wrap);
+  });
+  const dur=videoFrames.length*parseInt(durasi.value);
+  buildBtn.disabled=videoFrames.length<2;
+  $('timelineInfo').textContent=videoFrames.length
+    ? `${videoFrames.length} foto × ${durasi.value}s = ${dur}s total\nKlik foto untuk hapus`
+    : 'Belum ada gambar. Generate atau upload dulu.';
+}
+
+async function generateImages(){
+  const prompt=buildPrompt();
+  if(!prompt) return alert('Isi deskripsi dulu!');
+  genBtn.disabled=true;
+  $('result').style.display='none';
+  showProgress(`⏳ Generating ${jumlah.value} gambar AI...`);
+
+  const neg=negative.value.trim()?` | negative: ${negative.value.trim()}`:'';
+  const total=parseInt(jumlah.value);
+
+  for(let i=0;i<total;i++){
+    showProgress(`⏳ Generating gambar ${i+1}/${total}...`);
+    const full=prompt+neg;
+    const enc=encodeURIComponent(full);
+    const seed=Math.floor(Math.random()*1000000);
+    const url=`https://image.pollinations.ai/prompt/${enc}?width=768&height=1024&seed=${seed}&nologo=true`;
+    try{
+      const res=await fetch(url);
+      if(!res.ok) throw new Error('gagal fetch');
+      const blob=await res.blob();
+      const objUrl=URL.createObjectURL(blob);
+      videoFrames.push({url:objUrl,blob});
+    }catch(e){
+      console.error('Generate gagal:',e);
+    }
+  }
+
+  hideProgress();
+  renderGallery();
+  genBtn.disabled=false;
+}
+
+let ffmpegLoaded = false;
+
+async function loadFFmpeg() {
+  if (ffmpegLoaded) return;
+  if (typeof FFmpeg === 'undefined') throw new Error('Library FFmpeg gagal dimuat. Cek koneksi internet.');
+  const { createFFmpeg } = FFmpeg;
+  ffmpegInstance = createFFmpeg({ log: true, corePath: 'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js' });
+  showProgress('⏳ Load FFmpeg WASM (10MB, pertama kali)...');
+  await ffmpegInstance.load();
+  ffmpegLoaded = true;
+  showProgress('✅ FFmpeg Siap');
+}
+
+async function buildVideo(){
+  if(videoFrames.length<2) return alert('Minimal 2 gambar!');
+  buildBtn.disabled=true;
+  $('result').style.display='none';
+
+  try{
+    await loadFFmpeg();
+    const ffmpeg = ffmpegInstance;
+
+    showProgress(`⏳ Memproses ${videoFrames.length} gambar...`);
+    for(let i=0;i<videoFrames.length;i++){
+      ffmpeg.FS('writeFile',`frame${i}.jpg`,await FFmpeg.fetchFile(videoFrames[i].blob));
+    }
+
+    const durPer=parseInt(durasi.value);
+    let listContent=videoFrames.map((_,i)=>`file frame${i}.jpg\nduration ${durPer}`).join('\n');
+    listContent+=`\nfile frame${videoFrames.length-1}.jpg`;
+    ffmpeg.FS('writeFile','list.txt',listContent);
+
+    showProgress('⏳ Encoding video...');
+    await ffmpeg.run('-f','concat','-safe','0','-i','list.txt',
+      '-vf','scale=768:1024,format=yuv420p',
+      '-r','24','-pix_fmt','yuv420p','out.mp4');
+
+    const data=ffmpeg.FS('readFile','out.mp4');
+    const blob=new Blob([data.buffer],{type:'video/mp4'});
+    const url=URL.createObjectURL(blob);
+
+    previewVideo.src=url;
+    $('result').style.display='block';
+    $('downloadBtn').href=url;
+    $('downloadBtn').download=`video_${Date.now()}.mp4`;
+    hideProgress();
+    videoStatus.textContent=`✅ Video jadi! ${videoFrames.length} foto × ${durPer}s = ${videoFrames.length*durPer}s`;
+
+    ffmpeg.FS('unlink','out.mp4');
+    for(let i=0;i<videoFrames.length;i++) ffmpeg.FS('unlink',`frame${i}.jpg`);
+    ffmpeg.FS('unlink','list.txt');
+  }catch(e){
+    showProgress('❌ Error: '+e.message);
+  }
+  buildBtn.disabled=false;
+}
+
+function clearAll(){
+  videoFrames=[];
+  renderGallery();
+  $('result').style.display='none';
+  videoStatus.textContent='';
+}
+
+function copyCmd(){
+  const durPer=durasi.value;
+  const cmd=`ffmpeg -f concat -safe 0 -i list.txt -vf "scale=768:1024,format=yuv420p" -r 24 hantu_30detik.mp4`;
+  navigator.clipboard.writeText(cmd).then(()=>{ videoStatus.textContent='📋 FFmpeg command disalin!'; });
+}
+
+function showProgress(msg){ $('progress').style.display='block'; $('progress').textContent=msg; }
+function hideProgress(){ $('progress').style.display='none'; }
+</script>
+</body>
+</html>

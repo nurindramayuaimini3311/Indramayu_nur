@@ -2,7 +2,11 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="screen-orientation" content="any">
 <title>Ruangan 2 — Dapur Rumah — Pencuri Robi</title>
 <style>
   :root{
@@ -11,8 +15,8 @@
     --wall:#2b3550; --wall-edge:#4a5a86; --safe:#3ddc84;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0; padding:0; height:100%; overflow:hidden; background:var(--ink); font-family:'Courier New',monospace; color:var(--moon); user-select:none;}
-  #wrap{position:relative; width:100vw; height:100vh; display:flex; flex-direction:column;
+  html,body{margin:0; padding:0; height:100%; height:100dvh; overflow:hidden; background:var(--ink); font-family:'Courier New',monospace; color:var(--moon); user-select:none; -webkit-user-select:none; -webkit-text-size-adjust:100%; overscroll-behavior:none; touch-action:pan-x pan-y pinch-zoom;}
+  #wrap{position:relative; width:100vw; height:100vh; height:100dvh; max-height:100dvh; display:flex; flex-direction:column;
     background:radial-gradient(ellipse at 50% -10%, #1a2236 0%, transparent 60%), var(--ink);}
   #hud{display:flex; align-items:center; justify-content:space-between; padding:10px 14px; font-size:13px; letter-spacing:1px; z-index:5; border-bottom:1px solid #1c2436;}
   #hud .label{color:var(--moon-dim); font-size:10px; letter-spacing:2px; text-transform:uppercase;}
@@ -25,8 +29,8 @@
   .heatDot{width:8px; height:8px; border-radius:50%; background:#2a3247; border:1px solid #3a4359; transition:background .2s;}
   .heatDot.on{background:var(--danger); border-color:var(--danger); box-shadow:0 0 6px var(--danger);}
   #stage{position:relative; flex:1; overflow:hidden;}
-  canvas{display:block; width:100%; height:100%; touch-action:none;}
-  #controls{position:absolute; bottom:18px; left:0; right:0; display:flex; justify-content:space-between; align-items:flex-end; padding:0 18px; z-index:6; pointer-events:none;}
+  canvas{display:block; width:100%; height:100%; touch-action:pinch-zoom; -webkit-transform:translateZ(0); transform:translateZ(0);}
+  #controls{position:absolute; bottom:18px; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); left:0; right:0; display:flex; justify-content:space-between; align-items:flex-end; padding:0 18px; z-index:6; pointer-events:none;}
   #stick{width:120px; height:120px; border-radius:50%; background:rgba(207,227,255,0.05); border:1px solid rgba(207,227,255,0.18); position:relative; pointer-events:auto; touch-action:none;}
   #stickKnob{width:52px; height:52px; border-radius:50%; background:rgba(207,227,255,0.35); border:1px solid rgba(207,227,255,0.6); position:absolute; left:34px; top:34px; transition:background .15s;}
   #hint{color:var(--moon-dim); font-size:11px; text-align:right; max-width:150px; line-height:1.5;}
@@ -43,6 +47,29 @@
   button:active, a.btn:active{transform:scale(0.96);}
   #banner{position:absolute; top:50%; left:50%; transform:translate(-50%,-60%); font-size:20px; font-weight:bold; color:var(--gold); z-index:8; opacity:0; pointer-events:none; font-family:Georgia,serif; text-shadow:0 0 12px rgba(0,0,0,0.8); text-align:center; white-space:nowrap;}
   #safeFlag{position:absolute; z-index:4; font-size:22px; pointer-events:none; transform:translate(-50%,-50%);}
+
+  /* === FIX ROTATE + CUBIT (webkit/pinch) === */
+  #wrap{ -webkit-orientation:any; }
+  #stage{ -webkit-overflow-scrolling:touch; }
+  #topbar{display:flex; gap:6px; align-items:center;}
+  #topbar button{background:rgba(207,227,255,0.08); border:1px solid rgba(207,227,255,0.2); color:var(--moon-dim); font-size:13px; padding:6px 10px; border-radius:4px; font-family:'Courier New',monospace;}
+  #rotHint{position:absolute; bottom:150px; left:50%; transform:translateX(-50%); z-index:7; font-size:11px; color:var(--moon-dim); background:rgba(6,8,13,.7); padding:6px 12px; border-radius:20px; pointer-events:none; white-space:nowrap;}
+  @media (orientation:landscape){
+    #hud{padding:6px 14px;}
+    #controls{bottom:10px; padding:0 14px;}
+    #stick{width:96px; height:96px;}
+    #hint{display:none;}
+    #topbar{top:auto; bottom:110px;}
+    #rotHint{display:none;}
+  }
+  @media (max-height:500px){
+    #hint{display:none;}
+    header h1{font-size:22px;}
+  }
+
+  /* === TOMBOL AKSI kanan-bawah dekat home === */
+  #actBtn{width:88px; height:88px; border-radius:50%; background:var(--amber); border:3px solid #000; color:#1a1204; font-size:13px; font-weight:900; font-family:'Courier New',monospace; letter-spacing:1px; pointer-events:auto; touch-action:none; -webkit-touch-callout:none; -webkit-user-select:none; box-shadow:0 4px 12px rgba(0,0,0,.5); margin-bottom:env(safe-area-inset-bottom, 0px);}
+  #actBtn:active{transform:scale(.92);}
 </style>
 </head>
 <body>
@@ -73,11 +100,12 @@
   <div id="stage">
     <canvas id="game"></canvas>
     <div id="banner"></div>
-    <div id="topbar"><a class="btn" id="backHub" href="index.html">← Hub</a></div>
+    <div id="topbar"><a class="btn" id="backHub" href="index.html">← Hub</a><button id="fsBtn" title="Layar penuh">⤢</button><button id="zoomOut" title="Zoom -">−</button><button id="zoomIn" title="Zoom +">+</button></div>
+    <div id="rotHint">🔄 Putar HP (landscape/portrait) • 🤏 Cubit untuk zoom</div>
 
     <div id="controls">
       <div id="stick"><div id="stickKnob"></div></div>
-      <div id="hint">Geser joystick untuk gerak.<br>Cari 🚪 utama → tengah → keluar.<br>🚩 dekat pintu masuk = zona aman.</div>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; pointer-events:none;"><div id="hint">Geser joystick untuk gerak.<br>Cari 🚪 utama → tengah → keluar.<br>🚩 dekat pintu masuk = zona aman.</div><button id="actBtn">⚡<br>BOBOL</button></div>
     </div>
 
     <div id="overlay">
@@ -117,15 +145,83 @@
   const DOG_COUNT = 1, POLICE_COUNT = 1;
   const SPEED_MULT = 1.0;
 
-  let W, H;
+  let W, H, zoomLvl = 1;
   function resize(){
     const stage = document.getElementById('stage');
-    W = canvas.width = stage.clientWidth * devicePixelRatio;
-    H = canvas.height = stage.clientHeight * devicePixelRatio;
-    canvas.style.width = stage.clientWidth+'px';
-    canvas.style.height = stage.clientHeight+'px';
+    const cw = stage.clientWidth || window.innerWidth;
+    const ch = stage.clientHeight || window.innerHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let oldW = 0, oldH = 0;
+    try { oldW = cellW * cols; oldH = cellH * rows; } catch (err) { oldW = 0; oldH = 0; }
+    W = canvas.width = Math.round(cw * dpr);
+    H = canvas.height = Math.round(ch * dpr);
+    canvas.style.width = cw + 'px';
+    canvas.style.height = ch + 'px';
+    applyZoom();
+    // re-layout saat diputar: maze tidak pecah (try/catch agar aman dari TDZ saat init)
+    try {
+    if (cells && oldW > 0 && oldH > 0) {
+      const sx = W / oldW, sy = H / oldH;
+      cellW = W / cols; cellH = H / rows;
+      buildWallRects();
+      if (typeof player !== 'undefined' && player) {
+        player.x *= sx; player.y *= sy;
+        player.r = Math.min(cellW, cellH) * 0.28;
+        player.speed = cellW * 0.052;
+        player.x = Math.max(player.r, Math.min(W - player.r, player.x));
+        player.y = Math.max(player.r, Math.min(H - player.r, player.y));
+      }
+      if (enemies) enemies.forEach(function(e){ e.x *= sx; e.y *= sy; });
+    }
+    } catch (err) {}
+  }
+  function applyZoom(){
+    canvas.style.webkitTransform = 'scale(' + zoomLvl + ')';
+    canvas.style.transform = 'scale(' + zoomLvl + ')';
+    canvas.style.transformOrigin = 'center center';
+  }
+  // cubit (pinch) 2 jari di canvas — webkit + standar
+  (function(){
+    let lastDist = 0;
+    canvas.addEventListener('touchstart', function(e){
+      if (e.touches.length === 2) lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    }, {passive:true});
+    canvas.addEventListener('touchmove', function(e){
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        if (lastDist > 0) {
+          zoomLvl = Math.max(1, Math.min(2.5, zoomLvl + (d - lastDist) / 220));
+          applyZoom();
+        }
+        lastDist = d;
+      }
+    }, {passive:false});
+    canvas.addEventListener('touchend', function(){ lastDist = 0; }, {passive:true});
+    // webkit gesture (iOS Safari lama)
+    canvas.addEventListener('gesturestart', function(e){ e.preventDefault(); }, {passive:false});
+    canvas.addEventListener('gesturechange', function(e){
+      e.preventDefault();
+      zoomLvl = Math.max(1, Math.min(2.5, (e.scale || 1)));
+      applyZoom();
+    }, {passive:false});
+  })();
+  function toggleFS(){
+    try{
+      const el = document.documentElement;
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      } else {
+        if (el.requestFullscreen) el.requestFullscreen();
+        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      }
+    }catch(err){}
   }
   window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', function(){ setTimeout(resize, 150); setTimeout(resize, 500); });
+  if (window.visualViewport) visualViewport.addEventListener('resize', function(){ resize(); });
+  if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', function(){ setTimeout(resize, 150); });
   resize();
 
   let doorsTotal = 0;
@@ -289,6 +385,17 @@
   window.addEventListener('mousemove', e=>{ if(stickActive) updateStick(e.clientX,e.clientY); });
   window.addEventListener('mouseup', ()=>{ if(stickActive) stickEnd(); });
 
+  let sprint = false;
+  (function(){
+    const b = document.getElementById('actBtn');
+    const on = function(e){ e.preventDefault(); sprint = true; if (typeof checkDoors === 'function') checkDoors(); };
+    const off = function(e){ if(e) e.preventDefault(); sprint = false; };
+    b.addEventListener('touchstart', on, {passive:false});
+    b.addEventListener('touchend', off, {passive:false});
+    b.addEventListener('touchcancel', off, {passive:false});
+    b.addEventListener('mousedown', on);
+    window.addEventListener('mouseup', off);
+  })();
   const keys = {};
   window.addEventListener('keydown', e=>{ keys[e.key]=true; });
   window.addEventListener('keyup', e=>{ keys[e.key]=false; });
@@ -320,7 +427,7 @@
   function update(){
     if(!running) return;
     const mv = getMoveVec();
-    const step = player.speed;
+    const step = player.speed * (sprint ? 1.7 : 1);
     const nx = player.x + mv.x*step, ny = player.y + mv.y*step;
     if(!collidesAt(nx, player.y, player.r*0.75)) player.x = nx;
     if(!collidesAt(player.x, ny, player.r*0.75)) player.y = ny;
@@ -504,6 +611,10 @@
     running = true;
   });
 
+  document.getElementById('fsBtn').addEventListener('click', toggleFS);
+  document.getElementById('zoomIn').addEventListener('click', function(){ zoomLvl = Math.min(2.5, zoomLvl + 0.25); applyZoom(); });
+  document.getElementById('zoomOut').addEventListener('click', function(){ zoomLvl = Math.max(1, zoomLvl - 0.25); applyZoom(); });
+  setTimeout(function(){ var h = document.getElementById('rotHint'); if (h) h.style.display = 'none'; }, 6000);
   resize(); draw(); requestAnimationFrame(loop);
 })();
 </script>
@@ -517,6 +628,7 @@ if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html',''
 if(i<0) i=0;
 let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
 let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+if(!L || !R) return;
 L.href=prev; R.href=next;
 let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
 [L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
@@ -529,6 +641,7 @@ if(location.pathname.includes('alwiSD')){
 })();
 </script>
 
-<script src="/alwi_bubble4.js"></script>
+<!-- BUBBLE OFF utk game pencuri (menutupi layar) -->
+<!-- <script src="/alwi_bubble4.js"></script> -->
 </body>
 </html>

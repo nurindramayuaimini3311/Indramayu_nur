@@ -21,18 +21,36 @@
 })();
 </script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Naga Jari - Tanpa Stik</title>
 <style>
   html, body { margin:0; padding:0; background:#050810; overflow:hidden; height:100%; }
   canvas { display:block; width:100vw; height:100vh; touch-action:none; }
   #hint { position:fixed; bottom:12px; left:50%; transform:translateX(-50%); color:#3fa9f5; font:13px monospace; opacity:0.7; text-align:center; pointer-events:none; }
-  #score { position:fixed; top:12px; left:12px; color:#facc15; font:bold 18px monospace; }
+  #score { position:fixed; top:12px; left:12px; color:#facc15; font:bold 18px monospace; text-shadow:0 0 8px #000; }
+  #koinBox { position:fixed; top:12px; right:12px; text-align:right; color:#ffd700; font:bold 18px monospace; text-shadow:0 0 8px #000; }
+  #countdown { font-size:12px; color:#3fa9f5; font-weight:normal; }
+  #fireBtn {
+    position:fixed; right:14px; bottom:calc(60px + env(safe-area-inset-bottom, 0px));
+    width:64px; height:64px; border-radius:50%; font-size:30px;
+    background:rgba(250,204,21,.15); border:2px solid #facc15; cursor:pointer;
+  }
+  #fireBtn:active { transform:scale(.9); }
+  #toast {
+    position:fixed; top:22%; left:50%; transform:translateX(-50%);
+    color:#ffd700; font:bold 22px monospace; text-shadow:0 0 12px #000;
+    opacity:0; transition:opacity .4s; pointer-events:none; text-align:center;
+  }
 </style>
 </head>
 <body>
 <canvas id="game"></canvas>
 <div id="score">Skor: 0</div>
+<div id="koinBox">🪙 <span id="koin">0</span><br><span id="countdown">🎁 1:00</span></div>
+<div id="toast"></div>
+<button id="fireBtn" title="Kembang api">🎆</button>
 <div id="hint">GERAKKAN JARI DI LAYAR • NAGA IKUT JARI • LEPAS = PETIR • 2 JARI = 2 NAGA</div>
 <script>
 const canvas=document.getElementById('game');
@@ -64,6 +82,103 @@ class NagaJari {
 
 const nagas={};
 let particles=[];
+let rockets=[];   // roket kembang api yang meluncur
+let koinHujan=[]; // koin berjatuhan (visual)
+
+/* ---- KOIN: tiap 1 menit main dapat 1 koin ---- */
+const KOIN_KEY='stickNagaKoin';
+let koin=0, detikMain=0, detikTampil=-1;
+try { koin=parseInt(localStorage.getItem(KOIN_KEY)||'0',10)||0; } catch(e) {}
+function tampilKoin(){
+  document.getElementById('koin').textContent=koin;
+  const sisa=Math.max(0, 60-Math.floor(detikMain));
+  document.getElementById('countdown').textContent='🎁 '+Math.floor(sisa/60)+':'+String(sisa%60).padStart(2,'0');
+}
+tampilKoin();
+
+function toast(teks){
+  const el=document.getElementById('toast');
+  el.textContent=teks; el.style.opacity='1';
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>{ el.style.opacity='0'; }, 2200);
+}
+
+/* ---- SUARA RINGAN (tanpa file) ---- */
+const Suara=(function(){
+  let ctx=null, master=null;
+  function init(){
+    if(ctx){ if(ctx.state==='suspended')ctx.resume(); return; }
+    try{
+      const AC=window.AudioContext||window.webkitAudioContext;
+      if(!AC)return;
+      ctx=new AC();
+      master=ctx.createGain(); master.gain.value=0.4; master.connect(ctx.destination);
+    }catch(e){}
+  }
+  function blip(f,dur,tipe,vol,f2){
+    if(!ctx)return;
+    try{
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.type=tipe; o.frequency.setValueAtTime(f,ctx.currentTime);
+      if(f2)o.frequency.exponentialRampToValueAtTime(f2,ctx.currentTime+dur);
+      g.gain.setValueAtTime(vol,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+      o.connect(g); g.connect(master); o.start(); o.stop(ctx.currentTime+dur);
+    }catch(e){}
+  }
+  return {
+    init,
+    koin:()=>{ blip(1320,0.12,'sine',0.2); setTimeout(()=>blip(1760,0.2,'sine',0.2),90); },
+    boom:()=>blip(120,0.5,'sawtooth',0.18,40),
+    desis:()=>blip(3000,0.3,'sine',0.04,5000)
+  };
+})();
+
+/* ---- BUNGA API (kembang api) ---- */
+function luncurkanApi(x){
+  Suara.init(); Suara.desis();
+  rockets.push({
+    x: x ?? (Math.random()*canvas.width*0.8+canvas.width*0.1),
+    y: canvas.height+10,
+    vy: -(9+Math.random()*4),
+    targetY: canvas.height*(0.15+Math.random()*0.35),
+    warna: `hsl(${Math.floor(Math.random()*360)},100%,60%)`
+  });
+}
+function ledakkanApi(r){
+  Suara.boom();
+  const n=50;
+  for(let i=0;i<n;i++){
+    const a=(i/n)*Math.PI*2 + Math.random()*0.2;
+    const sp=2+Math.random()*5;
+    particles.push({x:r.x, y:r.y,
+      vx:Math.cos(a)*sp, vy:Math.sin(a)*sp,
+      life:50+Math.random()*20, max:70, color:r.warna, api:true});
+  }
+  // kilatan tengah
+  for(let i=0;i<10;i++){
+    particles.push({x:r.x, y:r.y,
+      vx:(Math.random()-0.5)*2, vy:(Math.random()-0.5)*2,
+      life:20, max:20, color:'#ffffff', api:true});
+  }
+}
+function hujanKoin(n){
+  for(let i=0;i<(n||12);i++){
+    koinHujan.push({x:Math.random()*canvas.width, y:-20-Math.random()*100,
+      vy:2+Math.random()*3, putar:Math.random()*Math.PI*2});
+  }
+}
+/* hadiah 1 menit */
+function hadiahMenit(){
+  koin++;
+  try{ localStorage.setItem(KOIN_KEY,String(koin)); }catch(e){}
+  tampilKoin();
+  toast('🪙 +1 KOIN!\n🎆 BUNGA API! 🎆');
+  Suara.koin();
+  for(let i=0;i<5;i++) setTimeout(()=>luncurkanApi(), i*250);
+  hujanKoin(16);
+}
+document.getElementById('fireBtn').addEventListener('click',()=>{ luncurkanApi(); });
 
 function spawnParticles(x,y,color){
   for(let i=0;i<12;i++){
@@ -108,7 +223,37 @@ canvas.addEventListener('pointerup', e=>{
 function loop(){
   ctx.fillStyle='rgba(5,8,16,0.25)';
   ctx.fillRect(0,0,canvas.width,canvas.height);
-  
+
+  // pewaktu 1 menit -> koin + bunga api
+  detikMain += 1/60;
+  if(Math.floor(detikMain) !== detikTampil){ detikTampil=Math.floor(detikMain); tampilKoin(); }
+  if(detikMain >= 60){ detikMain = 0; hadiahMenit(); }
+
+  // roket meluncur ke atas
+  for(let i=rockets.length-1;i>=0;i--){
+    const r=rockets[i];
+    r.y += r.vy;
+    // jejak api
+    particles.push({x:r.x+(Math.random()-0.5)*4, y:r.y+8,
+      vx:(Math.random()-0.5)*1.5, vy:2+Math.random()*2,
+      life:15, max:15, color:'#ffcc66', api:true});
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(r.x,r.y,3,0,Math.PI*2); ctx.fill();
+    if(r.y <= r.targetY){ rockets.splice(i,1); ledakkanApi(r); }
+  }
+
+  // koin berjatuhan
+  for(let i=koinHujan.length-1;i>=0;i--){
+    const k=koinHujan[i];
+    k.y += k.vy; k.putar += 0.15;
+    if(k.y > canvas.height+20){ koinHujan.splice(i,1); continue; }
+    const rx=Math.abs(Math.cos(k.putar))*10;
+    ctx.fillStyle='#ffd700';
+    ctx.beginPath(); ctx.ellipse(k.x,k.y,Math.max(rx,2),10,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#a07000';
+    ctx.font='bold 10px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('Rp',k.x,k.y);
+  }
   // gambar naga jari
   Object.values(nagas).forEach(n=>{
     // ekor
@@ -141,7 +286,8 @@ function loop(){
   // particles
   particles.forEach(p=>{
     p.x+=p.vx; p.y+=p.vy; p.life--;
-    ctx.globalAlpha=p.life/30;
+    if(p.api){ p.vy+=0.06; p.vx*=0.985; } // bunga api melengkung jatuh
+    ctx.globalAlpha=Math.max(0,Math.min(1,p.life/(p.max||30)));
     ctx.fillStyle=p.color;
     ctx.beginPath();
     ctx.arc(p.x,p.y,4,0,Math.PI*2);
@@ -163,6 +309,7 @@ if(i==-1) i=PAGES.findIndex(x=>p.includes(x.replace(/\//g,'').replace('.html',''
 if(i<0) i=0;
 let prev=PAGES[(i-1+PAGES.length)%PAGES.length], next=PAGES[(i+1)%PAGES.length];
 let L=document.getElementById('rlL'), R=document.getElementById('rlR');
+if(!L || !R) return;
 L.href=prev; R.href=next;
 let ctx; function tuk(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(700,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(150,ctx.currentTime+0.12);g.gain.setValueAtTime(0.6,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.14);if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
 [L,R].forEach(b=>b.addEventListener('click',()=>{tuk();b.style.transform='scale(0.8)';setTimeout(()=>b.style.transform='',120);}));
@@ -174,9 +321,10 @@ if(location.pathname.includes('alwiSD')){
 }
 })();
 </script>
-<script>poinGame()</script>
+<script>if(window.poinGame)poinGame()</script>
 
-<script src="/alwi_bubble4.js"></script>
+<!-- BUBBLE OFF utk stick naga (menutupi kanvas) -->
+<!-- <script src="/alwi_bubble4.js"></script> -->
 </body>
 </html>
 

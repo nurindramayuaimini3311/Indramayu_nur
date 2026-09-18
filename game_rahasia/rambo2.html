@@ -2,7 +2,9 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>ALWI LEVEL 3 - RAMBO CONTRA</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
@@ -48,6 +50,7 @@ canvas{display:block;background:#87CEEB;image-rendering:pixelated;max-width:100v
       <div>LEVEL 3<br><span style="color:#ffff00">CONTRA</span></div>
       <div style="color:#ff8844">ALWI<br><span id="hearts" class="heart">♥♥♥</span></div>
       <div>KILL<br><span id="killTxt" style="color:#00ff88">0/15</span></div>
+      <div>🪙<br><span id="koinTxt" style="color:#ffd700">0</span></div>
     </div>
     <div class="hudRight">
       <div id="fBox" style="display:flex;align-items:center;gap:6px"><span style="background:#8a2be2;color:#ffff00;border:2px solid #fff;padding:2px 5px;font-size:12px">F</span><div class="powerBar"><div id="pFill" class="powerFill"></div></div></div>
@@ -56,7 +59,7 @@ canvas{display:block;background:#87CEEB;image-rendering:pixelated;max-width:100v
   </div>
   <div id="overlay">
     <h1>ALWI - LEVEL 3<br>RAMBO CONTRA WAR</h1>
-    <p>Musuh tentara hijau menyerbu dari kanan! Kalahkan <span style="color:#00ff88">15 MUSUH</span> untuk menang. Ambil power-up <span style="background:#8a2be2;color:#ff0;padding:1px 4px">F</span> untuk rapid-fire! <br><br>PC: A/D gerak, W/↑ Lompat, SPASI Tembak<br>HP: Gunakan tombol bawah</p>
+    <p>Musuh 👹👾🥷👻💀 + <span style="color:#c77dff">pasukan ☠️ 7 detik</span> menyerbu! Kalahkan <span style="color:#00ff88">15 MUSUH</span> lalu hadapi <span style="color:#ff00ff">BOSS LABA-LABA 🕷️</span>! Sundul <span style="color:#ffd700">BALOK ?</span> dari bawah untuk koin (awas, kadang keluar musuh!). Ambil power-up <span style="background:#8a2be2;color:#ff0;padding:1px 4px">F</span> untuk rapid-fire! <br><br>PC: A/D gerak, W/↑ Lompat, SPASI Tembak<br>HP: Gunakan tombol bawah</p>
     <button id="startBtn">▶ MULAI PERANG</button>
     <p style="margin-top:12px;font-size:8px" class="blink">▼ INSERT COIN - TEKAN MULAI ▼</p>
   </div>
@@ -87,23 +90,53 @@ const GROUND_Y=H-64;
 let keys={}, gameState='menu', score=0,kills=0,lives=3,power=100, rapidTimer=0;
 let player,bullets=[],eBullets=[],enemies=[],particles=[],powerups=[],camX=0;
 let spawnTimer=0, difficulty=0;
+// BARU: serangan 7 detik + boss laba-laba
+let frenzyT=0, frenzyCd=1100, boss=null;
+// BARU: balok ? sundul koin + teks melayang + koin
+let blocks=[],floatTexts=[],koin=0,blockTimer=0;
 
 // Player
 function resetGame(){
   score=0;kills=0;lives=3;power=100;rapidTimer=0;
   bullets=[];eBullets=[];enemies=[];particles=[];powerups=[];
+  blocks=[];floatTexts=[];koin=0;blockTimer=120;
+  frenzyT=0;frenzyCd=1100;boss=null;
   spawnTimer=0;difficulty=0;camX=0;
   player={x:80,y:GROUND_Y-48,w:28,h:44,vx:0,vy:0,dir:1,onGround:true,shootCd:0,invul:0,frame:0};
   document.getElementById('killTxt').textContent='0/15';
+  document.getElementById('koinTxt').textContent='0';
   document.getElementById('scoreTxt').textContent='00000';
 }
 
-function spawnEnemy(){
+// SPRITE BOSS: taruh foto JPG-mu di folder ini dengan nama PERSIS 'bos-laba.jpg'
+// kalau tidak ada, game otomatis gambar laba-laba sendiri (fallback canvas)
+const SPRITE_BOSS = 'bos-laba.jpg';
+const bossImg = new Image();
+let bossImgOk = false;
+bossImg.onload = () => { bossImgOk = true; };
+bossImg.onerror = () => { bossImgOk = false; };
+bossImg.src = SPRITE_BOSS;
+
+function spawnEnemy(forceType){
   const y = GROUND_Y-36 + (Math.random()>0.5?0:-0); // slight variation
-  const type=Math.random()<0.6?0:1; // 0 ground rush, 1 cover shooter
-  const e={x:camX+W+40+Math.random()*200,y:y,w:26,h:36,vx:-(1.2+Math.random()*1.5+difficulty*0.2),type:type,shootCd:60+Math.random()*100,alive:true,hp: type?1:2,state:'run',t:0};
+  const r=Math.random();
+  // 0 runner👹, 1 cover👾, 2 jumper🥷, 3 hantu👻, 4 tengkorak💀, 5 pasukan☠️(frenzy)
+  const type = (forceType!==undefined) ? forceType : (r<0.3?0 : r<0.5?1 : r<0.65?2 : r<0.8?3 : r<0.93?4 : 0);
+  const e={x:camX+W+40+Math.random()*200,y:y,w:26,h:36,vx:-(1.2+Math.random()*1.5+difficulty*0.2),type:type,shootCd:60+Math.random()*100,alive:true,hp: type?1:2,state:'run',t:0,emoji:'👹'};
   if(type===1){
-    e.w=32;e.h=38;e.vx=0;e.state='hide';e.hideTime=60;
+    e.w=32;e.h=38;e.vx=0;e.state='hide';e.hideTime=60;e.emoji='👾';
+  }
+  if(type===2){ // MUSUH LOMPAT: ninja, melompat ke arah pemain
+    e.w=28;e.h=30;e.vy=0;e.vx=0;e.onGround=false;e.hp=1;e.emoji='🥷';
+  }
+  if(type===3){ // HANTU: melayang sinus, tembak 1 pelan
+    e.w=30;e.h=32;e.vy=0;e.vx=-(0.8+Math.random()*0.6);e.hp=1;e.emoji='👻';e.baseY=y;
+  }
+  if(type===4){ // TENGKORAK: tebal HP4, lambat
+    e.w=30;e.h=34;e.vx=-(0.7+Math.random()*0.4);e.hp=4;e.emoji='💀';
+  }
+  if(type===5){ // PASUKAN FRENZY ☠️: cepat, HP1
+    e.w=24;e.h=32;e.vx=-(3.2+Math.random()*1.2);e.hp=1;e.emoji='☠️';e.shootCd=9999;
   }
   enemies.push(e);
 }
@@ -154,7 +187,20 @@ function update(){
   }
 
   spawnTimer--;
-  if(spawnTimer<=0){spawnEnemy();spawnTimer=70-difficulty*12; if(spawnTimer<22) spawnTimer=22;}
+  if(spawnTimer<=0){
+    if(frenzyT>0){ spawnEnemy(5); spawnTimer=14; }
+    else { spawnEnemy(); spawnTimer=70-difficulty*12; if(spawnTimer<22) spawnTimer=22; }
+  }
+  // SERANGAN 7 DETIK: tiap ~18 detik, pasukan ☠️ menyerbu!
+  if(frenzyCd>0 && !boss){
+    frenzyCd--;
+    if(frenzyCd<=0){
+      frenzyT=420; frenzyCd=1100;
+      for(let k=0;k<4;k++) spawnEnemy(5);
+      floatTexts.push({x:camX+W/2,y:120,txt:'⚠️ SERBUAN 7 DETIK! ⚠️'});
+    }
+  }
+  if(frenzyT>0) frenzyT--;
   if(Math.random()<0.008) spawnPower();
 
   // bullets
@@ -167,10 +213,20 @@ function update(){
       if(rectCol(b,e)){
         e.hp--; bullets.splice(i,1);
         if(e.hp<=0){e.alive=false; kills++; score+=100; addExplosion(e.x+e.w/2,e.y+e.h/2,1.4);
-          document.getElementById('killTxt').textContent=kills+'/15';
+          document.getElementById('killTxt').textContent=boss?'BOSS!':kills+'/15';
           document.getElementById('scoreTxt').textContent=('00000'+score).slice(-5);
         } else {addExplosion(b.x,b.y,0.4,'#ffff00');}
         break;
+      }
+    }
+    if(bullets[i] && boss && boss.alive && rectCol(bullets[i],boss)){
+      boss.hp--; bullets.splice(i,1);
+      addExplosion(b.x,b.y,0.6,'#ff00ff');
+      if(boss.hp<=0){
+        boss.alive=false; score+=2000;
+        addExplosion(boss.x+boss.w/2,boss.y+boss.h/2,3);
+        document.getElementById('scoreTxt').textContent=('00000'+score).slice(-5);
+        gameOver(true);
       }
     }
   }
@@ -183,6 +239,23 @@ function update(){
     if(e.type===0){ // runner
       e.x+=e.vx; e.shootCd--;
       if(e.shootCd<=0){eBullets.push({x:e.x,y:e.y+14,w:8,h:6,vx:-5,vy:(Math.random()-0.5)*0.8}); e.shootCd=90+Math.random()*70;}
+      if(e.x<camX-60) enemies.splice(i,1);
+    } else if(e.type===2){ // JUMPER: ninja melompat ke arah pemain
+      e.vy+=0.62; e.y+=e.vy;
+      e.x+= (player.x>e.x?1.4:-1.4);
+      if(e.y+e.h>=GROUND_Y){e.y=GROUND_Y-e.h; e.vy=-10.5; e.x+=(player.x>e.x?14:-14);}
+      if(e.x<camX-60) enemies.splice(i,1);
+    } else if(e.type===3){ // HANTU: melayang sinus + tembak 1
+      e.x+=e.vx; e.t+=0.06; e.y=e.baseY+Math.sin(e.t)*36;
+      e.shootCd--;
+      if(e.shootCd<=0 && e.x>camX && e.x<camX+W){eBullets.push({x:e.x,y:e.y+14,w:8,h:6,vx:-4,vy:0}); e.shootCd=110+Math.random()*60;}
+      if(e.x<camX-60) enemies.splice(i,1);
+    } else if(e.type===4){ // TENGKORAK: jalan lambat tebal
+      e.x+=e.vx; e.shootCd--;
+      if(e.shootCd<=0 && e.x>camX && e.x<camX+W){eBullets.push({x:e.x,y:e.y+14,w:8,h:6,vx:-3.5,vy:0}); e.shootCd=130+Math.random()*60;}
+      if(e.x<camX-60) enemies.splice(i,1);
+    } else if(e.type===5){ // PASUKAN FRENZY: lari cepat tanpa tembak
+      e.x+=e.vx;
       if(e.x<camX-60) enemies.splice(i,1);
     } else {
       // cover shooter: hide then pop
@@ -208,6 +281,34 @@ function update(){
     if(p.x<camX-60) powerups.splice(i,1);
   }
 
+  // BALOK ? SUNDUL KOIN (ala rambo1): lompat, sundul dari bawah!
+  blockTimer--;
+  if(blockTimer<=0){blockTimer=260+Math.random()*200; blocks.push({x:camX+W+60+Math.random()*160,y:GROUND_Y-170,w:34,h:34,used:false});}
+  for(let i=blocks.length-1;i>=0;i--){
+    const bl=blocks[i];
+    if(bl.x<camX-80){blocks.splice(i,1);continue;}
+    if(!bl.used && player.vy<0 && player.y<=bl.y+bl.h && player.y+player.h>bl.y+bl.h &&
+       player.x+player.w>bl.x+6 && player.x<bl.x+bl.w-6){
+      bl.used=true; player.vy=2;
+      if(Math.random()<0.25){
+        // 25%: balok keluar MUSUH, bukan koin!
+        const et=[0,2,3][Math.floor(Math.random()*3)];
+        const me={x:bl.x,y:bl.y-34,w:26,h:32,vx:-1.5,type:et,shootCd:80,alive:true,hp:1,state:'run',t:0,vy:0,
+          emoji:et===0?'👹':et===2?'🥷':'👻',baseY:bl.y-34};
+        enemies.push(me);
+        floatTexts.push({x:bl.x+bl.w/2,y:bl.y-10,txt:'AWAS!'});
+        addExplosion(bl.x+bl.w/2,bl.y,0.7,'#ff2244');
+      } else {
+        koin++; score+=200;
+        floatTexts.push({x:bl.x+bl.w/2,y:bl.y-10,txt:'+200'});
+        addExplosion(bl.x+bl.w/2,bl.y,0.7,'#ffd700');
+        document.getElementById('koinTxt').textContent=koin;
+        document.getElementById('scoreTxt').textContent=('00000'+score).slice(-5);
+      }
+    }
+  }
+  for(let i=floatTexts.length-1;i>=0;i--){const ft=floatTexts[i]; ft.y-=1.2; ft.t++; if(ft.t>50) floatTexts.splice(i,1);}
+
   // particles
   for(let i=particles.length-1;i>=0;i--){const pr=particles[i]; pr.x+=pr.vx; pr.y+=pr.vy; pr.vy+=0.16; pr.t++; if(pr.t>=pr.life) particles.splice(i,1);}
 
@@ -216,9 +317,60 @@ function update(){
   document.getElementById('pFill').style.background= rapidTimer>0?'#ffff00':'#00ffff';
 
   if(lives<=0){gameOver(false);}
-  if(kills>=15){gameOver(true);}
+  if(!boss && kills>=15){ spawnBoss(); }
+  if(boss){ updateBoss(); }
 }
 function hitPlayer(){lives--; player.invul=90; document.getElementById('hearts').textContent='♥'.repeat(Math.max(0,lives)); if(lives<=0) return; addExplosion(player.x+10,player.y+10,0.5);}
+
+// BOSS LABA-LABA: keluar setelah 15 kill. Foto JPG 'bos-laba.jpg' kalau ada,
+// kalau tidak ada digambar sendiri via canvas (fallback).
+function spawnBoss(){
+  boss={x:camX+W-240,y:110,w:170,h:120,hp:24,maxhp:24,alive:true,t:0,shootCd:90};
+  floatTexts.push({x:camX+W/2,y:200,txt:'🕷️ BOSS LABA-LABA! 🕷️'});
+  document.getElementById('killTxt').textContent='BOSS!';
+}
+function updateBoss(){
+  if(!boss.alive) return;
+  boss.t++;
+  const cx=camX+W/2+Math.sin(boss.t*0.02)*(W/2-150);
+  boss.x+=(Math.max(camX+20,Math.min(camX+W-190,cx))-boss.x)*0.03;
+  boss.y=100+Math.sin(boss.t*0.03)*30;
+  boss.shootCd--;
+  if(boss.shootCd<=0){
+    boss.shootCd=70;
+    for(let s=-1;s<=1;s++){
+      const dx=(player.x-boss.x), dy=(player.y-boss.y);
+      const d=Math.max(1,Math.hypot(dx,dy));
+      eBullets.push({x:boss.x+boss.w/2,y:boss.y+boss.h,w:14,h:14,
+        vx:dx/d*3+s*1.2, vy:dy/d*3});
+    }
+  }
+  if(rectCol(player,boss) && player.invul===0){hitPlayer();}
+}
+function drawBoss(){
+  if(!boss || !boss.alive) return;
+  const x=boss.x-camX, y=boss.y;
+  ctx.fillStyle='#500'; ctx.fillRect(x,y-16,boss.w,10);
+  ctx.fillStyle='#f0f'; ctx.fillRect(x,y-16,boss.w*(boss.hp/boss.maxhp),10);
+  if(bossImgOk){
+    try{ ctx.drawImage(bossImg,x,y,boss.w,boss.h); }catch(e){ bossImgOk=false; }
+  }
+  if(!bossImgOk){
+    ctx.strokeStyle='#3a0a4a'; ctx.lineWidth=6;
+    for(let k=0;k<4;k++){
+      const yy=y+20+k*22;
+      ctx.beginPath();ctx.moveTo(x+boss.w/2-20,yy);ctx.lineTo(x-24,yy-14+k*8);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+boss.w/2+20,yy);ctx.lineTo(x+boss.w+24,yy-14+k*8);ctx.stroke();
+    }
+    ctx.fillStyle='#5a1a7a';
+    ctx.beginPath();ctx.ellipse(x+boss.w/2,y+boss.h/2,60,44,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#7a2a9a';
+    ctx.beginPath();ctx.ellipse(x+boss.w/2,y+18,30,24,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#f00';
+    for(let e2=0;e2<4;e2++){ctx.beginPath();ctx.arc(x+boss.w/2-18+e2*12,y+12,4,0,Math.PI*2);ctx.fill();}
+  }
+  ctx.font='44px serif';ctx.textAlign='center';ctx.fillText('🕷️',x+boss.w/2,y-26);
+}
 
 // DRAW
 function drawBackground(){
@@ -291,10 +443,38 @@ function drawPlayer(){
   }
 }
 
+function drawBlocks(){
+  for(let bl of blocks){
+    const x=bl.x-camX, y=bl.y;
+    if(x<-40||x>W+40) continue;
+    ctx.fillStyle= bl.used?'#7a5a2a':'#f4b400';
+    ctx.fillRect(x,y,bl.w,bl.h);
+    ctx.fillStyle= bl.used?'#4a3515':'#fff2a0';
+    ctx.fillRect(x+3,y+3,bl.w-6,4);
+    if(!bl.used){
+      ctx.fillStyle='#7a4d00'; ctx.font='bold 20px "Press Start 2P",monospace';
+      ctx.textAlign='center'; ctx.fillText('?',x+bl.w/2,y+25);
+    }
+  }
+  ctx.fillStyle='#ffd700'; ctx.font='bold 13px "Press Start 2P",monospace'; ctx.textAlign='center';
+  for(let ft of floatTexts){const x=ft.x-camX; ctx.fillText(ft.txt+' 🪙',x,ft.y);}
+}
+
 function drawEnemies(){
   for(let e of enemies){
     if(!e.alive) continue;
     const x=e.x-camX, y=e.y;
+    if(e.type===2){ // kodok ungu pelompat
+      ctx.fillStyle='rgba(0,0,0,.2)'; ctx.fillRect(x+2,GROUND_Y-4,e.w,5);
+      ctx.fillStyle='#8a2be2'; ctx.fillRect(x,y+8,e.w,e.h-8);
+      ctx.fillStyle='#5a1a9a'; ctx.fillRect(x+2,y+e.h-6,e.w-4,6);
+      ctx.fillStyle='#fff'; ctx.fillRect(x+4,y,10,10); ctx.fillRect(x+e.w-14,y,10,10);
+      ctx.fillStyle='#000'; ctx.fillRect(x+7,y+3,4,4); ctx.fillRect(x+e.w-11,y+3,4,4);
+      const hop = e.vy<0? -4:0;
+      ctx.fillStyle='#5a1a9a'; ctx.fillRect(x-2,y+e.h-2+hop,8,4); ctx.fillRect(x+e.w-6,y+e.h-2+hop,8,4);
+      ctx.font='20px serif';ctx.textAlign='center';ctx.fillText('🥷',x+e.w/2,y+22);
+      continue;
+    }
     ctx.fillStyle='rgba(0,0,0,.2)'; ctx.fillRect(x+2,GROUND_Y-4,e.w,5);
     // green army
     ctx.fillStyle='#3a782a'; ctx.fillRect(x,y,e.w,e.h-12);
@@ -310,6 +490,7 @@ function drawEnemies(){
       ctx.fillStyle='#222'; ctx.fillRect(x-12,y+10,12,4);
       if(e.shootCd<10){ctx.fillStyle='#ffff00'; ctx.fillRect(x-16,y+10,6,4);}
     }
+    if(e.emoji){ctx.font='20px serif';ctx.textAlign='center';ctx.fillText(e.emoji,x+e.w/2,y+22);}
   }
 }
 
@@ -333,14 +514,14 @@ function drawParticles(){
 function loop(){
   requestAnimationFrame(loop);
   update();
-  drawBackground(); drawPowerups(); drawEnemies(); drawBullets(); drawPlayer(); drawParticles();
+  drawBackground(); drawBlocks(); drawPowerups(); drawEnemies(); drawBoss(); drawBullets(); drawPlayer(); drawParticles();
 }
 
 function gameOver(win){
   gameState='over';
   const ov=document.getElementById('overlay');
   ov.style.display='flex';
-  ov.innerHTML= win ? `<h1 style="color:#00ff88">MISI SELESAI!<br>ALWI MENANG!</h1><p>Kamu telah kalahkan 15 tentara musuh!<br>Skor Akhir: ${score}<br><br><span style="color:#ffff00">CONTRA RAMBO LEVEL 3 CLEARED</span></p><button id="startBtn" onclick="location.reload()">▶ MAIN LAGI</button>` 
+  ov.innerHTML= win ? `<h1 style="color:#00ff88">MISI SELESAI!<br>LABA-LABA TUMBANG!</h1><p>Kamu kalahkan 15 musuh + <b>BOSS LABA-LABA 🕷️</b>!<br>Skor Akhir: ${score} • Koin: ${koin}<br><br><span style="color:#ffff00">CONTRA RAMBO LEVEL 3 CLEARED</span></p><button id="startBtn" onclick="location.reload()">▶ MAIN LAGI</button>` 
   : `<h1 style="color:#ff2244">GAME OVER<br>ALWI GUGUR</h1><p>Kill: ${kills}/15<br>Skor: ${score}<br><br>Coba lagi, prajurit!</p><button id="startBtn" onclick="location.reload()">↻ COBA LAGI</button>`;
 }
 
@@ -359,6 +540,25 @@ resetGame();
 loop();
 </script>
 
-<script src="/alwi_bubble4.js"></script>
+<!-- BUBBLE OFF game rahasia (menutupi layar) -->
+<!-- <script src="/alwi_bubble4.js"></script> -->
+<!-- SUARA SENTUH ringan (Web Audio, tanpa file) -->
+<script>
+(function(){var c=null;function init(){if(c){if(c.state==="suspended")c.resume();return;}
+try{c=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+document.addEventListener("pointerdown",function(){init();if(!c)return;
+try{var o=c.createOscillator(),g=c.createGain();o.type="sine";
+o.frequency.setValueAtTime(660,c.currentTime);
+o.frequency.exponentialRampToValueAtTime(990,c.currentTime+0.08);
+g.gain.setValueAtTime(0.08,c.currentTime);
+g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.12);
+o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+0.13);}catch(e){}},{passive:true});})();
+</script>
+<!-- CUBIT 2 JARI (webkit/pinch): 1 jari tetap untuk main, 2 jari = zoom -->
+<script>
+(function(){function buka(){try{document.querySelectorAll("canvas").forEach(function(c){c.style.touchAction="pinch-zoom";});}catch(e){}}
+if(document.readyState!=="loading")buka();else document.addEventListener("DOMContentLoaded",buka);
+setTimeout(buka,2000);setTimeout(buka,5000);})();
+</script>
 </body>
 </html>

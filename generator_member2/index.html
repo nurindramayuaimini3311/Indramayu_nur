@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NUR Generator - Fixed FFmpeg</title>
+<style>
+body{background:#0a0a0a;color:#fff;font-family:system-ui;padding:12px}
+.card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:12px;margin:8px 0}
+input,textarea{width:100%;background:#000;color:#fff;border:1px solid #444;border-radius:8px;padding:10px;margin:6px 0}
+button{background:#ff0055;color:#fff;border:0;border-radius:10px;padding:12px 16px;font-weight:700;width:100%;margin:6px 0}
+button:disabled{opacity:.5}
+#timeline{display:flex;gap:8px;overflow:auto;padding:8px 0}
+.thumb{width:90px;height:120px;object-fit:cover;border-radius:8px;border:1px solid #444}
+#log{font-size:12px;white-space:pre-wrap;background:#000;padding:8px;border-radius:8px;max-height:200px;overflow:auto}
+</style>
+<!-- FIX: FFmpeg WASM UMD yang benar -->
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+</head>
+<body>
+<h2>🎬 NUR Generator V2 - Anti FFmpeg Error</h2>
+
+<div class="card">
+<label>Prompt Positif:</label>
+<textarea id="prompt" rows="3">beautiful Indonesian girl, long wet black hair, white tank top, sitting on floor in abandoned hospital ruins, dust and debris, hole in ceiling with god rays, volumetric fog, cinematic horror, photorealistic, highly detailed skin, 8k</textarea>
+<label>Negative Prompt:</label>
+<textarea id="neg" rows="2">blurry, low quality, lowres, cartoon, anime, illustration, plastic skin, 3d render, bad anatomy, extra fingers, extra limbs, watermark, text, logo</textarea>
+<button id="genBtn">✨ Generate Gambar AI (Pollinations 768x1024)</button>
+<input type="file" id="upload" accept="image/*" multiple>
+<div id="status">Status: Idle</div>
+</div>
+
+<div class="card">
+<h3>Timeline (<span id="count">0</span>/10)</h3>
+<div id="timeline"></div>
+<button id="videoBtn">🎥 Buat Video 30 detik (FFmpeg di Browser)</button>
+<div id="log"></div>
+<video id="preview" controls style="width:100%;margin-top:10px;display:none"></video>
+<a id="download" style="display:none" download="hantu_30detik.mp4">⬇️ Download Video</a>
+</div>
+
+<script>
+const { createFFmpeg, fetchFile } = FFmpeg;
+const ffmpeg = createFFmpeg({ log: true });
+let images = [];
+const $ = s=>document.getElementById(s);
+const log = m=>{ $('log').textContent += m+"\n"; $('log').scrollTop=9999; }
+
+async function ensureFFmpeg(){
+  if(!ffmpeg.isLoaded()){
+    $('status').innerText='⏳ Loading FFmpeg core ~30MB (sekali saja)...';
+    log('Loading FFmpeg...');
+    await ffmpeg.load();
+    $('status').innerText='✅ FFmpeg Siap';
+    log('FFmpeg loaded');
+  }
+}
+
+function addImage(src){
+  if(images.length>=10){ alert('Max 10 gambar'); return; }
+  images.push(src);
+  const img=document.createElement('img');
+  img.src=src; img.className='thumb';
+  $('timeline').appendChild(img);
+  $('count').innerText=images.length;
+}
+
+// Generate Pollinations - pakai 768x1024 biar gak jadi webp raksasa
+$('genBtn').onclick=async()=>{
+  const p=encodeURIComponent($('prompt').value);
+  const n=encodeURIComponent($('neg').value);
+  const seed=Math.floor(Math.random()*999999);
+  // Pollinations image endpoint
+  const url=`https://image.pollinations.ai/prompt/${p}?width=768&height=1024&seed=${seed}&nologo=true&model=flux&negative=${n}`;
+  $('status').innerText='⏳ Generating...';
+  log('Fetching: '+url.slice(0,120)+'...');
+  try{
+    const res=await fetch(url);
+    const blob=await res.blob();
+    const objUrl=URL.createObjectURL(blob);
+    addImage(objUrl);
+    $('status').innerText='✅ Gambar masuk timeline';
+  }catch(e){ $('status').innerText='❌ Error: '+e.message; log(e.message); }
+};
+
+// Upload manual
+$('upload').onchange=async(e)=>{
+  for(const file of e.target.files){
+    const url=URL.createObjectURL(file);
+    addImage(url);
+  }
+};
+
+// Buat Video - FFmpeg WASM di browser, tidak sentuh VM!
+$('videoBtn').onclick=async()=>{
+  if(images.length===0){ alert('Timeline kosong'); return; }
+  $('videoBtn').disabled=true;
+  try{
+    await ensureFFmpeg();
+    log(`Mulai render ${images.length} gambar...`);
+    // tulis gambar ke FS ffmpeg
+    for(let i=0;i<images.length;i++){
+      const data=await fetchFile(images[i]);
+      ffmpeg.FS('writeFile', `img${i}.jpg`, data);
+      log(`write img${i}.jpg`);
+    }
+    // bikin list concat 3 detik per gambar
+    let concat='';
+    for(let i=0;i<images.length;i++) concat+=`file 'img${i}.jpg'\nduration 3\n`;
+    concat+=`file 'img${images.length-1}.jpg'\n`;
+    ffmpeg.FS('writeFile','list.txt', concat);
+
+    log('Running ffmpeg...');
+    await ffmpeg.run('-f','concat','-safe','0','-i','list.txt','-vf','scale=768:1024:force_original_aspect_ratio=decrease,pad=768:1024:(ow-iw)/2:(oh-ih)/2:color=black,format=yuv420p','-r','24','-pix_fmt','yuv420p','out.mp4');
+
+    const out=ffmpeg.FS('readFile','out.mp4');
+    const blob=new Blob([out.buffer],{type:'video/mp4'});
+    const url=URL.createObjectURL(blob);
+    $('preview').src=url; $('preview').style.display='block';
+    $('download').href=url; $('download').style.display='block';
+    $('status').innerText='✅ Video jadi! Size: '+(blob.size/1024/1024).toFixed(2)+' MB';
+    log('Video done: '+blob.size+' bytes');
+  }catch(e){
+    log('FFmpeg Error: '+e.message);
+    $('status').innerText='❌ '+e.message;
+  }finally{ $('videoBtn').disabled=false; }
+};
+</script>
+</body>
+</html>

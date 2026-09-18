@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ Nur Creative Lab V2 — Image + 30s Video + FFmpeg</title>
+<style>
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;margin:0;padding:20px;display:flex;flex-direction:column;align-items:center}
+h1{color:#facc15;margin-bottom:6px;font-size:1.6em;text-align:center}
+.subtitle{color:#94a3b8;font-size:12px;margin-bottom:18px;text-align:center}
+.container{background:#1e293b;padding:18px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.3);width:100%;max-width:540px;margin-bottom:16px;box-sizing:border-box}
+label{display:block;margin-bottom:6px;font-weight:bold;color:#cbd5e1;font-size:13px}
+input[type="text"],textarea,select{width:100%;padding:10px;margin-bottom:12px;border:1px solid #334155;border-radius:8px;font-size:13px;box-sizing:border-box;background:#0f172a;color:#e2e8f0;resize:vertical}
+textarea{min-height:70px}
+button{background:#facc15;color:#0f172a;padding:12px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold;width:100%;margin-top:6px}
+button:disabled{opacity:.5;cursor:not-allowed}
+button.secondary{background:#334155;color:#e2e8f0}
+button.green{background:#22c55e;color:#0f172a}
+button.red{background:#ef4444;color:white}
+.image-result-box{background:#1e293b;padding:16px;border-radius:12px;border:1px dashed #334155;text-align:center;width:100%;max-width:540px;box-sizing:border-box;margin-bottom:16px}
+#generatedImage{max-width:100%;border-radius:8px}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.gallery img{width:100%;border-radius:8px;border:2px solid transparent;cursor:pointer}
+.gallery img.selected{border-color:#facc15}
+.save-status{font-size:11px;color:#7fbf7f;margin-top:8px;min-height:14px}
+.timeline{font-size:12px;color:#94a3b8;background:#0f172a;padding:10px;border-radius:8px;margin-top:10px;text-align:left;white-space:pre-line}
+</style>
+</head>
+<body>
+<h1>⚡ Nur Creative Lab V2</h1>
+<div class="subtitle">Generate Gambar → Kumpulin → Jadiin Video 30 Detik (FFmpeg di HP)</div>
+
+<div class="container">
+<label>Keywords / Deskripsi:</label>
+<textarea id="keywords" rows="3" placeholder="Contoh: hantu wanita rambut panjang depan pintu kayu tua, kabut, sinematik horor..."></textarea>
+<label>Negative Prompt:</label>
+<textarea id="negative" rows="2" placeholder="blurry, low quality, bad anatomy"></textarea>
+<div style="display:flex;gap:8px">
+<div style="flex:1"><label>Style:</label><select id="style"><option value="">--</option><option value="photorealistic">Photorealistic</option><option value="horror cinematic">Horror Cinematic</option><option value="fantasy art">Fantasy Art</option><option value="cyberpunk">Cyberpunk</option><option value="anime">Anime</option></select></div>
+<div style="flex:1"><label>Lighting:</label><select id="lighting"><option value="">--</option><option value="cinematic lighting">Cinematic</option><option value="dramatic lighting">Dramatic</option><option value="moonlight">Moonlight</option><option value="foggy, volumetric light">Foggy Volumetric</option></select></div>
+</div>
+<button id="generateBtn">✨ Generate & Simpan Otomatis</button>
+</div>
+
+<div class="image-result-box">
+<p>Hasil Gambar Terbaru:</p>
+<div style="min-height:180px;display:flex;align-items:center;justify-content:center;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:8px">
+<img id="generatedImage" src="" style="display:none"><span id="loadingText" style="font-style:italic;color:#94a3b8;display:none">⏳ Membuat gambar...</span>
+</div>
+<div style="display:flex;gap:8px;margin-top:8px">
+<button class="secondary" id="resaveBtn" style="display:none">⬇️ Simpan Ulang</button>
+<button class="green" id="addToVideoBtn" style="display:none">➕ Tambah ke Video 30s</button>
+</div>
+<div class="save-status" id="saveStatus"></div>
+</div>
+
+<div class="container">
+<p style="font-weight:bold;font-size:13px">🎬 Timeline Video 30 Detik (5 gambar x 6 detik):</p>
+<div class="gallery" id="videoGallery"></div>
+<div class="timeline" id="timelineInfo">Belum ada gambar. Generate atau upload dulu, lalu klik "Tambah ke Video 30s". Video final akan 30 detik pas (format vertikal 9:16).</div>
+<button class="green" id="createVideoBtn">🎥 Buat Video 30 Detik (FFmpeg Baru)</button>
+<button class="secondary" id="clearVideoBtn">🗑️ Kosongkan Timeline</button>
+<button class="red" id="downloadFfmpegCmd" style="margin-top:8px">📋 Copy Perintah FFmpeg Baru</button>
+<div class="save-status" id="videoStatus"></div>
+<video id="previewVideo" controls style="width:100%;margin-top:12px;display:none;border-radius:8px"></video>
+</div>
+
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.7/dist/ffmpeg.min.js"></script>
+<script>
+const $ = id=>document.getElementById(id);
+const keywordsInput=$('keywords'), negativeInput=$('negative'), styleSelect=$('style'), lightingSelect=$('lighting');
+const generateBtn=$('generateBtn'), generatedImage=$('generatedImage'), loadingText=$('loadingText'), saveStatus=$('saveStatus');
+const resaveBtn=$('resaveBtn'), addToVideoBtn=$('addToVideoBtn'), videoGallery=$('videoGallery'), timelineInfo=$('timelineInfo');
+const createVideoBtn=$('createVideoBtn'), clearVideoBtn=$('clearVideoBtn'), videoStatus=$('videoStatus'), previewVideo=$('previewVideo');
+
+let currentImageUrl='', currentBlob=null;
+let videoFrames=[]; // array of {url, blob}
+
+function buildPrompt(){
+ let parts=[];
+ if(keywordsInput.value.trim()) parts.push(keywordsInput.value.trim());
+ if(styleSelect.value) parts.push(styleSelect.value);
+ if(lightingSelect.value) parts.push(lightingSelect.value);
+ parts.push("highly detailed, intricate, sharp focus, cinematic, 8k, horror atmosphere");
+ return parts.join(", ");
+}
+
+async function autoSaveImage(imageUrl){
+ saveStatus.textContent='⏳ Menyimpan ke HP...';
+ try{
+  const res=await fetch(imageUrl); if(!res.ok) throw new Error('gagal fetch');
+  const blob=await res.blob(); currentBlob=blob;
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`nurlab-${Date.now()}.jpg`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  saveStatus.textContent='✅ Tersimpan otomatis';
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+ }catch(e){ saveStatus.textContent='❌ Auto-simpan gagal: '+e.message; }
+}
+
+generateBtn.addEventListener('click', async ()=>{
+ const finalPrompt=buildPrompt();
+ if(!finalPrompt){ alert('Isi keywords dulu'); return; }
+ loadingText.style.display='block'; generatedImage.style.display='none';
+ resaveBtn.style.display='none'; addToVideoBtn.style.display='none';
+ saveStatus.textContent=''; generateBtn.disabled=true;
+ const full= finalPrompt + (negativeInput.value.trim() ? ` | negative: ${negativeInput.value.trim()}`:'');
+ const enc=encodeURIComponent(full); const seed=Math.floor(Math.random()*1000000);
+ const imageUrl=`https://image.pollinations.ai/prompt/${enc}?width=768&height=1024&seed=${seed}&nologo=true`;
+ currentImageUrl=imageUrl;
+ generatedImage.onload=async()=>{
+  loadingText.style.display='none'; generatedImage.style.display='block';
+  resaveBtn.style.display='block'; addToVideoBtn.style.display='block'; generateBtn.disabled=false;
+  await autoSaveImage(imageUrl);
+ };
+ generatedImage.onerror=()=>{ loadingText.style.display='none'; generateBtn.disabled=false; saveStatus.textContent='❌ Gagal generate'; };
+ generatedImage.src=imageUrl;
+});
+
+resaveBtn.addEventListener('click',()=>{ if(currentImageUrl) autoSaveImage(currentImageUrl); });
+
+addToVideoBtn.addEventListener('click', async()=>{
+ if(!currentBlob){ alert('Belum ada gambar'); return; }
+ if(videoFrames.length>=5){ alert('Timeline sudah 5 gambar (30 detik). Kosongkan dulu atau hapus satu.'); return; }
+ const url=URL.createObjectURL(currentBlob);
+ videoFrames.push({url, blob:currentBlob});
+ renderGallery();
+});
+
+function renderGallery(){
+ videoGallery.innerHTML='';
+ videoFrames.forEach((f,i)=>{
+  const img=document.createElement('img'); img.src=f.url;
+  img.onclick=()=>{ videoFrames.splice(i,1); renderGallery(); };
+  videoGallery.appendChild(img);
+ });
+ const dur=videoFrames.length*6;
+ timelineInfo.textContent = videoFrames.length ? `Isi: ${videoFrames.length}/5 gambar\nDurasi: ${dur} detik (target 30s)\nKlik gambar untuk hapus\nUrutan: ${videoFrames.map((_,i)=>`Scene ${i+1} (${6}s)`).join(' → ')}` : 'Belum ada gambar. Generate atau upload dulu.';
+}
+
+clearVideoBtn.addEventListener('click',()=>{ videoFrames=[]; renderGallery(); videoStatus.textContent=''; previewVideo.style.display='none'; });
+
+createVideoBtn.addEventListener('click', async()=>{
+ if(videoFrames.length===0){ alert('Tambah gambar dulu'); return; }
+ videoStatus.textContent='⏳ Loading FFmpeg baru... (pertama kali agak lama)';
+ const { createFFmpeg, fetchFile } = FFmpeg;
+ const ffmpeg = createFFmpeg({ log:true });
+ await ffmpeg.load();
+ videoStatus.textContent='⏳ Proses bikin video 30 detik...';
+ for(let i=0;i<videoFrames.length;i++){
+  ffmpeg.FS('writeFile', `frame${i}.jpg`, await fetchFile(videoFrames[i].blob));
+ }
+ // buat file list dengan durasi 6 detik per gambar + transisi xfade
+ let filter='';
+ let inputs='';
+ // jika kurang dari 5, duplicate biar 30 detik
+ while(videoFrames.length<5){ videoFrames.push(videoFrames[videoFrames.length-1]); }
+ // sekarang 5
+ // input looping 6 detik
+ // build complex filter
+ let cmd=[];
+ // kita akan pakai cara xfade: tiap frame 6s
+ // ffmpeg sudah write file, kita butuh re-encode dengan loop
+ // simple method: concat dengan transisi
+ // Untuk browser, pakai concat demuxer lebih aman, lalu scale
+ const listContent = videoFrames.map((_,i)=>`file frame${i}.jpg\nduration 6`).join('\n') + `\nfile frame${videoFrames.length-1}.jpg`;
+ ffmpeg.FS('writeFile','list.txt', listContent);
+ await ffmpeg.run('-f','concat','-safe','0','-i','list.txt','-vf','scale=768:1024:force_original_aspect_ratio=decrease,pad=768:1024:(ow-iw)/2:(oh-ih)/2:color=black,format=yuv420p','-r','24','-pix_fmt','yuv420p','out_30s.mp4');
+ const data = ffmpeg.FS('readFile','out_30s.mp4');
+ const blob = new Blob([data.buffer], {type:'video/mp4'});
+ const url = URL.createObjectURL(blob);
+ previewVideo.src=url; previewVideo.style.display='block';
+ const a=document.createElement('a'); a.href=url; a.download=`hantu_30detik_${Date.now()}.mp4`; a.click();
+ videoStatus.textContent='✅ Video 30 detik jadi & tersimpan!';
+});
+
+$('downloadFfmpegCmd').addEventListener('click',()=>{
+ const cmd = `ffmpeg -framerate 1/6 -i frame_%03d.jpg -c:v libx264 -r 24 -pix_fmt yuv420p -vf "scale=768:1024:force_original_aspect_ratio=decrease,pad=768:1024:(ow-iw)/2:(oh-ih)/2" hantu_30detik.mp4`;
+ navigator.clipboard.writeText(cmd).then(()=>{ videoStatus.textContent='📋 Perintah FFmpeg baru disalin!'; });
+});
+</script>
+</body>
+</html>

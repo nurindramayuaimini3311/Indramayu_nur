@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NUR Generator - No SharedArrayBuffer Error</title>
+<style>
+body{background:#0a0a0a;color:#fff;font-family:system-ui;padding:12px}
+.card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:12px;margin:8px 0}
+input,textarea{width:100%;background:#000;color:#fff;border:1px solid #444;border-radius:8px;padding:10px;margin:6px 0}
+button{background:#ff0055;color:#fff;border:0;border-radius:10px;padding:12px 16px;font-weight:700;width:100%;margin:6px 0}
+#timeline{display:flex;gap:8px;overflow:auto;padding:8px 0}
+.thumb{width:90px;height:120px;object-fit:cover;border-radius:8px;border:1px solid #444}
+#log{font-size:12px;white-space:pre-wrap;background:#000;padding:8px;border-radius:8px;max-height:200px;overflow:auto}
+</style>
+<!-- V3: FFmpeg 0.12.10 yang bisa jalan tanpa SharedArrayBuffer error kalau pakai COOP header, fallback ke single-thread -->
+<script type="module">
+import { FFmpeg } from "https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js";
+window.FFmpegLib = { FFmpeg };
+</script>
+</head>
+<body>
+<h2>🎬 NUR Generator V3 - Fix SharedArrayBuffer</h2>
+
+<div class="card">
+<label>Prompt (Bahasa Indonesia):</label>
+<textarea id="prompt" rows="3">gadis cantik Indonesia, rambut hitam panjang basah, kaos putih tanpa lengan, duduk di lantai rumah sakit terbengkalai berdebu, lubang di langit-langit ada cahaya matahari masuk, kabut tebal, suasana horor sinematik, kulit sangat detail, foto realistis 8k</textarea>
+<label>Negative Prompt:</label>
+<textarea id="neg" rows="2">buram, kualitas rendah, kartun, anime, kulit plastik, anatomi buruk, jari tambahan, watermark, tulisan, logo</textarea>
+<button id="genBtn">✨ Generate Gambar AI (768x1024)</button>
+<input type="file" id="upload" accept="image/*" multiple>
+<div id="status">Status: Idle - Butuh server COOP/COEP</div>
+</div>
+
+<div class="card">
+<h3>Timeline (<span id="count">0</span>/10)</h3>
+<div id="timeline"></div>
+<button id="videoBtn">🎥 Buat Video (FFmpeg Browser)</button>
+<div id="log"></div>
+<video id="preview" controls style="width:100%;margin-top:10px;display:none"></video>
+<a id="download" style="display:none" download="4galbar.mp4">⬇️ Download Video</a>
+</div>
+
+<script type="module">
+import { fetchFile } from "https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js";
+const images = [];
+const $ = s=>document.getElementById(s);
+const log = m=>{ $('log').textContent += m+"\n"; };
+let ffmpeg=null;
+
+async function ensureFFmpeg(){
+  if(ffmpeg) return;
+  $('status').innerText='⏳ Loading FFmpeg core (sekali saja ~30MB)...';
+  log('Loading FFmpeg 0.12.10...');
+  const { FFmpeg } = window.FFmpegLib;
+  ffmpeg = new FFmpeg();
+  ffmpeg.on('log', ({message})=>log(message));
+  ffmpeg.on('progress', ({progress})=>{ $('status').innerText=`⏳ Rendering ${(progress*100).toFixed(1)}%`; });
+  
+  // Load core single-thread + wasm yang support tanpa COOP (tapi kalau ada COOP lebih cepat)
+  await ffmpeg.load({
+    coreURL: "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm/ffmpeg-core.js",
+    wasmURL: "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm/ffmpeg-core.wasm",
+  });
+  $('status').innerText='✅ FFmpeg Siap';
+  log('FFmpeg loaded');
+}
+
+function addImage(src){
+  if(images.length>=10){ alert('Max 10'); return; }
+  images.push(src);
+  const img=document.createElement('img'); img.src=src; img.className='thumb';
+  $('timeline').appendChild(img);
+  $('count').innerText=images.length;
+}
+
+$('genBtn').onclick=async()=>{
+  const p=encodeURIComponent($('prompt').value);
+  const n=encodeURIComponent($('neg').value);
+  const seed=Math.floor(Math.random()*999999);
+  const url=`https://image.pollinations.ai/prompt/${p}?width=768&height=1024&seed=${seed}&nologo=true&model=flux&negative=${n}`;
+  $('status').innerText='⏳ Generating...';
+  log('GET '+url.slice(0,100));
+  try{
+    const r=await fetch(url); const b=await r.blob();
+    addImage(URL.createObjectURL(b));
+    $('status').innerText='✅ Masuk timeline';
+  }catch(e){ $('status').innerText='❌ '+e.message; log(e.message); }
+};
+
+$('upload').onchange=e=>{
+  for(const f of e.target.files) addImage(URL.createObjectURL(f));
+};
+
+$('videoBtn').onclick=async()=>{
+  if(!images.length){ alert('Timeline kosong'); return; }
+  $('videoBtn').disabled=true;
+  try{
+    await ensureFFmpeg();
+    log(`Tulis ${images.length} gambar...`);
+    for(let i=0;i<images.length;i++){
+      await ffmpeg.writeFile(`img${i}.jpg`, await fetchFile(images[i]));
+    }
+    let txt=''; for(let i=0;i<images.length;i++) txt+=`file 'img${i}.jpg'\nduration 3\n`;
+    txt+=`file 'img${images.length-1}.jpg'\n`;
+    await ffmpeg.writeFile('list.txt', txt);
+    log('ffmpeg concat...');
+    await ffmpeg.exec(['-f','concat','-safe','0','-i','list.txt','-vf','scale=768:1024:force_original_aspect_ratio=decrease,pad=768:1024:(ow-iw)/2:(oh-ih)/2:color=black,format=yuv420p','-r','24','-pix_fmt','yuv420p','out.mp4']);
+    const data=await ffmpeg.readFile('out.mp4');
+    const blob=new Blob([data.buffer],{type:'video/mp4'});
+    const url=URL.createObjectURL(blob);
+    $('preview').src=url; $('preview').style.display='block';
+    $('download').href=url; $('download').style.display='block';
+    $('status').innerText=`✅ Jadi! ${(blob.size/1024/1024).toFixed(2)} MB`;
+    log('Done');
+  }catch(e){
+    if(String(e).includes('SharedArrayBuffer')){
+      log('ERROR SharedArrayBuffer - server kamu belum pakai COOP/COEP headers');
+      $('status').innerText='❌ Butuh server_coop.py (lihat log)';
+      alert('Server kamu harus pakai server_coop.py bukan python -m http.server biasa. Upload server_coop.py ke VM dan jalankan python3 server_coop.py');
+    } else { log('Error: '+e.message); $('status').innerText='❌ '+e.message; }
+  }finally{ $('videoBtn').disabled=false; }
+};
+</script>
+</body>
+</html>

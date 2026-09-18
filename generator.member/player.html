@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Player — Nur Lab</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#000;display:flex;align-items:center;justify-content:center;height:100vh;overflow:hidden}video{max-width:100vw;max-height:100vh;width:100%;height:100%;object-fit:contain;display:block}</style>
+</head>
+<body>
+<video id="vid" controls autoplay playsinline muted>
+  Browser tidak support video.
+</video>
+<script>
+const vid = document.getElementById('vid');
+const p = new URLSearchParams(location.search).get('v');
+if (p) {
+  vid.src = p;
+  vid.play().catch(()=>{});
+}
+document.addEventListener('click', () => {
+  vid.muted = false;
+  vid.play().catch(()=>{});
+}, {once:true});
+</script>
+</body>
+</html>

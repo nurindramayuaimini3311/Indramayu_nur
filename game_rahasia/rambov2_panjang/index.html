@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>🎮 RAMBO PANJANG v2 — 3 Level</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Segoe UI',system-ui,sans-serif;
+    background:radial-gradient(circle at top,#2a1a4a,#0a0f1e 70%);
+    min-height:100vh;min-height:100dvh;color:#fff;
+    display:flex;flex-direction:column;align-items:center;
+    padding:20px 16px 60px;text-align:center;
+    touch-action:pan-x pan-y pinch-zoom;-webkit-text-size-adjust:100%}
+  .box{width:100%;max-width:480px;display:flex;flex-direction:column;align-items:center}
+  .ico{font-size:64px;margin-top:8px}
+  h1{font-size:clamp(24px,7vw,34px);margin:14px 0 4px;
+    background:linear-gradient(90deg,#0ff,#ff8c00);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:13px;opacity:.85;margin-bottom:18px;line-height:1.7}
+  .lvl{display:flex;align-items:center;gap:12px;width:100%;
+    background:#ffffff12;border:1px solid #ffffff2b;border-radius:14px;
+    padding:14px 16px;margin:8px 0;color:#fff;text-decoration:none;
+    font-weight:bold;font-size:16px}
+  .lvl:active{transform:scale(.97)}
+  .lvl .ic{font-size:28px}
+  .lvl .lbl{text-align:left;font-size:13px;line-height:1.5;opacity:.85}
+  .lvl .go{margin-left:auto;opacity:.7}
+  .lvl.banyak{border-color:#0ff;background:#0ff12}
+  .lvl.hujan{border-color:#f0f;background:#f0f112}
+  .small{font-size:12px;opacity:.6;margin-top:14px}
+  .back{color:#8ab4ff;font-size:13px;margin-top:10px;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="ico">🕷️</div>
+  <h1>RAMBO PANJANG v2</h1>
+  <p class="sub">Misi 25 menit • lawan boss berulang sampai waktu habis!<br>Mainkan 3 level, makin tinggi makin <b>banyak peluru!</b></p>
+
+  <a class="lvl" href="panjang.html"><span class="ic">🔫</span>
+    <span class="lbl"><b>LEVEL 1 — NORMAL</b><br>Musuh 1 peluru • Boss 3 peluru</span><span class="go">▶️</span></a>
+  <a class="lvl banyak" href="panjang2.html"><span class="ic">🎯</span>
+    <span class="lbl"><b>LEVEL 2 — TEMBAKAN BANYAK</b><br>Musuh 3 peluru • Boss 5 peluru</span><span class="go">▶️</span></a>
+  <a class="lvl hujan" href="panjang3.html"><span class="ic">💥</span>
+    <span class="lbl"><b>LEVEL 3 — HUJAN PELURU</b><br>Musuh 5 peluru • Boss 9 peluru</span><span class="go">▶️</span></a>
+
+  <a class="back" href="../index.html">← Kembali ke galeri game</a>
+  <p class="small">3 level • 1 engine • tanpa kunci • langsung main</p>
+</div>
+
+<!-- SUARA SENTUH ringan (Web Audio, tanpa file) -->
+<script>
+(function(){var c=null;function init(){if(c){if(c.state==="suspended")c.resume();return;}
+try{c=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+document.addEventListener("pointerdown",function(){init();if(!c)return;
+try{var o=c.createOscillator(),g=c.createGain();o.type="sine";
+o.frequency.setValueAtTime(660,c.currentTime);
+o.frequency.exponentialRampToValueAtTime(990,c.currentTime+0.08);
+g.gain.setValueAtTime(0.08,c.currentTime);
+g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.12);
+o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+0.13);}catch(e){}},{passive:true});})();
+</script>
+</body>
+</html>
