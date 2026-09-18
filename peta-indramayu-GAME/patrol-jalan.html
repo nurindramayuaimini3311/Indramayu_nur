@@ -9,8 +9,8 @@
 body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
 #c{position:fixed;inset:0}
 .pill{background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:8px 12px;font-size:12px}
-#hud{position:fixed;top:10px;left:10px;right:10px;display:none;justify-content:space-between;gap:6px;flex-wrap:wrap;pointer-events:none;z-index:5}
-#hud2{position:fixed;top:50px;left:10px;right:10px;display:none;justify-content:space-between;gap:6px;pointer-events:none;z-index:5}
+#hud{position:fixed;top:60px;left:10px;right:10px;display:none;justify-content:space-between;gap:6px;flex-wrap:wrap;pointer-events:none;z-index:5}
+#hud2{position:fixed;top:100px;left:10px;right:10px;display:none;justify-content:space-between;gap:6px;pointer-events:none;z-index:5}
 #ctrl{position:fixed;left:0;right:0;bottom:0;padding:10px;display:none;gap:8px;z-index:5}
 #ctrl button{flex:1;border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:16px 8px;font-weight:900;font-size:15px;background:rgba(255,255,255,.1);color:#fff}
 .gas{background:#22cc55!important;border-color:#22cc55!important;color:#00220f!important}
@@ -22,9 +22,10 @@ body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-a
 #veh button{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:10px 14px;font-weight:800;font-size:12px;min-width:105px}
 #veh button.on{background:#fff;color:#000}
 #bStart{margin-top:8px;width:min(420px,90vw);height:64px;border-radius:999px;border:0;background:#ffcf40;color:#111;font-weight:900;font-size:18px;letter-spacing:.12em}
-#minimap{position:fixed;right:10px;top:110px;width:140px;height:140px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);border-radius:12px;z-index:6;display:none}
+#minimap{position:fixed;right:10px;top:150px;width:140px;height:140px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);border-radius:12px;z-index:6;display:none}
+#backPeta{position:fixed;left:10px;top:140px;z-index:30;background:#ffd700;color:#000;font-weight:900;padding:10px 14px;border-radius:12px;text-decoration:none;font-size:12px}
 #notif{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.8);border:2px solid #ffcf40;padding:16px 24px;border-radius:16px;font-weight:900;font-size:18px;display:none;z-index:20;text-align:center}
-#stopPill{position:fixed;top:88px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);border:2px solid #00BFFF;padding:10px 18px;border-radius:14px;font-weight:900;font-size:14px;display:none;z-index:20;text-align:center}
+#stopPill{position:fixed;top:185px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);border:2px solid #00BFFF;padding:10px 18px;border-radius:14px;font-weight:900;font-size:14px;display:none;z-index:20;text-align:center}
 #routeSign{position:fixed;top:50%;left:10px;transform:translateY(-50%);background:rgba(0,0,0,.7);border:1px solid #fff;padding:10px;border-radius:12px;display:none;z-index:6;font-size:11px}
 </style>
 <script async src="./es-module-shims.js"></script>
@@ -32,6 +33,7 @@ body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-a
 </head>
 <body>
 <canvas id="c"></canvas>
+<a id="backPeta" href="index.html">← PETA</a>
 <div id="hud"><div class="pill" id="pos">📍 JATIBARANG</div><div class="pill" id="timer">⏱ 30:00</div><div class="pill" id="spd">0 KMH</div></div>
 <div id="hud2"><div class="pill" id="dist">SISA 5.0 KM</div><div class="pill" id="route">RUTE A PANTURA</div><div class="pill" id="pax">👥 0</div></div>
 <canvas id="minimap"></canvas>

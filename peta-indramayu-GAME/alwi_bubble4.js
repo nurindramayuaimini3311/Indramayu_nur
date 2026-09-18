@@ -794,3 +794,22 @@ updateBallPosition=function(){
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',pasang);
   else setTimeout(pasang,600);
 })();
+
+/* ============ HAPUS NAV BUBBLE KHUSUS PETA ============
+   Yang dibuang: HOME, badge ⭐ poin, mic 🎤, link Navigasi,
+   pil poin penjelajah. YANG TETAP ADA: bola bubble + ADZAN
+   (suara otomatis + pil Adzan + jadwal teks tetap jalan). */
+(function(){
+  if(window.__alwiHapusNav) return; window.__alwiHapusNav=true;
+  function buang(){
+    ['ALWI_HOME_BTN','ALWI_POIN_BADGE','ALWI_MIC','ALWI_MIC_BTN'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.remove();
+    });
+    var nav=document.querySelector('a[href$="navigasi.html"]'); if(nav) nav.remove();
+    var pil=document.querySelector('div[title^="Poin Penjelajah"]'); if(pil) pil.remove();
+  }
+  buang();
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',buang);
+  window.addEventListener('load',buang);
+  setInterval(buang,800);
+})();

@@ -2,12 +2,34 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>🕌 Masjid 3D - Indramayu</title><style>
 *{box-sizing:border-box;margin:0}body{font-family:Arial;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
-#c{position:fixed;inset:0;display:block}.top{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;z-index:5}
+#c{position:fixed;inset:0;display:block}.top{position:fixed;top:60px;left:10px;right:10px;display:flex;gap:8px;z-index:5;flex-wrap:wrap;justify-content:center}
 a.back{background:#22cc55;color:#000;font-weight:900;padding:10px 16px;border-radius:12px;text-decoration:none}
-.pill{background:rgba(0,0,0,.6);border:1px solid #22cc55;border-radius:12px;padding:10px 14px;font-weight:900}</style>
+.pill{background:rgba(0,0,0,.6);border:1px solid #22cc55;border-radius:12px;padding:10px 14px;font-weight:900;font-size:13px}
+.hint{position:fixed;bottom:64px;left:10px;right:10px;text-align:center;font-size:11px;opacity:.8;z-index:5;pointer-events:none}
+#kartu{display:none;position:fixed;top:125px;right:10px;width:min(300px,86vw);background:#0a1414f2;border:2px solid #22cc55;border-radius:16px;padding:12px;z-index:40;box-shadow:0 10px 30px rgba(34,204,85,.35)}
+#kartu h3{font-size:13px;color:#22cc55;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+#kartu h3 span{cursor:pointer;color:#888}
+#isi{font-size:13px;line-height:1.55;max-height:34vh;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.b{padding:8px 10px;border-radius:12px;max-width:90%}
+.bot{background:#0f2417;color:#e2e8f0;align-self:flex-start;border:1px solid #22cc5555}
+.me{background:#22cc55;color:#000;align-self:flex-end;font-weight:700}
+#menu{position:fixed;left:8px;right:8px;bottom:8px;display:flex;gap:6px;z-index:30;overflow-x:auto;padding:4px}
+#menu button{flex:1;min-width:100px;padding:12px 8px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.6);color:#fff;font-weight:800;font-size:12px}</style>
 <script type="importmap">{"imports":{"three":"./three.module.js","three/addons/":"./addons/"}}</script></head>
 <body><canvas id="c"></canvas>
-<div class="top"><a class="back" href="index.html">← PETA</a><div class="pill">🕌 MASJID INDRAMAYU</div></div>
+<div class="top"><a class="back" href="index.html">← PETA</a><div class="pill">🕌 MASJID + 🍲🥤 GEROBAK RIBUT</div><div class="pill" id="laku">🍲🍧 0 laku</div></div>
+<div class="hint">ketuk tukang bersarung → obrolan ribut lucu • 1 jari putar • 2 jari zoom</div>
+<div id="kartu">
+ <h3>🍲 <span id="judul">Tukang Gerobak</span> <span id="x">✕</span></h3>
+ <div id="isi"></div>
+</div>
+<div id="menu">
+ <button data-t="bakso">🍲 Bakso</button>
+ <button data-t="es">🍧 Es Campur</button>
+ <button data-t="ribut">😤 Ribut</button>
+ <button data-t="lucu">😂 Lucu</button>
+ <button data-t="adem">🕌 Adem</button>
+</div>
 <script type="module">
 import * as THREE from 'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';
 const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});
@@ -26,6 +48,135 @@ const bl=new THREE.Mesh(new THREE.SphereGeometry(.5,10,8),new THREE.MeshStandard
 for(const x of[-5.5,5.5]){const t=new THREE.Mesh(new THREE.CylinderGeometry(.7,.9,9,10),new THREE.MeshStandardMaterial({color:0xf0f0f0}));t.position.set(x,4.5,0);t.castShadow=true;s.add(t);
 const uj=new THREE.Mesh(new THREE.ConeGeometry(1,1.8,10),new THREE.MeshStandardMaterial({color:0x22aa66}));uj.position.set(x,9.9,0);s.add(uj);}
 s.add(B(2,2.6,.3,0x6b4a1f,0,1.3,-3.6)); // pintu
+// ===== GEROBAK BAKSO 🍲 vs ES CAMPUR 🍧 =====
+function sign(txt,bg){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const x=cv.getContext('2d');
+ x.fillStyle=bg;x.fillRect(0,0,512,128);x.fillStyle='#fff';x.font='bold 52px Arial';x.textAlign='center';x.fillText(txt,256,82);
+ return new THREE.CanvasTexture(cv);}
+function gerobak(x,nama,bg){
+ const g=new THREE.Group();
+ const body=new THREE.Mesh(new THREE.BoxGeometry(2.2,1.1,1.2),new THREE.MeshStandardMaterial({color:0x8a5a2a,roughness:.9}));
+ body.position.y=.95;body.castShadow=true;g.add(body);
+ const kaca=new THREE.Mesh(new THREE.BoxGeometry(2,.6,1),
+  new THREE.MeshStandardMaterial({color:0xbfe8ff,roughness:.1,metalness:.4,transparent:true,opacity:.6}));
+ kaca.position.y=1.7;g.add(kaca);
+ const pp=new THREE.Mesh(new THREE.PlaneGeometry(2.4,1),
+  new THREE.MeshBasicMaterial({map:sign(nama,bg),side:THREE.DoubleSide}));
+ pp.position.y=2.6;g.add(pp);
+ for(const px of[-2.2,2.2]){const ti=new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,2.6,6),
+  new THREE.MeshStandardMaterial({color:0x555555}));ti.position.set(px,1.3,0);g.add(ti);}
+ for(const wx of[-.7,.7])for(const wz of[-.5,.5]){
+  const ro=new THREE.Mesh(new THREE.CylinderGeometry(.32,.32,.15,12),
+   new THREE.MeshStandardMaterial({color:0x222222}));ro.rotation.x=Math.PI/2;ro.position.set(wx,.32,wz);g.add(ro);}
+ g.position.set(x,0,7);g.rotation.y=x<0?.3:-.3;s.add(g);
+ return g;
+}
+const gBakso=gerobak(-7,'🍲 BAKSO','#cc2222');
+const gEs=gerobak(7,'🍧 ES CAMPUR','#2288dd');
+// panci bakso + uap
+const panci=new THREE.Mesh(new THREE.CylinderGeometry(.45,.4,.4,14),
+ new THREE.MeshStandardMaterial({color:0xcccccc,metalness:.7,roughness:.3}));
+panci.position.set(-7,1.75,7);s.add(panci);
+const UAP=[];
+for(let i=0;i<5;i++){const u=new THREE.Mesh(new THREE.SphereGeometry(.16,8,8),
+ new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.5}));
+ u.position.set(-7+Math.random()*.4-.2,2,7+Math.random()*.4-.2);s.add(u);UAP.push({m:u,ph:Math.random()*6});}
+// gelas warna-warni es campur
+for(let i=0;i<5;i++){const gl=new THREE.Mesh(new THREE.CylinderGeometry(.12,.1,.3,10),
+ new THREE.MeshStandardMaterial({color:[0xff3333,0xffdd33,0x33dd33,0x3388ff,0xcc33ff][i]}));
+ gl.position.set(6.2+i*.4,1.75,7);s.add(gl);}
+// ===== 2 BUBBLE BERSARUNG + PECI 🧕🫧 =====
+function texWajah(e){const cv=document.createElement('canvas');cv.width=cv.height=128;
+const x=cv.getContext('2d');x.font='64px serif';x.textAlign='center';x.textBaseline='middle';x.fillText(e,64,70);
+return new THREE.CanvasTexture(cv);}
+const TUK=[];
+const lakuEl=document.getElementById('laku');let nLaku=0;
+function tukang(i,x,warna,emoji,sarung){
+ const g=new THREE.Group();
+ // sarung (kain bawah)
+ const sr=new THREE.Mesh(new THREE.CylinderGeometry(.5,.62,.9,14),
+  new THREE.MeshStandardMaterial({color:sarung,roughness:.95}));
+ sr.position.y=.45;sr.castShadow=true;g.add(sr);
+ const bola=new THREE.Mesh(new THREE.SphereGeometry(.62,22,22),
+  new THREE.MeshStandardMaterial({color:warna,emissive:warna,emissiveIntensity:.35,roughness:.4}));
+ bola.position.y=1.35;bola.castShadow=true;g.add(bola);
+ // peci hitam
+ const peci=new THREE.Mesh(new THREE.CylinderGeometry(.3,.32,.22,12),
+  new THREE.MeshStandardMaterial({color:0x111111,roughness:.6}));
+ peci.position.y=1.95;g.add(peci);
+ const wajah=new THREE.Mesh(new THREE.PlaneGeometry(.62,.62),
+  new THREE.MeshBasicMaterial({map:texWajah(emoji),transparent:true}));
+ wajah.position.set(0,1.38,.6);g.add(wajah);
+ g.position.set(x,0,5);s.add(g);
+ TUK.push({g,bola,lompat:0,ph:Math.random()*6,i});
+}
+tukang(0,-7,0xFFEB3B,'💛',0x663399); // tukang BAKSO
+tukang(1,7,0x00FF88,'💚',0x226622);  // tukang ES CAMPUR
+// ===== OBROLAN RIBUT BEDA JUALAN 😤😂 =====
+const kartu=document.getElementById('kartu'),isi=document.getElementById('isi'),judul=document.getElementById('judul');
+document.getElementById('x').onclick=()=>kartu.style.display='none';
+const JAWAB={
+ bakso:['Bakso anget-anget, Lur! 🍲','Pentole gede, kuah medok... es campur? Enak sih, tapi ora ngenyangke! 😂'],
+ es:['Es campur adem seger! 🍧','Bakso kuwi panas-panas... eling kolesterol, Lur! Es campur aman tentrem 😜'],
+ lucu:['Aku bakso, kowe es... dadi... bakso campur? 😂','Sing penting rukun, rezeki wis ana sing ngatur 🕌🤲'],
+ adem:['Wis wis, aja ribut... 🕌','Alhamdulillah laris kabeh. Bakso wareg, es campur seger. Damai! 🤝😊'],
+};
+function tulis(t,me){const d=document.createElement('div');d.className='b '+(me?'me':'bot');d.textContent=t;
+ isi.appendChild(d);isi.scrollTop=isi.scrollHeight;}
+function botBalas(kunci,nama){
+ kartu.style.display='block';
+ if(kunci==='ribut'){ // debat bergantian bakso vs es
+  judul.textContent='😤 Ribut Gerobak';
+  const urutan=[
+   '🍲 Bakso: "Dagonganku ngenyangke! Ana pentol, mie, pangsit!" 😤',
+   '🍧 Es: "Dagonganku nyegerke! Ana cendol, dawet, nangka, alpukat!" 😤',
+   '🍲 Bakso: "Es kuwi mung banyu + gula... bakso ana daginge!" 😤',
+   '🍧 Es: "Daging kuwi kolesterol! Es campur buah, sehat!" 😤',
+   '🤝 Bareng: "Wis! Sing penting laris kabeh... Aamiin!" 😂🕌'];
+  urutan.forEach((u,i)=>setTimeout(()=>tulis(u),400+i*1100));
+  return;
+ }
+ const arr=JAWAB[kunci]||JAWAB.bakso;
+ judul.textContent=nama;
+ setTimeout(()=>tulis(arr[0]),250);
+ setTimeout(()=>tulis(arr[1]),950);
+}
+document.querySelectorAll('#menu button').forEach(b=>{
+ b.onclick=()=>{tulis(b.textContent,true);
+  const nm=b.dataset.t==='es'?'Tukang Es 🍧':b.dataset.t==='bakso'?'Tukang Bakso 🍲':'Gerobak';
+  botBalas(b.dataset.t,nm);};
+});
+// ketuk tukang → lompat + laku + ngoceh
+const ray2=new THREE.Raycaster(),ptr2=new THREE.Vector2();let qX=0,qY=0,qT=0;
+r.domElement.addEventListener('pointerdown',e=>{qX=e.clientX;qY=e.clientY;qT=performance.now();});
+r.domElement.addEventListener('pointerup',e=>{
+ if(Math.hypot(e.clientX-qX,e.clientY-qY)>12||performance.now()-qT>500)return;
+ ptr2.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);
+ ray2.setFromCamera(ptr2,c);
+ const hit=ray2.intersectObjects(TUK.map(p=>p.bola));
+ if(!hit.length)return;
+ const p=TUK.find(x=>x.bola===hit[0].object);
+ p.lompat=1;
+ nLaku++;lakuEl.textContent='🍲🍧 '+nLaku+' laku';
+ const ni=p.i===0?'bakso':'es';
+ tulis(p.i===0?'👆 Tuku bakso, Kang!':'👆 Tumbas es, Kang!',true);
+ botBalas(ni,p.i===0?'Tukang Bakso 🍲':'Tukang Es 🍧');
+});
 addEventListener('resize',()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});r.setSize(innerWidth,innerHeight);
-(function l(){requestAnimationFrame(l);o.update();r.render(s,c);})();
-</script><script src="alwi_bubble4.js"></script></body></html>
+(function l(){requestAnimationFrame(l);const t=performance.now()/1000;
+for(const u of UAP){u.m.position.y=2+((t*.7+u.ph)%1.5);u.m.material.opacity=.5*(1-((t*.7+u.ph)%1.5)/1.5);}
+const dt=.016;
+for(const p of TUK){
+ if(p.lompat>0){
+  p.lompat-=dt*1.6;
+  const k=Math.max(0,p.lompat);
+  p.g.position.y=Math.sin(k*Math.PI)*1.1;
+  p.g.rotation.y+=dt*7;
+  if(p.lompat<=0){p.g.position.y=0;p.g.rotation.y=0;}
+ }else{
+  p.g.position.y=Math.abs(Math.sin(t*3+p.ph))*.07;
+  // tukang bakso vs es saling lirik (noleh berlawanan)
+  p.g.rotation.y=(p.i===0?1:-1)*(.3+Math.sin(t*1.2+p.ph)*.25);
+ }
+}
+o.update();r.render(s,c);})();
+ </script><script src="alwi_bubble1.js"></script><script src="alwi_bubble3.js"></script><script src="alwi_bubble4.js"></script></body></html>

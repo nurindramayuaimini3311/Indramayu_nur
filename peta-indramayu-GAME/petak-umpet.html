@@ -55,7 +55,7 @@ html,body{height:100%;margin:0;padding:0;background:#0f1215;color:#fff;font-fami
 </head>
 <body>
 <div class="header">
-<a href="index.html" style="position:absolute;left:10px;top:10px;background:#ffd700;color:#000;font-weight:bold;padding:8px 12px;border-radius:8px;text-decoration:none;font-size:12px">← PETA</a>
+<a href="index.html" style="position:absolute;left:10px;top:60px;background:#ffd700;color:#000;font-weight:bold;padding:8px 12px;border-radius:8px;text-decoration:none;font-size:12px">← PETA</a>
 <h1>🫣 PETAK UMPET 3D - INDRAMAYU</h1>
 <p>Temukan yang ngumpet! Ketemu → tap <b>LIHAT 3D</b> untuk masuk rumah/masjid/sawah/lautnya!</p>
 </div>
@@ -85,11 +85,19 @@ html,body{height:100%;margin:0;padding:0;background:#0f1215;color:#fff;font-fami
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// CENTER INDRAMAYU
-const INDRAMAYU = [-6.337, 108.32];
-const map = L.map('map',{zoomControl:false}).setView(INDRAMAYU, 12);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(map);
+// CENTER INDRAMAYU (sama seperti index peta)
+const INDRAMAYU = [-6.38, 108.20];
+const map = L.map('map',{zoomControl:false}).setView(INDRAMAYU, 10);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
 L.control.zoom({position:'topright'}).addTo(map);
+// RUTE 30 MENIT (sama seperti index): A Pantura hitam, B Sawah kuning, C Desa biru
+const RUTE_A=[[-6.4758,108.3104],[-6.455,108.295],[-6.43,108.27],[-6.405,108.245],[-6.38,108.215],[-6.35,108.185],[-6.32,108.15],[-6.295,108.11],[-6.2730,108.0620]];
+const RUTE_B=[[-6.4758,108.3104],[-6.465,108.28],[-6.45,108.245],[-6.425,108.20],[-6.39,108.155],[-6.35,108.11],[-6.31,108.08],[-6.2730,108.0620]];
+const RUTE_C=[[-6.4758,108.3104],[-6.45,108.325],[-6.42,108.315],[-6.385,108.29],[-6.35,108.26],[-6.315,108.21],[-6.29,108.15],[-6.2730,108.0620]];
+L.polyline(RUTE_A,{color:'#000',weight:6,opacity:.9}).addTo(map);
+L.polyline(RUTE_A,{color:'#fff',weight:1.5,dashArray:'8,8',opacity:.8}).addTo(map);
+L.polyline(RUTE_B,{color:'#ffcf40',weight:4,opacity:.9}).addTo(map);
+L.polyline(RUTE_C,{color:'#60a5fa',weight:4,opacity:.9}).addTo(map);
 
 let targets = [];
 let foundMarkers = [];
@@ -117,15 +125,19 @@ function startGame(){
   document.getElementById('clueBox').textContent = `🎯 Level ${level}: ${cfg.name} - Ada ${cfg.count} orang ngumpet! Tap peta untuk cari.`;
   gameActive = true;
 
-  // buat target ngumpet DI DEKAT titik 3D (rumah/masjid/sawah/laut Eretan...)
+  // buat target ngumpet DI DEKAT titik 3D (sama daftarnya seperti index peta)
   const TEMPAT=[
     {n:'🏠 Rumah',f:'rumah.html',c:[-6.4780,108.3120]},
     {n:'🕌 Masjid',f:'masjid.html',c:[-6.4740,108.3090]},
     {n:'⛪ Gereja',f:'gereja.html',c:[-6.4720,108.3150]},
     {n:'🏮 Klenteng',f:'klenteng.html',c:[-6.4700,108.3050]},
     {n:'🌾 Sawah',f:'sawah.html',c:[-6.4600,108.2800]},
+    {n:'👨‍🌾 Sawah2 Petani Bubble',f:'sawah2.html',c:[-6.4490,108.2640]},
     {n:'🌊 Laut Eretan',f:'laut.html',c:[-6.2730,108.0620]},
-    {n:'🪦 Kuburan Wiralodra',f:'kuburan.html',c:[-6.3980,108.3020]}
+    {n:'🪦 Kuburan Wiralodra',f:'kuburan.html',c:[-6.3980,108.3020]},
+    {n:'🎣 Orang Mancing',f:'mancing.html',c:[-6.3480,108.1900]},
+    {n:'⛽ SPBU Isi Bensin',f:'spbu.html',c:[-6.4030,108.2500]},
+    {n:'🏪 Pasar Patrol',f:'pasar.html',c:[-6.4300,108.2900]}
   ];
   for(let i=0;i<cfg.count;i++){
     const tp=TEMPAT[Math.floor(Math.random()*TEMPAT.length)];
@@ -259,10 +271,6 @@ function closeModal(){ document.getElementById('modalWin').classList.remove('sho
 resetGame();
 </script>
 
-<!-- nav antar-halaman dimatikan di versi GAME -->
-
-
-<script src="alwi_bubble4.js"></script>
 </body>
 </html>
 

@@ -9,9 +9,10 @@
  body{font-family:system-ui,Arial;background:#87ceeb;color:#fff;overflow:hidden;touch-action:none}
  #c{position:fixed;inset:0;display:block}
  .pill{background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:8px 12px;font-size:12px}
- #info{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;pointer-events:none;flex-wrap:wrap}
+ #info{position:fixed;top:60px;left:10px;right:10px;display:flex;gap:8px;pointer-events:none;flex-wrap:wrap;justify-content:center}
+ #backPeta{pointer-events:auto;background:#ffd700;color:#000;font-weight:900;padding:8px 14px;border-radius:12px;text-decoration:none;font-size:12px}
  /* kartu tanya jawab */
- #kartu{display:none;position:fixed;top:60px;right:10px;width:min(300px,86vw);background:#0a1414f2;border:2px solid #00BFFF;border-radius:16px;padding:12px;z-index:40;box-shadow:0 10px 30px rgba(0,191,255,.35)}
+ #kartu{display:none;position:fixed;top:125px;right:10px;width:min(300px,86vw);background:#0a1414f2;border:2px solid #00BFFF;border-radius:16px;padding:12px;z-index:40;box-shadow:0 10px 30px rgba(0,191,255,.35)}
  #kartu h3{font-size:13px;color:#00BFFF;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
  #kartu h3 span{cursor:pointer;color:#888}
  #isi{font-size:13px;line-height:1.55;max-height:38vh;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
@@ -31,7 +32,7 @@
 </head>
 <body>
 <canvas id="c"></canvas>
-<div id="info"><div class="pill">🏖️ Pantai ALWI 3D</div><div class="pill">ketuk bubble → kartu Q&A • lempar → icon lucu 😜</div></div>
+<div id="info"><a id="backPeta" href="index.html">← PETA</a><div class="pill">🏖️ Pantai ALWI 3D</div><div class="pill">ketuk bubble → kartu Q&A • lempar → icon lucu 😜</div></div>
 
 <div id="kartu">
  <h3>🤖 <span id="judul">Bubble Bot</span> <span id="x">✕</span></h3>
@@ -320,6 +321,5 @@ const jam=new THREE.Clock();
 <!-- bubble 2D real otomatis -->
 <script src="./alwi_bubble1.js"></script>
 <script src="./alwi_bubble3.js"></script>
-<script src="./alwi_bubble4.js"></script>
 </body>
 </html>

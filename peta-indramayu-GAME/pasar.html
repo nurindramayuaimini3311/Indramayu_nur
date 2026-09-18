@@ -2,12 +2,34 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>🏪 Pasar 3D - Indramayu</title><style>
 *{box-sizing:border-box;margin:0}body{font-family:Arial;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
-#c{position:fixed;inset:0;display:block}.top{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;z-index:5;flex-wrap:wrap}
+#c{position:fixed;inset:0;display:block}.top{position:fixed;top:60px;left:10px;right:10px;display:flex;gap:8px;z-index:5;flex-wrap:wrap;justify-content:center}
 a.back{background:#22cc55;color:#000;font-weight:900;padding:10px 16px;border-radius:12px;text-decoration:none}
-.pill{background:rgba(0,0,0,.6);border:1px solid #22cc55;border-radius:12px;padding:10px 14px;font-weight:900;font-size:13px}</style>
+.pill{background:rgba(0,0,0,.6);border:1px solid #22cc55;border-radius:12px;padding:10px 14px;font-weight:900;font-size:13px}
+.hint{position:fixed;bottom:64px;left:10px;right:10px;text-align:center;font-size:11px;opacity:.8;z-index:5;pointer-events:none}
+#kartu{display:none;position:fixed;top:125px;right:10px;width:min(300px,86vw);background:#0a1414f2;border:2px solid #22cc55;border-radius:16px;padding:12px;z-index:40;box-shadow:0 10px 30px rgba(34,204,85,.35)}
+#kartu h3{font-size:13px;color:#22cc55;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+#kartu h3 span{cursor:pointer;color:#888}
+#isi{font-size:13px;line-height:1.55;max-height:34vh;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.b{padding:8px 10px;border-radius:12px;max-width:90%}
+.bot{background:#0f2417;color:#e2e8f0;align-self:flex-start;border:1px solid #22cc5555}
+.me{background:#22cc55;color:#000;align-self:flex-end;font-weight:700}
+#menu{position:fixed;left:8px;right:8px;bottom:8px;display:flex;gap:6px;z-index:30;overflow-x:auto;padding:4px}
+#menu button{flex:1;min-width:100px;padding:12px 8px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.6);color:#fff;font-weight:800;font-size:12px}</style>
 <script type="importmap">{"imports":{"three":"./three.module.js","three/addons/":"./addons/"}}</script></head>
 <body><canvas id="c"></canvas>
-<div class="top"><a class="back" href="index.html">← PETA</a><div class="pill">🏪 PASAR PATROL - RAMAI</div></div>
+<div class="top"><a class="back" href="index.html">← PETA</a><div class="pill">🏪 PASAR PATROL - RAMAI</div><div class="pill" id="laris">💰 0 laris</div></div>
+<div class="hint">ketuk bubble pedagang → nawar + laris • 1 jari putar • 2 jari zoom</div>
+<div id="kartu">
+ <h3>🏪 <span id="judul">Pedagang Bubble</span> <span id="x">✕</span></h3>
+ <div id="isi"></div>
+</div>
+<div id="menu">
+ <button data-t="beli">🛒 Beli</button>
+ <button data-t="capek">😮‍💨 Capek</button>
+ <button data-t="murah">💰 Murah</button>
+ <button data-t="lucu">😂 Lucu</button>
+ <button data-t="dagang">🍊 Dagangan</button>
+</div>
 <script type="module">
 import * as THREE from 'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';
 const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});
@@ -53,8 +75,99 @@ function papan(txt,bg){const cv=document.createElement('canvas');cv.width=512;cv
  return new THREE.CanvasTexture(cv);}
 const pp=new THREE.Mesh(new THREE.BoxGeometry(10,2.2,.4),new THREE.MeshStandardMaterial({map:papan('🏪 PASAR PATROL','#228822')}));pp.position.set(0,7,-10);s.add(pp);
 for(const x of[-5,5])s.add(B(1,8,1,0xdddddd,x,4,-10));
+// ===== 4 PEDAGANG BUBBLE 🏪🫧 =====
+function texWajah(e){const cv=document.createElement('canvas');cv.width=cv.height=128;
+const x=cv.getContext('2d');x.font='64px serif';x.textAlign='center';x.textBaseline='middle';x.fillText(e,64,70);
+return new THREE.CanvasTexture(cv);}
+const WB=[0xFFEB3B,0x00FF88,0xFF4DFF,0x7ec8ff],WE=['💛','💚','💖','⛑️'];
+const PED=[];const COINS=[];
+const larisEl=document.getElementById('laris');let nLaris=0;
+function pedagangBubble(i,x){
+ const g=new THREE.Group();
+ const bola=new THREE.Mesh(new THREE.SphereGeometry(.7,22,22),
+  new THREE.MeshStandardMaterial({color:WB[i],emissive:WB[i],emissiveIntensity:.35,roughness:.4}));
+ bola.position.y=1.7;bola.castShadow=true;g.add(bola);
+ // ikat kepala pedagang
+ const ikat=new THREE.Mesh(new THREE.TorusGeometry(.55,.1,8,18),
+  new THREE.MeshStandardMaterial({color:TEND[i%4],roughness:.8}));
+ ikat.position.y=2.05;ikat.rotation.x=Math.PI/2.2;g.add(ikat);
+ const wajah=new THREE.Mesh(new THREE.PlaneGeometry(.7,.7),
+  new THREE.MeshBasicMaterial({map:texWajah(WE[i]),transparent:true}));
+ wajah.position.set(0,1.75,.68);g.add(wajah);
+ const celemek=new THREE.Mesh(new THREE.BoxGeometry(.6,.7,.1),
+  new THREE.MeshStandardMaterial({color:0xffffff,roughness:.9}));
+ celemek.position.set(0,.9,.35);g.add(celemek);
+ g.position.set(x,0,-2.6);s.add(g);
+ PED.push({g,bola,lompat:0,ph:Math.random()*6});
+}
+for(let i=0;i<4;i++)pedagangBubble(i,-12+i*8);
+// ===== OBROLAN PEDAGANG: TAWAR-MENAWAR CAPEK TAPI LUCU 😮‍💨😂 =====
+const kartu=document.getElementById('kartu'),isi=document.getElementById('isi'),judul=document.getElementById('judul');
+document.getElementById('x').onclick=()=>kartu.style.display='none';
+const JAWAB={
+ beli:['Monggo, monggo dipilih... 🛒','Sayure seger, esuk-esuk metik... regane? Gampang, ditawar wae 😂'],
+ capek:['Dodolan dari subuh, Lur... 😮‍💨','Bakule rame, sikile kram... tapi dompete senyum 😂💰'],
+ murah:['Murah meriah! 💰','Tuku siji bonus senyum... tuku loro bonus... ya senyum juga 😂'],
+ lucu:['Nawar ojo sadis-sadis, bakule nangisan 😂','Rega kanca, kualitas... ya kanca juga 😜'],
+ dagang:['Wortel, kol, tomat, Lombok... 🍊🥬','Awas, jeruke manis... sing kecut mung omongane tonggo 😂'],
+};
+function tulis(t,me){const d=document.createElement('div');d.className='b '+(me?'me':'bot');d.textContent=t;
+ isi.appendChild(d);isi.scrollTop=isi.scrollHeight;}
+function botBalas(kunci,nama){
+ const arr=JAWAB[kunci]||JAWAB.beli;
+ judul.textContent='Pedagang '+nama;
+ kartu.style.display='block';
+ setTimeout(()=>tulis(arr[0]),250);
+ setTimeout(()=>tulis(arr[1]),950);
+}
+document.querySelectorAll('#menu button').forEach(b=>{
+ b.onclick=()=>{tulis(b.textContent,true);botBalas(b.dataset.t,'Bubble');};
+});
+// ketuk pedagang → lompat + koin laris + obrolan
+const ray2=new THREE.Raycaster(),ptr2=new THREE.Vector2();let qX=0,qY=0,qT=0;
+r.domElement.addEventListener('pointerdown',e=>{qX=e.clientX;qY=e.clientY;qT=performance.now();});
+r.domElement.addEventListener('pointerup',e=>{
+ if(Math.hypot(e.clientX-qX,e.clientY-qY)>12||performance.now()-qT>500)return;
+ ptr2.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);
+ ray2.setFromCamera(ptr2,c);
+ const hit=ray2.intersectObjects(PED.map(p=>p.bola));
+ if(!hit.length)return;
+ const p=PED.find(x=>x.bola===hit[0].object);
+ p.lompat=1;
+ const ni=PED.indexOf(p)+1;
+ // koin 💰 muncrat dari meja
+ for(let k=0;k<3;k++){
+  const kn=new THREE.Mesh(new THREE.CylinderGeometry(.18,.18,.06,12),
+   new THREE.MeshStandardMaterial({color:0xffd700,emissive:0xffcc00,emissiveIntensity:.6,metalness:.7,roughness:.3}));
+  kn.position.set(p.g.position.x+(Math.random()-.5)*2,1.4,(Math.random()-.5));
+  s.add(kn);
+  COINS.push({m:kn,vx:(Math.random()-.5)*3,vy:4+Math.random()*2,t:0});
+ }
+ nLaris++;larisEl.textContent='💰 '+nLaris+' laris';
+ tulis('👆 Nawar ke Pedagang Bubble '+ni,true);
+ botBalas(['beli','capek','murah','lucu','dagang'][Math.floor(Math.random()*5)],'Bubble '+ni);
+});
 addEventListener('resize',()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});r.setSize(innerWidth,innerHeight);
 (function l(){requestAnimationFrame(l);const t=performance.now()/1000;
 orgs.forEach(o2=>{o2.m.position.y=Math.abs(Math.sin(t*3+o2.ph))*.07;o2.m.rotation.y+=Math.sin(t+o2.ph)*.002;});
+const dt=.016;
+for(const p of PED){
+ if(p.lompat>0){
+  p.lompat-=dt*1.6;
+  const k=Math.max(0,p.lompat);
+  p.g.position.y=Math.sin(k*Math.PI)*1.2;
+  p.g.rotation.y+=dt*7;
+  if(p.lompat<=0){p.g.position.y=0;p.g.rotation.y=0;}
+ }else{
+  p.g.position.y=Math.abs(Math.sin(t*3+p.ph))*.08;
+  p.g.rotation.y=Math.sin(t+p.ph)*.25; // noleh kanan-kiri nawarin dagangan
+ }
+}
+for(let i=COINS.length-1;i>=0;i--){
+ const cn=COINS[i];cn.t+=dt;
+ cn.m.position.x+=cn.vx*dt;cn.m.position.y+=cn.vy*dt;cn.vy-=12*dt;
+ cn.m.rotation.x+=8*dt;cn.m.rotation.y+=5*dt;
+ if(cn.m.position.y<.1||cn.t>1.6){s.remove(cn.m);COINS.splice(i,1);}
+}
 o.update();r.render(s,c);})();
-</script><script src="alwi_bubble4.js"></script></body></html>
+ </script><script src="alwi_bubble1.js"></script><script src="alwi_bubble3.js"></script><script src="alwi_bubble4.js"></script></body></html>

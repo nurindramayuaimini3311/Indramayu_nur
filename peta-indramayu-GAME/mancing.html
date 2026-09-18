@@ -2,12 +2,34 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>🎣 Mancing 3D - Indramayu</title><style>
 *{box-sizing:border-box;margin:0}body{font-family:Arial;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
-#c{position:fixed;inset:0;display:block}.top{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;z-index:5;flex-wrap:wrap}
+#c{position:fixed;inset:0;display:block}.top{position:fixed;top:60px;left:10px;right:10px;display:flex;gap:8px;z-index:5;flex-wrap:wrap;justify-content:center}
 a.back{background:#ffdd33;color:#000;font-weight:900;padding:10px 16px;border-radius:12px;text-decoration:none}
-.pill{background:rgba(0,0,0,.6);border:1px solid #ffdd33;border-radius:12px;padding:10px 14px;font-weight:900;font-size:13px}</style>
+.pill{background:rgba(0,0,0,.6);border:1px solid #ffdd33;border-radius:12px;padding:10px 14px;font-weight:900;font-size:13px}
+.hint{position:fixed;bottom:64px;left:10px;right:10px;text-align:center;font-size:11px;opacity:.8;z-index:5;pointer-events:none}
+#kartu{display:none;position:fixed;top:125px;right:10px;width:min(300px,86vw);background:#0a1414f2;border:2px solid #ffdd33;border-radius:16px;padding:12px;z-index:40;box-shadow:0 10px 30px rgba(255,221,51,.35)}
+#kartu h3{font-size:13px;color:#ffdd33;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+#kartu h3 span{cursor:pointer;color:#888}
+#isi{font-size:13px;line-height:1.55;max-height:34vh;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.b{padding:8px 10px;border-radius:12px;max-width:90%}
+.bot{background:#12202a;color:#e2e8f0;align-self:flex-start;border:1px solid #ffdd3355}
+.me{background:#ffdd33;color:#000;align-self:flex-end;font-weight:700}
+#menu{position:fixed;left:8px;right:8px;bottom:8px;display:flex;gap:6px;z-index:30;overflow-x:auto;padding:4px}
+#menu button{flex:1;min-width:100px;padding:12px 8px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.6);color:#fff;font-weight:800;font-size:12px}</style>
 <script type="importmap">{"imports":{"three":"./three.module.js","three/addons/":"./addons/"}}</script></head>
 <body><canvas id="c"></canvas>
-<div class="top"><a class="back" href="index.html">← PETA</a><div class="pill">🎣 ORANG MANCING DI SUNGAI</div></div>
+<div class="top"><a class="back" href="index.html">← PETA</a><div class="pill">🎣 ORANG MANCING DI SUNGAI</div><div class="pill" id="dapat">🐟 0</div></div>
+<div class="hint">ketuk bubble pemancing → sentak + dapat ikan • 1 jari putar • 2 jari zoom</div>
+<div id="kartu">
+ <h3>🎣 <span id="judul">Pemancing Bubble</span> <span id="x">✕</span></h3>
+ <div id="isi"></div>
+</div>
+<div id="menu">
+ <button data-t="mancing">🎣 Mancing</button>
+ <button data-t="capek">😮‍💨 Capek</button>
+ <button data-t="dapat">🐟 Dapat</button>
+ <button data-t="panas">☀️ Panas</button>
+ <button data-t="lucu">😂 Lucu</button>
+</div>
 <script type="module">
 import * as THREE from 'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';
 const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});
@@ -49,10 +71,106 @@ const ik=[];for(let i=0;i<7;i++){const f=new THREE.Group();
  const e=new THREE.Mesh(new THREE.ConeGeometry(.2,.45,6),M(0xcc5500));e.rotation.z=Math.PI/2;e.position.x=.65;f.add(e);
  f.position.set(-20+Math.random()*40,.4,1+Math.random()*4);s.add(f);
  ik.push({m:f,cx:f.position.x,cz:f.position.z,r:2+Math.random()*3,sp:.5+Math.random(),ph:Math.random()*6});}
+// ===== 3 PEMANCING BUBBLE 🎣🫧 =====
+function texWajah(e){const cv=document.createElement('canvas');cv.width=cv.height=128;
+const x=cv.getContext('2d');x.font='64px serif';x.textAlign='center';x.textBaseline='middle';x.fillText(e,64,70);
+return new THREE.CanvasTexture(cv);}
+const WB=[0xFFEB3B,0xFF4DFF,0x7ec8ff],WE=['💛','💖','⛑️'];
+const PEM=[];
+const dapatEl=document.getElementById('dapat');let nDapat=0;
+function pemancingBubble(i,bx){
+ const g=new THREE.Group();
+ const bola=new THREE.Mesh(new THREE.SphereGeometry(.55,20,20),
+  new THREE.MeshStandardMaterial({color:WB[i],emissive:WB[i],emissiveIntensity:.35,roughness:.4}));
+ bola.position.y=.8;bola.castShadow=true;g.add(bola);
+ const topi=new THREE.Mesh(new THREE.CylinderGeometry(.5,.55,.18,14),
+  new THREE.MeshStandardMaterial({color:0x8a5a2a,roughness:.9}));
+ topi.position.y=1.42;g.add(topi);
+ const wajah=new THREE.Mesh(new THREE.PlaneGeometry(.6,.6),
+  new THREE.MeshBasicMaterial({map:texWajah(WE[i]),transparent:true}));
+ wajah.position.set(0,.85,.53);g.add(wajah);
+ // joran sendiri mengarah ke sungai
+ const rod=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,4.4,6),M(0x6b4a1f));
+ rod.position.set(1,2,-.5);rod.rotation.x=.85;rod.rotation.z=-.25;g.add(rod);
+ const fl=new THREE.Mesh(new THREE.SphereGeometry(.13,8,8),
+  new THREE.MeshStandardMaterial({color:0x22ff44,emissive:0x00ff00,emissiveIntensity:.7}));
+ fl.position.set(1.9,.25,2.6);g.add(fl);
+ g.position.set(bx,0,-3.2);s.add(g);
+ PEM.push({g,bola,rod,fl,strike:0,tS:0,fish:null,ph:Math.random()*6});
+}
+pemancingBubble(0,-7);pemancingBubble(1,5);pemancingBubble(2,9);
+// ===== OBROLAN PEMANCING CAPEK TAPI LUCU 😮‍💨😂 =====
+const kartu=document.getElementById('kartu'),isi=document.getElementById('isi'),judul=document.getElementById('judul');
+document.getElementById('x').onclick=()=>kartu.style.display='none';
+const JAWAB={
+ mancing:['Sabar... mancing itu ibadah sabar 🎣','Kail sudah dilempar, tinggal nunggu rezeki... karo ngantuk 😴😂'],
+ capek:['Boyoke pegel, Lur... 😮‍💨','Duduk dari pagi, pantat sampai hafal bentuk batu ini 😂🪨'],
+ dapat:['STRIKE! 🐟🔥','Iwakke lumayan... cukup buat lauk, kurang buat hajatan 😂'],
+ panas:['Panas cetar... ☀️😰','Untung bawa topi. Kamu bawa apa? Bawa... harapan? 😂'],
+ lucu:['Katanya ikan besar yang lepas... padahal yang nyangkut cuma kresek 😂','Mancing itu 10% umpan, 90% cerita bohong 😜🎣'],
+};
+function tulis(t,me){const d=document.createElement('div');d.className='b '+(me?'me':'bot');d.textContent=t;
+ isi.appendChild(d);isi.scrollTop=isi.scrollHeight;}
+function botBalas(kunci,nama){
+ const arr=JAWAB[kunci]||JAWAB.mancing;
+ judul.textContent='Pemancing '+nama;
+ kartu.style.display='block';
+ setTimeout(()=>tulis(arr[0]),250);
+ setTimeout(()=>tulis(arr[1]),950);
+}
+document.querySelectorAll('#menu button').forEach(b=>{
+ b.onclick=()=>{tulis(b.textContent,true);botBalas(b.dataset.t,'Bubble');};
+});
+// ketuk bubble → sentak + dapat ikan + obrolan
+const ray2=new THREE.Raycaster(),ptr2=new THREE.Vector2();let qX=0,qY=0,qT=0;
+r.domElement.addEventListener('pointerdown',e=>{qX=e.clientX;qY=e.clientY;qT=performance.now();});
+r.domElement.addEventListener('pointerup',e=>{
+ if(Math.hypot(e.clientX-qX,e.clientY-qY)>12||performance.now()-qT>500)return;
+ ptr2.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);
+ ray2.setFromCamera(ptr2,c);
+ const hit=ray2.intersectObjects(PEM.map(p=>p.bola));
+ if(!hit.length)return;
+ const p=PEM.find(x=>x.bola===hit[0].object);
+ if(p.strike>0)return;
+ p.strike=1;p.tS=0;
+ const ni=PEM.indexOf(p)+1;
+ tulis('👆 Colek Pemancing Bubble '+ni,true);
+ botBalas(['mancing','capek','dapat','panas','lucu'][Math.floor(Math.random()*5)],'Bubble '+ni);
+});
+function ikanTerbang(dari){
+ const f=new THREE.Mesh(new THREE.ConeGeometry(.28,1.1,8),M(0xff8800));
+ f.rotation.z=-Math.PI/2;f.position.copy(dari);s.add(f);
+ return {m:f,dari:dari.clone(),ke:new THREE.Vector3(-1.5,.9,-3),t:0};
+}
 addEventListener('resize',()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});r.setSize(innerWidth,innerHeight);
 (function l(){requestAnimationFrame(l);const t=performance.now()/1000;
 ik.forEach(f=>{f.ph+=.02*f.sp;f.m.position.x=f.cx+Math.cos(f.ph)*f.r;f.m.position.z=f.cz+Math.sin(f.ph)*f.r*.5;f.m.rotation.y=-f.ph;});
 pl.position.y=.25+Math.abs(Math.sin(t*3))*.3; // pelampung naik-turun: ada ikan!
 l1.rotation.x=-1+Math.sin(t*2)*.1;
+const dt=.016;
+for(const p of PEM){
+ // apung + goyang joran
+ p.fl.position.y=.25+Math.abs(Math.sin(t*3+p.ph))*.25;
+ p.rod.rotation.x=.85+Math.sin(t*1.5+p.ph)*.06;
+ if(p.strike>0){
+  p.tS+=dt;
+  // sentakan joran
+  p.rod.rotation.x=.85+Math.sin(p.tS*25)*.25*(1-p.tS);
+  p.fl.position.y=.1;
+  if(p.tS>.5&&!p.fish){
+   const wp=new THREE.Vector3();p.fl.getWorldPosition(wp);
+   p.fish=ikanTerbang(wp);
+  }
+ }
+ if(p.fish){
+  const f=p.fish;f.t+=dt*1.4;
+  const k=Math.min(1,f.t);
+  f.m.position.lerpVectors(f.dari,f.ke,k);
+  f.m.position.y+=Math.sin(k*Math.PI)*2;
+  f.m.rotation.y+=.2;
+  if(k>=1){s.remove(f.m);p.fish=null;p.strike=0;p.rod.rotation.x=.85;
+   nDapat++;dapatEl.textContent='🐟 '+nDapat;}
+ }
+}
 o.update();r.render(s,c);})();
-</script><script src="alwi_bubble4.js"></script></body></html>
+ </script><script src="alwi_bubble1.js"></script><script src="alwi_bubble3.js"></script><script src="alwi_bubble4.js"></script></body></html>

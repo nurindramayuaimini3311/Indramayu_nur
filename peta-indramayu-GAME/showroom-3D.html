@@ -9,7 +9,8 @@
  body{font-family:system-ui,Arial;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
  #c{position:fixed;inset:0;display:block}
  .pill{background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:8px 12px;font-size:12px}
- #hud{position:fixed;top:10px;left:10px;right:10px;display:none;justify-content:space-between;gap:8px;pointer-events:none}
+ #hud{position:fixed;top:60px;left:10px;right:10px;display:none;justify-content:space-between;gap:8px;pointer-events:none}
+ #backPeta{position:fixed;left:10px;top:100px;z-index:30;background:#ffd700;color:#000;font-weight:900;padding:10px 14px;border-radius:12px;text-decoration:none;font-size:12px}
  #ctrl{position:fixed;left:0;right:0;bottom:0;padding:10px;display:none;gap:8px}
  #ctrl button{flex:1;border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:16px 8px;font-weight:900;font-size:15px;background:rgba(255,255,255,.1);color:#fff}
  #ctrl button.on{background:#fff;color:#000}
@@ -31,6 +32,7 @@
 </head>
 <body>
 <canvas id="c"></canvas>
+<a id="backPeta" href="index.html">← PETA</a>
 <div id="hud"><div class="pill" id="pos">📍 JATIBARANG KOTA</div><div class="pill" id="spd">0 KMH</div></div>
 <div id="ctrl">
   <button class="rem" id="bRem">◀ REM</button>
