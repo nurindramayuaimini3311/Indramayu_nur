@@ -138,7 +138,7 @@ function ALWI_BUKA_LOKAL(k){
  ALWI_WIDGET_KARTU(k,t.n);
 }
 Object.entries(T).forEach(([key,t],i)=>{
- const icon=L.divIcon({className:'',html:`<div class="pin" style="background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(0,0,0,.25)),${t.w}"><div class="pin-c">🏠</div><span class="pin-n">${i+1}</span></div>`,iconSize:[34,34]});
+ const icon=L.divIcon({className:'',html:`<div class="pin" style="background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(0,0,0,.25)),${t.w}"><div class="pin-c">${t.n.split(' ')[0]}</div><span class="pin-n">${i+1}</span></div>`,iconSize:[34,34]});
  L.marker(t.c,{icon}).addTo(map).bindPopup(`<b>${t.n}</b><br><a class="masuk" href="${t.f}">▶ MASUK 3D</a> <button class="tanya" onclick="ALWI_BUKA_LOKAL('${key.replace(/'/g,"\\'")}')">📹 Video & Komentar</button>`);
 });
 map.fitBounds(L.latLngBounds([...RUTE_A,...RUTE_B,...RUTE_C,...Object.values(T).map(t=>t.c)]),{padding:[30,30]});
