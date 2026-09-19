@@ -188,7 +188,7 @@ const BUILD={
   [[-.95,-2.9],[.95,-2.9],[-1,1.9],[1,1.9]].forEach(([x,z],i)=>G.add(wheel(i<2?.42:.48,.55,x,i<2?.42:.48,z)));
   return G;}
 };
-const STAT={mobil:{top:44,acc:20},bus:{top:33,acc:15},truk:{top:30,acc:13},tebu:{top:28,acc:12},f1:{top:55,acc:26}};
+const STAT={mobil:{top:55.56,acc:20},bus:{top:55.56,acc:15},truk:{top:55.56,acc:13},tebu:{top:55.56,acc:12},f1:{top:55.56,acc:26}};
 const ST_DT=3.2*1.2;
 // ===== BALAP =====
 let cur='bus',player=null,mode='menu',gas=false;
@@ -205,7 +205,7 @@ function spawn(){scene.remove(player);foes.forEach(f=>scene.remove(f.mesh));foes
  for(let i=0;i<3;i++){
   const fk=keys[i%keys.length];
   const m=new THREE.Group();m.add(BUILD[fk]());m.position.set(LANES[i+1],.05,4);scene.add(m);
-  foes.push({mesh:m,v:0,d:0,skill:.52+Math.random()*.18,react:.8+Math.random()*.8,vk:fk});
+  foes.push({mesh:m,v:0,d:0,skill:.9+Math.random()*.1,react:.3+Math.random()*.4,vk:fk});
  }}
 spawn();
 const bGas=document.getElementById('btnGas');
@@ -265,7 +265,7 @@ const clock=new THREE.Clock();
   sndRPM(Math.min(pS.rpm,1));
   // 3 MUSUH AI
   for(const o of foes){
-   if(phaseT>o.react){o.v=Math.min(o.v+STAT[o.vk].acc*o.skill*dt*ST_DT*.45,STAT[o.vk].top*o.skill*.8);}
+   if(phaseT>o.react){o.v=Math.min(o.v+STAT[o.vk].acc*o.skill*dt*ST_DT*.8,STAT[o.vk].top*o.skill*.99);}
    o.d+=o.v*dt;
    o.mesh.position.z=4-o.d*(2054/2000);
    o.mesh.traverse(w=>{if(w.userData.spin)w.rotation.x-=dt*o.v;});

@@ -168,6 +168,22 @@ const BUILD={
   return G;}
 };
 const STAT={mobil:{top:40,acc:9},bus:{top:32,acc:7},truk:{top:30,acc:6},tebu:{top:27,acc:5},f1:{top:52,acc:12}};
+// ===== AI MOBIL BERGERAK SENDIRI 2 AKTIF =====
+let aiCars=[];
+function spawnAI(){
+ aiCars.forEach(o=>scene.remove(o.group));
+ aiCars=[];
+ const types=['bus','truk']; // 2 AI: 1 bus Luragung, 1 truk Pertamina putih susu
+ for(let i=0;i<2;i++){
+  const type=types[i];
+  const g=new THREE.Group();
+  g.add(BUILD[type]());
+  scene.add(g);
+  aiCars.push({group:g, type:type, t: (i*0.5)%1, speed: 6 + Math.random()*4 + (type==='bus'?2:0), lap:0});
+ }
+}
+spawnAI();
+
 const GEAR_FRAC=[.22,.4,.6,.8,1];
 let cur='bus',car=new THREE.Group(),px=0,pz=0,hd=0,sp=0,gear=1,rpm=.2;
 let iL=false,iR=false,iG=false,iR2=false;
@@ -215,10 +231,22 @@ const clock=new THREE.Clock();
  px=Math.max(-220,Math.min(220,px));pz=Math.max(-220,Math.min(220,pz));
  car.position.set(px,.05,pz);car.rotation.y=hd;
  car.traverse(o=>{if(o.userData.spin)o.rotation.x-=dt*v;});
+ // AI bergerak sendiri di jalan loop oval
+ aiCars.forEach(ai=>{
+  ai.t = (ai.t + ai.speed*dt/loop.getLength()) % 1;
+  const p=loop.getPointAt(ai.t), tan=loop.getTangentAt(ai.t);
+  ai.group.position.set(p.x,.05,p.z);
+  ai.group.rotation.y=Math.atan2(-tan.x,-tan.z);
+  ai.group.traverse(o=>{if(o.userData.spin)o.rotation.x-=dt*ai.speed*0.8;});
+  // hindari tabrak player - kalau dekat, AI ngerem
+  const dist=Math.hypot(px-p.x, pz-p.z);
+  if(dist<8) ai.speed=Math.max(2, ai.speed - dt*10);
+  else ai.speed=Math.min(ai.type==='bus'?10:8, ai.speed + dt*2);
+ });
  sndGo(v,rpm);
  document.getElementById('spd').textContent=Math.round(Math.abs(v)*3.6)+' KMH • G'+gear;
  document.getElementById('rpmfill').style.width=Math.min(100,rpm*100)+'%';
- document.getElementById('zona').textContent=off?'🌿 LUAR JALAN':'🛣️ JALAN';
+ document.getElementById('zona').textContent=(off?'🌿 LUAR JALAN':'🛣️ JALAN')+' • 2 AI AKTIF';
  const bx=px+Math.sin(hd)*9,bz=pz+Math.cos(hd)*9;
  camera.position.lerp(new THREE.Vector3(bx,4.2,bz),1-Math.pow(.005,dt));
  camera.lookAt(px,1.2,pz);
