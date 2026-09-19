@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>🏁 Drag Race Eretan - Mobil 3D + Suara</title>
+<title>🏁 Eretan Panjang - ALWI x LURAGUNG JAYA - Gigi Angka - Tanpa Timer</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
@@ -43,18 +43,28 @@ body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-a
 <div id="rpmwrap"><div id="rpmbar"><div id="rpmfill"></div></div></div>
 <div id="gear">1</div>
 <div id="lampu"><div id="L0"></div><div id="L1"></div><div id="L2"></div><div id="LG"></div></div>
-<div id="ctrl"><button id="btnStop">■</button><button id="btnShift">▲ GIGI</button><button id="btnGas">GAS ▶</button></div>
+<div id="ctrl" style="display:flex;flex-wrap:wrap">
+<button id="btnStop" style="flex:.4">■</button>
+<div style="display:flex;gap:4px;flex:1">
+<button data-g="1" id="g1" style="flex:1;background:#fff;color:#000">1</button>
+<button data-g="2" id="g2" style="flex:1">2</button>
+<button data-g="3" id="g3" style="flex:1">3</button>
+<button data-g="4" id="g4" style="flex:1">4</button>
+<button data-g="5" id="g5" style="flex:1">5</button>
+</div>
+<button id="btnGas" style="flex:.6">GAS ▶</button>
+</div>
 <div id="hasil"><div class="box"><h2 id="hJudul">🏁</h2><p id="hIsi"></p><button onclick="location.reload()">🔄 ULANGI</button> <button onclick="location.href='index.html'">🗺 PETA</button></div></div>
 <div id="start">
-<div style="font-size:11px;opacity:.8">🏁 DRAG RACE 400M • PANTAI ERETAN • MOBIL 3D + SUARA MESIN</div>
+<div style="font-size:11px;opacity:.8">🏁 JALAN PANJANG 2000M • BEBAS TANPA TIMER • GIGI ANGKA 1-5 • ALWI x LURAGUNG</div>
 <h1>DRAG <span>ERETAN</span></h1>
-<p style="font-size:12px;opacity:.9;max-width:400px">Tahan GAS setelah lampu HIJAU (jangan curi start!). Oper GIGI ▲ di zona kuning-merah biar ngebut. Kalahkan lawan 400 meter!</p>
+<p style="font-size:12px;opacity:.9;max-width:400px">JALAN PANJANG 2000M - TANPA TIMER - BEBAS GAS! Pakai gigi angka 1-5. Warna mobil ALWI x LURAGUNG JAYA sudah fix!</p>
 <div id="veh">
-<button data-v="mobil">MOBIL</button>
-<button data-v="bus" class="on">BUS</button>
-<button data-v="truk">TRUK</button>
-<button data-v="tebu">TEBU</button>
-<button data-v="f1">F1 MERAH</button>
+<button data-v="mobil">JEEP MERAH FERRARI ALWI</button>
+<button data-v="bus" class="on">LURAGUNG JAYA ALWI KUNING JINGGA SERAM</button>
+<button data-v="truk">PERTAMINA PUTIH SUSU MERAH</button>
+<button data-v="tebu">TRUK TEBU LOHBENER</button>
+<button data-v="f1">F1 MERAH FERRARI</button>
 </div>
 <button id="bStart">▶ START BALAP</button>
 <p style="font-size:10px;opacity:.6">Mesin beda suara tiap mobil • F1 paling kencang, Tebu paling santai</p>
@@ -79,34 +89,51 @@ const canvas=document.getElementById('c');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:false});
 renderer.setPixelRatio(1);renderer.shadowMap.enabled=false;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x87b5e0);
-scene.fog=new THREE.Fog(0x87b5e0,60,400);
+scene.fog=new THREE.Fog(0x87b5e0,80,2600);
 const camera=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.1,800);
 camera.position.set(0,4,12);
 let menuA=0;
 scene.add(new THREE.HemisphereLight(0xffffff,0x334455,.9));
 const sun=new THREE.DirectionalLight(0xffffff,1.4);sun.position.set(30,40,20);scene.add(sun);
-const tanah=new THREE.Mesh(new THREE.PlaneGeometry(300,600),new THREE.MeshStandardMaterial({color:0x4f9a4f,roughness:1}));
-tanah.rotation.x=-Math.PI/2;tanah.position.z=-200;tanah.receiveShadow=true;scene.add(tanah);
-// jalan lurus 400m (start z=0, finish z=-400)
-const road=new THREE.Mesh(new THREE.PlaneGeometry(12,440),new THREE.MeshStandardMaterial({color:0x24282e,roughness:.9}));
-road.rotation.x=-Math.PI/2;road.position.set(0,.05,-200);road.receiveShadow=true;scene.add(road);
-for(const s of[-5.5,5.5]){const e=new THREE.Mesh(new THREE.PlaneGeometry(.4,440),new THREE.MeshBasicMaterial({color:0xffffff}));e.rotation.x=-Math.PI/2;e.position.set(s,.08,-200);scene.add(e);}
-for(let i=0;i<50;i++){const dsh=new THREE.Mesh(new THREE.PlaneGeometry(.35,2.5),new THREE.MeshBasicMaterial({color:i%2?0xffdd33:0xffffff}));dsh.rotation.x=-Math.PI/2;dsh.position.set(0,.08,-i*8);scene.add(dsh);}
+const tanah=new THREE.Mesh(new THREE.PlaneGeometry(600,3000),new THREE.MeshStandardMaterial({color:0x1a6bb0,roughness:.6,metalness:.1,transparent:true,opacity:.92}));
+tanah.rotation.x=-Math.PI/2;tanah.position.set(0,-.6,-1350);tanah.receiveShadow=true;scene.add(tanah);
+// riak-riak laut (strip putih buram di sekitar jalan)
+for(let i=0;i<7;i++){const wv=new THREE.Mesh(new THREE.PlaneGeometry(70,4),new THREE.MeshBasicMaterial({color:0xbfe8ff,transparent:true,opacity:.18}));wv.rotation.x=-Math.PI/2;wv.position.set((Math.random()-.5)*240,-.5,-100-i*280);scene.add(wv);}
+// jalan lurus 2000m (start z=0, finish z=-2000) - ASPAL HITAM DI ATAS LAUT
+const ROAD_HALF=1050;
+const road=new THREE.Mesh(new THREE.PlaneGeometry(12,ROAD_HALF*2),new THREE.MeshStandardMaterial({color:0x1b1b1f,roughness:1}));
+road.rotation.x=-Math.PI/2;road.position.set(0,.05,-ROAD_HALF);road.receiveShadow=true;scene.add(road);
+for(const s of[-5.5,5.5]){const e=new THREE.Mesh(new THREE.PlaneGeometry(.4,ROAD_HALF*2),new THREE.MeshBasicMaterial({color:0xffffff}));e.rotation.x=-Math.PI/2;e.position.set(s,.08,-ROAD_HALF);scene.add(e);}
+for(let i=0;i<ROAD_HALF/4;i++){const dsh=new THREE.Mesh(new THREE.PlaneGeometry(.35,2.5),new THREE.MeshBasicMaterial({color:i%2?0xffdd33:0xffffff}));dsh.rotation.x=-Math.PI/2;dsh.position.set(0,.08,-i*8);scene.add(dsh);}
 // garis start + finish catur
 function catur(x,z){const cv=document.createElement('canvas');cv.width=128;cv.height=32;const c2=cv.getContext('2d');
  for(let a=0;a<8;a++)for(let b=0;b<2;b++){c2.fillStyle=(a+b)%2?'#000':'#fff';c2.fillRect(a*16,b*16,16,16);}
  const m=new THREE.Mesh(new THREE.PlaneGeometry(12,2),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv)}));
  m.rotation.x=-Math.PI/2;m.position.set(x,.09,z);scene.add(m);}
-catur(0,0);catur(0,-400);
+catur(0,0);catur(0,-2000);
+// GERBANG FINISH 2000M + papan kotak-kotak + bendera
+function caturTeks(t){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const c2=cv.getContext('2d');
+ c2.fillStyle='#fff';c2.fillRect(0,0,512,128);
+ for(let a=0;a<8;a++)for(let b=0;b<4;b++){c2.fillStyle=(a+b)%2?'#111':'#fff';c2.fillRect(a*64,b*32,64,32);}
+ c2.fillStyle='#000';c2.font='900 60px Arial';c2.textAlign='center';c2.fillText(t,256,88);return new THREE.CanvasTexture(cv);}
+function finishGate(x,z,t){
+ const g=new THREE.Group();
+ for(const sx of[-6,6]){const tiang=new THREE.Mesh(new THREE.BoxGeometry(.5,8,.5),M(0xeeeeee,.5,.3));tiang.position.set(sx,4,z);g.add(tiang);}
+ const b=new THREE.Mesh(new THREE.BoxGeometry(12.6,2.6,.6),new THREE.MeshStandardMaterial({map:caturTeks(t)}));b.position.set(0,8.4,z);g.add(b);
+ return g;}
+scene.add(finishGate(0,0,'🏁 START 🏁'));
+scene.add(finishGate(0,-2050,'🏁 FINISH 2000M 🏁'));
 // papan ERETAN + penonton kotak
 function teks(t,bg){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const x=cv.getContext('2d');
  x.fillStyle=bg;x.fillRect(0,0,512,128);x.fillStyle='#fff';x.font='bold 52px Arial';x.textAlign='center';x.fillText(t,256,80);return new THREE.CanvasTexture(cv);}
-const pp=new THREE.Mesh(new THREE.BoxGeometry(14,3,.5),new THREE.MeshStandardMaterial({map:teks('🏁 DRAG ERETAN 400M','#aa1111')}));pp.position.set(0,9,-30);scene.add(pp);
+const pp=new THREE.Mesh(new THREE.BoxGeometry(14,3,.5),new THREE.MeshStandardMaterial({map:teks('🏁 DRAG ERETAN 2000M','#aa1111')}));pp.position.set(0,9,-30);scene.add(pp);
 for(const sx of[-7,7]){const ti=new THREE.Mesh(new THREE.BoxGeometry(1,9,1),new THREE.MeshStandardMaterial({color:0xdddddd}));ti.position.set(sx,4.5,-30);scene.add(ti);}
 const WARNA=[0xff3333,0x33cc33,0x3388ff,0xffdd33,0xcc33ff,0xffffff];
 for(let i=0;i<24;i++){const p=new THREE.Mesh(new THREE.BoxGeometry(.8,1.7+Math.random(),.5),
  new THREE.MeshStandardMaterial({color:WARNA[i%6]}));p.position.set(i%2?10+Math.random()*4:-10-Math.random()*4,.9,-20-Math.floor(i/2)*32);scene.add(p);
- const k=new THREE.Mesh(new THREE.SphereGeometry(.25,8,8),new THREE.MeshStandardMaterial({color:0xffdbac}));k.position.set(p.position.x,2+Math.random()*.3,p.position.z);scene.add(k);}
+ const k=new THREE.Mesh(new THREE.SphereGeometry(.25,8,8),new THREE.MeshStandardMaterial({color:0xffdbac}));k.position.set(p.position.x,2+Math.random()*.3,p.position.z);scene.add(k);
+ const dock=new THREE.Mesh(new THREE.BoxGeometry(9,.3,3.5),new THREE.MeshStandardMaterial({color:0x8a5a2b,roughness:1}));dock.position.set(p.position.x>0?15:-15,.15,p.position.z);dock.rotation.y=p.position.x>0?0:Math.PI/2;scene.add(dock);
+ for(const dp of[-1.5,-.5,.5,1.5]){const bcp=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,10,6),M(0x6b4a1f,.9,.1));bcp.position.set(p.position.x>0?10.5:-10.5,-5,p.position.z+dp);scene.add(bcp);}}
 // lampu start di tengah
 const lampMesh=[];
 for(let i=0;i<4;i++){const lm=new THREE.Mesh(new THREE.SphereGeometry(.5,12,12),
@@ -122,30 +149,52 @@ function wheel(r,w,x,y,z){const g=new THREE.Group();
  g.position.set(x,y,z);g.userData.spin=t;return g;}
 function kaca(w,h,d,x,y,z){return box(w,h,d,new THREE.MeshStandardMaterial({color:0x9fd8ff,roughness:.15,metalness:.5,transparent:true,opacity:.85}),x,y,z);}
 const BUILD={
- mobil(c=0xd21f26){const G=new THREE.Group(),B=M(c,.5,.4);
-  G.add(box(1.9,.55,4.2,B,0,.65,0),box(1.7,.55,2.2,B,0,1.15,-.2),kaca(1.72,.4,1.1,0,1.15,.55));
-  [[-.95,-1.35],[.95,-1.35],[-.95,1.35],[.95,1.35]].forEach(([x,z])=>G.add(wheel(.38,.3,x,.38,z)));return G;},
- bus(c=0xff1a1a){const G=new THREE.Group(),B=M(c,.55,.2);
-  G.add(box(2.5,1.9,10,B,0,1.55,0),kaca(2.3,1,.9,0,1.9,-4.6));
-  [[-1.1,-3.3],[1.1,-3.3],[-1.1,3.3],[1.1,3.3]].forEach(([x,z])=>G.add(wheel(.5,.4,x,.5,z)));return G;},
- truk(c=0x1a8a2a){const G=new THREE.Group();
-  G.add(box(2.4,1.6,2.6,M(c,.5,.3),0,1.4,-3.6),kaca(2,.7,.2,0,1.7,-4.92));
-  G.add(cyl(1.15,1.15,6.5,M(0xdfe6ea,.35,.7),0,1.55,.8,Math.PI/2,20));
-  [[-1,-3.6],[1,-3.6],[-1,3.2],[1,3.2]].forEach(([x,z])=>G.add(wheel(.5,.4,x,.5,z)));return G;},
- tebu(){const G=new THREE.Group();
+ mobil(c=0xcc0000){ // JEEP MERAH FERRARI
+  const G=new THREE.Group(),B=M(0xd40000,.35,.6);
+  G.add(box(1.9,.65,4.2,B,0,.75,0),box(1.7,.6,2.2,M(0xaa0000,.3,.5),0,1.25,-.2),kaca(1.72,.4,1.1,0,1.25,.55));
+  G.add(box(1.91,.05,4.22,M(0xffd700,.4,.6),0,.95,0));
+  [[-.95,-1.35],[.95,-1.35],[-.95,1.35],[.95,1.35]].forEach(([x,z])=>G.add(wheel(.42,.35,x,.42,z)));
+  return G;},
+ bus(c=0xffcc00){ // LURAGUNG JAYA ALWI KUNING JINGGA + ALWI PUTIH BELAKANG + GARIS JINGGA ATAP
+  const G=new THREE.Group(),B=M(0xffcc00,.55,.2),O=M(0xff6600,.55,.3),H=M(0x111111,.8,0);
+  G.add(box(2.5,1.9,10,B,0,1.55,0),box(2.52,.5,10.02,M(0xffffff,.9,.1),0,.75,0),kaca(2.3,1,.9,0,1.9,-4.6));
+  G.add(box(2.55,.25,9.5,O,0,.95,0),box(2.55,.08,9.5,H,0,1.15,0));
+  G.add(box(2.55,.06,10.1,O,0,2.52,0)); // garis jingga atap
+  G.add(box(2.51,.35,1.2,H,0,1.2,-4.4),box(2.52,.12,.8,O,0,1.5,-4.2));
+  const cvB=document.createElement('canvas');cvB.width=256;cvB.height=128;const xb=cvB.getContext('2d');xb.fillStyle='#ffcc00';xb.fillRect(0,0,256,128);xb.fillStyle='#ffffff';xb.font='900 50px Arial';xb.textAlign='center';xb.fillText('ALWI',128,80);xb.strokeStyle='#000';xb.lineWidth=2;xb.strokeText('ALWI',128,80);
+  const texB=new THREE.CanvasTexture(cvB);const back=new THREE.Mesh(new THREE.PlaneGeometry(2.2,1),new THREE.MeshBasicMaterial({map:texB}));back.position.set(0,1.6,5.01);back.rotation.y=Math.PI;G.add(back);
+  [[-1.1,-3.3],[1.1,-3.3],[-1.1,3.3],[1.1,3.3]].forEach(([x,z])=>{const w=wheel(.5,.4,x,.5,z);w.children[1].material=M(0xffcc00,.3,.6);G.add(w);});
+  return G;},
+ truk(c=0xcc0000){ // PERTAMINA PUTIH SUSU + GARIS MERAH BENDERA + KEPALA MERAH GARIS JINGGA
+  const G=new THREE.Group();
+  G.add(box(2.4,1.6,2.6,M(0xcc0000,.5,.3),0,1.4,-3.6),kaca(2,.7,.2,0,1.7,-4.92));
+  G.add(box(2.41,.18,1.8,M(0xff6600,.6,.3),0,1.8,-3.6)); // garis jingga kepala
+  const tankMat=M(0xfff8e7,.45,.2); // putih susu
+  G.add(cyl(1.15,1.15,6.5,tankMat,0,1.55,.8,Math.PI/2,20));
+  G.add(box(0.1,0.25,6.6,M(0xcc0000,.5,.3),0,2.0,.8),box(0.1,0.25,6.6,M(0xcc0000,.5,.3),0,1.1,.8));
+  [[-1,-3.6],[1,-3.6],[-1,3.2],[1,3.2]].forEach(([x,z])=>G.add(wheel(.5,.4,x,.5,z)));
+  return G;},
+ tebu(){ // TRUK TEBU LOHBENER overload
+  const G=new THREE.Group();
   G.add(box(2.3,1.5,2.4,M(0x2a7a2a,.6,.2),0,1.3,-5.2),kaca(1.9,.6,.2,0,1.6,-6.42));
   G.add(box(2.4,.3,7,M(0x6b4a1f,.8,.1),0,.9,-.5));
-  for(let i=0;i<8;i++)G.add(cyl(.14,.14,6.2,M(0xd8c56a,.9,0),(Math.random()-.5)*1.2,1.7,-.5,Math.PI/2,8));
-  [[-1,-5.2],[1,-5.2],[-1,1.5],[1,1.5]].forEach(([x,z])=>G.add(wheel(.5,.4,x,.5,z)));return G;},
- f1(c=0xff0000){const G=new THREE.Group(),B=M(c,.35,.6);
-  G.add(box(.7,.4,4.4,B,0,.5,-.3),box(.28,.28,1.8,B,0,.45,-2.8),box(1.9,.12,.6,B,0,.65,2.35),box(1.8,.1,.45,B,0,.75,-3.4));
-  [[-.95,-2.9],[.95,-2.9],[-1,1.9],[1,1.9]].forEach(([x,z],i)=>G.add(wheel(i<2?.42:.48,.55,x,i<2?.42:.48,z)));return G;}
+  for(let i=0;i<12;i++){const col=i%2?M(0xd8c56a,.9,0):M(0x4a8a2a,.8,.2); const c=cyl(.14,.14,6.5,col,(Math.random()-.5)*1.5,1.8+Math.random()*.9,-.5+Math.random()*.5,Math.PI/2,8); G.add(c);}
+  [[-1,-5.2],[1,-5.2],[-1,1.5],[1,1.5]].forEach(([x,z])=>G.add(wheel(.55,.45,x,.55,z)));
+  return G;},
+ f1(c=0xff0000){ // F1 MERAH FERRARI
+  const G=new THREE.Group(),B=M(0xff0000,.25,.7);
+  G.add(box(.7,.45,4.4,B,0,.5,-.3),box(.28,.28,1.8,B,0,.45,-2.8),box(1.9,.14,.6,M(0xcc0000,.3,.6),0,.7,2.35),box(1.8,.12,.45,B,0,.8,-3.4),kaca(.5,.35,.9,0,.9,.1));
+  G.add(box(.71,.05,4.41,M(0xffd700,.3,.8),0,.7,-.3));
+  [[-.95,-2.9],[.95,-2.9],[-1,1.9],[1,1.9]].forEach(([x,z],i)=>G.add(wheel(i<2?.42:.48,.55,x,i<2?.42:.48,z)));
+  return G;}
 };
-const STAT={mobil:{top:46,acc:11},bus:{top:34,acc:8},truk:{top:32,acc:7},tebu:{top:29,acc:6},f1:{top:58,acc:14}};
+const STAT={mobil:{top:92,acc:22},bus:{top:68,acc:16},truk:{top:64,acc:14},tebu:{top:58,acc:12},f1:{top:116,acc:28}};
+const ST_DT=3.2*1.25;
 // ===== BALAP =====
 let cur='bus',player=null,mode='menu',gas=false;
 let pS={v:0,d:0,g:1,rpm:0},foes=[];
 let phase='',phaseT=0,hasil=false;
+const ROAD_LEN=2000; // PANJANG JALAN 2000M sesuai request - tanpa timer
 const LANES=[-4.2,-1.4,1.4,4.2];
 function setCar(id){cur=id;
  document.querySelectorAll('#veh button').forEach(b=>b.classList.toggle('on',b.dataset.v===id));}
@@ -159,9 +208,14 @@ function spawn(){scene.remove(player);foes.forEach(f=>scene.remove(f.mesh));foes
   foes.push({mesh:m,v:0,d:0,skill:.82+Math.random()*.2,react:.4+Math.random()*.6,vk:fk});
  }}
 spawn();
-const bGas=document.getElementById('btnGas'),bSh=document.getElementById('btnShift');
+const bGas=document.getElementById('btnGas');
 bGas.onpointerdown=e=>{e.preventDefault();gas=true;};bGas.onpointerup=bGas.onpointerleave=()=>gas=false;
-bSh.onclick=()=>{if(mode==='race'&&pS.g<5){pS.g++;pS.rpm=Math.max(.3,pS.rpm-.35);beep(700,.08);}};
+function setGear(g){if(g>=1&&g<=5){pS.g=g; pS.rpm=Math.max(.3,pS.rpm-.35); beep(600+g*80,.08);
+ document.querySelectorAll('[data-g]').forEach(b=>{b.style.background=b.dataset.g==g?'#ffcf40':'rgba(255,255,255,.1)'; b.style.color=b.dataset.g==g?'#111':'#fff';});}}
+document.querySelectorAll('[data-g]').forEach(b=>{b.onclick=()=>setGear(parseInt(b.dataset.g));});
+const bSh={onclick:()=>{}}; // dummy
+bSh.onclick=()=>{if(mode==='race'&&pS.g<5)setGear(pS.g+1);};
+
 document.getElementById('btnStop').onclick=()=>location.reload();
 addEventListener('keydown',e=>{if(e.key===' ')gas=true;if(e.key==='Shift')bSh.onclick();});
 addEventListener('keyup',e=>{if(e.key===' ')gas=false;});
@@ -180,7 +234,7 @@ document.getElementById('bStart').onclick=()=>{
 function finish(menang,alasan){
  if(hasil)return;hasil=true;mode='done';sndStop();
  document.getElementById('hJudul').textContent=menang?'🏆 MENANG!':'😅 KALAH';
- document.getElementById('hIsi').textContent=alasan+` Jarakmu ${Math.round(Math.min(pS.d,400))}m.`;
+ document.getElementById('hIsi').textContent=alasan+` Jarakmu ${Math.round(pS.d)}m.`;
  document.getElementById('hasil').style.display='flex';
  if(menang){beep(660,.15);setTimeout(()=>beep(880,.2),180);}else beep(220,.4);
 }
@@ -202,35 +256,36 @@ const clock=new THREE.Clock();
   // player
   const st=STAT[cur];
   pS.rpm=.25+(pS.v/(pS.g*13));
-  if(gas){if(pS.rpm<1.05)pS.v+=(st.acc*(1.15-pS.g*.12))*dt*3.2;else pS.v-=4*dt;}
+  if(gas){if(pS.rpm<1.05)pS.v+=(st.acc*(1.15-pS.g*.12))*dt*ST_DT;else pS.v-=4*dt;}
   else pS.v=Math.max(0,pS.v-6*dt);
   pS.v=Math.min(pS.v,st.top);
   pS.d+=pS.v*dt;
-  player.position.z=4-pS.d*(380/400);
+  player.position.z=4-pS.d*(2054/2000);
   player.traverse(o=>{if(o.userData.spin)o.rotation.x-=dt*pS.v;});
   sndRPM(Math.min(pS.rpm,1));
   // 3 MUSUH AI
   for(const o of foes){
-   if(phaseT>o.react){o.v=Math.min(o.v+STAT[o.vk].acc*o.skill*dt*3.2,STAT[o.vk].top*o.skill);}
+   if(phaseT>o.react){o.v=Math.min(o.v+STAT[o.vk].acc*o.skill*dt*ST_DT,STAT[o.vk].top*o.skill);}
    o.d+=o.v*dt;
-   o.mesh.position.z=4-o.d*(380/400);
+   o.mesh.position.z=4-o.d*(2054/2000);
    o.mesh.traverse(w=>{if(w.userData.spin)w.rotation.x-=dt*o.v;});
   }
   // HUD
   document.getElementById('spd').textContent=Math.round(pS.v*3.6)+' KMH';
-  document.getElementById('jarak').textContent=Math.round(Math.min(pS.d,400))+' M';
+  document.getElementById('jarak').textContent=Math.round(pS.d)+' M';
   const rank=1+foes.filter(o=>o.d>pS.d).length;
-  document.getElementById('lawan').textContent='P'+rank+'/4';
+  // HAPUS PERINGKAT - ganti jadi jarak bebas
+  document.getElementById('lawan').textContent=Math.round(pS.d)+'M / '+ROAD_LEN+'M BEBAS';
   document.getElementById('rpmfill').style.width=Math.min(100,pS.rpm*100)+'%';
   document.getElementById('gear').textContent=pS.g;
   // kamera ikut
   camera.position.lerp(new THREE.Vector3(player.position.x,4.2,player.position.z+13),1-Math.pow(.01,dt));
   camera.lookAt(player.position.x,1,player.position.z-10);
-  const doneF=foes.filter(o=>o.d>=400).length;
-  if(pS.d>=400||doneF===3){
-   const rank=1+foes.filter(o=>o.d>pS.d).length;
-   if(rank===1)finish(true,`JUARA 1 dari 4! Gasss! `);
-   else finish(false,`Finis P${rank} dari 4. ${foes.map(o=>o.vk.toUpperCase()).join(', ')} angel! Coba gigi lebih pas! `);
+  // HAPUS TIMER & FINISH - jalan panjang bebas tanpa batas waktu
+  if(pS.d>=ROAD_LEN){
+   pS.d=0; // loop balik ke start biar bisa jalan terus tanpa finish
+   // reset posisi lawan juga
+   foes.forEach(o=>o.d=0);
   }
  }
  renderer.render(scene,camera);})();
