@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>🏁 Eretan Panjang - ALWI x LURAGUNG JAYA - Gigi Angka - Tanpa Timer</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
+#c{position:fixed;inset:0;display:block}
+.pill{background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:8px 12px;font-size:12px}
+#hud{position:fixed;top:8px;left:8px;right:8px;display:none;justify-content:space-between;gap:4px;z-index:5;pointer-events:none}
+.pill{padding:6px 8px!important;font-size:11px!important}
+#rpmwrap{position:fixed;top:56px;left:10px;right:10px;display:none;z-index:5;pointer-events:none}
+#rpmbar{height:14px;border-radius:8px;background:#222;border:1px solid #555;overflow:hidden}
+#rpmfill{height:100%;width:0%;background:linear-gradient(90deg,#22cc55,#ffdd33 70%,#ff2222)}
+#gear{position:fixed;top:78px;left:50%;transform:translateX(-50%);font-size:28px;font-weight:900;display:none;z-index:5;pointer-events:none;text-shadow:0 0 10px #000}
+#ctrl{position:fixed;left:0;right:0;bottom:0;padding:10px;display:none;gap:8px;z-index:5}
+#ctrl button{flex:1;border-radius:16px;padding:18px 8px;font-weight:900;font-size:17px;border:1px solid}
+#btnGas{background:#22cc55;border-color:#22cc55;color:#00220f}
+#btnShift{background:#ffdd33;border-color:#ffdd33;color:#111}
+#btnStop{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);color:#fff;flex:.6!important}
+#start{position:fixed;inset:0;background:radial-gradient(circle at 50% 20%,#3a0f0f,#070b12 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center;z-index:10;overflow-y:auto}
+#start h1{font-size:30px;letter-spacing:.06em}
+#start h1 span{color:#ffcf40}
+#veh{display:flex;gap:8px;overflow-x:auto;max-width:100%;padding:6px}
+#veh button{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:10px 14px;font-weight:800;font-size:12px;min-width:105px}
+#veh button.on{background:#fff;color:#000}
+#bStart{margin-top:8px;width:min(420px,90vw);height:64px;border-radius:999px;border:0;background:#ffcf40;color:#111;font-weight:900;font-size:18px;letter-spacing:.1em}
+#lampu{position:fixed;top:120px;left:50%;transform:translateX(-50%);display:none;gap:10px;z-index:6}
+#lampu div{width:34px;height:34px;border-radius:50%;background:#333;border:2px solid #666}
+#hasil{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:20;background:rgba(0,0,0,.7)}
+#hasil .box{background:#111;border:2px solid #ffcf40;border-radius:16px;padding:24px;text-align:center;max-width:88vw}
+#hasil button{margin-top:10px;padding:12px 20px;border-radius:12px;border:0;font-weight:900;background:#ffcf40;color:#111}
+#bootErr{position:fixed;bottom:10px;left:10px;right:10px;background:rgba(150,0,0,.9);padding:10px 14px;border-radius:12px;font-size:12px;display:none;z-index:99}
+</style>
+<script async src="./es-module-shims.js"></script>
+<script type="importmap-shim">{"imports":{"three":"./three.module.js","three/addons/":"./addons/"}}</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud"><div class="pill" id="spd">0 KMH</div><div class="pill" id="jarak">0 M</div><div class="pill" id="lawan">LAWAN +0M</div></div>
+<div id="rpmwrap"><div id="rpmbar"><div id="rpmfill"></div></div></div>
+<div id="gear">1</div>
+<div id="lampu"><div id="L0"></div><div id="L1"></div><div id="L2"></div><div id="LG"></div></div>
+<div id="ctrl" style="display:flex;flex-wrap:wrap">
+<button id="btnStop" style="flex:.4">■</button>
+<div style="display:flex;gap:4px;flex:1">
+<button data-g="1" id="g1" style="flex:1;background:#fff;color:#000">1</button>
+<button data-g="2" id="g2" style="flex:1">2</button>
+<button data-g="3" id="g3" style="flex:1">3</button>
+<button data-g="4" id="g4" style="flex:1">4</button>
+<button data-g="5" id="g5" style="flex:1">5</button>
+</div>
+<button id="btnGas" style="flex:.6">GAS ▶</button>
+</div>
+<div id="hasil"><div class="box"><h2 id="hJudul">🏁</h2><p id="hIsi"></p><button onclick="location.reload()">🔄 ULANGI</button> <button onclick="location.href='index.html'">🗺 PETA</button></div></div>
+<div id="start">
+<div style="font-size:11px;opacity:.8">🏁 JALAN PANJANG 2000M • BEBAS TANPA TIMER • GIGI ANGKA 1-5 • ALWI x LURAGUNG</div>
+<h1>DRAG <span>ERETAN</span></h1>
+<p style="font-size:12px;opacity:.9;max-width:400px">JALAN PANJANG 2000M - TANPA TIMER - BEBAS GAS! Pakai gigi angka 1-5. Warna mobil ALWI x LURAGUNG JAYA sudah fix!</p>
+<div id="veh">
+<button data-v="mobil">JEEP MERAH FERRARI ALWI</button>
+<button data-v="bus" class="on">LURAGUNG JAYA ALWI KUNING JINGGA SERAM</button>
+<button data-v="truk">PERTAMINA PUTIH SUSU MERAH</button>
+<button data-v="tebu">TRUK TEBU LOHBENER</button>
+<button data-v="f1">F1 MERAH FERRARI</button>
+</div>
+<button id="bStart">▶ START BALAP</button>
+<p style="font-size:10px;opacity:.6">Mesin beda suara tiap mobil • F1 paling kencang, Tebu paling santai</p>
+</div>
+<div id="bootErr"></div>
+<script>
+window.__booted=false;
+window.addEventListener('error',function(e){var b=document.getElementById('bootErr');if(b){b.style.display='block';b.textContent='⚠️ Error: '+(e.message||'gagal load');}});
+</script>
+<script type="module-shim">
+import * as THREE from 'three';
+// ===== SUARA: mesin + beep + menang (Web Audio, offline) =====
+let AC=null,osc=null,flt=null,gn=null;
+const MESIN={mobil:{f:80,s:8,w:'sawtooth',lp:900},bus:{f:55,s:5,w:'square',lp:420},truk:{f:45,s:4,w:'square',lp:350},tebu:{f:65,s:5,w:'sawtooth',lp:600},f1:{f:200,s:25,w:'sawtooth',lp:3200}};
+function sndInit(){if(AC){AC.resume();return;}try{AC=new(window.AudioContext||window.webkitAudioContext)();osc=AC.createOscillator();flt=AC.createBiquadFilter();flt.type='lowpass';gn=AC.createGain();gn.gain.value=0;osc.connect(flt);flt.connect(gn);gn.connect(AC.destination);osc.start();sndSet(cur);}catch(e){}}
+function sndSet(v){if(!osc)return;const m=MESIN[v]||MESIN.mobil;osc.type=m.w;flt.frequency.value=m.lp;osc.frequency.value=m.f;}
+function sndRPM(rpm){if(!AC||!osc)return;const m=MESIN[cur]||MESIN.mobil;osc.frequency.setTargetAtTime(m.f+rpm*m.s*10,AC.currentTime,.05);gn.gain.setTargetAtTime(.08,AC.currentTime,.1);}
+function sndStop(){if(!AC)return;try{gn.gain.setTargetAtTime(0,AC.currentTime,.1);}catch(e){}}
+function beep(f,d=.2){if(!AC)return;try{const o=AC.createOscillator(),g=AC.createGain();o.type='square';o.frequency.value=f;g.gain.value=.15;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d);}catch(e){}}
+// ===== 3D =====
+const canvas=document.getElementById('c');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:false});
+renderer.setPixelRatio(1);renderer.shadowMap.enabled=false;
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x87b5e0);
+scene.fog=new THREE.Fog(0x87b5e0,60,400);
+const camera=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.1,800);
+camera.position.set(0,4,12);
+let menuA=0;
+scene.add(new THREE.HemisphereLight(0xffffff,0x334455,.9));
+const sun=new THREE.DirectionalLight(0xffffff,1.4);sun.position.set(30,40,20);scene.add(sun);
+const tanah=new THREE.Mesh(new THREE.PlaneGeometry(300,600),new THREE.MeshStandardMaterial({color:0x4f9a4f,roughness:1}));
+tanah.rotation.x=-Math.PI/2;tanah.position.z=-200;tanah.receiveShadow=true;scene.add(tanah);
+// jalan lurus 400m (start z=0, finish z=-400)
+const road=new THREE.Mesh(new THREE.PlaneGeometry(12,460),new THREE.MeshStandardMaterial({color:0x5c646e,roughness:1}));
+road.rotation.x=-Math.PI/2;road.position.set(0,.05,-210);road.receiveShadow=true;scene.add(road);
+for(const s of[-5.5,5.5]){const e=new THREE.Mesh(new THREE.PlaneGeometry(.4,440),new THREE.MeshBasicMaterial({color:0xffffff}));e.rotation.x=-Math.PI/2;e.position.set(s,.08,-200);scene.add(e);}
+for(let i=0;i<50;i++){const dsh=new THREE.Mesh(new THREE.PlaneGeometry(.35,2.5),new THREE.MeshBasicMaterial({color:i%2?0xffdd33:0xffffff}));dsh.rotation.x=-Math.PI/2;dsh.position.set(0,.08,-i*8);scene.add(dsh);}
+// garis start + finish catur
+function catur(x,z){const cv=document.createElement('canvas');cv.width=128;cv.height=32;const c2=cv.getContext('2d');
+ for(let a=0;a<8;a++)for(let b=0;b<2;b++){c2.fillStyle=(a+b)%2?'#000':'#fff';c2.fillRect(a*16,b*16,16,16);}
+ const m=new THREE.Mesh(new THREE.PlaneGeometry(12,2),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv)}));
+ m.rotation.x=-Math.PI/2;m.position.set(x,.09,z);scene.add(m);}
+catur(0,0);catur(0,-400);
+// GERBANG FINISH 400M + papan kotak-kotak + bendera
+function caturTeks(t){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const c2=cv.getContext('2d');
+ c2.fillStyle='#fff';c2.fillRect(0,0,512,128);
+ for(let a=0;a<8;a++)for(let b=0;b<4;b++){c2.fillStyle=(a+b)%2?'#111':'#fff';c2.fillRect(a*64,b*32,64,32);}
+ c2.fillStyle='#000';c2.font='900 60px Arial';c2.textAlign='center';c2.fillText(t,256,88);return new THREE.CanvasTexture(cv);}
+function finishGate(x,z){
+ const g=new THREE.Group();
+ for(const sx of[-6,6]){const tiang=new THREE.Mesh(new THREE.BoxGeometry(.5,8,.5),M(0xeeeeee,.5,.3));tiang.position.set(sx,4,z);g.add(tiang);}
+ const b=new THREE.Mesh(new THREE.BoxGeometry(12.6,2.6,.6),new THREE.MeshStandardMaterial({map:caturTeks('🏁 FINISH 400M 🏁')}));b.position.set(0,8.4,z);g.add(b);
+ return g;}
+scene.add(finishGate(0,-400));
+scene.add(finishGate(0,0));
+// papan ERETAN + penonton kotak
+function teks(t,bg){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const x=cv.getContext('2d');
+ x.fillStyle=bg;x.fillRect(0,0,512,128);x.fillStyle='#fff';x.font='bold 52px Arial';x.textAlign='center';x.fillText(t,256,80);return new THREE.CanvasTexture(cv);}
+const pp=new THREE.Mesh(new THREE.BoxGeometry(14,3,.5),new THREE.MeshStandardMaterial({map:teks('🏁 DRAG ERETAN 400M','#aa1111')}));pp.position.set(0,9,-30);scene.add(pp);
+for(const sx of[-7,7]){const ti=new THREE.Mesh(new THREE.BoxGeometry(1,9,1),new THREE.MeshStandardMaterial({color:0xdddddd}));ti.position.set(sx,4.5,-30);scene.add(ti);}
+const WARNA=[0xff3333,0x33cc33,0x3388ff,0xffdd33,0xcc33ff,0xffffff];
+for(let i=0;i<24;i++){const p=new THREE.Mesh(new THREE.BoxGeometry(.8,1.7+Math.random(),.5),
+ new THREE.MeshStandardMaterial({color:WARNA[i%6]}));p.position.set(i%2?10+Math.random()*4:-10-Math.random()*4,.9,-20-Math.floor(i/2)*32);scene.add(p);
+ const k=new THREE.Mesh(new THREE.SphereGeometry(.25,8,8),new THREE.MeshStandardMaterial({color:0xffdbac}));k.position.set(p.position.x,2+Math.random()*.3,p.position.z);scene.add(k);}
+// lampu start di tengah
+const lampMesh=[];
+for(let i=0;i<4;i++){const lm=new THREE.Mesh(new THREE.SphereGeometry(.5,12,12),
+ new THREE.MeshStandardMaterial({color:0x333333,emissive:0x111111}));lm.position.set(0,6-i*1.4,-8);scene.add(lm);lampMesh.push(lm);}
+const tih=new THREE.Mesh(new THREE.CylinderGeometry(.2,.2,7,6),new THREE.MeshStandardMaterial({color:0x333333}));tih.position.set(0,3,-8);scene.add(tih);
+// ===== MOBIL 3D (upgrade ALWI-3D-speed: bukan kotak PNG) =====
+function M(c,r=.6,m=.3){return new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});}
+function box(w,h,d,c,x=0,y=0,z=0){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),c);o.position.set(x,y,z);return o;}
+function cyl(rt,rb,h,c,x=0,y=0,z=0,rx=0,seg=14){const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),c);o.position.set(x,y,z);o.rotation.x=rx;return o;}
+function wheel(r,w,x,y,z){const g=new THREE.Group();
+ const t=new THREE.Mesh(new THREE.CylinderGeometry(r,r,w,18),M(0x111111,.9,0));t.rotation.z=Math.PI/2;g.add(t);
+ const v=new THREE.Mesh(new THREE.CylinderGeometry(r*.55,r*.55,w+.02,10),M(0xcccccc,.4,.8));v.rotation.z=Math.PI/2;g.add(v);
+ g.position.set(x,y,z);g.userData.spin=t;return g;}
+function kaca(w,h,d,x,y,z){return box(w,h,d,new THREE.MeshStandardMaterial({color:0x9fd8ff,roughness:.15,metalness:.5,transparent:true,opacity:.85}),x,y,z);}
+const BUILD={
+ mobil(c=0xcc0000){ // JEEP MERAH FERRARI
+  const G=new THREE.Group(),B=M(0xd40000,.35,.6);
+  G.add(box(1.9,.65,4.2,B,0,.75,0),box(1.7,.6,2.2,M(0xaa0000,.3,.5),0,1.25,-.2),kaca(1.72,.4,1.1,0,1.25,.55));
+  G.add(box(1.91,.05,4.22,M(0xffd700,.4,.6),0,.95,0));
+  [[-.95,-1.35],[.95,-1.35],[-.95,1.35],[.95,1.35]].forEach(([x,z])=>G.add(wheel(.42,.35,x,.42,z)));
+  return G;},
+ bus(c=0xffcc00){ // LURAGUNG JAYA ALWI KUNING JINGGA + ALWI PUTIH BELAKANG + GARIS JINGGA ATAP
+  const G=new THREE.Group(),B=M(0xffcc00,.55,.2),O=M(0xff6600,.55,.3),H=M(0x111111,.8,0);
+  G.add(box(2.5,1.9,10,B,0,1.55,0),box(2.52,.5,10.02,M(0xffffff,.9,.1),0,.75,0),kaca(2.3,1,.9,0,1.9,-4.6));
+  G.add(box(2.55,.25,9.5,O,0,.95,0),box(2.55,.08,9.5,H,0,1.15,0));
+  G.add(box(2.55,.06,10.1,O,0,2.52,0)); // garis jingga atap
+  G.add(box(2.51,.35,1.2,H,0,1.2,-4.4),box(2.52,.12,.8,O,0,1.5,-4.2));
+  const cvB=document.createElement('canvas');cvB.width=256;cvB.height=128;const xb=cvB.getContext('2d');xb.fillStyle='#ffcc00';xb.fillRect(0,0,256,128);xb.fillStyle='#ffffff';xb.font='900 50px Arial';xb.textAlign='center';xb.fillText('ALWI',128,80);xb.strokeStyle='#000';xb.lineWidth=2;xb.strokeText('ALWI',128,80);
+  const texB=new THREE.CanvasTexture(cvB);const back=new THREE.Mesh(new THREE.PlaneGeometry(2.2,1),new THREE.MeshBasicMaterial({map:texB}));back.position.set(0,1.6,5.01);back.rotation.y=Math.PI;G.add(back);
+  [[-1.1,-3.3],[1.1,-3.3],[-1.1,3.3],[1.1,3.3]].forEach(([x,z])=>{const w=wheel(.5,.4,x,.5,z);w.children[1].material=M(0xffcc00,.3,.6);G.add(w);});
+  return G;},
+ truk(c=0xcc0000){ // PERTAMINA PUTIH SUSU + GARIS MERAH BENDERA + KEPALA MERAH GARIS JINGGA
+  const G=new THREE.Group();
+  G.add(box(2.4,1.6,2.6,M(0xcc0000,.5,.3),0,1.4,-3.6),kaca(2,.7,.2,0,1.7,-4.92));
+  G.add(box(2.41,.18,1.8,M(0xff6600,.6,.3),0,1.8,-3.6)); // garis jingga kepala
+  const tankMat=M(0xfff8e7,.45,.2); // putih susu
+  G.add(cyl(1.15,1.15,6.5,tankMat,0,1.55,.8,Math.PI/2,20));
+  G.add(box(0.1,0.25,6.6,M(0xcc0000,.5,.3),0,2.0,.8),box(0.1,0.25,6.6,M(0xcc0000,.5,.3),0,1.1,.8));
+  [[-1,-3.6],[1,-3.6],[-1,3.2],[1,3.2]].forEach(([x,z])=>G.add(wheel(.5,.4,x,.5,z)));
+  return G;},
+ tebu(){ // TRUK TEBU LOHBENER overload
+  const G=new THREE.Group();
+  G.add(box(2.3,1.5,2.4,M(0x2a7a2a,.6,.2),0,1.3,-5.2),kaca(1.9,.6,.2,0,1.6,-6.42));
+  G.add(box(2.4,.3,7,M(0x6b4a1f,.8,.1),0,.9,-.5));
+  for(let i=0;i<12;i++){const col=i%2?M(0xd8c56a,.9,0):M(0x4a8a2a,.8,.2); const c=cyl(.14,.14,6.5,col,(Math.random()-.5)*1.5,1.8+Math.random()*.9,-.5+Math.random()*.5,Math.PI/2,8); G.add(c);}
+  [[-1,-5.2],[1,-5.2],[-1,1.5],[1,1.5]].forEach(([x,z])=>G.add(wheel(.55,.45,x,.55,z)));
+  return G;},
+ f1(c=0xff0000){ // F1 MERAH FERRARI
+  const G=new THREE.Group(),B=M(0xff0000,.25,.7);
+  G.add(box(.7,.45,4.4,B,0,.5,-.3),box(.28,.28,1.8,B,0,.45,-2.8),box(1.9,.14,.6,M(0xcc0000,.3,.6),0,.7,2.35),box(1.8,.12,.45,B,0,.8,-3.4),kaca(.5,.35,.9,0,.9,.1));
+  G.add(box(.71,.05,4.41,M(0xffd700,.3,.8),0,.7,-.3));
+  [[-.95,-2.9],[.95,-2.9],[-1,1.9],[1,1.9]].forEach(([x,z],i)=>G.add(wheel(i<2?.42:.48,.55,x,i<2?.42:.48,z)));
+  return G;}
+};
+const STAT={mobil:{top:46,acc:11},bus:{top:34,acc:8},truk:{top:32,acc:7},tebu:{top:29,acc:6},f1:{top:58,acc:14}};
+// ===== BALAP =====
+let cur='bus',player=null,mode='menu',gas=false;
+let pS={v:0,d:0,g:1,rpm:0},foes=[];
+let phase='',phaseT=0,hasil=false;
+const ROAD_LEN=2000; // PANJANG JALAN 2000M sesuai request - tanpa timer
+const LANES=[-4.2,-1.4,1.4,4.2];
+function setCar(id){cur=id;
+ document.querySelectorAll('#veh button').forEach(b=>b.classList.toggle('on',b.dataset.v===id));}
+document.querySelectorAll('#veh button').forEach(b=>b.onclick=()=>setCar(b.dataset.v));
+function spawn(){scene.remove(player);foes.forEach(f=>scene.remove(f.mesh));foes=[];
+ player=new THREE.Group();player.add(BUILD[cur]());player.position.set(LANES[0],.05,4);scene.add(player);
+ const keys=Object.keys(BUILD).filter(k=>k!==cur).sort(()=>Math.random()-.5);
+ for(let i=0;i<3;i++){
+  const fk=keys[i%keys.length];
+  const m=new THREE.Group();m.add(BUILD[fk]());m.position.set(LANES[i+1],.05,4);scene.add(m);
+  foes.push({mesh:m,v:0,d:0,skill:.82+Math.random()*.2,react:.4+Math.random()*.6,vk:fk});
+ }}
+spawn();
+const bGas=document.getElementById('btnGas');
+bGas.onpointerdown=e=>{e.preventDefault();gas=true;};bGas.onpointerup=bGas.onpointerleave=()=>gas=false;
+function setGear(g){if(g>=1&&g<=5){pS.g=g; pS.rpm=Math.max(.3,pS.rpm-.35); beep(600+g*80,.08);
+ document.querySelectorAll('[data-g]').forEach(b=>{b.style.background=b.dataset.g==g?'#ffcf40':'rgba(255,255,255,.1)'; b.style.color=b.dataset.g==g?'#111':'#fff';});}}
+document.querySelectorAll('[data-g]').forEach(b=>{b.onclick=()=>setGear(parseInt(b.dataset.g));});
+const bSh={onclick:()=>{}}; // dummy
+bSh.onclick=()=>{if(mode==='race'&&pS.g<5)setGear(pS.g+1);};
+
+document.getElementById('btnStop').onclick=()=>location.reload();
+addEventListener('keydown',e=>{if(e.key===' ')gas=true;if(e.key==='Shift')bSh.onclick();});
+addEventListener('keyup',e=>{if(e.key===' ')gas=false;});
+function setLamp(i,color){const ids=['L0','L1','L2','LG'];ids.forEach((id,k)=>{document.getElementById(id).style.background=k<=i?color:'#333';});
+ lampMesh.forEach((m,k)=>{m.material.emissive.set(k<=i?color:'#111111');m.material.color.set(k<=i?color:'#333333');});}
+document.getElementById('bStart').onclick=()=>{
+ sndInit();spawn();
+ document.getElementById('start').style.display='none';
+ ['hud','rpmwrap','gear'].forEach(id=>document.getElementById(id).style.display='flex');
+ document.getElementById('gear').style.display='block';
+ document.getElementById('ctrl').style.display='flex';
+ document.getElementById('lampu').style.display='flex';
+ camera.position.set(-4.2,4.2,17);camera.lookAt(-4.2,1,-6);
+ mode='count';phase='stage';phaseT=0;pS={v:0,d:0,g:1,rpm:0};foes.forEach(o=>{o.v=0;o.d=0;});hasil=false;
+};
+function finish(menang,alasan){
+ if(hasil)return;hasil=true;mode='done';sndStop();
+ document.getElementById('hJudul').textContent=menang?'🏆 MENANG!':'😅 KALAH';
+ document.getElementById('hIsi').textContent=alasan+` Jarakmu ${Math.round(Math.min(pS.d,400))}m.`;
+ document.getElementById('hasil').style.display='flex';
+ if(menang){beep(660,.15);setTimeout(()=>beep(880,.2),180);}else beep(220,.4);
+}
+function resize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);}
+addEventListener('resize',resize);resize();
+const clock=new THREE.Clock();
+(function loop(){requestAnimationFrame(loop);
+ const dt=Math.min(clock.getDelta(),.05);
+ if(mode==='menu'){menuA+=dt*.4;camera.position.set(Math.sin(menuA)*11,4.5,4+Math.cos(menuA)*11);camera.lookAt(0,1,-4);}
+ else if(mode==='count'){
+  phaseT+=dt;
+  const n=Math.floor(phaseT/.7);
+  if(n<3){setLamp(n,'#ffdd33');if(phase!=='n'+n){phase='n'+n;beep(440,.15);}}
+  else{setLamp(3,'#22ff55');beep(880,.4);mode='race';phaseT=0;
+   document.getElementById('lampu').style.display='none';}
+  if(gas&&n<3){finish(false,'JUMP START! Ngegas sebelum hijau. ');}
+ }else if(mode==='race'){
+  phaseT+=dt;
+  // player
+  const st=STAT[cur];
+  pS.rpm=.25+(pS.v/(pS.g*13));
+  if(gas){if(pS.rpm<1.05)pS.v+=(st.acc*(1.15-pS.g*.12))*dt*3.2;else pS.v-=4*dt;}
+  else pS.v=Math.max(0,pS.v-6*dt);
+  pS.v=Math.min(pS.v,st.top);
+  pS.d+=pS.v*dt;
+  player.position.z=4-pS.d*(380/400);
+  player.traverse(o=>{if(o.userData.spin)o.rotation.x-=dt*pS.v;});
+  sndRPM(Math.min(pS.rpm,1));
+  // 3 MUSUH AI
+  for(const o of foes){
+   if(phaseT>o.react){o.v=Math.min(o.v+STAT[o.vk].acc*o.skill*dt*3.2,STAT[o.vk].top*o.skill);}
+   o.d+=o.v*dt;
+   o.mesh.position.z=4-o.d*(380/400);
+   o.mesh.traverse(w=>{if(w.userData.spin)w.rotation.x-=dt*o.v;});
+  }
+  // HUD
+  document.getElementById('spd').textContent=Math.round(pS.v*3.6)+' KMH';
+  document.getElementById('jarak').textContent=Math.round(Math.min(pS.d,400))+' M';
+  const rank=1+foes.filter(o=>o.d>pS.d).length;
+  // HAPUS PERINGKAT - ganti jadi jarak bebas
+  document.getElementById('lawan').textContent=Math.round(pS.d)+'M / '+ROAD_LEN+'M BEBAS';
+  document.getElementById('rpmfill').style.width=Math.min(100,pS.rpm*100)+'%';
+  document.getElementById('gear').textContent=pS.g;
+  // kamera ikut
+  camera.position.lerp(new THREE.Vector3(player.position.x,4.2,player.position.z+13),1-Math.pow(.01,dt));
+  camera.lookAt(player.position.x,1,player.position.z-10);
+  // HAPUS TIMER & FINISH - jalan panjang bebas tanpa batas waktu
+  if(pS.d>=ROAD_LEN){
+   pS.d=0; // loop balik ke start biar bisa jalan terus tanpa finish
+   // reset posisi lawan juga
+   foes.forEach(o=>o.d=0);
+  }
+ }
+ renderer.render(scene,camera);})();
+window.__booted=true;
+</script>
+
+
+</body>
+</html>
