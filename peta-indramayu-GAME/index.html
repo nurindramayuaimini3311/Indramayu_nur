@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Peta Indramayu 3D - Index Titik</title>
+<title>Peta Indramayu 3D - FIX Jalur Real Celeng Lohbener</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#161616">
 <meta name="mobile-web-app-capable" content="yes">
@@ -61,7 +61,7 @@
 <div id="map"></div>
 <div class="header">
  <h1>🗺️ PETA INDRAMAYU 3D</h1>
- <p><b style="color:#fff">HITAM</b>=A Pantura 30mnt • <b style="color:#ffcf40">KUNING</b>=B Sawah • <b style="color:#60a5fa">BIRU</b>=C Desa • Buka ☰ untuk menu</p>
+ <p><b style="color:#fff">HITAM</b>=A Patrol-Celeng-Jatibarang • <b style="color:#ffcf40">KUNING</b>=B Sawah • <b style="color:#60a5fa">BIRU</b>=C Desa • <b style="color:#ff2222">MERAH</b>=D Celeng-Indramayu • Pin sudah REAL</p>
 </div>
 <button id="burger" onclick="document.getElementById('drawer').classList.add('open');document.getElementById('scrim').classList.add('open')">☰</button>
 <div id="scrim" onclick="document.getElementById('drawer').classList.remove('open');this.classList.remove('open')"></div>
@@ -89,7 +89,7 @@
  <a style="background:#888;color:#fff" href="kuburan.html">🪦 Kuburan</a>
  <a style="background:#ffdd33" href="mancing.html">🎣 Mancing</a>
  <a style="background:#ff2222;color:#fff" href="spbu.html">⛽ SPBU</a>
- <a style="background:#22cc55" href="pasar.html">🏪 Pasar</a>
+ <a style="background:#ff3b30;color:#fff" href="pasar.html">🏪 Pasar</a>
  </div>
  <h3>⭐ CONTOH</h3>
  <a style="background:#a78bfa" href="3D_MODEL.html">🏖 3D_MODEL Pantai</a>
@@ -97,17 +97,23 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // TITIK INDRAMAYU (demo, bisa digeser sesuai lokasi asli)
+// TITIK REAL - sudah diperbaiki pakai koordinat asli
 const T={
- rumah:{n:'🏠 Rumah',c:[-6.4780,108.3120],f:'rumah.html',w:'#ff8844',m:1,yt:'https://www.youtube.com/watch?v=IZBfLoRmqgU'},
- masjid:{n:'🕌 Masjid',c:[-6.4740,108.3090],f:'masjid.html',w:'#22cc55',yt:'https://www.youtube.com/watch?v=ckB4alwkoBw'},
- gereja:{n:'⛪ Gereja',c:[-6.4720,108.3150],f:'gereja.html',w:'#cccccc',yt:'https://www.youtube.com/watch?v=XHFyOrG3LU0'},
-klenteng:{n:'🏮 Klenteng',c:[-6.4700,108.3050],f:'klenteng.html',w:'#ff3333',yt:'https://www.youtube.com/watch?v=9QLdFJh3Zqo'},
-  sawah:{n:'🌾 Sawah',c:[-6.4600,108.2800],f:'sawah.html',w:'#ffcf40',yt:'https://www.youtube.com/watch?v=5vycxEduVDo'},
+ rumah:{n:'🏠 Rumah Jatibarang',c:[-6.4780,108.3120],f:'rumah.html',w:'#ff8844',m:1,yt:'https://www.youtube.com/watch?v=IZBfLoRmqgU'},
+ masjid:{n:'🕌 Masjid Nurul Huda Larangan',c:[-6.407979,108.256639],f:'masjid.html',w:'#22cc55',yt:'https://www.youtube.com/watch?v=ckB4alwkoBw'},
+ gereja:{n:'⛪ Gereja Jatibarang',c:[-6.4720,108.3150],f:'gereja.html',w:'#cccccc',yt:'https://www.youtube.com/watch?v=XHFyOrG3LU0'},
+ klenteng:{n:'🏮 Klenteng Jatibarang',c:[-6.4700,108.3050],f:'klenteng.html',w:'#ff3333',yt:'https://www.youtube.com/watch?v=9QLdFJh3Zqo'},
+ sawah:{n:'🌾 Sawah Lohbener',c:[-6.4600,108.2800],f:'sawah.html',w:'#ffcf40',yt:'https://www.youtube.com/watch?v=5vycxEduVDo'},
  laut:{n:'🌊 Laut Eretan',c:[-6.2730,108.0620],f:'laut.html',w:'#00bfff',m:1,yt:'https://www.youtube.com/watch?v=cd2MaybV5-M'},
- kubur:{n:'🪦 Makam Wiralodra',c:[-6.3980,108.3020],f:'kuburan.html',w:'#888888'},
- mancing:{n:'🎣 Orang Mancing',c:[-6.3480,108.1900],f:'mancing.html',w:'#ffdd33'},
- spbu:{n:'⛽ SPBU Isi Bensin',c:[-6.4030,108.2500],f:'spbu.html',w:'#ff2222'},
- larangan:{n:'🏡 Desa Larangan',c:[-6.4490,108.2500],f:'larangan.html',w:'#ffcf40'},  pasar:{n:'🏪 Pasar Patrol',c:[-6.4300,108.2900],f:'pasar.html',w:'#22cc55'},
+ kubur:{n:'🪦 Makam Wiralodra Sindang',c:[-6.3980,108.3020],f:'kuburan.html',w:'#888888'},
+ mancing:{n:'🎣 Orang Mancing Eretan',c:[-6.3480,108.1900],f:'mancing.html',w:'#ffdd33'},
+ spbu:{n:'⛽ SPBU Lohbener',c:[-6.4030,108.2500],f:'spbu.html',w:'#ff2222'},
+ larangan:{n:'🏡 Desa Larangan Real',c:[-6.407979,108.256639],f:'larangan.html',w:'#ffcf40'},
+ halte:{n:'🚏 Busstop Larangan Real',c:[-6.40458555,108.2670992],f:'larangan.html',w:'#2563eb'},
+ celeng:{n:'⭐ GERBANG CELENG LOHBENER',c:[-6.39514938,108.28548697],f:'larangan.html',w:'#22cc55'},
+ pasar:{n:'🏪 Pasar Patrol',c:[-6.31421005,107.99739269],f:'pasar.html',w:'#ff3b30',m:1},
+ pasarJT:{n:'🏪 Pasar Jatibarang',c:[-6.47293261,108.30617431],f:'pasar.html',w:'#ff3b30',m:1},
+ terminal:{n:'🚌 Terminal Indramayu',c:[-6.33585815,108.33462292],w:'#2563eb'},
  bukit:{n:'⛰️ Bukit Eretan',c:[-6.3000,108.1200],f:'patrol-jalan.html',w:'#2a7a3a'},
  tani:{n:'👨‍🌾 Petani 9 Orang',c:[-6.4550,108.2720],f:'sawah.html',w:'#228800'},
  tani2:{n:'👨‍🌾 Sawah2 Petani Bubble 🎩',c:[-6.4490,108.2640],f:'sawah2.html',w:'#88ff44'},
@@ -116,18 +122,22 @@ klenteng:{n:'🏮 Klenteng',c:[-6.4700,108.3050],f:'klenteng.html',w:'#ff3333',y
  rumah6:{n:'🏠 Kang Darto',c:[-6.3300,108.0900],f:'rumah6.html',w:'#ffb347',m:1},
  rumah7:{n:'🏠 Mad Amin',c:[-6.4600,108.1200],f:'rumah7.html',w:'#ffb347',m:1}
 };
-const map=L.map('map').setView([-6.38,108.20],10);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
-// JALAN 30 MENIT dari game patrol: 3 rute bercabang Jatibarang → Laut Eretan
-const RUTE_A=[[-6.4758,108.3104],[-6.455,108.295],[-6.43,108.27],[-6.405,108.245],[-6.38,108.215],[-6.35,108.185],[-6.32,108.15],[-6.295,108.11],[-6.2730,108.0620]];
-const RUTE_B=[[-6.4758,108.3104],[-6.465,108.28],[-6.45,108.245],[-6.425,108.20],[-6.39,108.155],[-6.35,108.11],[-6.31,108.08],[-6.2730,108.0620]];
-const RUTE_C=[[-6.4758,108.3104],[-6.45,108.325],[-6.42,108.315],[-6.385,108.29],[-6.35,108.26],[-6.315,108.21],[-6.29,108.15],[-6.2730,108.0620]];
-// RUTE HITAM PANJANG = Rute A Pantura (jalan utama 30 menit)
-L.polyline(RUTE_A,{color:'#000',weight:6,opacity:.9}).addTo(map);
-L.polyline(RUTE_A,{color:'#fff',weight:1.5,dashArray:'8,8',opacity:.8}).addTo(map);
-// Rute B SAWAH (kuning, shortcut) + Rute C DESA (biru)
-L.polyline(RUTE_B,{color:'#ffcf40',weight:4,opacity:.9}).addTo(map);
-L.polyline(RUTE_C,{color:'#60a5fa',weight:4,opacity:.9}).addTo(map);
+const map=L.map('map').setView([-6.39514938,108.28548697],12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap - Jalur Real'}).addTo(map);
+// JALUR REAL DIPERBAIKI: Patrol → Larangan → Celeng → Jatibarang (Pantura) + Celeng → Indramayu Kota (Merah)
+const RUTE_A=[[-6.31421005,107.99739269],[-6.35,108.10],[-6.38,108.20],[-6.40458555,108.2670992],[-6.39514938,108.28548697],[-6.42,108.295],[-6.47293261,108.30617431]];
+const RUTE_B=[[-6.31421005,107.99739269],[-6.33,108.15],[-6.36,108.22],[-6.385,108.28],[-6.39514938,108.28548697],[-6.42,108.295],[-6.47293261,108.30617431]];
+const RUTE_C=[[-6.31421005,107.99739269],[-6.32,108.12],[-6.34,108.18],[-6.407979,108.256639],[-6.40458555,108.2670992],[-6.39514938,108.28548697],[-6.47293261,108.30617431]];
+// JALAN BARU MERAH Celeng → Indramayu Kota
+const RUTE_MERAH=[[-6.39514938,108.28548697],[-6.385,108.295],[-6.37,108.31],[-6.35,108.325],[-6.33585815,108.33462292],[-6.32920874,108.31571446]];
+// RUTE DIPERBAIKI - HITAM Pantura utama 30 menit
+L.polyline(RUTE_A,{color:'#000',weight:7,opacity:.95}).addTo(map).bindPopup('A: Patrol → Larangan → CELENG → Jatibarang (30 menit)');
+L.polyline(RUTE_A,{color:'#fff',weight:2,dashArray:'10,10',opacity:.9}).addTo(map);
+// Rute B SAWAH (kuning) + Rute C DESA (biru)
+L.polyline(RUTE_B,{color:'#ffcf40',weight:5,opacity:.9}).addTo(map).bindPopup('B: Sawah Shortcut via Celeng');
+L.polyline(RUTE_C,{color:'#60a5fa',weight:5,opacity:.9}).addTo(map).bindPopup('C: Desa via Masjid Larangan');
+// JALAN BARU MERAH Celeng → Indramayu
+L.polyline(RUTE_MERAH,{color:'#ff2222',weight:8,opacity:.95}).addTo(map).bindPopup('🔴 JALAN BARU: Celeng Lohbener → Terminal & Kota Indramayu (13 KM)');
 // MARKER tiap titik → popup tombol masuk 3D + video + komentar
 const ALWI_API = (window.ALWI_API||'https://script.google.com/macros/s/AKfycby-gpf71cTrZ7e8yJy07mgo0Dy9Gn_WQtJ_VVW1cBUDdQla-mWSigdO8CzmaCL5-rdZ/exec');
 // Video YouTube default semua pin; bisa beda per lokasi lewat kolom `yt` di objek T
@@ -139,7 +149,8 @@ function ALWI_BUKA_LOKAL(k){
 }
 Object.entries(T).forEach(([key,t],i)=>{
  const icon=L.divIcon({className:'',html:`<div class="pin" style="background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(0,0,0,.25)),${t.w}"><div class="pin-c">${t.n.split(' ')[0]}</div><span class="pin-n">${i+1}</span></div>`,iconSize:[34,34]});
- L.marker(t.c,{icon}).addTo(map).bindPopup(`<b>${t.n}</b><br><a class="masuk" href="${t.f}">▶ MASUK 3D</a> <button class="tanya" onclick="ALWI_BUKA_LOKAL('${key.replace(/'/g,"\\'")}')">📹 Video & Komentar</button>`);
+ const masuk=t.f?`<a class="masuk" href="${t.f}">▶ MASUK 3D</a> `:'';
+ L.marker(t.c,{icon}).addTo(map).bindPopup(`<b>${t.n}</b><br>${masuk}<button class="tanya" onclick="ALWI_BUKA_LOKAL('${key.replace(/'/g,"\\'")}')">📹 Video & Komentar</button>`);
 });
 map.fitBounds(L.latLngBounds([...RUTE_A,...RUTE_B,...RUTE_C,...Object.values(T).map(t=>t.c)]),{padding:[30,30]});
 </script>
