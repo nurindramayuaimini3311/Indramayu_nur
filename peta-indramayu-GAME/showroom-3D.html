@@ -44,11 +44,11 @@
   <h1>PATROLI <span>JATIBARANG</span></h1>
   <p>Start → keliling sirkuit: <b>Sawah</b> 🌾 → <b>Kota</b> 🏠 → <b>Laut</b> 🌊 → balik lagi.<br>Nose mobil = -Z • 60fps HP</p>
   <div id="veh">
-    <button data-v="mobil">MOBIL</button>
-    <button data-v="bus" class="on">SINAR JAYA BUS</button>
-    <button data-v="truk">PERTAMINA TRUK</button>
-    <button data-v="tebu">TRUK TEBU</button>
-    <button data-v="f1">F1 MERAH</button>
+    <button data-v="mobil">JEEP MERAH FERRARI</button>
+    <button data-v="bus" class="on">LURAGUNG JAYA ALWI KUNING JINGGA</button>
+    <button data-v="truk">PERTAMINA MERAH PUTIH</button>
+    <button data-v="tebu">TRUK TEBU LOHBENER</button>
+    <button data-v="f1">F1 MERAH FERRARI</button>
   </div>
   <button id="bStart">▶ START PATROLI</button>
   <button id="bShow">Lihat model dulu (showroom)</button>
@@ -171,32 +171,93 @@ function wheel(r,w,x,y,z){const g=new THREE.Group();
  g.position.set(x,y,z);g.userData.spin=t;return g;}
 function kaca(w,h,d,x,y,z){return box(w,h,d,new THREE.MeshStandardMaterial({color:0x9fd8ff,roughness:.1,metalness:.6,transparent:true,opacity:.85}),x,y,z);}
 function lampu(x,y,z,c=0xfff6b0){const o=new THREE.Mesh(new THREE.SphereGeometry(.14,12,12),new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:1}));o.position.set(x,y,z);return o;}
-function buildMobil(color=0xd21f26){const G=new THREE.Group(),B=M(color,.5,.4);
- G.add(box(1.9,.55,4.2,B,0,.65,0),box(1.7,.55,2.2,B,0,1.15,-.2),kaca(1.72,.4,1.1,0,1.15,.55),kaca(1.5,.35,.08,0,1.2,-1.32));
- G.add(box(1.92,.18,4.25,M(0x111111,.8,0),0,.42,0),lampu(-.6,.7,-2.11),lampu(.6,.7,-2.11));
- [[-.95,-1.35],[.95,-1.35],[-.95,1.35],[.95,1.35]].forEach(([x,z])=>G.add(wheel(.38,.3,x,.38,z)));return G;}
-function buildBus(color=0xff1a1a){const G=new THREE.Group(),B=M(color,.55,.2);
- G.add(box(2.5,1.9,10,B,0,1.55,0),box(2.52,.5,10.02,M(0xffffff,.6,.1),0,.75,0),kaca(2.3,1,.9,0,1.9,-4.6));
+function buildMobil(color=0xcc0000){ // JEEP MERAH FERRARI - merah Ferrari garang
+ const G=new THREE.Group(),B=M(0xd40000,.35,.6);
+ G.add(box(1.9,.65,4.2,B,0,.75,0),box(1.7,.6,2.2,M(0xaa0000,.3,.5),0,1.25,-.2),kaca(1.72,.4,1.1,0,1.25,.55),kaca(1.5,.35,.08,0,1.3,-1.32));
+ G.add(box(1.92,.18,4.25,M(0x111111,.8,0),0,.52,0),lampu(-.6,.8,-2.11,0xff0000),lampu(.6,.8,-2.11,0xff0000));
+ // stripe kuning ALWI
+ G.add(box(1.91,.05,4.22,M(0xffd700,.4,.6),0,.95,0));
+ [[-.95,-1.35],[.95,-1.35],[-.95,1.35],[.95,1.35]].forEach(([x,z])=>G.add(wheel(.42,.35,x,.42,z)));
+ // tulisan ALWI di atap
+ const cv=document.createElement('canvas');cv.width=256;cv.height=64;const cx=cv.getContext('2d');cx.fillStyle='#ffd700';cx.fillRect(0,0,256,64);cx.fillStyle='#000';cx.font='bold 36px Arial';cx.fillText('ALWI',60,45);
+ const tex=new THREE.CanvasTexture(cv);const alwiPlane=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.3),new THREE.MeshBasicMaterial({map:tex}));alwiPlane.rotation.x=-Math.PI/2;alwiPlane.position.set(0,1.56,0);G.add(alwiPlane);
+ return G;}
+function buildBus(color=0xffcc00){ // LURAGUNG JAYA ALWI KUNING JINGGA SERAM - kuning + garis jingga + ALWI putih belakang + garis jingga atap
+ const G=new THREE.Group(),B=M(0xffcc00,.55,.2); // kuning utama
+ const O=M(0xff6600,.55,.3); // jingga
+ const H=M(0x111111,.8,0); // hitam
+ const W=M(0xffffff,.9,.1);
+ G.add(box(2.5,1.9,10,B,0,1.55,0),box(2.52,.5,10.02,W,0,.75,0),kaca(2.3,1,.9,0,1.9,-4.6));
+ // garis jingga seram di samping bawah
+ G.add(box(2.55,.25,9.5,O,0,.95,0),box(2.55,.08,9.5,H,0,1.15,0),box(2.55,.12,9.5,M(0xff3300,.5,.3),0,.55,0));
+ // GARIS JINGGA DI ATAS ATAP - sesuai request
+ G.add(box(2.55,.06,10.1,O,0,2.52,0),box(2.55,.04,10.1,M(0xff3300,.6,.2),0,2.55,0));
+ // list hitam oranye di depan
+ G.add(box(2.51,.35,1.2,H,0,1.2,-4.4),box(2.52,.12,.8,O,0,1.5,-4.2));
+ // kaca samping
  for(let s of[-1,1])for(let i=0;i<4;i++)G.add(kaca(.06,.8,1.4,s*1.26,1.9,-1.2+i*1.7));
- G.add(lampu(-.9,.7,-5.01),lampu(.9,.7,-5.01));
- [[-1.1,-3.3],[1.1,-3.3],[-1.1,3.3],[1.1,3.3]].forEach(([x,z])=>G.add(wheel(.5,.4,x,.5,z)));return G;}
-function buildTruk(color=0x1a8a2a){const G=new THREE.Group();
- G.add(box(2.4,1.6,2.6,M(color,.5,.3),0,1.4,-3.6),kaca(2,.7,.2,0,1.7,-4.92));
- G.add(cyl(1.15,1.15,6.5,M(0xdfe6ea,.35,.7),0,1.55,.8,Math.PI/2,0,24),box(2,.5,.3,M(0xff3300,.5,.2),0,1.5,-2.2));
- [[-1,-3.6],[1,-3.6],[-1,1.2],[1,1.2],[-1,3.2],[1,3.2]].forEach(([x,z])=>G.add(wheel(.5,.4,x,.5,z)));return G;}
-function buildTebu(){const G=new THREE.Group();
+ G.add(lampu(-.9,.7,-5.01,0xffcc00),lampu(.9,.7,-5.01,0xffcc00));
+ // velg kuning + oranye
+ [[-1.1,-3.3],[1.1,-3.3],[-1.1,3.3],[1.1,3.3]].forEach(([x,z])=>{const w=wheel(.5,.4,x,.5,z); w.children[1].material=M(0xffcc00,.3,.6); G.add(w);});
+ // tulisan LURAGUNG JAYA UTAMA ALWI di samping (canvas)
+ const cv2=document.createElement('canvas');cv2.width=512;cv2.height=128;const x2=cv2.getContext('2d');x2.fillStyle='#ffcc00';x2.fillRect(0,0,512,128);x2.fillStyle='#0044aa';x2.font='bold 32px Arial';x2.fillText('LURAGUNG JAYA UTAMA',10,50);x2.fillStyle='#ff4400';x2.font='bold 28px Arial';x2.fillText('ALWI',10,90);x2.fillStyle='#000';x2.fillRect(0,100,512,8);x2.fillStyle='#ff6600';x2.fillRect(0,108,512,12);
+ const tex2=new THREE.CanvasTexture(cv2);const side1=new THREE.Mesh(new THREE.PlaneGeometry(5,.9),new THREE.MeshBasicMaterial({map:tex2}));side1.position.set(1.26,1.6,0);side1.rotation.y=Math.PI/2;G.add(side1);
+ const side2=side1.clone();side2.position.set(-1.26,1.6,0);side2.rotation.y=-Math.PI/2;G.add(side2);
+ // TULISAN ALWI PUTIH DI BELAKANG BUS - sesuai request
+ const cvBack=document.createElement('canvas');cvBack.width=512;cvBack.height=256;const xb=cvBack.getContext('2d');
+ xb.fillStyle='#ffcc00';xb.fillRect(0,0,512,256);
+ xb.fillStyle='#000';xb.fillRect(0,0,512,12);xb.fillStyle='#ff6600';xb.fillRect(0,12,512,16);
+ xb.fillStyle='#ffffff';xb.font='900 90px Arial';xb.textAlign='center';xb.fillText('ALWI',256,130);
+ xb.fillStyle='#0044aa';xb.font='bold 28px Arial';xb.fillText('LURAGUNG JAYA UTAMA',256,170);
+ xb.strokeStyle='#fff';xb.lineWidth=4;xb.strokeText('ALWI',256,130);
+ const texBack=new THREE.CanvasTexture(cvBack);
+ const backPlane=new THREE.Mesh(new THREE.PlaneGeometry(2.4,1.2),new THREE.MeshBasicMaterial({map:texBack}));
+ backPlane.position.set(0,1.6,5.01); backPlane.rotation.y=Math.PI; // belakang
+ G.add(backPlane);
+ return G;}
+function buildTruk(color=0xcc0000){ // PERTAMINA MERAH PUTIH - tangki putih garis merah bendera Indonesia + kepala merah garis jingga
+ const G=new THREE.Group();
+ // kepala merah + GARIS JINGGA
+ G.add(box(2.4,1.6,2.6,M(0xcc0000,.5,.3),0,1.4,-3.6),kaca(2,.7,.2,0,1.7,-4.92));
+ G.add(box(2.41,.18,1.8,M(0xff6600,.6,.3),0,1.8,-3.6),box(2.41,.06,1.8,M(0xffd700,.5,.6),0,1.95,-3.6)); // garis jingga di kepala
+ // tangki putih dengan GARIS MERAH seperti bendera Indonesia
+ G.add(cyl(1.15,1.15,6.5,M(0xfff8e7,.45,.2),0,1.55,.8,Math.PI/2,0,24)); // PUTIH SUSU - bukan putih kertas
+ // garis merah di tangki
+ G.add(box(0.1,0.3,6.6,M(0xcc0000,.5,.3),0,2.1,.8),box(0.1,0.3,6.6,M(0xcc0000,.5,.3),0,1.0,.8));
+ G.add(cyl(1.16,1.16,.6,M(0xcc0000,.5,.3),0,1.55,-1.2,Math.PI/2,0,24),cyl(1.16,1.16,.6,M(0xcc0000,.5,.3),0,1.55,2.8,Math.PI/2,0,24));
+ G.add(box(2,.5,.3,M(0xff3300,.5,.2),0,1.5,-2.2));
+ [[-1,-3.6],[1,-3.6],[-1,1.2],[1,1.2],[-1,3.2],[1,3.2]].forEach(([x,z])=>G.add(wheel(.5,.4,x,.5,z)));
+ // tulisan PERTAMINA + ALWI merah putih
+ const cv=document.createElement('canvas');cv.width=512;cv.height=128;const cx=cv.getContext('2d');
+ cx.fillStyle='#fff8e7';cx.fillRect(0,0,512,64);cx.fillStyle='#cc0000';cx.fillRect(0,64,512,64); // putih susu
+ cx.fillStyle='#cc0000';cx.font='bold 36px Arial';cx.fillText('PERTAMINA',10,45);
+ cx.fillStyle='#ffffff';cx.font='900 36px Arial';cx.fillText('ALWI - INDONESIA',10,108);
+ const tex=new THREE.CanvasTexture(cv);
+ const p=new THREE.Mesh(new THREE.PlaneGeometry(5,.7),new THREE.MeshBasicMaterial({map:tex}));
+ p.position.set(0,1.9,0.8);p.rotation.y=Math.PI/2;G.add(p);
+ return G;}
+function buildTebu(){ // TRUK TEBU LOHBENER - hijau + muatan tebu kuning
+ const G=new THREE.Group();
  G.add(box(2.3,1.5,2.4,M(0x2a7a2a,.6,.2),0,1.3,-5.2),kaca(1.9,.6,.2,0,1.6,-6.42));
  const bak=M(0x6b4a1f,.8,.1);G.add(box(2.4,.3,7,bak,0,.9,-.5));
  for(let s of[-1,1])G.add(box(.12,1.6,7,bak,s*1.2,1.8,-.5));
- const tm=M(0xd8c56a,.9,0);
- for(let i=0;i<12;i++)G.add(cyl(.14,.14,6.2,tm,(Math.random()-.5)*1.3,1.6+Math.random()*.8,-.5,Math.PI/2,0,8));
- [[-1,-5.2],[1,-5.2],[-1,-1],[1,-1],[-1,1.5],[1,1.5]].forEach(([x,z])=>G.add(wheel(.5,.4,x,.5,z)));return G;}
-function buildF1(color=0xff0000){const G=new THREE.Group(),B=M(color,.35,.6);
- G.add(box(.7,.4,4.4,B,0,.5,-.3),box(.28,.28,1.8,B,0,.45,-2.8),box(1.9,.12,.6,B,0,.65,2.35),box(1.8,.1,.45,B,0,.75,-3.4),kaca(.5,.35,.9,0,.85,.1));
- const halo=new THREE.Mesh(new THREE.TorusGeometry(.38,.06,10,20),M(0x111111,.5,.6));halo.position.set(0,1,.1);halo.rotation.x=1.35;G.add(halo);
- [[-.95,-2.9],[.95,-2.9],[-1,1.9],[1,1.9]].forEach(([x,z],i)=>G.add(wheel(i<2?.42:.48,.55,x,i<2?.42:.48,z)));return G;}
+ const tm=M(0xd8c56a,.9,0); // tebu kering kuning
+ const tm2=M(0x4a8a2a,.8,.2); // tebu hijau
+ for(let i=0;i<18;i++){const col=i%2?tm:tm2; G.add(cyl(.14,.14,6.5,col,(Math.random()-.5)*1.5,1.8+Math.random()*.9,-.5+Math.random()*.5,Math.PI/2,0,8));}
+ // overload ke atas biar keliatan penuh
+ for(let i=0;i<8;i++)G.add(cyl(.13,.13,6.2,tm,(Math.random()-.5)*1.2,2.5+Math.random()*.4,-.5,Math.PI/2,0,8));
+ [[-1,-5.2],[1,-5.2],[-1,-1],[1,-1],[-1,1.5],[1,1.5]].forEach(([x,z])=>G.add(wheel(.55,.45,x,.55,z)));
+ return G;}
+function buildF1(color=0xff0000){ // F1 MERAH FERRARI
+ const G=new THREE.Group(),B=M(0xff0000,.25,.7);
+ G.add(box(.7,.45,4.4,B,0,.55,-.3),box(.28,.28,1.8,B,0,.5,-2.8),box(1.9,.14,.6,M(0xcc0000,.3,.6),0,.7,2.35),box(1.8,.12,.45,B,0,.8,-3.4),kaca(.5,.35,.9,0,.9,.1));
+ // kuning ALWI di F1
+ G.add(box(.71,.05,4.41,M(0xffd700,.3,.8),0,.7,-.3));
+ const halo=new THREE.Mesh(new THREE.TorusGeometry(.38,.06,10,20),M(0x111111,.5,.6));halo.position.set(0,1.05,.1);halo.rotation.x=1.35;G.add(halo);
+ [[-.95,-2.9],[.95,-2.9],[-1,1.9],[1,1.9]].forEach(([x,z],i)=>G.add(wheel(i<2?.42:.48,.55,x,i<2?.42:.48,z)));
+ return G;}
 const builders={mobil:buildMobil,bus:buildBus,truk:buildTruk,tebu:buildTebu,f1:buildF1};
-const names={mobil:'MOBIL',bus:'SINAR JAYA BUS',truk:'PERTAMINA TRUK',tebu:'TRUK TEBU',f1:'F1 MERAH'};
+const names={mobil:'JEEP MERAH FERRARI ALWI',bus:'LURAGUNG JAYA ALWI KUNING JINGGA SERAM',truk:'PERTAMINA MERAH PUTIH ALWI',tebu:'TRUK TEBU LOHBENER OVERLOAD',f1:'F1 MERAH FERRARI'};
 
 let cur='bus',car=new THREE.Group(),mode='menu',t=0,speed=0,gas=false,rem=false;
 function setCar(id){cur=id;scene.remove(car);car=new THREE.Group();car.add(builders[id]());scene.add(car);
