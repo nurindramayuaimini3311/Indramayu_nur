@@ -34,6 +34,27 @@
  .leaflet-popup-content-wrapper{background:#1e1e1e;color:#fff;border:1px solid #ffd700;border-radius:10px}
  .leaflet-popup-tip{background:#1e1e1e}
  .masuk{display:inline-block;margin-top:6px;background:#ffd700;color:#000;font-weight:bold;padding:8px 14px;border-radius:8px;text-decoration:none}
+.tanya{display:inline-block;margin-top:6px;margin-left:4px;background:#4f46e5;color:#fff;font-weight:bold;padding:8px 10px;border-radius:8px;text-decoration:none;cursor:pointer;border:0;font-size:12px}
+/* PIN BENTUK 🏠 */
+.pin{position:relative;width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #000;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.55)}
+.pin-c{transform:rotate(45deg);font-size:17px;line-height:1}
+.pin-n{position:absolute;right:-7px;bottom:-7px;background:#FFD700;color:#000;font-weight:bold;font-size:10px;border-radius:50%;width:15px;height:15px;display:flex;align-items:center;justify-content:center;border:2px solid #000;transform:rotate(45deg)}
+/* KARTU TANYA JAWAB */
+#kartu{position:fixed;left:0;right:0;bottom:0;z-index:3000;background:#161616;color:#fff;border-top:2px solid #ffd700;border-radius:16px 16px 0 0;max-height:62vh;display:flex;flex-direction:column;transform:translateY(105%);transition:transform .25s;box-shadow:0 -10px 40px rgba(0,0,0,.6)}
+#kartu.open{transform:none}
+#kartu-hd{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-weight:bold;color:#ffd700;font-size:14px}
+#kartu-titik{font-size:12px;color:#ccc;padding:0 14px 8px;border-bottom:1px solid #222}
+#kartu-list{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:8px}
+.kom{background:#222;border-radius:10px;padding:8px 10px}
+.kom b{color:#ffd700;font-size:12px;display:block}
+.kom span{color:#888;font-size:10px;float:right}
+.kom p{margin:4px 0 0;font-size:13px;line-height:1.4}
+.kom-kosong{color:#888;font-size:13px;text-align:center;padding:16px 0}
+#kartu-form{display:flex;gap:6px;padding:8px 14px 14px;border-top:1px solid #222;flex-wrap:wrap}
+#kartu-form input{flex:1;min-width:120px;padding:9px 10px;border:1px solid #444;border-radius:10px;background:#0d0d0d;color:#fff;font-size:13px;outline:none}
+#kartu-form button{padding:9px 16px;border:0;border-radius:10px;background:#4f46e5;color:#fff;font-weight:bold;cursor:pointer}
+#Kx{background:none;border:0;color:#ffd700;font-size:20px;cursor:pointer}
+#kartu-err{display:none;font-size:12px;color:#ffb4b4;padding:0 14px}
 </style>
 </head>
 <body>
@@ -46,6 +67,7 @@
 <div id="scrim" onclick="document.getElementById('drawer').classList.remove('open');this.classList.remove('open')"></div>
 <nav id="drawer">
  <button class="x" onclick="document.getElementById('drawer').classList.remove('open');document.getElementById('scrim').classList.remove('open')">✕</button>
+ <a style="background:#111;color:#FFD700;border:2px solid #FFD700" href="http://34.170.37.50:8080/">🏠 HOME</a>
  <h3>🎮 GAME</h3>
  <a style="background:#ff3333" href="patrol-jalan.html">🏁 Drag Race Eretan 400M</a>
  <a style="background:#22cc55;color:#000" href="patrol-bebas.html">🚗 Bebas: Setir + Suara</a>
@@ -76,12 +98,12 @@
 <script>
 // TITIK INDRAMAYU (demo, bisa digeser sesuai lokasi asli)
 const T={
- rumah:{n:'🏠 Rumah',c:[-6.4780,108.3120],f:'rumah.html',w:'#ff8844',m:1},
- masjid:{n:'🕌 Masjid',c:[-6.4740,108.3090],f:'masjid.html',w:'#22cc55'},
- gereja:{n:'⛪ Gereja',c:[-6.4720,108.3150],f:'gereja.html',w:'#cccccc'},
-klenteng:{n:'🏮 Klenteng',c:[-6.4700,108.3050],f:'klenteng.html',w:'#ff3333'},
-  sawah:{n:'🌾 Sawah',c:[-6.4600,108.2800],f:'sawah.html',w:'#ffcf40'},
- laut:{n:'🌊 Laut Eretan',c:[-6.2730,108.0620],f:'laut.html',w:'#00bfff',m:1},
+ rumah:{n:'🏠 Rumah',c:[-6.4780,108.3120],f:'rumah.html',w:'#ff8844',m:1,yt:'https://www.youtube.com/watch?v=IZBfLoRmqgU'},
+ masjid:{n:'🕌 Masjid',c:[-6.4740,108.3090],f:'masjid.html',w:'#22cc55',yt:'https://www.youtube.com/watch?v=ckB4alwkoBw'},
+ gereja:{n:'⛪ Gereja',c:[-6.4720,108.3150],f:'gereja.html',w:'#cccccc',yt:'https://www.youtube.com/watch?v=XHFyOrG3LU0'},
+klenteng:{n:'🏮 Klenteng',c:[-6.4700,108.3050],f:'klenteng.html',w:'#ff3333',yt:'https://www.youtube.com/watch?v=9QLdFJh3Zqo'},
+  sawah:{n:'🌾 Sawah',c:[-6.4600,108.2800],f:'sawah.html',w:'#ffcf40',yt:'https://www.youtube.com/watch?v=5vycxEduVDo'},
+ laut:{n:'🌊 Laut Eretan',c:[-6.2730,108.0620],f:'laut.html',w:'#00bfff',m:1,yt:'https://www.youtube.com/watch?v=cd2MaybV5-M'},
  kubur:{n:'🪦 Makam Wiralodra',c:[-6.3980,108.3020],f:'kuburan.html',w:'#888888'},
  mancing:{n:'🎣 Orang Mancing',c:[-6.3480,108.1900],f:'mancing.html',w:'#ffdd33'},
  spbu:{n:'⛽ SPBU Isi Bensin',c:[-6.4030,108.2500],f:'spbu.html',w:'#ff2222'},
@@ -106,14 +128,24 @@ L.polyline(RUTE_A,{color:'#fff',weight:1.5,dashArray:'8,8',opacity:.8}).addTo(ma
 // Rute B SAWAH (kuning, shortcut) + Rute C DESA (biru)
 L.polyline(RUTE_B,{color:'#ffcf40',weight:4,opacity:.9}).addTo(map);
 L.polyline(RUTE_C,{color:'#60a5fa',weight:4,opacity:.9}).addTo(map);
-// MARKER tiap titik → popup tombol masuk html
-Object.values(T).forEach((t,i)=>{
- const icon=L.divIcon({className:'',html: t.m ? `<div style="background:${t.w};width:30px;height:30px;border-radius:50%;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;">🏠<span style="position:absolute;right:-5px;bottom:-5px;background:#FFD700;color:#000;font-weight:bold;font-size:10px;border-radius:50%;width:15px;height:15px;display:flex;align-items:center;justify-content:center;border:2px solid #000;">${i+1}</span></div>` : `<div style="background:${t.w};width:26px;height:26px;border-radius:50%;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#000;">${i+1}</div>`,iconSize:t.m?[30,30]:[26,26]});
- L.marker(t.c,{icon}).addTo(map).bindPopup(`<b>${t.n}</b><br><a class="masuk" href="${t.f}">▶ MASUK 3D</a>`);
+// MARKER tiap titik → popup tombol masuk 3D + video + komentar
+const ALWI_API = (window.ALWI_API||'https://script.google.com/macros/s/AKfycby-gpf71cTrZ7e8yJy07mgo0Dy9Gn_WQtJ_VVW1cBUDdQla-mWSigdO8CzmaCL5-rdZ/exec');
+// Video YouTube default semua pin; bisa beda per lokasi lewat kolom `yt` di objek T
+window.YT_DEFAULT='https://www.youtube.com/watch?v=IZBfLoRmqgU';
+function ALWI_BUKA_LOKAL(k){
+ const t=T[k]; if(!t) return;
+ window.ALWI_WIDGET_VIDEO=t.yt||window.YT_DEFAULT||'';
+ ALWI_WIDGET_KARTU(k,t.n);
+}
+Object.entries(T).forEach(([key,t],i)=>{
+ const icon=L.divIcon({className:'',html:`<div class="pin" style="background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(0,0,0,.25)),${t.w}"><div class="pin-c">🏠</div><span class="pin-n">${i+1}</span></div>`,iconSize:[34,34]});
+ L.marker(t.c,{icon}).addTo(map).bindPopup(`<b>${t.n}</b><br><a class="masuk" href="${t.f}">▶ MASUK 3D</a> <button class="tanya" onclick="ALWI_BUKA_LOKAL('${key.replace(/'/g,"\\'")}')">📹 Video & Komentar</button>`);
 });
 map.fitBounds(L.latLngBounds([...RUTE_A,...RUTE_B,...RUTE_C,...Object.values(T).map(t=>t.c)]),{padding:[30,30]});
 </script>
-<script src="alwi_bubble4.js"></script>
+
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js');}</script>
+<!-- Widget Alwi (three.js bubble + komentar kartu + login member) disajikan dari Apps Script -->
+<script src="https://script.google.com/macros/s/AKfycby-gpf71cTrZ7e8yJy07mgo0Dy9Gn_WQtJ_VVW1cBUDdQla-mWSigdO8CzmaCL5-rdZ/exec?action=widgetjs"></script>
 </body>
 </html>
