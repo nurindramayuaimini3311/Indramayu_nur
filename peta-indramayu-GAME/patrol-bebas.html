@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>🚗 Bebas Eretan - ALWI x LURAGUNG JAYA - Gigi Angka</title>
+<title>🚗 TERMINAL INDRAMAYU - ALWI x LURAGUNG JAYA - Gigi Angka</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
@@ -40,12 +40,12 @@ body{font-family:system-ui;background:#0b0e14;color:#fff;overflow:hidden;touch-a
 <button id="btnRem">▼ REM</button><button id="btnGas">▲ GAS</button>
 </div>
 <div id="gate">
-<div style="font-size:11px;opacity:.8">🚗 MODE BEBAS • TANPA START • TANPA WAKTU • TANPA FINISH</div>
+<div style="font-size:11px;opacity:.8">🚗 MODE BEBAS • TERMINAL  • TANPA WAKTU • TANPA FINISH</div>
 <h1>BEBAS <span>ERETAN</span></h1>
 <p style="font-size:12px;opacity:.85">Stik ◀ ▶ buat belok, GAS/REM buat laju. Keliling dunia mini sepuasnya. Ada suara mesin!</p>
 <div id="veh">
 <button data-v="mobil">JEEP MERAH FERRARI</button>
-<button data-v="bus" class="on">LURAGUNG JAYA ALWI KUNING</button>
+<button data-v="bus" class="on">LURAGUNG JAYA ALWI </button>
 <button data-v="truk">PERTAMINA PUTIH SUSU</button>
 <button data-v="tebu">TEBU LOHBENER</button>
 <button data-v="f1">F1 MERAH</button>
@@ -96,7 +96,7 @@ const loop=new THREE.CatmullRomCurve3(loopPts,true);
 function teks(t,bg){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const x=cv.getContext('2d');
  x.fillStyle=bg;x.fillRect(0,0,512,128);x.fillStyle='#fff';x.font='bold 52px Arial';x.textAlign='center';x.fillText(t,256,82);return new THREE.CanvasTexture(cv);}
 // gapura + SPBU + pasar + sawah + laut Eretan mini
-const pp0=new THREE.Mesh(new THREE.BoxGeometry(12,2.6,.5),new THREE.MeshStandardMaterial({map:teks('🚗 BEBAS ERETAN','#226622')}));pp0.position.set(0,8,-128);scene.add(pp0);
+const pp0=new THREE.Mesh(new THREE.BoxGeometry(12,2.6,.5),new THREE.MeshStandardMaterial({map:teks('🚗 TERMINAL INDRAMAYU','#226622')}));pp0.position.set(0,8,-128);scene.add(pp0);
 for(const sx of[-6,6])scene.add(box(1,8,1,M(0xdddddd),sx,4,-128));
 (function(){const g=new THREE.Group();g.position.set(40,0,-40);scene.add(g);
  g.add(box(12,.7,9,M(0xcc0000),0,4.8,0));

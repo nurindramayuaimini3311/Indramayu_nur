@@ -256,7 +256,7 @@ const clock=new THREE.Clock();
   // player
   const st=STAT[cur];
   pS.rpm=.25+(pS.v/(pS.g*13));
-  if(gas){if(pS.rpm<1.05)pS.v+=(st.acc*(1.15-pS.g*.12))*dt*ST_DT;else pS.v-=4*dt;}
+  if(gas){if(pS.rpm<1.20)pS.v+=(st.acc*(1.15-pS.g*.12))*dt*ST_DT;else pS.v-=4*dt;}
   else pS.v=Math.max(0,pS.v-6*dt);
   pS.v=Math.min(pS.v,st.top);
   pS.d+=pS.v*dt;

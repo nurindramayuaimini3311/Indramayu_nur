@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🏠 Rumah Belajar — Indramayu Nur</title>
+<meta name="description" content="Aplikasi offline rumah belajar Indramayu Nur — tema retro 70an.">
+<meta name="theme-color" content="#b45309">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="img/icon-180.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ruang Main Alwi">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Courier New',Courier,monospace;min-height:100vh;background:linear-gradient(180deg,#7c2d12 0%,#b45309 35%,#d97706 100%);color:#2f1b0a;padding:14px 14px calc(20px + env(safe-area-inset-bottom,12px));overflow-x:hidden;overflow-y:auto}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background:repeating-linear-gradient(45deg,#fde68a 0 14px,transparent 14px 34px),repeating-linear-gradient(-45deg,#fbbf24 0 14px,transparent 14px 34px)}
+.wrap{max-width:430px;margin:0 auto;position:relative}
+.sky{position:relative;text-align:center;padding:18px 10px 10px;background:linear-gradient(135deg,#f59e0b,#ef4444);border:5px solid #78350f;border-radius:22px;box-shadow:8px 8px 0 rgba(0,0,0,.35)}
+.caract{font-size:60px;display:block;filter:drop-shadow(0 4px 6px rgba(0,0,0,.25)) sepia(.4);animation:apung 3s ease-in-out infinite}
+@keyframes apung{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.bigtitle{font-size:28px;font-weight:900;margin-top:8px;background:#2f1b0a;color:#fbbf24;display:inline-block;padding:7px 20px;border-radius:8px;border:4px double #fde68a;text-transform:uppercase;letter-spacing:3px;text-shadow:2px 2px 0 #ef4444}
+.sub{font-size:12px;font-weight:700;color:#fffbeb;margin-top:6px;letter-spacing:1px}
+.tombol{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#fef3c7,#fde68a);border:4px solid #78350f;border-radius:6px;padding:13px 14px;margin-top:12px;text-decoration:none;color:#2f1b0a;font-weight:800;font-size:15px;box-shadow:6px 6px 0 rgba(0,0,0,.3);transition:transform .08s}
+.tombol:active{transform:scale(.97);box-shadow:2px 2px 0 rgba(0,0,0,.3)}
+.tombol .ico{font-size:30px;width:44px;height:44px;border-radius:6px;display:grid;place-items:center;flex-shrink:0;border:2px solid #78350f}
+.tombol .txt{flex:1;line-height:1.25}
+.tombol .txt small{display:block;font-weight:600;font-size:11px;color:#92400e}
+.tombol:hover{transform:translateY(-3px)}
+.sek{font-size:15px;font-weight:900;margin:20px 4px 2px;color:#fed7aa;text-shadow:2px 2px 0 #7c2d12;letter-spacing:2px}
+.jembatan{background:linear-gradient(180deg,#4ade80,#15803d);color:#fefce8;border-color:#14532d}
+.jembatan .ico{background:#166534}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="sky">
+    <span class="caract">🧒🕌🌟</span>
+    <div class="bigtitle">GUDANG GAME</div>
+    <div class="sub">👾 RETRO '70s · Indramayu Nur 👾</div>
+  </div>
+
+  <div class="sek">🌐 MODE ONLINE (perlu internet)</div>
+  <a class="tombol jembatan" href="../online.html">
+    <div class="ico">📡</div>
+    <div class="txt">MENU PILIHAN KHUSUS<small>Index gabungan, IBADAH  & KOMENTAR </small></div>
+  </a>
+
+  <div class="sek">💣  MAIN & BELAJAR DI SINI</div>
+  <a class="tombol" href="game/"><div class="ico" style="background:#fead2b">🎮</div><div class="txt">Game Seru<small>Dadu, tank, stik naga & lainnya</small></div></a>
+  <a class="tombol" href="game_rahasia/"><div class="ico" style="background:#f472b6">🤫</div><div class="txt">Game Rahasia<small>Hanya untuk yang berani</small></div></a>
+  <a class="tombol" href="../alwiSD"><div class="ico" style="background:#a78bfa">🧠</div><div class="txt">alwiSD<small>Bot, matematika & lukis</small></div></a>
+  <a class="tombol" href="../fiturBARU"><div class="ico" style="background:#fbbf24">✨</div><div class="txt">Fitur Baru<small>Admin & fitur keren</small></div></a>
+
+  <div class="sek">🚗 SERBA-SERBI</div>
+  <a class="tombol" href="mobil/"><div class="ico" style="background:#fb7185">🚗</div><div class="txt">Mainan Mobil<small>Mobil, bonus & lucu-lucu</small></div></a>
+  <a class="tombol" href="kamera-hantu/"><div class="ico" style="background:#818cf8">👻</div><div class="txt">Kamera Hantu<small>Mode gelap & menegangkan</small></div></a>
+  <a class="tombol" href="pencuri/"><div class="ico" style="background:#94a3b8">🕵️</div><div class="txt">Pencuri<small>Ruang 1 sampai 5</small></div></a>
+  <a class="tombol" href="../kalkulator.html"><div class="ico" style="background:#2dd4bf">🧮</div><div class="txt">Kalkulator<small>Hitung cepat</small></div></a>
+  <a class="tombol" href="../meta_AI.html"><div class="ico" style="background:#e879f9">🤖</div><div class="txt">Meta AI<small>Bermain dengan AI</small></div></a>
+  <div class="sek">🕌 IBADAH</div>
+  <a class="tombol" href="../NURgenerator/ibadah/"><div class="ico" style="background:#34d399">🕌</div><div class="txt">Ibadah<small>Sholat, adzan, quran & pesan</small></div></a>
+  <a class="tombol" href="http://34.170.37.50:8080/NURgenerator/ADZAN/"><div class="ico" style="background:#fbbf24">📢</div><div class="txt">Player Adzan<small>Koleksi suara adzan dunia</small></div></a>
+  <div style="margin-top:12px;border-radius:6px;overflow:hidden;border:4px solid #78350f;box-shadow:6px 6px 0 rgba(0,0,0,.3);background:#2f1b0a;padding:4px">
+    <iframe src="http://34.170.37.50:8080/NURgenerator/ADZAN/" loading="lazy" title="Player Adzan" style="display:block;width:100%;height:420px;border:0;border-radius:3px;background:#fffbeb"></iframe>
+  </div>
+
+  <div class="sek">⚙️ LAINNYA</div>
+  <a class="tombol" href="../index4.html"><div class="ico" style="background:#f59e0b">🗄️</div><div class="txt">belajar fisika<small>Menu lengkap generator</small></div></a>
+  <a class="tombol" href="bola_bayangan.html"><div class="ico" style="background:#ef4444">⚽</div><div class="txt">ajak alwi<small>bermain bubble</small></div></a>
+
+  <div class="sek">🎬 VIDEO</div>
+  <a class="tombol" href="videoHANTU_edit.mp4"><div class="ico" style="background:#0ea5e9">🎬</div><div class="txt">Video Hantu<small>videoHANTU_edit.mp4 · 11 MB</small></div></a>
+  <div style="margin-top:12px;border-radius:6px;overflow:hidden;border:4px solid #78350f;box-shadow:6px 6px 0 rgba(0,0,0,.3);background:#2f1b0a;padding:4px">
+    <video src="videoHANTU_edit.mp4" controls preload="metadata" playsinline style="display:block;width:100%;height:auto;border-radius:3px"></video>
+  </div>
+</div>
+<script src="alwi_bubble4.js"></script>
+<script>
+(function(){
+  var tb=document.querySelectorAll('a.tombol');
+  for(var i=0;i<tb.length;i++){
+    (function(a){
+      a.addEventListener('click', function(ev){
+        ev.preventDefault();
+        var h=a.getAttribute('href');
+        if(!h) return;
+        if(window.bukaIframe) window.bukaIframe(h);
+        else window.location.href=h;
+      });
+    })(tb[i]);
+  }
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').then(function (reg) {
+      console.log('SW registered:', reg.scope);
+    }).catch(function (err) {
+      console.warn('SW register error:', err);
+    });
+  });
+}
+</script>
+</body>
+</html>
