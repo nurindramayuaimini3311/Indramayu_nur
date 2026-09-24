@@ -1,28 +1,33 @@
 !function(){
 if(window.__ALWI)return;window.__ALWI=1;
 
-// Deteksi path → otomatis ke Indramayu_nur (VPS) ATAU INDRAMAYU_CLUB (GitHub Pages)
+// Deteksi path → semua link menuju root
 let pathParts = window.location.pathname.split('/').filter(Boolean);
-let baseIdx = pathParts.findIndex(function(p){ return p === 'Indramayu_nur' || p === 'INDRAMAYU_CLUB'; });
-let prefix = baseIdx >= 0 ? '/' + pathParts.slice(0, baseIdx + 1).join('/') + '/' : '/';
-let isRoot = pathParts.length - (baseIdx + 1) <= 1;
-window.__ALWI_PREFIX = prefix;
-const CHAT_AI_URL = 'http://35.240.161.189:3000/';
+let prefix;
+let isRoot = pathParts.length <= 1; // true bila di root server (mis. /index.html)
+if (pathParts.length <= 1) {
+  prefix = './';
+} else if (pathParts[0] === 'NURgenerator') {
+  prefix = pathParts.length > 2 ? '../' : './';
+} else {
+  prefix = '/';
+}
+const CHAT_AI_URL = 'http://35.240.161.189:3000';
 
 // 1. Buat Bola Helm ⛑️
 let isDragging=false, startX, startY, vx=0, vy=0, x=window.innerWidth-80, y=window.innerHeight-120;
 let ball=document.createElement('div');
 ball.id="ALWI_BOLA";
 ball.style.cssText=`position:fixed;left:${x}px;top:${y}px;z-index:999999999;width:60px;height:60px;background:radial-gradient(circle at 30% 30%,#7ec8ff,#0e7490);border-radius:50%;border:3px solid #00BFFF;box-shadow:0 0 20px rgba(0,191,255,0.5),0 0 40px rgba(0,191,255,0.3);font-size:32px;display:flex;align-items:center;justify-content:center;cursor:grab;user-select:none;transition:transform 0.1s;will-change:transform,left,top;`;
-      ball.innerHTML=`<img src="/img/icon-72.png" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">`;
+      ball.innerHTML=`<img src="http://34.170.37.50:8080/NURgenerator/img/icon-72.png" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">`;
 document.body.appendChild(ball);
 
-// 1b. Tombol HOME mengambang kiri atas (semua halaman NURgenerator)
+// 1b. Tombol HOME di atas bola (index utama)
 let homeBtn=document.createElement('div');
 homeBtn.id="ALWI_HOME_BTN";
-homeBtn.style.cssText=`position:fixed;left:12px;top:12px;z-index:999999998;width:90px;height:40px;background:#0891b2;color:#fff;border:2px solid #38bdf8;border-radius:20px;font-weight:800;font-size:12px;cursor:pointer;box-shadow:0 4px 15px rgba(0,191,255,0.4);transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:5px;`;
+homeBtn.style.cssText=`position:fixed;top:12px;left:12px;z-index:999999998;width:70px;height:36px;background:#0891b2;color:#fff;border:none;border-radius:18px;font-weight:800;font-size:11px;cursor:pointer;box-shadow:0 4px 15px rgba(0,191,255,0.4);transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:4px;`;
 homeBtn.innerHTML="🏠 HOME";
-homeBtn.onclick=function(){ window.location.href='http://34.170.37.50:8080/index.html'; };
+homeBtn.onclick=function(){ goHome(); };
 homeBtn.onpointerdown=function(e){ e.stopPropagation(); };
 document.body.appendChild(homeBtn);
 
@@ -35,17 +40,48 @@ menu.innerHTML=`
     <span>📍 NAVIGASI</span>
     <span onclick="document.getElementById('ALWI_DROPUP').style.display='none'" style="cursor:pointer;color:#888;font-weight:bold;font-size:16px;">✕</span>
   </div>
-  <button onclick="window.location.href='http://35.240.161.189:3000/'" style="padding:9px 8px;background:#16a34a;color:#fff;border:1px solid #4ade80;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🤖 CHAT AI</button>
-  <button onclick="window.location.href='https://fancy-wood-77c8.imahazzah51.workers.dev/'" style="padding:9px 8px;background:#0284c7;color:#fff;border:1px solid #38bdf8;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🌐 Worker Utama (Cloud)</button>
-  <button onclick="window.location.href='https://belajar-bermain.imahazzah51.workers.dev/'" style="padding:9px 8px;background:#0f766e;color:#fff;border:1px solid #2dd4bf;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🎮 Belajar Bermain</button>
-  <button onclick="window.location.href='https://belajar-agama.imahazzah51.workers.dev/'" style="padding:9px 8px;background:#14532d;color:#fff;border:1px solid #34d399;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">📖 Belajar Agama</button>
-  <button onclick="window.location.href='https://fancy-wood-77c8.imahazzah51.workers.dev/meta/gambar-streaming/'" style="padding:9px 8px;background:#7f1d1d;color:#fff;border:1px solid #f00;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🔴 Streaming</button>
-  <button onclick="window.location.href='https://belajar-agama.imahazzah51.workers.dev/ibadah/diskusi/'" style="padding:9px 8px;background:#064e3b;color:#fff;border:1px solid #34d399;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">📖 Diskusi Al-Quran</button>
-  <button onclick="window.location.href='https://nurindramayuaimini3311.github.io/Indramayu_nur/'" style="padding:9px 8px;background:#1e3a8a;color:#fff;border:1px solid #818cf8;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🏠 Rumah Alwi (GitHub)</button>
-  <button onclick="window.location.href='http://34.170.37.50:8080/index.html'" style="padding:9px 8px;background:#155e75;color:#fff;border:1px solid #22d3ee;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🏠 HOME (Server 8080)</button>
-
+  <button onclick="bukaTab('http://35.240.161.189:3000')" style="padding:9px 8px;background:#0284c7;color:#fff;border:1px solid #38bdf8;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;width:100%;">🤖 TANYA ALWI (Chat AI)</button>
+  `;
+// 3. Modal Popup Fullscreen untuk Iframe
+let modal=document.createElement('div');
+modal.id="ALWI_MODAL";
+modal.style.cssText="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.95);z-index:999999997;flex-direction:column;";
+modal.innerHTML=`
+  <div style="height:44px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid #222;">
+    <span id="ALWI_MODAL_TITLE" style="color:#00BFFF;font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">📍 Loading...</span>
+    <button onclick="tutupIframe()" style="background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:11px;transition:all 0.2s;">TUTUP ✕</button>
+  </div>
+  <iframe id="ALWI_IFRAME" style="width:100%;flex:1;border:none;background:#fff;" allow="clipboard-read; clipboard-write; autoplay"></iframe>
 `;
-document.body.appendChild(menu);
+document.body.appendChild(modal);
+
+let open=false;
+function toggleMenu(){
+  open=!open;
+  menu.style.display=open?'flex':'none';
+  if(open) menu.querySelector('button').focus();
+}
+
+window.goToPage=function(url){
+  window.location.href=url;
+}
+
+window.bukaIframe=function(targetUrl){
+  document.getElementById('ALWI_MODAL_TITLE').textContent="📍 " + (targetUrl.split('/').pop() || targetUrl);
+  document.getElementById('ALWI_IFRAME').src = targetUrl;
+  modal.style.display='flex';
+  open=false;
+  menu.style.display='none';
+}
+
+window.tutupIframe=function(){
+  modal.style.display='none';
+  document.getElementById('ALWI_IFRAME').src = '';
+}
+
+window.bukaTab=function(u){
+  window.open(u,'_blank','noopener');
+}
 
 // HOME selalu menuju index.html portal (bebas isRoot)
 window.goHome=function(){
@@ -164,7 +200,7 @@ function showFunnyFace(){
     let originalSrc=img.src;
     ball.innerHTML='<span style="font-size:40px;">'+faceEmojis[Math.floor(Math.random()*faceEmojis.length)]+'</span>';
     setTimeout(()=>{
-ball.innerHTML=`<img src="/img/icon-72.png" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">`;
+ball.innerHTML=`<img src="http://34.170.37.50:8080/NURgenerator/img/icon-72.png" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">`;
     },800);
   }
 }
@@ -188,6 +224,7 @@ ball.addEventListener('pointerdown',e=>{
   vx=0; vy=0; 
   vxPhysical=0; vyPhysical=0;
   ball.style.transition='none'; 
+  homeBtn.style.transition='none'; 
   ball.style.cursor='grabbing';
   ball.style.transform='scale(1.1)';
 });
@@ -224,19 +261,14 @@ ball.addEventListener('pointerup',e=>{
     spinSpeed=vx*4;
     startPhysics();
   } else {
-    // Klik biasa - SELALU buka Chat AI
-    window.location.href = CHAT_AI_URL;
+    // Klik biasa - di root buka Chat AI langsung, selain itu buka menu
+    if (isRoot) { bukaTab(CHAT_AI_URL); }
+    else { toggleMenu(); }
   }
 });
 
-let open=false;
-function toggleMenu(){
-  open=!open;
-  menu.style.display=open?'flex':'none';
-}
-
 document.addEventListener('click',e=>{
-  if(!ball.contains(e.target) && !menu.contains(e.target) && open){
+  if(!ball.contains(e.target) && !menu.contains(e.target) && !homeBtn.contains(e.target) && open){
     open=false;
     menu.style.display='none';
   }
@@ -310,171 +342,10 @@ window.infoPoin=function(){return{uid:alwiUid(),poin:alwiGetPoin(),target:POIN_C
 // Tambahkan badge poin + tombol cek ke menu
 let poinBadge=document.createElement('div');
 poinBadge.id="ALWI_POIN_BADGE";
-poinBadge.style.cssText=`position:fixed;left:${x-5}px;top:${y-90}px;z-index:999999998;background:#00BFFF;color:#000;padding:4px 12px;border-radius:12px;font-weight:900;font-size:11px;box-shadow:0 2px 10px rgba(255,215,0,0.4);cursor:pointer;transition:all 0.3s;`;
+poinBadge.style.cssText=`position:fixed;top:12px;right:12px;z-index:999999998;background:#00BFFF;color:#000;padding:4px 12px;border-radius:12px;font-weight:900;font-size:11px;box-shadow:0 2px 10px rgba(255,215,0,0.4);cursor:pointer;transition:all 0.3s;`;
 poinBadge.textContent='⭐ '+alwiGetPoin();
 poinBadge.onclick=function(e){e.stopPropagation();cekPoinWA();};
 document.body.appendChild(poinBadge);
-
-// Update badge position saat bola gerak
-let _origUpdate=updateBallPosition;
-updateBallPosition=function(){
-  _origUpdate();
-  poinBadge.style.left=(x-5)+'px';
-  poinBadge.style.top=(y-90)+'px';
-};
-
-// === FITUR MIC & SUARA (BOT HIDUP) ===
-let micBtn=document.createElement('div');
-micBtn.id="ALWI_MIC";
-micBtn.style.cssText=`position:fixed;left:${x+65}px;top:${y+10}px;z-index:999999998;width:42px;height:42px;background:linear-gradient(135deg,#ef4444,#dc2626);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;box-shadow:0 2px 10px rgba(239,68,68,0.5);transition:all 0.3s;border:2px solid #fff;`;
-micBtn.innerHTML='🎤';
-micBtn.title='Klik untuk bicara';
-if (!isRoot) document.body.appendChild(micBtn);
-
-// Speech Recognition
-let recognition=null;
-let isListening=false;
-let SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
-
-if(SpeechRecognition){
-  recognition=new SpeechRecognition();
-  recognition.continuous=false;
-  recognition.interimResults=false;
-  recognition.lang='id-ID';
-  
-  recognition.onresult=function(e){
-    let transcript=e.results[0][0].transcript.toLowerCase().trim();
-    alwiBotRespond(transcript);
-  };
-  
-  recognition.onend=function(){
-    isListening=false;
-    micBtn.style.background='linear-gradient(135deg,#ef4444,#dc2626)';
-    micBtn.innerHTML='🎤';
-    micBtn.style.boxShadow='0 2px 10px rgba(239,68,68,0.5)';
-  };
-  
-  recognition.onerror=function(){
-    isListening=false;
-    micBtn.style.background='linear-gradient(135deg,#ef4444,#dc2626)';
-    micBtn.innerHTML='🎤';
-    alwiBotSay('Maaf, saya tidak dengar. Coba lagi ya!');
-  };
-}
-
-// Speech Synthesis
-function alwiBotSay(text){
-  if('speechSynthesis' in window){
-    window.speechSynthesis.cancel();
-    let u=new SpeechSynthesisUtterance(text);
-    u.lang='id-ID';
-    u.rate=1;
-    u.pitch=1.1;
-    // Cari suara Indonesia
-    let voices=window.speechSynthesis.getVoices();
-    let idVoice=voices.find(v=>v.lang.startsWith('id'));
-    if(idVoice) u.voice=idVoice;
-    window.speechSynthesis.speak(u);
-  }
-  alwiBotShowChat(text);
-}
-
-// Tampilkan chat bubble
-function alwiBotShowChat(text){
-  let chat=document.createElement('div');
-  chat.style.cssText='position:fixed;bottom:160px;right:15px;max-width:240px;background:#0891b2;color:#fff;padding:12px 16px;border-radius:16px 16px 4px 16px;font-size:12px;font-weight:600;z-index:999999997;box-shadow:0 4px 15px rgba(0,191,255,0.4);animation:alwiPopPoin .3s ease;line-height:1.5;word-wrap:break-word;';
-  chat.textContent='🤖 '+text;
-  document.body.appendChild(chat);
-  setTimeout(()=>{chat.style.opacity='0';chat.style.transition='.5s';},4000);
-  setTimeout(()=>chat.remove(),4500);
-}
-
-// Respon bot berdasarkan perintah suara
-function alwiBotRespond(text){
-  alwiBotShowChat('🎤 "'+text+'"');
-  
-  // POIN
-  if(text.includes('poin')||text.includes('cek poin')){
-    let p=alwiGetPoin();
-    alwiBotSay('Poin kamu sekarang '+p+' poin. Target seribu poin untuk tukar hadiah.');
-  }
-  // HOME
-  else if(text.includes('home')||text.includes('halaman utama')||text.includes('kembali')){
-    alwiBotSay('Kembali ke halaman utama!');
-    setTimeout(()=>{window.goHome();},800);
-  }
-  // GAME
-  else if(text.includes('game')||text.includes('main')){
-    alwiBotSay('Ayo main game! Saya bukakan game nya.');
-    setTimeout(()=>{window.location.href=prefix+'game/index.html';},800);
-  }
-  // BELAJAR
-  else if(text.includes('belajar')||text.includes('belajar')){
-    alwiBotSay('Semangat belajar! Yuk mulai.');
-    setTimeout(()=>{window.location.href=prefix+'alwiSD/index.html';},800);
-  }
-  // KUIS
-  else if(text.includes('kuis')||text.includes('quiz')){
-    alwiBotSay('Siap! Kuis menunggu kamu.');
-    setTimeout(()=>{window.location.href=prefix+'kuis/quiz.html';},800);
-  }
-  // AI
-  else if(text.includes('ai')||text.includes('pusat')||text.includes('tanya')){
-    alwiBotSay('AI ALWI Pusat siap membantu!');
-    setTimeout(()=>{window.location.href=prefix+'pusat.html';},800);
-  }
-  // WHATSAPP
-  else if(text.includes('whatsapp')||text.includes('wa')){
-    alwiBotSay('Membuka WhatsApp admin!');
-    setTimeout(()=>{cekPoinWA();},800);
-  }
-  // NAMA
-  else if(text.includes('siapa namamu')||text.includes('namamu')){
-    alwiBotSay('Halo! Nama saya Alwi, bot pintar dari Indramayu Club!');
-  }
-  // HELLO
-  else if(text.includes('halo')||text.includes('hai')||text.includes('hello')){
-    let sapa=['Halo! Ada yang bisa saya bantu?','Hai! Senang berkenalan dengan kamu!','Hey! Mau main game atau belajar?'];
-    alwiBotSay(sapa[Math.floor(Math.random()*sapa.length)]);
-  }
-  // DEFAULT
-  else {
-    alwiBotSay('Maaf, saya belum paham "'+text+'". Coba bilang: game, belajar, kuis, atau poin.');
-  }
-}
-
-// Toggle mic
-micBtn.onclick=function(e){
-  e.stopPropagation();
-  if(!SpeechRecognition){
-    alwiBotSay('Browser kamu tidak support microphone. Coba pakai Chrome ya!');
-    return;
-  }
-  if(isListening){
-    recognition.stop();
-    isListening=false;
-  } else {
-    isListening=true;
-    micBtn.style.background='linear-gradient(135deg,#22c55e,#16a34a)';
-    micBtn.innerHTML='🔴';
-    micBtn.style.boxShadow='0 0 20px rgba(34,197,94,0.6)';
-    alwiBotSay('Saya dengarkan...');
-    recognition.start();
-  }
-};
-
-// Load voices
-if('speechSynthesis' in window){
-  window.speechSynthesis.onvoiceschanged=function(){window.speechSynthesis.getVoices();};
-}
-
-// Update posisi mic saat bola gerak
-let _origUpdate2=updateBallPosition;
-updateBallPosition=function(){
-  _origUpdate2();
-  micBtn.style.left=(x+65)+'px';
-  micBtn.style.top=(y+10)+'px';
-};
 
 }();
 /* ==================== ADZAN OTOMATIS (semua halaman ber-bubble) ==================== */
@@ -483,7 +354,6 @@ updateBallPosition=function(){
   const AZ = { Subuh:'Adzan-Shubuh-Abu-Hazim.mp3', Dzuhur:'Adzan-Misyari-Rasyid.mp3', Ashar:'Adzan-Misyari-Rasyid.mp3', Maghrib:'Mecca-Adzan-2.mp3', Isya:'Pakistan-Adzan.mp3' };
   const on = () => localStorage.getItem('alwiAdzan') === '1';
   let jadwalAz = null, tglAz = '', audioAz = null;
-  const terkirim = new Set();
   const pill = document.createElement('div');
   pill.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:2147483000;background:#0a3a5a;color:#ffd700;border:1px solid #ffd700;border-radius:99px;padding:6px 12px;font:600 11px system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4)';
   function setPill(){ pill.textContent = on() ? '\uD83D\uDD14 Adzan ON' : '\uD83D\uDD15 Adzan OFF'; }
@@ -494,7 +364,7 @@ updateBallPosition=function(){
     setPill();
     if (on()) { jadwalAz = null; cek(); } // langsung cek saat diaktifkan
   });
-  function pasang(){ (document.body || document.documentElement).appendChild(pill); }
+  function pasang(){ if (!isRoot) (document.body || document.documentElement).appendChild(pill); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', pasang); else pasang();
   async function ambilJadwal(){
     const d = new Date();
@@ -530,8 +400,8 @@ updateBallPosition=function(){
   if (window.__alwiNav) return; window.__alwiNav = true;
   function pasang(){
     var b = document.createElement('a');
-    b.href = (window.__ALWI_PREFIX || '/') + 'navigasi.html';
-    b.style.cssText = 'position:fixed;left:12px;bottom:40px;z-index:2147483000;background:#0a3a5a;color:#ffd700;border:1px solid #ffd700;border-radius:99px;padding:6px 12px;font:600 11px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.4)';
+    b.href = 'navigasi.html';
+    b.style.cssText = 'position:fixed;left:12px;bottom:44px;z-index:2147483000;background:#0a3a5a;color:#ffd700;border:1px solid #ffd700;border-radius:99px;padding:6px 12px;font:600 11px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.4)';
     b.textContent = '\uD83E\uDDED Navigasi';
     (document.body || document.documentElement).appendChild(b);
   }
@@ -539,52 +409,11 @@ updateBallPosition=function(){
 })();
 
 
-/* ==================== POIN PENJELAJAH NUR ==================== */
-/* +5 poin per halaman baru per hari - Reset otomatis saat capai 1000 */
-(function(){
-  if (window.__alwiPoin) return; window.__alwiPoin = true;
-  var K='alwiPoin', LOG='alwiPoinLog', TOT='alwiPoinTotal';
-  var hari = new Date().toISOString().slice(0,10);
-  var p = parseInt(localStorage.getItem(K)||'0',10);
-  var tot = parseInt(localStorage.getItem(TOT)||'0',10);
-  var log = {}; try { log = JSON.parse(localStorage.getItem(LOG)||'{}'); } catch(e){}
-  for (var d in log){ if (d !== hari && new Date(d) < new Date(Date.now()-7*864e5)) delete log[d]; }
 
-  function pillBuat(){
-    var el = document.createElement('div');
-    el.style.cssText = 'position:fixed;left:12px;bottom:68px;z-index:2147483000;background:#0a3a5a;color:#ffd700;border:1px solid #ffd700;border-radius:99px;padding:6px 12px;font:700 11px system-ui,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.4)';
-    el.title = 'Poin Penjelajah NUR - total keseluruhan: '+tot;
-    return el;
-  }
-  var pill = pillBuat();
-  function gambar(){ pill.textContent = '\\uD83E\\uDE99 ' + p + ' / 1000'; }
-  function simpan(){ localStorage.setItem(K,String(p)); localStorage.setItem(TOT,String(tot)); localStorage.setItem(LOG,JSON.stringify(log)); }
-  function rayakan(){
-    var o = document.createElement('div');
-    o.style.cssText = 'position:fixed;inset:0;z-index:2147483600;background:#0a1626ee;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px';
-    o.innerHTML = '<div style="font-size:52px">\\uD83C\\uDF89</div>' +
-      '<div style="color:#ffd700;font-size:20px;font-weight:900;margin:12px 0">SELAMAT! 1000 POIN TERCAPAI!</div>' +
-      '<div style="font-size:13px;color:#eaf4ff;max-width:300px">Kamu Penjelajah Sejati NUR!<br>Total poin keseluruhanmu: <b style="color:#ffd700">'+tot+'</b></div>' +
-      '<button onclick="this.parentElement.remove()" style="margin-top:18px;background:#ffd700;border:0;border-radius:99px;padding:10px 26px;font-weight:800;cursor:pointer">Lanjut Jelajah \\u27A1</button>';
-    document.body.appendChild(o);
-  }
-  function tambah(n){
-    p += n; tot += n;
-    if (p >= 1000){ p = 0; simpan(); gambar(); setTimeout(rayakan, 400); return; }
-    simpan(); gambar();
-  }
-  // Poin kunjungan: halaman unik per hari = +5
-  if (!log[hari]) log[hari] = {};
-  if (!log[hari][location.pathname]){ log[hari][location.pathname] = 1; tambah(5); }
-  else { gambar(); }
-  function pasang(){ (document.body || document.documentElement).appendChild(pill); }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', pasang); else pasang();
-})();
-
-/* ================= MIC ALWI + FOLDER NAV v2 ================= */
+/* ================= FOLDER NAV + ADZAN v2 ================= */
 (function(){
   var pp = location.pathname.split('/').filter(Boolean);
-  var prefix = window.__ALWI_PREFIX || (pp[0]==='Indramayu_nur'||pp[0]==='INDRAMAYU_CLUB' ? '/'+pp[0]+'/' : '/');
+  var prefix = (pp[0]==='NURgenerator') ? (pp.length>2?'../':'./') : (pp.length<=1 ? './' : '/');
 
   /* --- deretan tombol SEMUA FOLDER di dropup --- */
   function pasangFolder(){
@@ -592,9 +421,9 @@ updateBallPosition=function(){
     if (!menu || menu.getAttribute('data-folder')) return;
     menu.setAttribute('data-folder','1');
     var F=[
-      ['Facebook_pusat','\uD83C\uDFAE GAME CENTER'],
+ 
       ['game','\uD83D\uDD79\uFE0F GAME'],
-      ['testgame','\uD83E\uDDEA TEST GAME'],
+    
       ['kuis','\u2755 KUIS'],
       ['kamera-hantu','\uD83D\uDC7B KAMERA HANTU'],
       ['pencuri','\uD83D\uDD75\uFE0F PENCURI'],
@@ -602,7 +431,7 @@ updateBallPosition=function(){
       ['netflix','\uD83C\uDFAC NETFLIX'],
       ['konten','\uD83D\uDCDA KONTEN'],
       ['meta_bisnis','\uD83D\uDCBC META BISNIS'],
-      ['static','\uD83E\uDEAA MEMBER'],
+ 
       ['alwiSD','\uD83E\uDDEE ALWI SD'],
       ['fiturBARU','\u2728 FITUR BARU'],
       ['peta','\uD83D\uDDFA\uFE0F PETA & NASA'],
@@ -617,7 +446,7 @@ updateBallPosition=function(){
       var x=document.createElement('button');
       x.textContent=f[1];
       x.style.cssText="padding:8px;background:#111;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;";
-      x.onclick=function(){ window.location.href=prefix+f[0]+'/index.html'; };
+      x.onclick=function(){ bukaIframe(prefix+f[0]+'/index.html'); };
       frag.appendChild(x);
     });
     var head=menu.firstChild;
@@ -625,75 +454,6 @@ updateBallPosition=function(){
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',function(){setTimeout(pasangFolder,400);}); }
   else{ setTimeout(pasangFolder,400); }
-
-  /* --- tombol MIC melayang --- */
-  var mic=document.createElement('div');
-  mic.id='ALWI_MIC_BTN';
-  mic.innerHTML='\uD83C\uDFA4';
-  mic.title='Tanya Alwi pakai suara';
-  mic.style.cssText='position:fixed;bottom:100px;left:14px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0e7490,#00BFFF);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;z-index:999999999;border:3px solid #000;box-shadow:0 4px 14px rgba(0,191,255,.5);user-select:none;-webkit-user-select:none;touch-action:manipulation;';
-  document.body.appendChild(mic);
-
-  /* --- balon jawaban --- */
-  var bal=document.createElement('div');
-  bal.id='ALWI_MIC_BALON';
-  bal.style.cssText='display:none;position:fixed;bottom:156px;left:12px;width:min(330px,88vw);background:#0a1414;border:2px solid #00BFFF;border-radius:14px;padding:12px;z-index:999999999;box-shadow:0 10px 30px rgba(0,191,255,.35);font-family:sans-serif;';
-  bal.innerHTML='<div id="MIC_HDR" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b style="color:#00BFFF;font-size:12px">\uD83C\uDFA4 TANYA ALWI</b><span id="MIC_X" style="cursor:pointer;color:#888;font-weight:bold">\u2715</span></div>'+
-    '<div id="MIC_Q" style="font-size:11px;color:#00BFFF;margin-bottom:6px;display:none"></div>'+
-    '<div id="MIC_A" style="font-size:13px;line-height:1.55;color:#e2e8f0;max-height:40vh;overflow-y:auto">Mau tanya apa?</div>'+
-    '<button id="MIC_GO" style="display:none;margin-top:8px;padding:9px 12px;border:none;border-radius:8px;background:linear-gradient(135deg,#00A3FF,#00BFFF);color:#000;font-weight:800;font-size:11px;width:100%;cursor:pointer">\u23F3 BUKA JAWABAN LENGKAP</button>';
-  document.body.appendChild(bal);
-
-  var teksTerakhir='';
-  function tampil(teksTanya, isi){
-    teksTerakhir=teksTanya||'';
-    document.getElementById('MIC_Q').textContent=teksTanya?('\u201C'+teksTanya+'\u201D'):'';
-    document.getElementById('MIC_Q').style.display=teksTanya?'block':'none';
-    document.getElementById('MIC_A').innerHTML=isi;
-    document.getElementById('MIC_GO').style.display=teksTanya?'block':'none';
-    bal.style.display='block';
-  }
-  document.getElementById('MIC_X').onclick=function(){ bal.style.display='none'; };
-  document.getElementById('MIC_GO').onclick=function(){
-    alwiBotSay('Fitur kalkulator sudah dihapus. Coba tanya: game, belajar, kuis, atau poin.');
-    bal.style.display='none';
-  };
-
-  function tanyaAI(teks){
-    tampil(teks,'<span style="color:#94a3b8">\u23F3 Alwi sedang berpikir...</span>');
-    fetch(API_BASE()+'/api/ai',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({prompt:'Jawab singkat padat dalam Bahasa Indonesia (maks 4 kalimat): '+teks,model:'Alwi',maks:220})
-    }).then(function(r){return r.json()})
-      .then(function(d){
-        if(d&&d.response){ tampil(teks,d.response.trim()); }
-        else{ tampil(teks,'\u26A0\uFE0F '+(d&&d.galat||'AI tidak merespons')); }
-      })
-      .catch(function(){ tampil(teks,'\u26A0\uFE0F Server AI tak terjangkau. Cek koneksi.'); });
-  }
-  function API_BASE(){
-    return (location.protocol==='file:'?'http:':location.protocol)+'//'+(location.hostname||'34.170.37.50')+':8080';
-  }
-
-  mic.onclick=function(){
-    var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-    if(!SR){
-      var t=prompt('\uD83C\uDFA4 Mic tidak didukung browser ini.\nKetik pertanyaanmu:');
-      if(t&&t.trim()) tanyaAI(t.trim());
-      return;
-    }
-    var r=new SR();
-    r.lang='id-ID'; r.interimResults=false; r.maxAlternatives=1;
-    mic.style.boxShadow='0 0 22px 6px rgba(255,0,80,.8)';
-    tampil(null,'\uD83C\uDFA4 <i>Dengarkan... silakan bicara!</i>');
-    bal.style.display='block';
-    r.onresult=function(e){ var t=e.results[0][0].transcript.trim(); if(t) tanyaAI(t); };
-    r.onerror=function(e){
-      tampil(null, e.error==='not-allowed' ? '\u26D4 Izinkan akses mikrofon di browser.' : '\u26A0\uFE0F Gagal mendengar ('+e.error+'). Coba lagi.');
-    };
-    r.onend=function(){ mic.style.boxShadow='0 4px 14px rgba(0,191,255,.5)'; };
-    try{ r.start(); }catch(e){}
-  };
 
   // ===== WIDGET TEKS BERJALAN ADZAN (muncul tiap 5 menit, kecil & non-intrusif) =====
   var adzanJam = [
@@ -737,60 +497,201 @@ updateBallPosition=function(){
   setTimeout(adzanTampil, 5000);
 })();
 
-/* ============ SINKRON POIN SERVER (upgrade seragam lintas origin) ============ */
+/* ==================== BANK BRI DOMPET (alwi_bubble4) ==================== */
 (function(){
-  if (window.__alwiPoinSrv) return; window.__alwiPoinSrv = true;
-  function base(){
-    return (location.protocol==='https:')
-      ? 'https://fancy-wood-77c8.imahazzah51.workers.dev'
-      : 'http://34.170.37.50:80';
-  }
+  if (window.__alwiBri) return; window.__alwiBri=true;
+  const API='http://34.170.37.50:8000';
+  const defVA='777770000000000001';
+  let pnl=document.createElement('div');
+  pnl.id='ALWI_BRI_PANEL';
+  pnl.style.cssText='display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:350px;max-width:94vw;max-height:84vh;overflow:auto;background:#0a0a0a;border:2px solid #00BFFF;border-radius:14px;z-index:9999999993;padding:14px;color:#e2e8f0;font:13px system-ui,sans-serif;box-shadow:0 12px 50px rgba(0,0,0,.7);';
+  pnl.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #222;padding-bottom:8px;margin-bottom:10px">
+      <b style="color:#00BFFF;font-size:14px">\uD83C\uDFE6 BANK BRI — DOMPET INDRA MAYU</b>
+      <span onclick="briTutup()" style="cursor:pointer;color:#888;font-weight:bold;font-size:18px">\u2715</span></div>
+    <div style="font-size:11px;color:#64748b;margin-bottom:8px">Mode sandbox BRI SNAP \u00B7 API 34.170.37.50:8000</div>
+    <label style="font-size:11px;color:#94a3b8">\uD83D\uDC64 Nama</label>
+    <input id="ALWI_BRI_NAME" value="Player Alwi" style="width:100%;background:#111;border:1px solid #333;color:#fff;border-radius:8px;padding:8px;box-sizing:border-box;margin:2px 0 8px" />
+    <label style="font-size:11px;color:#94a3b8">\uD83C\uDFE7 No. VA / Rekening</label>
+    <input id="ALWI_BRI_ACC" value="${defVA}" style="width:100%;background:#111;border:1px solid #333;color:#fff;border-radius:8px;padding:8px;box-sizing:border-box;margin:2px 0 8px" />
+    <label style="font-size:11px;color:#94a3b8">\uD83D\uDCB5 Nominal (Rp)</label>
+    <input id="ALWI_BRI_AMT" value="10000" type="number" style="width:100%;background:#111;border:1px solid #333;color:#fff;border-radius:8px;padding:8px;box-sizing:border-box;margin:2px 0 10px" />
+    <button onclick="briSaldo()" style="width:100%;padding:10px;background:linear-gradient(135deg,#0284c7,#0e7490);color:#fff;border:none;border-radius:9px;font-weight:800;cursor:pointer;margin-bottom:6px">\uD83D\uDCB0 CEK SALDO</button>
+    <button onclick="briMutasi()" style="width:100%;padding:10px;background:linear-gradient(135deg,#0f766e,#065f46);color:#fff;border:none;border-radius:9px;font-weight:800;cursor:pointer;margin-bottom:6px">\uD83D\uDCDC MUTASI 7 HARI</button>
+    <button onclick="briTransfer()" style="width:100%;padding:10px;background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;border:none;border-radius:9px;font-weight:800;cursor:pointer;margin-bottom:6px">\uD83C\uDFE6 TRANSFER VA</button>
+    <button onclick="briPoin()" style="width:100%;padding:10px;background:linear-gradient(135deg,#ca8a04,#d97706);color:#000;border:none;border-radius:9px;font-weight:800;cursor:pointer;margin-bottom:6px">\u2B50 CEK POIN SAYA</button>
+    <button onclick="briRedeem()" style="width:100%;padding:10px;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:none;border-radius:9px;font-weight:800;cursor:pointer;margin-bottom:8px">\uD83C\uDF81 TUKAR 1000 POIN → RP10.000</button>
+    <pre id="ALWI_BRI_OUT" style="background:#020617;border:1px solid #334155;border-radius:9px;padding:10px;font:11px/1.45 ui-monospace,monospace;color:#86efac;white-space:pre-wrap;word-break:break-word;max-height:180px;overflow:auto">Hasil akan muncul di sini... \u2B04</pre>`;
+  document.body.appendChild(pnl);
+
   function uid(){
-    var u=localStorage.getItem('alwi_uid');
-    if(!u){ u='u'+Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4); localStorage.setItem('alwi_uid',u); }
+    let u=localStorage.getItem('alwi_uid');
+    if(!u){u='U'+Date.now().toString(36)+Math.random().toString(36).substr(2,4);localStorage.setItem('alwi_uid',u);}
     return u;
   }
-  function tulis(poin){
-    try{
-      localStorage.setItem('alwi_poin',String(poin));
-      localStorage.setItem('alwiPoin',String(poin));
-      var b=document.getElementById('ALWI_POIN_BADGE');
-      if(b) b.textContent='\u2B50 '+poin;
-      var pil=document.querySelector('div[title^="Poin Penjelajah"]');
-      if(pil) pil.textContent='\uD83E\uDE99 '+poin+' / 1000';
-      var pil2=document.querySelector('div[title^="Poin NUR server"]');
-      if(pil2) pil2.textContent='\uD83E\uDE99 '+poin+' / 1000';
-      var p3=document.getElementById('fpsPoin');
-      if(p3) p3.textContent='\uD83E\uDE99 '+poin+' / 1000';
-    }catch(e){}
+  function inp(id){let e=document.getElementById(id);return e?e.value.trim():'';}
+  function setOut(t){let o=document.getElementById('ALWI_BRI_OUT');if(o)o.textContent=t;}
+  function api(path,method,body){
+    return fetch(API+path,{method:method||'GET',headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined})
+      .then(function(r){return r.json().catch(function(){return {ok:false,error:'response-not-json',http:r.status};});});
   }
-  function dorong(n){
-    if(!n||n<=0) return;
-    fetch(base()+'/api/poin?u='+uid(),{
-      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({n:n})
-    }).catch(function(){});
+  function tampil(res){
+    let t=res&&res.data?res.data:JSON.stringify(res,null,1);
+    try{ if(typeof t==='string') t=JSON.stringify(JSON.parse(t),null,1); }catch(e){}
+    setOut('💬 '+(res&&res.ok?'OK ✅':'GAGAL ⚠️')+'\n'+(t||''));
+    return res;
   }
-  function sync(){
-    var lokal=parseInt(localStorage.getItem('alwiPoin')||'0',10)||0;
-    fetch(base()+'/api/poin?u='+uid())
-      .then(function(r){return r.json();})
-      .then(function(j){
-        var srv=(j&&j.p)?j.p:0;
-        if(lokal>srv){ dorong(lokal-srv); }
-        else if(srv>=lokal){ tulis(srv); }
-      })
-      .catch(function(){});
+
+  window.briTutup=function(){pnl.style.display='none';};
+  window.briBuka=function(){pnl.style.display='block';};
+  window.briSaldo=function(){
+    let a=inp('ALWI_BRI_ACC')||defVA;
+    setOut('⏳ Cek saldo '+a+'...');
+    api('/api/balance','POST',{account_no:a}).then(tampil);
+  };
+  function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  window.briMutasi=function(){
+    let a=inp('ALWI_BRI_ACC')||defVA;
+    let end=new Date(), start=new Date(end.getTime()-6*864e5);
+    setOut('⏳ Ambil mutasi 7 hari...');
+    api('/api/statement','POST',{account_no:a,start_date:ymd(start),end_date:ymd(end)}).then(tampil);
+  };
+  window.briTransfer=function(){
+    let a=inp('ALWI_BRI_ACC')||defVA, amt=Math.round(Number(inp('ALWI_BRI_AMT'))||0)||10000;
+    setOut('⏳ Transfer VA '+amt+' → '+a+'...');
+    api('/api/transfer/va','POST',{customer_no:a,amount:amt,ref:'BUBBLE-'+Date.now().toString(36)}).then(tampil);
+  };
+  window.briPoin=function(){
+    let u=uid();
+    setOut('⏳ Cek poin '+u+'...');
+    api('/api/poin?uid='+encodeURIComponent(u)).then(function(d){
+      if(d&&d.ok){setOut('⭐ Poin: '+d.poin+' / '+d.target+'\nNilai: Rp '+d.nilai_idr+'\nSisa: '+d.sisa+'\nBisa tukar: '+(d.bisa_tukar?'YA 🎉':'belum'));}
+      else {setOut('💬 GAGAL ⚠️\n'+JSON.stringify(d,null,1));}
+    });
+  };
+  window.briRedeem=function(){
+    let u=uid(), nm=inp('ALWI_BRI_NAME')||'Player', a=inp('ALWI_BRI_ACC')||defVA;
+    let p=parseInt(localStorage.getItem('alwi_poin')||'0',10);
+    setOut('⏳ Sinkron poin ('+p+') '+u+'...');
+    api('/api/poin/sync','POST',{uid:u,poin:p,name:nm,account_no:a}).then(function(s){
+      if(!(s&&s.ok)){setOut('💬 GAGAL ⚠️\n'+JSON.stringify(s,null,1));return;}
+      setOut('⏳ Tukar poin → BRI (ref berjalan)...');
+      api('/api/poin/redeem','POST',{uid:u,name:nm,account_no:a}).then(function(r){
+        if(r&&r.ok){
+          localStorage.setItem('alwi_poin',String(parseInt(r.poin,10)||0));
+          if(window.alwiUpdateBadgePoin)alwiUpdateBadgePoin();
+          if(window.__alwiBri_last) alwiNotifPoin('🎁 Tukar berhasil!');
+        }
+        tampil(r);
+      });
+    });
+  };
+  // tombol di drop-up menu (setelah tombol TANYA ALWI)
+  function pasang(){
+    let m=document.getElementById('ALWI_DROPUP');
+    if(!m||m.getAttribute('data-bri'))return;
+    m.setAttribute('data-bri','1');
+    let b=document.createElement('button');
+    b.textContent='\uD83C\uDFE6 BANK BRI (Dompet)';
+    b.style.cssText='padding:9px 8px;background:#0e7490;color:#fff;border:1px solid #38bdf8;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;';
+    b.onclick=function(){m.style.display='none';window.briBuka();};
+    let nav=m.querySelector('button');
+    if(nav) m.insertBefore(b,nav.nextSibling); else m.appendChild(b);
   }
-  function add(n, cb){
-    fetch(base()+'/api/poin?u='+uid(),{
-      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({n:n||5})
-    }).then(function(r){return r.json();})
-      .then(function(j){ var p=(j&&j.p)?j.p:0; tulis(p); if(cb)cb(p); })
-      .catch(function(){});
-  }
-  if(!window.poinAdd) window.poinAdd=add;
-  window.poinServerSync=sync;
-  function pasang(){ sync(); setInterval(sync,30000); }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',pasang);
-  else setTimeout(pasang,600);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(pasang,300);});
+  else setTimeout(pasang,300);
 })();
+/* =================== AKHIR BANK BRI DOMPET ==================== */
+
+/* ==================== KARTU MEMBER ALWI (login WA ringan) ==================== */
+(function(){
+  if (window.__alwiMember) return; window.__alwiMember=true;
+  const API='http://34.170.37.50:8000';
+  const TARGET=1000, ADMIN_WA='6282147573665';
+  let pnl=document.createElement('div');
+  pnl.id='ALWI_MEMBER_PANEL';
+  pnl.style.cssText='display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:340px;max-width:94vw;max-height:84vh;overflow:auto;background:#0a0a0a;border:2px solid #ffd700;border-radius:14px;z-index:9999999993;padding:14px;color:#e2e8f0;font:13px system-ui,sans-serif;box-shadow:0 12px 50px rgba(0,0,0,.7);';
+  pnl.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #222;padding-bottom:8px;margin-bottom:10px">
+      <b style="color:#ffd700;font-size:14px">\uD83D\uDCB3 KARTU MEMBER — ALWI CLUB</b>
+      <span onclick="memberTutup()" style="cursor:pointer;color:#888;font-weight:bold;font-size:18px">\u2715</span></div>
+    <div style="font-size:11px;color:#64748b;margin-bottom:8px">Login ringan via WhatsApp · butuh \u2B50 1000 poin utk tukar</div>
+    <label style="font-size:11px;color:#94a3b8">\uD83D\uDC64 Nama</label>
+    <input id="ALWI_MEMBER_NAME" style="width:100%;background:#111;border:1px solid #333;color:#fff;border-radius:8px;padding:8px;box-sizing:border-box;margin:2px 0 8px" placeholder="Nama kamu..." />
+    <label style="font-size:11px;color:#94a3b8">\uD83D\uDCF1 No. WhatsApp</label>
+    <input id="ALWI_MEMBER_WA" inputmode="numeric" style="width:100%;background:#111;border:1px solid #333;color:#fff;border-radius:8px;padding:8px;box-sizing:border-box;margin:2px 0 10px" placeholder="628xxxxxxxxx" />
+    <button onclick="memberSimpan()" style="width:100%;padding:10px;background:linear-gradient(135deg,#f59e0b,#b45309);color:#000;border:none;border-radius:9px;font-weight:800;cursor:pointer;margin-bottom:6px">\uD83D\uDCBE SIMPAN MEMBER</button>
+    <button onclick="memberStatus()" style="width:100%;padding:10px;background:linear-gradient(135deg,#0e7490,#155e75);color:#fff;border:none;border-radius:9px;font-weight:800;cursor:pointer;margin-bottom:6px">\uD83D\uDCDC POIN & DATA TRANSPARAN (JSON)</button>
+    <button onclick="memberChat()" style="width:100%;padding:10px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;border:none;border-radius:9px;font-weight:800;cursor:pointer;margin-bottom:8px">\uD83D\uDCAC CHAT ADMIN</button>
+    <div id="ALWI_MEMBER_CARD" style="border:1px solid #ffd700;border-radius:10px;padding:10px;margin-bottom:8px;font-size:12px;line-height:1.7">
+      <div style="color:#ffd700;font-weight:800;font-size:13px">\uD83D\uDCB3 KARTU MEMBER</div>
+      <div id="ALWI_MEMBER_CARD_ISI">Belum login — isi nama & no WA lalu SIMPAN.</div>
+    </div>
+    <pre id="ALWI_MEMBER_OUT" style="background:#020617;border:1px solid #334155;border-radius:9px;padding:10px;font:11px/1.45 ui-monospace,monospace;color:#86efac;white-space:pre-wrap;word-break:break-word;max-height:150px;overflow:auto">Data transparan muncul di sini...</pre>`;
+  document.body.appendChild(pnl);
+
+  function uid(){
+    let u=localStorage.getItem('alwi_uid');
+    if(!u){u='U'+Date.now().toString(36)+Math.random().toString(36).substr(2,4);localStorage.setItem('alwi_uid',u);}
+    return u;
+  }
+  function inp(id){let e=document.getElementById(id);return e?e.value.trim():'';}
+  function setOut(t){let o=document.getElementById('ALWI_MEMBER_OUT');if(o)o.textContent=t;}
+  function cwa(){return localStorage.getItem('alwi_member_wa')||'';}
+  function cnama(){return localStorage.getItem('alwi_member_name')||'';}
+  function cpoin(){return parseInt(localStorage.getItem('alwi_poin')||'0',10);}
+  function api(path,method,body){
+    return fetch(API+path,{method:method||'GET',headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined})
+      .then(function(r){return r.json().catch(function(){return {ok:false,error:'response-not-json',http:r.status};});});
+  }
+
+  window.memberTutup=function(){pnl.style.display='none';};
+  window.memberBuka=function(){pnl.style.display='block';memberGambar();};
+  window.memberSimpan=function(){
+    let w=inp('ALWI_MEMBER_WA').replace(/\D/g,'');
+    let n=inp('ALWI_MEMBER_NAME')||'Member Alwi';
+    if(w.length<9){setOut('❌ Nomor WA tidak valid (min 9 digit).');return;}
+    localStorage.setItem('alwi_member_wa',w);
+    localStorage.setItem('alwi_member_name',n);
+    memberGambar();
+    setOut('✅ Member tersimpan!\n📱 '+n+' · '+w+'\n🪪 UID : '+uid()+'\n⭐ Poin : '+cpoin()+' / '+TARGET);
+  };
+  function memberGambar(){
+    let isi=document.getElementById('ALWI_MEMBER_CARD_ISI');
+    if(!isi)return;
+    if(!cwa()){isi.textContent='Belum login — isi nama & no WA lalu SIMPAN.';return;}
+    let p=cpoin(), pr=Math.min(100,Math.round(p/TARGET*100));
+    isi.innerHTML='<b>📱 WA:</b> '+cwa()+'<br><b>👤 Nama:</b> '+cnama()+'<br><b>🪪 UID:</b> '+uid()+'<br><b>⭐ Poin:</b> '+p+' / '+TARGET+' ('+pr+'%)<br><div style="background:#1e293b;border-radius:99px;height:9px;overflow:hidden;margin-top:6px"><div style="height:100%;width:'+pr+'%;background:linear-gradient(90deg,#00BFFF,#ffd700)"></div></div>';
+  }
+  window.memberStatus=function(){
+    let u=uid(), p=cpoin();
+    setOut('⏳ Ambil data dari server (transparan)...');
+    api('/api/poin?uid='+encodeURIComponent(u)).then(function(d){
+      let hasil={
+        member:{wa:cwa()||'(belum)',nama:cnama()||'(belum)',uid:u,target_poin:TARGET},
+        poin_lokal:p,
+        server:d&&d.ok?{poin:d.poin,target:d.target,nilai_idr:d.nilai_idr,bisa_tukar:d.bisa_tukar,sisa:d.sisa}:d
+      };
+      setOut(JSON.stringify(hasil,null,1));
+    });
+  };
+  window.memberChat=function(){
+    let u=uid(), p=cpoin();
+    let m='💳 *MEMBER ALWI CLUB*\n\n🪪 UID: '+u+'\n📱 WA: '+(cwa()||'-')+'\n👤 Nama: '+(cnama()||'-')+'\n⭐ Poin: '+p+' / '+TARGET+'\n\nHalo admin, ini data member saya.';
+    window.open('https://wa.me/'+ADMIN_WA+'?text='+encodeURIComponent(m),'_blank');
+  };
+  // tombol di drop-up menu (setelah BANK BRI)
+  function pasang(){
+    let m=document.getElementById('ALWI_DROPUP');
+    if(!m||m.getAttribute('data-member'))return;
+    m.setAttribute('data-member','1');
+    let b=document.createElement('button');
+    b.textContent='\uD83D\uDCB3 KARTU MEMBER (WA)';
+    b.style.cssText='padding:9px 8px;background:#92400e;color:#fff;border:1px solid #f59e0b;border-radius:8px;text-align:left;font-weight:700;font-size:11px;cursor:pointer;width:100%;';
+    b.onclick=function(){m.style.display='none';window.memberBuka();};
+    let ref=null, bs=m.querySelectorAll('button');
+    for(let i=0;i<bs.length;i++){if((bs[i].textContent||'').indexOf('BANK BRI')>=0){ref=bs[i];break;}}
+    if(ref&&ref.nextSibling) m.insertBefore(b,ref.nextSibling); else m.appendChild(b);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(pasang,400);});
+  else setTimeout(pasang,400);
+})();
+/* =================== AKHIR KARTU MEMBER ALWI ==================== */

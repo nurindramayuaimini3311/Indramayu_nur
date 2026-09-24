@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Dompet Indramayu — Tukar Poin BRI</title>
+<style>
+ *{box-sizing:border-box;font-family:system-ui,Arial,sans-serif}
+ body{margin:0;background:#0a0a0a;color:#e2e8f0;padding:14px;min-height:100vh}
+ .head{border:2px solid #00BFFF;border-radius:14px;padding:14px;background:#0a0a0a;margin-bottom:12px;box-shadow:0 10px 30px rgba(0,191,255,.3)}
+ .head h1{margin:0;color:#00BFFF;font-size:17px;border-bottom:1px solid #222;padding-bottom:8px}
+ .head p{margin:8px 0 0;font-size:11.5px;color:#94a3b8;line-height:1.6}
+ .kartu{background:#020617;border:1px solid #334155;border-radius:12px;padding:12px;margin-bottom:10px;font-size:12.5px}
+ .kartu h3{margin:0 0 8px;color:#38bdf8;font-size:12.5px}
+ input{width:100%;background:#111;border:1px solid #333;color:#fff;border-radius:8px;padding:9px;box-sizing:border-box;margin:2px 0 8px;font-size:13px}
+ .tombol{display:block;width:100%;padding:11px;border:none;border-radius:9px;font-weight:800;font-size:12.5px;cursor:pointer;margin-bottom:6px;color:#fff}
+ .biru{background:linear-gradient(135deg,#0284c7,#0e7490);border:1px solid #38bdf8}
+ .ijo{background:linear-gradient(135deg,#16a34a,#15803d);border:1px solid #4ade80}
+ .kuning{background:linear-gradient(135deg,#ca8a04,#d97706);color:#000;border:1px solid #fbbf24}
+ pre{background:#020617;border:1px solid #334155;border-radius:9px;padding:10px;font:11px/1.45 ui-monospace,monospace;color:#86efac;white-space:pre-wrap;word-break:break-word;max-height:200px;overflow:auto}
+ .bawah{font-size:10.5px;color:#64748b;text-align:center;margin-top:12px;line-height:1.7}
+ .bawah a{color:#38bdf8;text-decoration:none;font-weight:700}
+ .bar{height:9px;background:#1e293b;border-radius:99px;overflow:hidden;margin:8px 0}
+ .bar i{display:block;height:100%;background:linear-gradient(90deg,#00BFFF,#ffd700)}
+</style>
+</head>
+<body>
+ <div class="head">
+  <h1>&#127873; TUKAR POIN &#8594; REK BRI</h1>
+  <p>Dompet Indramayu &middot; mode <b>BRI SNAP sandbox</b> (tanpa uang asli).<br>Member butuh &#9733; <b>1000 poin</b> untuk tukar = <b>Rp10.000</b> ke rek BRI.</p>
+ </div>
+
+ <div class="kartu">
+  <h3>&#128100; MEMBER SAYA</h3>
+  <label style="font-size:11px;color:#64748b">Nama</label>
+  <input id="f-nama" placeholder="Nama member...">
+  <label style="font-size:11px;color:#64748b">No. WA</label>
+  <input id="f-wa" inputmode="numeric" placeholder="628xxxxxxxxx">
+  <button class="tombol biru" onclick="simpan()">&#128190; SIMPAN MEMBER</button>
+  <div id="kartu" style="font-size:12px;line-height:1.7;border:1px solid #ffd700;border-radius:9px;padding:9px">Belum login.</div>
+  <div class="bar"><i id="bar-persen" style="width:0%"></i></div>
+ </div>
+
+ <div class="kartu">
+  <h3>&#128176; AKSI DOMPET</h3>
+  <button class="tombol biru" onclick="cekPoin()">&#9733; CEK POIN SAYA</button>
+  <button class="tombol kuning" onclick="translate()">&#127873; TUKAR 1000 POIN &#8594; <b>RP10.000</b></button>
+  <button class="tombol biru" onclick="cekSaldo()">&#128179; CEK SALDO BRI</button>
+  <button class="tombol ijo" onclick="mutasi()">&#128203; MUTASI 7 HARI</button>
+ </div>
+
+ <div class="kartu">
+  <h3>&#128228; HASIL / DATA TRANSPARAN</h3>
+  <pre id="out">Tekan tombol di atas. Hasil JSON transparan tampil di sini...</pre>
+ </div>
+
+ <div class="bawah">
+  <a href="history.html">&#128200; Lihat Grafik History (naik-turun)</a><br>
+  <a href="index.html">&#127757; Kembali ke Dompet Indramayu</a><br>
+  &#169; ALWI CLUB &middot; tukar poin &#8594; BRI (sandbox)
+ </div>
+
+<script>
+var API='http://34.170.37.50:8000';
+var TARGET=1000, NILAI=10000;
+function uid(){var u=localStorage.getItem('alwi_uid');if(!u){u='U'+Date.now().toString(36)+Math.random().toString(36).substr(2,4);localStorage.setItem('alwi_uid',u);}return u;}
+function n(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+function out(t){var o=document.getElementById('out');if(o)o.textContent=t;}
+function objectify(r){try{return r.json();}catch(e){return {ok:false,error:'not json'};}}
+function api(p,m,b){return fetch(API+p,{method:m||'GET',headers:{'Content-Type':'application/json'},body:b?JSON.stringify(b):undefined}).then(objectify);}
+function gambar(p){
+ var e=document.getElementById('kartu');if(!e)return;
+ var pr=Math.min(100,Math.round(p/TARGET*100));
+ var nm=localStorage.getItem('alwi_member_name')||'-';
+ var wa=localStorage.getItem('alwi_member_wa')||'-';
+ e.innerHTML='<b>&#128100; MEMBER</b><br>&#128100; '+nm+'<br>&#128241; '+wa+'<br>&#129398; UID: '+uid()+'<br>&#9733; Poin: <b style="color:#ffd700">'+p+'</b> / '+TARGET;
+ document.getElementById('bar-persen').style.width=pr+'%';
+}
+function simpan(){
+ var w=n('f-wa').replace(/\D/g,'');
+ if(w.length<9){out('&#10060; No WA tidak valid (min 9 digit).');return;}
+ localStorage.setItem('alwi_member_wa',w);localStorage.setItem('alwi_member_name',n('f-nama')||'Member Alwi');
+ api('/api/poin?uid='+encodeURIComponent(uid())).then(function(d){gambar(d&&d.ok?d.poin:0);out('&#9989; Member tersimpan!\nPoin terakhir: '+(d&&d.ok?d.poin:0)+' / '+TARGET+'\n'+JSON.stringify(d,null,1));});
+}
+function cekPoin(){
+ out('&#8987; Ambil data poin...');
+ api('/api/poin?uid='+encodeURIComponent(uid())).then(function(d){if(!d||!d.ok){out(JSON.stringify(d,null,1));return;}gambar(d.poin);out('&#9733; POIN SAYA\nUID: '+uid()+'\nPoin: '+d.poin+'/'+d.target+'\nNilai tukar: Rp'+d.nilai_idr.toLocaleString('id-ID')+'\nBisa tukar: '+(d.bisa_tukar?'YA':'BELUM')+'\nSisa: '+d.sisa+'\n\n'+JSON.stringify(d,null,1));});
+}
+function cekSaldo(){
+ out('&#8987; Cek saldo BRI sandbox...');
+ api('/api/balance','POST',{account_no:'777770000000000001'}).then(function(d){out('&#128179; SALDO BRI (sandbox):\n'+JSON.stringify(d,null,1));});
+}
+function mutasi(){
+ var end=new Date(),start=new Date();start.setDate(start.getDate()-7);
+ var s=start.toISOString().slice(0,10),e=end.toISOString().slice(0,10);
+ out('&#8987; Ambil mutasi...');
+ api('/api/statement','POST',{account_no:'777770000000000001',start_date:s,end_date:e}).then(function(d){out('&#128203; MUTASI 7 HARI:\n'+JSON.stringify(d,null,1));});
+}
+function translate(){
+ out('&#8987; Mengecek poin...');
+ api('/api/poin?uid='+encodeURIComponent(uid())).then(function(d){
+  if(!d||!d.ok){out(JSON.stringify(d,null,1));return;}
+  if(d.poin<TARGET){out('&#9733; Maaf, poin baru '+d.poin+' ('+TARGET+' dibutuhkan, kurang '+(TARGET-d.poin)+').');return;}
+  out('&#8987; Tukar '+TARGET+' poin ke BRI...');
+  api('/api/poin/redeem','POST',{uid:uid(),name:localStorage.getItem('alwi_member_name')||'Member Alwi',account_no:localStorage.getItem('alwi_member_wa')||''}).then(function(r){
+   out('&#127873; HASIL TUKAR:\n'+JSON.stringify(r,null,1));
+   api('/api/poin?uid='+encodeURIComponent(uid())).then(function(q){gambar(q&&q.ok?q.poin:0);});
+  });
+ });
+}
+gambar(parseInt(localStorage.getItem('alwi_poin')||'0',10));
+</script>
+</body>
+</html>

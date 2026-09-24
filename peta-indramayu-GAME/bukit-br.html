@@ -1,0 +1,122 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🎯 BUKIT BATTLE ROYALE 3D</title><style>
+*{box-sizing:border-box;margin:0}body{font-family:Arial;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
+#c{position:fixed;inset:0;display:block}
+.top{position:fixed;top:60px;left:10px;right:10px;display:flex;gap:8px;z-index:5;flex-wrap:wrap;justify-content:center}
+a.back{background:#ffd700;color:#000;font-weight:900;padding:10px 16px;border-radius:12px;text-decoration:none}
+.pill{background:rgba(0,0,0,.6);border:1px solid #ffd700;border-radius:12px;padding:10px 14px;font-weight:900;font-size:13px}
+.hint{position:fixed;bottom:92px;left:10px;right:10px;text-align:center;font-size:11px;opacity:.85;z-index:5;pointer-events:none}
+#dock{position:fixed;left:8px;right:8px;bottom:42px;z-index:20;display:flex;gap:6px;justify-content:center}
+#dock button{flex:1;max-width:150px;min-width:90px;display:flex;flex-direction:column;align-items:center;gap:2px;background:rgba(0,0,0,.72);border:2px solid;border-radius:14px;padding:8px 4px;color:#fff;font-weight:900;font-size:11px;cursor:pointer}
+#dock button small{font-size:9px;opacity:.8;font-weight:600}
+#game{position:fixed;inset:0;z-index:50;background:#000;display:none;flex-direction:column}
+#game.show{display:flex}
+#game .bar{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#111;border-bottom:2px solid #ffd700}
+#game .bar button{background:#ffd700;color:#000;font-weight:900;border:0;border-radius:10px;padding:8px 14px;cursor:pointer;font-size:14px}
+#game .bar span{color:#ffd700;font-weight:900;font-size:13px;flex:1;text-align:center}
+#game iframe{flex:1;width:100%;border:0}
+</style>
+<script type="importmap">{"imports":{"three":"./three.module.js","three/addons/":"./addons/"}}</script></head>
+<body><canvas id="c"></canvas>
+<div class="top"><a class="back" href="index.html">← MAP</a><div class="pill">🎯 BUKIT BATTLE ROYALE</div><div class="pill">4 GAME 1 PULAU</div></div>
+<div class="hint">1 jari putar • 2 jari zoom • pilih game di bawah, main di layar penuh</div>
+<div id="dock">
+<button style="border-color:#ffae00" onclick="buka('PUBG MOBILE','https://web.cloudmoonapp.com/id/game/com.tencent.ig/')">🪂 PUBG MOBILE<small>Pesawat & Lompat</small></button>
+<button style="border-color:#e74c3c" onclick="buka('FREE FIRE','https://web.cloudmoonapp.com/id/game/com.dts.freefireth/')">🔥 FREE FIRE<small>2J Drops</small></button>
+<button style="border-color:#a970ff" onclick="buka('FORTNITE','https://web.cloudmoonapp.com/id/game/com.epicgames.fortnite/')">🏹 FORTNITE<small>Bangun & Menang</small></button>
+<button style="border-color:#7dd34d" onclick="buka('CALL OF DUTY MOBILE','https://web.cloudmoonapp.com/id/game/com.activision.callofduty.shooter/')">💥 COD MOBILE<small>Multi & BR</small></button>
+</div>
+<div id="game">
+ <div class="bar"><button onclick="tutupGame()">✕ TUTUP</button><span id="gtitle">🎯 BATTLE ROYALE — BUKIT 3D</span><a id="gopen" href="#" target="_blank" style="color:#0af;font-size:11px;text-decoration:none">Buka Tab Baru ↗</a></div>
+ <iframe id="frm" src="about:blank" allow="fullscreen;autoplay;gamepad"></iframe>
+</div>
+<script type="module">
+import * as THREE from 'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';
+function buka(n,u){document.getElementById('gtitle').textContent=n+' — BUKIT BR 3D';document.getElementById('gopen').href=u;document.getElementById('frm').src=u;document.getElementById('game').classList.add('show');}
+function tutupGame(){document.getElementById('frm').src='about:blank';document.getElementById('game').classList.remove('show');}
+window.buka=buka;window.tutupGame=tutupGame;
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});
+r.setPixelRatio(Math.min(devicePixelRatio,2));r.shadowMap.enabled=true;
+const s=new THREE.Scene();s.background=new THREE.Color(0x7fb8e0);
+const c=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,300);c.position.set(16,10,18);
+const o=new OrbitControls(c,r.domElement);o.target.set(0,2.5,0);o.enableDamping=true;o.autoRotate=true;o.autoRotateSpeed=.6;
+s.add(new THREE.HemisphereLight(0xffffff,0x3a4a2a,1));
+const d=new THREE.DirectionalLight(0xffffff,1.5);d.position.set(12,16,9);d.castShadow=true;s.add(d);
+function M(co,r=.8,m=0){return new THREE.MeshStandardMaterial({color:co,roughness:r,metalness:m});}
+function B(w,h,dep,co,x,y,z){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,dep),typeof co==='number'?M(co):co);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;return o;}
+// tanah pulau
+const tg=document.createElement('canvas');tg.width=tg.height=256;const tx=tg.getContext('2d');
+tx.fillStyle='#6aa84a';tx.fillRect(0,0,256,256);
+for(let i=0;i<1200;i++){tx.fillStyle=`rgba(${50+Math.random()*90},${110+Math.random()*70},${40+Math.random()*50},.5)`;tx.fillRect(Math.random()*256,Math.random()*256,2,2);}
+for(let i=0;i<50;i++){tx.fillStyle='#8a7040';tx.fillRect(Math.random()*256,Math.random()*256,8,5);}
+const tgt=new THREE.CanvasTexture(tg);tgt.wrapS=tgt.wrapT=THREE.RepeatWrapping;tgt.repeat.set(8,6);
+const g=new THREE.Mesh(new THREE.PlaneGeometry(80,60),new THREE.MeshStandardMaterial({map:tgt,roughness:1}));g.rotation.x=-Math.PI/2;g.receiveShadow=true;s.add(g);
+// bukit & tebing
+function bukit(x,z,r,h,co){const b=new THREE.Mesh(new THREE.SphereGeometry(r,26,14,0,Math.PI*2,0,Math.PI/2),M(co));b.scale.y=h;b.position.set(x,0,z);b.castShadow=true;b.receiveShadow=true;s.add(b);return b;}
+bukit(0,0,7,3.4,0x7d9c50);bukit(-11,4,4,2,0x6f8f48);bukit(11,-4,4.5,2.2,0x6f8f48);bukit(3,11,3.5,1.8,0x6f8f48);
+s.add(B(6,1,6,0x8a8a7a,0,3.3,0));
+// MONUMEN BUKIT BR
+function papan(txt,bg){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const x=cv.getContext('2d');
+ x.fillStyle=bg;x.fillRect(0,0,512,128);x.fillStyle='#fff';x.font='bold 72px Arial';x.textAlign='center';x.textBaseline='middle';x.fillText(txt,256,64);
+ return new THREE.CanvasTexture(cv);}
+const pp=new THREE.Mesh(new THREE.BoxGeometry(9,2.6,.5),new THREE.MeshStandardMaterial({map:papan('🎯 BUKIT BATTLE ROYALE','#b45309')}));pp.position.set(0,6.6,-1);s.add(pp);
+for(const px of[-3,3]){s.add(B(.5,5, .5,0x333333,px,2.8,-1));}
+// AIRDROP crate + asap
+const crate=new THREE.Group();
+crate.add(B(1.8,1.6,1.8,0xb45309,0,.8,0));
+crate.add(B(1.86,.18,1.86,0xffd700,0,1.6,0));
+const smok=new THREE.Group();for(let i=0;i<6;i++){const s1=new THREE.Mesh(new THREE.SphereGeometry(.5,8,8),new THREE.MeshStandardMaterial({color:0xffffff,transparent:true,opacity:.4}));s1.position.set((i%3-1)*.5, i*.7,(i%2)*.5);smok.add(s1);}
+crate.add(smok);crate.position.set(0,4,-4);s.add(crate);
+// tenda bunker musuh / pos
+function tenda(x,z,col){const gr=new THREE.Group();
+ const a=new THREE.Mesh(new THREE.ConeGeometry(2,2.4,4),M(col));a.rotation.y=Math.PI/4;a.position.y=1.2;a.castShadow=true;gr.add(a);
+ s.add(B(2.6,.2,2.6,0x555555,x,.1,z));
+ gr.position.set(x,0,z);s.add(gr);}
+tenda(-13,-6,0x2e5d2e);tenda(13,5,0x2e5d2e);
+// pohon rindang
+function pohon(x,z){const gr=new THREE.Group();
+ const bat=new THREE.Mesh(new THREE.CylinderGeometry(.25,.4,4,8),M(0x6b4a1f));bat.position.y=2;gr.add(bat);
+ const daun=new THREE.Mesh(new THREE.SphereGeometry(1.6,10,10),M(0x2f6f2f));daun.position.y=4.4;gr.add(daun);
+ gr.position.set(x,0,z);gr.traverse(o=>o.castShadow=true);s.add(gr);return gr;}
+for(const [x,z]of[[-8,-9],[-6,10],[9,-11],[8,9],[3,-14],[-3,14],[17,1],[-17,-1]])pohon(x,z);
+// helikopter terbang
+const heli=new THREE.Group();
+heli.add(B(4,1,1.6,0x1d4ed8,0,.7,0));
+heli.add(B(.5,.5,5,0x1d4ed8,0,1.1,0));
+const baling=new THREE.Group();const bl1=new THREE.Mesh(new THREE.BoxGeometry(5,.05,.4),M(0x333333));baling.add(bl1);const bl2=new THREE.Mesh(new THREE.BoxGeometry(.4,.05,5),M(0x333333));baling.add(bl2);baling.position.y=1.5;heli.add(baling);
+const ekor=new THREE.Mesh(new THREE.BoxGeometry(.5,.3,2),M(0x1d4ed8));ekor.position.set(0,1,-2.8);heli.add(ekor);
+heli.position.set(0,14,0);s.add(heli);
+function tentara(x,z,col,hdg){const gr=new THREE.Group();
+ const bd=new THREE.Mesh(new THREE.BoxGeometry(.55,.85,.35),M(col));bd.position.y=.9;gr.add(bd);
+ const kp=new THREE.Mesh(new THREE.SphereGeometry(.22,12,12),M(0xffdbac));kp.position.y=1.55;gr.add(kp);
+ const helm=new THREE.Mesh(new THREE.SphereGeometry(.24,10,10,0,Math.PI*2,0,Math.PI/2),M(0x3a3a3a));helm.position.y=1.78;gr.add(helm);
+ const sen=new THREE.Mesh(new THREE.BoxGeometry(1,.1,.08),M(0x222222));sen.position.set(.55,1.05,.05);gr.add(sen);
+ gr.position.set(x,0,z);gr.rotation.y=hdg;gr.traverse(o=>o.castShadow=true);s.add(gr);return gr;}
+const t1=tentara(-3.5,2,'#c49a3a',Math.PI);const t2=tentara(3.5,2,'#3a7a3a',Math.PI);const t3=tentara(0.2,-7,'#555555',0);
+// 3 penerjun payung di udara
+const jump=[];
+for(let i=0;i<3;i++){const par=new THREE.Group();
+ par.add(B(2.2,.06,1.3,['#ffae00','#ff3b30','#5b21b6'][i],0,0,0));
+ par.add(B(.2,.7,.2,0x333333,0,-.4,0));
+ par.add(B(.3,.4,.2,0xffdbac,0,-.9,0));
+ par.position.set(-5+i*5,11+i%2*2,3);par.rotation.z=.4;s.add(par);jump.push({g:par,sp:.6+Math.random()*.4});}
+for(const [x,z,col]of[[-5.,-1,0xffae00],[5,-1,0x7dd34d],[0,4,0xa970ff]]){const mk=new THREE.Mesh(new THREE.RingGeometry(1.4,1.55,32),new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.65}));mk.rotation.x=-Math.PI/2;mk.position.set(x,.05,z);s.add(mk);}
+// emas loot
+for(let i=0;i<8;i++){const ky=new THREE.Mesh(new THREE.CylinderGeometry(.16,.2,.4,8),new THREE.MeshStandardMaterial({color:0xffd700,emissive:0xffaa00,emissiveIntensity:.55,metalness:.8,roughness:.25}));ky.position.set((Math.random()-.5)*16,3.2,(Math.random()-.5)*12);ky.castShadow=true;s.add(ky);}
+// awan
+function awan(x,y,z){const gr=new THREE.Group();const awm=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1,transparent:true,opacity:.92});
+ for(const xx of[0,1.2,-1.2,.5,-.5,0]){const sp=new THREE.Mesh(new THREE.SphereGeometry(.8,10,10),awm);sp.position.set(xx,0,Math.random()*.5);gr.add(sp);}gr.scale.set(3,1,2);gr.position.set(x,y,z);s.add(gr);return gr;}
+const awans=[awan(14,13,-9),awan(-13,15,10),awan(18,17,5),awan(-18,12,-14),awan(0,18,8)];
+addEventListener('resize',()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});r.setSize(innerWidth,innerHeight);
+(function l(){requestAnimationFrame(l);const t=performance.now()/1000;
+ baling.rotation.y+=.3;
+ heli.position.x=Math.sin(t*.25)*16;heli.position.z=Math.cos(t*.25)*14;heli.position.y=13+Math.sin(t*2)*1.5;heli.rotation.y=Math.atan2(-Math.sin(t*.25)*16,-Math.cos(t*.25)*14);
+ crate.position.y=4+Math.abs(Math.sin(t*2))*.5;
+ for(let i=0;i<smok.children.length;i++){smok.children[i].position.y+=.004;smok.children[i].rotation.x+=.02;}
+ t1.position.y=Math.abs(Math.sin(t*2))*.1;t2.position.y=Math.abs(Math.cos(t*1.8))*.1;t3.position.y=Math.abs(Math.sin(t*2.4+1))*.1;
+ for(let i=0;i<jump.length;i++){const j=jump[i];j.g.position.y-=j.sp*.012;if(j.g.position.y<3.2){j.g.position.y=3.2;j.g.rotation.z*=.96;}j.g.rotation.z=Math.sin(t+j.g.position.x)*.1;}
+ for(const w of awans)w.position.x+=Math.sin(t*.1+w.position.y)*.003;
+ o.update();r.render(s,c);})();
+</script>
+</body></html>

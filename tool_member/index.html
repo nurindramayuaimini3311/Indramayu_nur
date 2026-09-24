@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Daftar Member Aktif — Indramayu Club</title>
+<style>
+ *{box-sizing:border-box;font-family:system-ui,Arial,sans-serif}
+ body{margin:0;background:#0a0a0a;color:#e2e8f0;padding:14px;min-height:100vh}
+ .head{border:2px solid #00BFFF;border-radius:14px;padding:12px;background:#0a0a0a;margin-bottom:12px;box-shadow:0 10px 30px rgba(0,191,255,0.3)}
+ .head h1{margin:0;color:#00BFFF;font-size:17px;border-bottom:1px solid #222;padding-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+ .head p{margin:6px 0 0;font-size:11px;color:#94a3b8;line-height:1.6}
+ .head b{color:#86efac}
+ .card{background:#020617;border:1px solid #334155;border-radius:12px;padding:12px;margin-bottom:10px;font-size:11px}
+ .card .titik{display:flex;align-items:center;justify-content:space-between;gap:8px}
+ .card a{color:#38bdf8;font-weight:bold;font-size:14px;text-decoration:none;word-break:break-all}
+ .badge{font-size:10px;padding:3px 8px;border-radius:99px;font-weight:bold;flex-shrink:0;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:1px solid #4ade80}
+ .card .ket{font-size:11.5px;color:#94a3b8;margin:6px 0 0;line-height:1.55}
+ .card .url{font-size:10.5px;color:#64748b;margin-top:6px;word-break:break-all}
+ .btn{display:block;width:100%;padding:10px;background:linear-gradient(135deg,#0284c7,#0e7490);color:#fff;border:1px solid #38bdf8;border-radius:9px;font-weight:800;font-size:12px;cursor:pointer;margin-top:10px;text-align:center;text-decoration:none}
+ .foot{margin-top:14px;font-size:10.5px;color:#475569;text-align:center;line-height:1.6;border-top:1px solid #222;padding-top:10px}
+</style>
+</head>
+<body>
+ <div class="head">
+  <h1>&#9733; DAFTAR HTML MEMBER AKTIF</h1>
+  <p>Halaman member yang <b>aktif &amp; terverifikasi (HTTP 200)</b> di server <b>34.170.37.50:8080</b>.<br>Terakhir dicek: <b id="tgl"></b>.</p>
+ </div>
+
+ <div class="card">
+  <div class="titik"><a href="http://34.170.37.50:8080/kartu_member.html">&#127942; Kartu Member &mdash; Indramayu PETA</a><span class="badge">AKTIF</span></div>
+  <div class="ket">Kartu identitas visual member Indramayu (nama, poin, QR/UID member) untuk ditampilkan di peta 3D.</div>
+  <div class="url">/kartu_member.html &mdash; Indramayu_nur (root)</div>
+ </div>
+
+ <div class="card">
+  <div class="titik"><a href="http://34.170.37.50:8080/formulir_member.html">&#128203; Formulir Member &mdash; Indramayu PETA</a><span class="badge">AKTIF</span></div>
+  <div class="ket">Formulir pendaftaran/pengisian data member Indramayu (nama, WA, alamat, ID member).</div>
+  <div class="url">/formulir_member.html &mdash; Indramayu_nur (root)</div>
+ </div>
+
+ <div class="card">
+  <div class="titik"><a href="http://34.170.37.50:8080/konten/login_member.html">&#128273; Login Member &mdash; Indramayu Club</a><span class="badge">AKTIF</span></div>
+  <div class="ket">Halaman login member via WhatsApp (input nomor WA) untuk masuk sebagai member club.</div>
+  <div class="url">/konten/login_member.html &mdash; Indramayu_nur/konten</div>
+ </div>
+
+ <div class="card">
+  <div class="titik"><a href="http://34.170.37.50:8080/game/komentar_member.html">&#128172; Form &amp; Log Komentar Member</a><span class="badge">AKTIF</span></div>
+  <div class="ket">Form komentar + log riwayat komentar member yang dipakai widget kartu di peta Indramayu_GAME.</div>
+  <div class="url">/game/komentar_member.html &mdash; Indramayu_nur/game</div>
+ </div>
+
+ <div class="card">
+  <div class="titik"><a href="http://34.170.37.50:8080/dompet-indramayu/aplikasi_dompet/template_member.html">&#128176; Template Member &mdash; Dompet Indramayu</a><span class="badge">AKTIF</span></div>
+  <div class="ket">Template panel member dalam aplikasi dompet (SPG Indonesia Hijab): poin, saldo, login WA, tukar BRI.</div>
+  <div class="url">/dompet-indramayu/aplikasi_dompet/template_member.html</div>
+ </div>
+
+ <a class="btn" href="http://34.170.37.50:8080/">&#127757; KE HALAMAN UTAMA INDRAMAYU</a>
+
+ <div class="foot">Tidak masuk daftar: <b>nur-cli-deploy/pages/member.html</b> (404:8080/3000), <b>deploy-bermain/pages/member.html</b> (307 &#8594; fancy-wood).<br>&copy; Indramayu Club &middot; tool_member/daftar_member_aktif</div>
+
+<script>document.getElementById('tgl').textContent=new Date().toLocaleString('id-ID');</script>
+</body>
+</html>

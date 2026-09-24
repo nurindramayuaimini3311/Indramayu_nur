@@ -1,28 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
-<head><!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
-(function() {
-  if (window.__playableTouchPatchInstalled) return;
-  window.__playableTouchPatchInstalled = true;
-  var origAdd = EventTarget.prototype.addEventListener;
-  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
-  EventTarget.prototype.addEventListener = function(type, listener, options) {
-    if (blockedTypes[type]) {
-      if (options === undefined || options === null) {
-        options = { passive: true };
-      } else if (typeof options === 'boolean') {
-        options = { capture: options, passive: true };
-      } else {
-        options = Object.assign({}, options, { passive: true });
-      }
-    }
-    return origAdd.call(this, type, listener, options);
-  };
-})();
-</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Game Petak Umpet 3D - Indramayu Club</title>
+<title>Game Petak Umpet 3D - Indramayu REAL MAP FIX</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
 html,body{height:100%;margin:0;padding:0;background:#0f1215;color:#fff;font-family:'Segoe UI',Arial,sans-serif;overflow:hidden}
@@ -55,9 +36,9 @@ html,body{height:100%;margin:0;padding:0;background:#0f1215;color:#fff;font-fami
 </head>
 <body>
 <div class="header">
-<a href="index.html" style="position:absolute;left:10px;top:60px;background:#ffd700;color:#000;font-weight:bold;padding:8px 12px;border-radius:8px;text-decoration:none;font-size:12px">← PETA</a>
-<h1>🫣 PETAK UMPET 3D - INDRAMAYU</h1>
-<p>Temukan yang ngumpet! Ketemu → tap <b>LIHAT 3D</b> untuk masuk rumah/masjid/sawah/lautnya!</p>
+<a href="index.html" style="position:absolute;left:10px;top:50px;background:#ffd700;color:#000;font-weight:bold;padding:8px 12px;border-radius:8px;text-decoration:none;font-size:12px">← PETA</a>
+<h1>🫣 PETAK UMPET 3D - INDRAMAYU REAL</h1>
+<p>FIX: Rute REAL Patrol→Larangan→Celeng→Jatibarang | Temukan → tap <b>LIHAT 3D</b></p>
 </div>
 <div class="stats">
 <div class="stat"><b id="found">0/3</b><span>Ditemukan</span></div>
@@ -66,7 +47,7 @@ html,body{height:100%;margin:0;padding:0;background:#0f1215;color:#fff;font-fami
 </div>
 <div id="map"></div>
 <div class="panel">
-<div class="clue" id="clueBox">👀 Pilih level untuk mulai berburu! Petunjuk akan muncul di sini.</div>
+<div class="clue" id="clueBox">👀 Jalur sudah REAL! Pilih level untuk mulai berburu!</div>
 <div class="btn-row">
 <button class="btn btn-gps" onclick="getHint()">💡 Petunjuk (-5s)</button>
 <button class="btn btn-level" onclick="startGame()">▶️ Mulai Level</button>
@@ -85,19 +66,24 @@ html,body{height:100%;margin:0;padding:0;background:#0f1215;color:#fff;font-fami
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// CENTER INDRAMAYU (sama seperti index peta)
-const INDRAMAYU = [-6.38, 108.20];
-const map = L.map('map',{zoomControl:false}).setView(INDRAMAYU, 10);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+// === FIX: CENTER & RUTE SAMA PERSIS DENGAN INDEX.HTML UPGRADE ===
+const CELENG = [-6.39514938,108.28548697];
+const map = L.map('map',{zoomControl:false}).setView(CELENG, 12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap - Jalur Real'}).addTo(map);
 L.control.zoom({position:'topright'}).addTo(map);
-// RUTE 30 MENIT (sama seperti index): A Pantura hitam, B Sawah kuning, C Desa biru
-const RUTE_A=[[-6.4758,108.3104],[-6.455,108.295],[-6.43,108.27],[-6.405,108.245],[-6.38,108.215],[-6.35,108.185],[-6.32,108.15],[-6.295,108.11],[-6.2730,108.0620]];
-const RUTE_B=[[-6.4758,108.3104],[-6.465,108.28],[-6.45,108.245],[-6.425,108.20],[-6.39,108.155],[-6.35,108.11],[-6.31,108.08],[-6.2730,108.0620]];
-const RUTE_C=[[-6.4758,108.3104],[-6.45,108.325],[-6.42,108.315],[-6.385,108.29],[-6.35,108.26],[-6.315,108.21],[-6.29,108.15],[-6.2730,108.0620]];
-L.polyline(RUTE_A,{color:'#000',weight:6,opacity:.9}).addTo(map);
-L.polyline(RUTE_A,{color:'#fff',weight:1.5,dashArray:'8,8',opacity:.8}).addTo(map);
-L.polyline(RUTE_B,{color:'#ffcf40',weight:4,opacity:.9}).addTo(map);
-L.polyline(RUTE_C,{color:'#60a5fa',weight:4,opacity:.9}).addTo(map);
+
+// RUTE REAL DARI INDEX - FIX
+const RUTE_A=[[-6.31421005,107.99739269],[-6.35,108.10],[-6.38,108.20],[-6.40458555,108.2670992],[-6.39514938,108.28548697],[-6.42,108.295],[-6.47293261,108.30617431]];
+const RUTE_B=[[-6.31421005,107.99739269],[-6.33,108.15],[-6.36,108.22],[-6.385,108.28],[-6.39514938,108.28548697],[-6.42,108.295],[-6.47293261,108.30617431]];
+const RUTE_C=[[-6.31421005,107.99739269],[-6.32,108.12],[-6.34,108.18],[-6.407979,108.256639],[-6.40458555,108.2670992],[-6.39514938,108.28548697],[-6.47293261,108.30617431]];
+const RUTE_MERAH=[[-6.39514938,108.28548697],[-6.385,108.295],[-6.37,108.31],[-6.35,108.325],[-6.33585815,108.33462292],[-6.32920874,108.31571446]];
+
+// Gambar rute
+L.polyline(RUTE_A,{color:'#000',weight:7,opacity:.95}).addTo(map).bindPopup('A HITAM: Patrol → Larangan → CELENG → Jatibarang (30 menit)');
+L.polyline(RUTE_A,{color:'#fff',weight:2,dashArray:'10,10',opacity:.9}).addTo(map);
+L.polyline(RUTE_B,{color:'#ffcf40',weight:5,opacity:.9}).addTo(map).bindPopup('B KUNING: Sawah Shortcut via Celeng');
+L.polyline(RUTE_C,{color:'#60a5fa',weight:5,opacity:.9}).addTo(map).bindPopup('C BIRU: Desa via Masjid Larangan');
+L.polyline(RUTE_MERAH,{color:'#ff2222',weight:8,opacity:.95}).addTo(map).bindPopup('🔴 MERAH BARU: Celeng Lohbener → Terminal & Kota Indramayu (13 KM)');
 
 let targets = [];
 let foundMarkers = [];
@@ -110,9 +96,9 @@ let level = 1;
 let gameActive = false;
 
 const levels = [
-  { name:"Pemula - Alun-alun", count:2, radius:0.02, time:90 },
-  { name:"Siaga - Kota", count:3, radius:0.05, time:75 },
-  { name:"Pro - Se-Indramayu", count:3, radius:0.15, time:60 }
+  { name:"Pemula - Celeng & Larangan", count:2, radius:0.02, time:90 },
+  { name:"Siaga - Kota Jatibarang-Patrol", count:3, radius:0.05, time:75 },
+  { name:"Pro - Se-Indramayu REAL", count:4, radius:0.12, time:70 }
 ];
 
 function randOffset(r){ return (Math.random()-0.5)*r*2 }
@@ -122,22 +108,28 @@ function startGame(){
   const cfg = levels[level-1];
   timeLeft = cfg.time;
   document.getElementById('timer').textContent = timeLeft;
-  document.getElementById('clueBox').textContent = `🎯 Level ${level}: ${cfg.name} - Ada ${cfg.count} orang ngumpet! Tap peta untuk cari.`;
+  document.getElementById('clueBox').textContent = `🎯 Level ${level}: ${cfg.name} - Ada ${cfg.count} orang ngumpet di jalur REAL! Tap peta untuk cari.`;
   gameActive = true;
 
-  // buat target ngumpet DI DEKAT titik 3D (sama daftarnya seperti index peta)
+  // === FIX: TEMPAT SAMA PERSIS DENGAN INDEX.HTML ===
   const TEMPAT=[
-    {n:'🏠 Rumah',f:'rumah.html',c:[-6.4780,108.3120]},
-    {n:'🕌 Masjid',f:'masjid.html',c:[-6.4740,108.3090]},
-    {n:'⛪ Gereja',f:'gereja.html',c:[-6.4720,108.3150]},
-    {n:'🏮 Klenteng',f:'klenteng.html',c:[-6.4700,108.3050]},
-    {n:'🌾 Sawah',f:'sawah.html',c:[-6.4600,108.2800]},
-    {n:'👨‍🌾 Sawah2 Petani Bubble',f:'sawah2.html',c:[-6.4490,108.2640]},
+    {n:'🏠 Rumah Jatibarang',f:'rumah.html',c:[-6.4780,108.3120]},
+    {n:'🕌 Masjid Nurul Huda Larangan',f:'masjid.html',c:[-6.407979,108.256639]},
+    {n:'⛪ Gereja Jatibarang',f:'gereja.html',c:[-6.4720,108.3150]},
+    {n:'🏮 Klenteng Jatibarang',f:'klenteng.html',c:[-6.4700,108.3050]},
+    {n:'🌾 Sawah Jatibarang',f:'sawah.html',c:[-6.4600,108.2800]},
     {n:'🌊 Laut Eretan',f:'laut.html',c:[-6.2730,108.0620]},
-    {n:'🪦 Kuburan Wiralodra',f:'kuburan.html',c:[-6.3980,108.3020]},
-    {n:'🎣 Orang Mancing',f:'mancing.html',c:[-6.3480,108.1900]},
-    {n:'⛽ SPBU Isi Bensin',f:'spbu.html',c:[-6.4030,108.2500]},
-    {n:'🏪 Pasar Patrol',f:'pasar.html',c:[-6.4300,108.2900]}
+    {n:'🪦 Kuburan Hantu Lohbener',f:'kuburan.html',c:[-6.3980,108.3020]},
+    {n:'🎣 Orang Mancing Eretan',f:'mancing.html',c:[-6.3480,108.1900]},
+    {n:'⛽ SPBU Lohbener',f:'spbu.html',c:[-6.4030,108.2500]},
+    {n:'🏡 Desa Larangan Real',f:'larangan.html',c:[-6.407979,108.256639]},
+    {n:'🚏 Busstop Larangan Real',f:'larangan.html',c:[-6.40458555,108.2670992]},
+    {n:'⭐ GERBANG CELENG LOHBENER',f:'larangan.html',c:[-6.39514938,108.28548697]},
+    {n:'🏪 Pasar Patrol',f:'pasar.html',c:[-6.31421005,107.99739269]},
+    {n:'🏪 Pasar Jatibarang',f:'pasar.html',c:[-6.47293261,108.30617431]},
+    {n:'🚌 Terminal Indramayu',f:'patrol-jalan.html',c:[-6.33585815,108.33462292]},
+    {n:'👨‍🌾 Petani 9 Orang',f:'sawah.html',c:[-6.4550,108.2720]},
+    {n:'👨‍🌾 Petani Bubble Sawah',f:'sawah2.html',c:[-6.4490,108.2640]},
   ];
   for(let i=0;i<cfg.count;i++){
     const tp=TEMPAT[Math.floor(Math.random()*TEMPAT.length)];
@@ -173,7 +165,7 @@ function resetGame(fullReset=true){
   pulseMarkers.forEach(m=>map.removeLayer(m));
   foundMarkers=[]; pulseMarkers=[];
   document.getElementById('clueBox').className='clue';
-  if(fullReset){ document.getElementById('clueBox').textContent='👀 Pilih level untuk mulai berburu! Tap Mulai Level.'; }
+  if(fullReset){ document.getElementById('clueBox').textContent='👀 Jalur REAL sudah aktif! Tap Mulai Level.'; }
   closeModal();
 }
 
@@ -194,11 +186,10 @@ function checkGuess(lat,lng){
     if(d<minDist){ minDist=d; nearestIdx=i; }
   });
 
-  // tap marker sementara
   const tap = L.circleMarker([lat,lng],{radius:6,color:'#fff',fillColor:'#ffd700',fillOpacity:0.8}).addTo(map);
   setTimeout(()=>map.removeLayer(tap),1500);
 
-  if(minDist < 120){ // ketemu <120 meter
+  if(minDist < 120){
     targets[nearestIdx].found=true;
     found++;
     document.getElementById('found').textContent=found+'/'+targets.length;
@@ -215,10 +206,10 @@ function checkGuess(lat,lng){
   } else {
     let msg='';
     let cls='clue';
-    if(minDist < 300){ msg=`🔥 PANAS BANGET! ${Math.round(minDist)}m lagi! Dikit lagi!`; cls='clue hot'; }
-    else if(minDist < 700){ msg=`🌡️ Hangat... ${Math.round(minDist)}m - kamu dekat!`; cls='clue'; }
-    else if(minDist < 1500){ msg=`❄️ Dingin... ${Math.round(minDist)}m jauh`; cls='clue cold'; }
-    else { msg=`🧊 BEKU! ${Math.round(minDist)}m - masih jauh banget`; cls='clue cold'; }
+    if(minDist < 300){ msg=`🔥 PANAS BANGET! ${Math.round(minDist)}m lagi!`; cls='clue hot'; }
+    else if(minDist < 700){ msg=`🌡️ Hangat... ${Math.round(minDist)}m - dekat!`; cls='clue'; }
+    else if(minDist < 1500){ msg=`❄️ Dingin... ${Math.round(minDist)}m`; cls='clue cold'; }
+    else { msg=`🧊 BEKU! ${Math.round(minDist)}m - masih jauh`; cls='clue cold'; }
     const box=document.getElementById('clueBox');
     box.textContent=msg;
     box.className=cls;
@@ -234,7 +225,7 @@ function getHint(){
   const pm = L.marker([t.lat,t.lng],{icon:pulseIcon}).addTo(map);
   pulseMarkers.push(pm);
   setTimeout(()=>{ map.removeLayer(pm); }, 3000);
-  document.getElementById('clueBox').textContent='💡 Petunjuk: Ada kilatan kuning 3 detik! (-5 detik)';
+  document.getElementById('clueBox').textContent='💡 Kilatan kuning 3 detik! (-5 detik)';
 }
 
 function endGame(win){
@@ -246,8 +237,7 @@ function endGame(win){
     document.getElementById('modalText').innerHTML=`Level ${level} selesai!<br>Ditemukan ${found} orang dalam ${attempt} tebakan<br>Sisa waktu: ${timeLeft}s`;
   } else {
     document.getElementById('modalTitle').textContent='⏰ WAKTU HABIS!';
-    document.getElementById('modalText').innerHTML=`Kamu baru nemu ${found}/${targets.length}<br>Coba lagi biar jadi juara petak umpet Indramayu!`;
-    // tampilkan yang belum ketemu
+    document.getElementById('modalText').innerHTML=`Kamu baru nemu ${found}/${targets.length}<br>Coba lagi!`;
     targets.filter(t=>!t.found).forEach(t=>{
       const icon = L.divIcon({html:'<div style="font-size:24px;opacity:0.6">👻</div>',iconSize:[24,24],className:''});
       const m = L.marker([t.lat,t.lng],{icon}).addTo(map).bindPopup('Di sini dia ngumpet!').openPopup();
@@ -261,7 +251,6 @@ function nextLevel(){
   closeModal();
   if(found===targets.length && level < levels.length){
     level++;
-    if(level>levels.length) level=1;
   }
   startGame();
 }
@@ -270,9 +259,5 @@ function closeModal(){ document.getElementById('modalWin').classList.remove('sho
 
 resetGame();
 </script>
-
-
-
 </body>
 </html>
-

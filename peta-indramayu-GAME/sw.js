@@ -1,7 +1,7 @@
 /* SW Peta 3D v5: network-first (file baru selalu menang, tidak sangkut) + fallback cache (offline) */
 const C='peta3d-v6';
 const INTI=['index.html','patrol-jalan.html','patrol-bebas.html','three.module.js','es-module-shims.js',
- 'addons/controls/OrbitControls.js','alwi_bubble4.js?v=6','alwi_bubble1.js','alwi_bubble3.js'];
+ 'addons/controls/OrbitControls.js','alwi_bubble4.js?v=6','alwi_bubble4.js','alwi_bubble4.js'];
 self.addEventListener('install',e=>{
  e.waitUntil(
   caches.open(C).then(c=>Promise.all(INTI.map(u=>c.add(u).catch(()=>{})))).then(()=>self.skipWaiting())

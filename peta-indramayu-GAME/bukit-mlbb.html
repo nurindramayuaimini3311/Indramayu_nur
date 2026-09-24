@@ -1,0 +1,119 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>⛰️ BUKIT 3D - Mobile Legends</title><style>
+*{box-sizing:border-box;margin:0}body{font-family:Arial;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
+#c{position:fixed;inset:0;display:block}
+.top{position:fixed;top:60px;left:10px;right:10px;display:flex;gap:8px;z-index:5;flex-wrap:wrap;justify-content:center}
+a.back{background:#ffd700;color:#000;font-weight:900;padding:10px 16px;border-radius:12px;text-decoration:none}
+.pill{background:rgba(0,0,0,.6);border:1px solid #ffd700;border-radius:12px;padding:10px 14px;font-weight:900;font-size:13px}
+.hint{position:fixed;bottom:78px;left:10px;right:10px;text-align:center;font-size:11px;opacity:.85;z-index:5;pointer-events:none}
+#main-btn{position:fixed;bottom:44px;left:50%;transform:translateX(-50%);z-index:20;background:linear-gradient(180deg,#ffd700,#f0a500);color:#3a2500;border:2px solid #fff3b0;font-weight:900;font-size:16px;padding:14px 26px;border-radius:999px;cursor:pointer;box-shadow:0 6px 20px rgba(255,180,0,.5)}
+#game{position:fixed;inset:0;z-index:50;background:#000;display:none;flex-direction:column}
+#game.show{display:flex}
+#game .bar{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#111;border-bottom:2px solid #ffd700}
+#game .bar button{background:#ffd700;color:#000;font-weight:900;border:0;border-radius:10px;padding:8px 14px;cursor:pointer;font-size:14px}
+#game .bar span{color:#ffd700;font-weight:900;font-size:13px;flex:1;text-align:center}
+#game iframe{flex:1;width:100%;border:0}
+</style>
+<script type="importmap">{"imports":{"three":"./three.module.js","three/addons/":"./addons/"}}</script></head>
+<body><canvas id="c"></canvas>
+<div class="top"><a class="back" href="index.html">← MAP</a><div class="pill">⛰️ BUKIT MLBB 3D</div><div class="pill">🗡️ Medan Perang Eretan</div></div>
+<div class="hint">1 jari putar • 2 jari zoom • ketuk tombol emas untuk main Mobile Legends</div>
+<button id="main-btn">🗡️ MAIN MOBILE LEGENDS</button>
+<div id="game">
+ <div class="bar"><button onclick="tutupGame()">✕ TUTUP</button><span>🗡️ MOBILE LEGENDS — BUKIT MLBB 3D</span><a href="https://web.cloudmoonapp.com/id/game/com.mobile.legends/" target="_blank" style="color:#0af;font-size:11px;text-decoration:none">Buka Tab Baru ↗</a></div>
+ <iframe id="frm" src="about:blank" allow="fullscreen;autoplay;gamepad"></iframe>
+</div>
+<script type="module">
+import * as THREE from 'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';
+const mainBtn=document.getElementById('main-btn');
+mainBtn.onclick=()=>{const f=document.getElementById('frm');f.src='https://web.cloudmoonapp.com/id/game/com.mobile.legends/';document.getElementById('game').classList.add('show');};
+function tutupGame(){document.getElementById('frm').src='about:blank';document.getElementById('game').classList.remove('show');}
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});
+r.setPixelRatio(Math.min(devicePixelRatio,2));r.shadowMap.enabled=true;
+const s=new THREE.Scene();s.background=new THREE.Color(0x86b6dd);
+const c=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,300);c.position.set(16,9,18);
+const o=new OrbitControls(c,r.domElement);o.target.set(0,2.5,0);o.enableDamping=true;o.autoRotate=true;o.autoRotateSpeed=.6;
+s.add(new THREE.HemisphereLight(0xffffff,0x3a4a2a,1));
+const d=new THREE.DirectionalLight(0xffffff,1.5);d.position.set(12,16,9);d.castShadow=true;s.add(d);
+const spot=new THREE.SpotLight(0xffe9a8,1.2,50,Math.PI/5,.4);spot.position.set(0,20,0);spot.target.position.set(0,0,0);s.add(spot);s.add(spot.target);
+function M(co,r=.8,m=0){return new THREE.MeshStandardMaterial({color:co,roughness:r,metalness:m});}
+function B(w,h,dep,co,x,y,z){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,dep),typeof co==='number'?M(co):co);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;return o;}
+// tanah rumput arena
+const tg=document.createElement('canvas');tg.width=tg.height=256;const tx=tg.getContext('2d');
+tx.fillStyle='#5e9c3e';tx.fillRect(0,0,256,256);
+for(let i=0;i<1200;i++){tx.fillStyle=`rgba(${40+Math.random()*80},${120+Math.random()*60},${40+Math.random()*40},.5)`;tx.fillRect(Math.random()*256,Math.random()*256,2,2);}
+for(let i=0;i<60;i++){tx.fillStyle='#4a7a2e';tx.fillRect(Math.random()*256,Math.random()*256,6,4);}
+const tgt=new THREE.CanvasTexture(tg);tgt.wrapS=tgt.wrapT=THREE.RepeatWrapping;tgt.repeat.set(8,6);
+const g=new THREE.Mesh(new THREE.PlaneGeometry(80,60),new THREE.MeshStandardMaterial({map:tgt,roughness:1}));g.rotation.x=-Math.PI/2;g.receiveShadow=true;s.add(g);
+// BUKIT utama (bukit war) + bukit kecil
+function bukit(x,z,r,h,co){
+ const b=new THREE.Mesh(new THREE.SphereGeometry(r,26,14,0,Math.PI*2,0,Math.PI/2),M(co));b.scale.y=h;b.position.set(x,0,z);b.castShadow=true;b.receiveShadow=true;s.add(b);return b;
+}
+const hill=bukit(0,0,7,3.6,0x7a9c4e);bukit(10,-4,4,2,0x6f8f48);bukit(-9,5,4.5,2.4,0x6f8f48);bukit(4,10,3.5,1.8,0x6f8f48);
+// puncak bukit yang diratakan dengan batu
+s.add(B(6,1.2,6,0x8a8a7a,0,3.4,0));
+s.add(B(5,.8,5,0x9aa08a,0,4,0));
+// MONUMEN "ML" di puncak bukit
+function papan(txt,bg){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const x=cv.getContext('2d');
+ x.fillStyle=bg;x.fillRect(0,0,512,128);x.fillStyle='#fff';x.font='bold 80px Arial';x.textAlign='center';x.textBaseline='middle';x.fillText(txt,256,64);
+ return new THREE.CanvasTexture(cv);}
+const pp=new THREE.Mesh(new THREE.BoxGeometry(8,2.6,.5),new THREE.MeshStandardMaterial({map:papan('⚔️ BUKIT MLBB','#1d4ed8')}));pp.position.set(0,7,-1);s.add(pp);
+for(const px of[-2.6,2.6]){s.add(B(.5,5.4,.5,0x333333,px,3.4,-1));}
+// MENARA ML (biru = tim kita) + menara merah musuh di kejauhan
+function menara(x,z,col,hdg){
+ const gr=new THREE.Group();
+ const t1=new THREE.Mesh(new THREE.CylinderGeometry(.5,.7,7,10),M(0xcccccc,.6));t1.position.y=3.5;t1.castShadow=true;gr.add(t1);
+ const t2=new THREE.Mesh(new THREE.CylinderGeometry(.34,.5,4,10),M(0xbbbbbb,.6));t2.position.y=6.8;t2.castShadow=true;gr.add(t2);
+ const orb=new THREE.Mesh(new THREE.SphereGeometry(.7,14,14),new THREE.MeshStandardMaterial({color:col,emissive:col,emissiveIntensity:.85,roughness:.3}));orb.position.y=9.6;orb.castShadow=true;gr.add(orb);
+ gr.position.set(x,0,z);gr.rotation.y=hdg;gr.traverse(o=>{o.castShadow=true;});s.add(gr);return {gr,orb};
+}
+const tKita=menara(-13,6,0x2266ff,0);const tMusuh=menara(13,-7,0xff2244,Math.PI);
+// POJOK base: pohon jungle
+function pohon(x,z){const gr=new THREE.Group();
+ const bat=new THREE.Mesh(new THREE.CylinderGeometry(.2,.3,3,8),M(0x6b4a1f));bat.position.y=1.5;gr.add(bat);
+ const daun=new THREE.Mesh(new THREE.SphereGeometry(1.3,10,10),M(0x2f6f2f));daun.position.y=3;gr.add(daun);
+ gr.position.set(x,0,z);gr.traverse(o=>o.castShadow=true);s.add(gr);return gr;}
+for(const [x,z]of[[-9,-8],[-7,9],[8,-10],[9,8],[2,-13],[-2,13],[16,0],[-16,0]])pohon(x,z);
+// Pahlawan: Fighter (pedang), Mage (tongkat api), Marksman (busur)
+function hero(x,z,jenis,hdg){
+ const gr=new THREE.Group();
+ let bju=jenis==='fighter'?0xcc0000:(jenis==='mage'?0x5b21b6:0x0e7490);
+ const bd=new THREE.Mesh(new THREE.BoxGeometry(.6,.9,.4),M(bju));bd.position.y=.95;gr.add(bd);
+ const kp=new THREE.Mesh(new THREE.SphereGeometry(.24,12,12),M(0xffdbac));kp.position.y=1.62;gr.add(kp);
+ const helm=new THREE.Mesh(new THREE.SphereGeometry(.27,10,10,0,Math.PI*2,0,Math.PI/2),M(0x888888));helm.position.y=1.85;gr.add(helm);
+ if(jenis==='fighter'){
+  const ped=new THREE.Mesh(new THREE.BoxGeometry(.09,1.5,.09),M(0xffffff,.2,.9));ped.position.set(.32,1.15,-.1);gr.add(ped);
+  const pij=new THREE.Mesh(new THREE.BoxGeometry(.12,.15,.12),M(0xffd700));pij.position.set(.32,1.95,-.1);gr.add(pij);
+ }else if(jenis==='mage'){
+  const tong=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,1.4,6),M(0x5f3d1c));tong.position.set(.3,.95,.1);tong.rotation.z=.2;gr.add(tong);
+  const api=new THREE.Mesh(new THREE.SphereGeometry(.22,10,10),new THREE.MeshStandardMaterial({color:0xff8800,emissive:0xff5500,emissiveIntensity:1.2}));api.position.set(.42,1.85,.15);gr.add(api);
+ }else{
+  const bus=new THREE.Mesh(new THREE.BoxGeometry(1,.12,.06),M(0x5f3d1c));bus.position.set(.5,1.25,.1);bus.rotation.z=.35;gr.add(bus);
+ }
+ gr.position.set(x,0,z);gr.rotation.y=hdg;gr.traverse(o=>o.castShadow=true);s.add(gr);return gr;
+}
+const h1=hero(-3,1.2,'fighter',Math.PI);const h2=hero(3,1.2,'mage',Math.PI);const h3=hero(0,-5.2,'marksman',0);
+// minion pemanah + creeper
+for(let i=0;i<4;i++)hero((-6+i*4),-20+((i%2)),'fighter',0).position.y-=i%2*.2;
+// bendera emas di puncak
+const tiang=new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,3,6),M(0x333333,.3,.8));tiang.position.set(0,5.5,-3);s.add(tiang);
+const kibar=new THREE.Mesh(new THREE.PlaneGeometry(1.6,.9),M(0x1d4ed8,.5,.1));kibar.position.set(.8,6.4,-3);s.add(kibar);
+// kristal & emas
+for(let i=0;i<6;i++){const ky=new THREE.Mesh(new THREE.CylinderGeometry(.2,.24,.5,8),new THREE.MeshStandardMaterial({color:0xffd700,emissive:0xffaa00,emissiveIntensity:.55,metalness:.8,roughness:.25}));ky.position.set((Math.random()-.5)*16,4.2,(Math.random()-.5)*12);ky.castShadow=true;s.add(ky);}
+const kr=new THREE.Mesh(new THREE.OctahedronGeometry(.5),new THREE.MeshStandardMaterial({color:0x22ccff,emissive:0x00aaff,emissiveIntensity:1,roughness:.2,metalness:.5}));kr.position.set(2,-15,-2);s.add(kr);
+// awan
+function awan(x,y,z){const gr=new THREE.Group();const awm=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1,transparent:true,opacity:.92});
+ for(const xx of[0,1.2,-1.2,.5,-.5,0]){const sp=new THREE.Mesh(new THREE.SphereGeometry(.8,10,10),awm);sp.position.set(xx,0,Math.random()*.5);gr.add(sp);}gr.scale.set(3,1,2);gr.position.set(x,y,z);s.add(gr);return gr;}
+const awans=[awan(14,12,-8),awan(-12,14,10),awan(17,16,4),awan(-17,11,-12)];
+addEventListener('resize',()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});r.setSize(innerWidth,innerHeight);
+(function l(){requestAnimationFrame(l);const t=performance.now()/1000;
+ h1.position.y=Math.abs(Math.sin(t*2))*.12;h1.rotation.z=Math.sin(t*4+.5)*.06;
+ h2.rotation.z=Math.cos(t*3.1)*.06;h3.position.y=Math.abs(Math.sin(t*2.3+1))*.12;
+ tKita.orb.position.y=9.6+Math.sin(t*3)*.12;tMusuh.orb.position.y=9.6+Math.cos(t*2.7)*.12;
+ kr.rotation.y+=.02;kr.position.y=4.7+Math.sin(t*2)*.2;
+ for(const w of awans)w.position.x+=Math.sin(t*.1+w.position.y)*.003;
+ o.update();r.render(s,c);})();
+window.tutupGame=tutupGame;
+</script>
+</body></html>

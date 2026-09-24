@@ -1,0 +1,129 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🏰 ISTANA 3D - Clash of Clans</title><style>
+*{box-sizing:border-box;margin:0}body{font-family:Arial;background:#0b0e14;color:#fff;overflow:hidden;touch-action:none}
+#c{position:fixed;inset:0;display:block}
+.top{position:fixed;top:60px;left:10px;right:10px;display:flex;gap:8px;z-index:5;flex-wrap:wrap;justify-content:center}
+a.back{background:#ffd700;color:#000;font-weight:900;padding:10px 16px;border-radius:12px;text-decoration:none}
+.pill{background:rgba(0,0,0,.6);border:1px solid #ffd700;border-radius:12px;padding:10px 14px;font-weight:900;font-size:13px}
+.hint{position:fixed;bottom:78px;left:10px;right:10px;text-align:center;font-size:11px;opacity:.85;z-index:5;pointer-events:none}
+#main-btn{position:fixed;bottom:44px;left:50%;transform:translateX(-50%);z-index:20;background:linear-gradient(180deg,#ffd700,#f0a500);color:#3a2500;border:2px solid #fff3b0;font-weight:900;font-size:16px;padding:14px 26px;border-radius:999px;cursor:pointer;box-shadow:0 6px 20px rgba(255,180,0,.5)}
+#game{position:fixed;inset:0;z-index:50;background:#000;display:none;flex-direction:column}
+#game.show{display:flex}
+#game .bar{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#111;border-bottom:2px solid #ffd700}
+#game .bar button{background:#ffd700;color:#000;font-weight:900;border:0;border-radius:10px;padding:8px 14px;cursor:pointer;font-size:14px}
+#game .bar span{color:#ffd700;font-weight:900;font-size:13px;flex:1;text-align:center}
+#game iframe{flex:1;width:100%;border:0}
+</style>
+<script type="importmap">{"imports":{"three":"./three.module.js","three/addons/":"./addons/"}}</script></head>
+<body><canvas id="c"></canvas>
+<div class="top"><a class="back" href="index.html">← MAP</a><div class="pill">🏰 ISTANA COC 3D</div><div class="pill">⚔️ Kandang Gerbang Celeng</div></div>
+<div class="hint">1 jari putar • 2 jari zoom • ketuk tombol emas untuk main Clash of Clans</div>
+<button id="main-btn">⚔️ MAIN CLASH OF CLANS</button>
+<div id="game">
+ <div class="bar"><button onclick="tutupGame()">✕ TUTUP</button><span>⚔️ CLASH OF CLANS — ISTANA COC 3D</span><a href="https://web.cloudmoonapp.com/id/game/com.supercell.clashofclans/" target="_blank" style="color:#0af;font-size:11px;text-decoration:none">Buka Tab Baru ↗</a></div>
+ <iframe id="frm" src="about:blank" allow="fullscreen;autoplay;gamepad"></iframe>
+</div>
+<script type="module">
+import * as THREE from 'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';
+const mainBtn=document.getElementById('main-btn');
+mainBtn.onclick=()=>{const f=document.getElementById('frm');f.src='https://web.cloudmoonapp.com/id/game/com.supercell.clashofclans/';document.getElementById('game').classList.add('show');};
+function tutupGame(){document.getElementById('frm').src='about:blank';document.getElementById('game').classList.remove('show');}
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});
+r.setPixelRatio(Math.min(devicePixelRatio,2));r.shadowMap.enabled=true;
+const s=new THREE.Scene();s.background=new THREE.Color(0x78b4e3);
+const c=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,300);c.position.set(15,9,17);
+const o=new OrbitControls(c,r.domElement);o.target.set(0,2,0);o.enableDamping=true;o.autoRotate=true;o.autoRotateSpeed=.6;
+s.add(new THREE.HemisphereLight(0xffffff,0x5a4a30,.95));
+const d=new THREE.DirectionalLight(0xffffff,1.5);d.position.set(12,16,9);d.castShadow=true;s.add(d);
+const spot=new THREE.SpotLight(0xffe9a8,1.2,40,Math.PI/5,.4);spot.position.set(0,18,0);spot.target.position.set(0,0,0);s.add(spot);s.add(spot.target);
+function M(co,r=.8,m=0){return new THREE.MeshStandardMaterial({color:co,roughness:r,metalness:m});}
+function B(w,h,dep,co,x,y,z){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,dep),typeof co==='number'?M(co):co);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;return o;}
+function tex(cv){const x=cv.getContext('2d');return new THREE.CanvasTexture(cv);}
+// tanah desa gaya COC (pasir + rumput)
+const tg=document.createElement('canvas');tg.width=tg.height=256;let tx=tg.getContext('2d');
+tx.fillStyle='#cbb86a';tx.fillRect(0,0,256,256);
+for(let i=0;i<900;i++){tx.fillStyle=`rgba(${120+Math.random()*70},${100+Math.random()*40},${40+Math.random()*40},.5)`;tx.fillRect(Math.random()*256,Math.random()*256,2,2);}
+const tgt=tex(tg);tgt.wrapS=tgt.wrapT=THREE.RepeatWrapping;tgt.repeat.set(8,6);
+const g=new THREE.Mesh(new THREE.PlaneGeometry(80,60),new THREE.MeshStandardMaterial({map:tgt,roughness:1}));g.rotation.x=-Math.PI/2;g.receiveShadow=true;s.add(g);
+// tekstur batu dinding
+const brick=document.createElement('canvas');brick.width=256;brick.height=128;let bx=brick.getContext('2d');
+bx.fillStyle='#8a5a2b';bx.fillRect(0,0,256,128);
+bx.strokeStyle='#5f3d1c';bx.lineWidth=3;
+for(let r=0;r<5;r++){bx.beginPath();bx.moveTo(0,r*28);bx.lineTo(256,r*28);bx.stroke();
+ for(let c2=0;c2<8;c2++){bx.beginPath();bx.moveTo(c2*64,0);bx.lineTo(c2*64,128);bx.stroke();}}
+for(let i=0;i<60;i++){bx.fillStyle=`rgba(0,0,0,.12)`;bx.fillRect(Math.random()*256,Math.random()*128,14,7);}
+const brickT=tex(brick);brickT.wrapS=brickT.wrapT=THREE.RepeatWrapping;
+function dinding(w,dep,h,x,z){const m=new THREE.MeshBasicMaterial({map:brickT});m.wrapS=THREE.RepeatWrapping;
+ m.repeat.set(w/3,1);const mw=new THREE.Mesh(new THREE.BoxGeometry(w,h,dep),new THREE.MeshStandardMaterial({map:brickT,roughness:.9}));
+ mw.position.set(x,h/2,z);mw.castShadow=true;mw.receiveShadow=true;s.add(mw);
+ for(const ex of[-.6,.6]){s.add(B(.5,1.1,.5,0x7a4f22,x+ex*(w/2-.3),.55,z));
+ }
+ return mw;}
+// ISTANA: gerbang + pagar
+dinding(3,2.6,2.4,0,0);
+dinding(3,2.6,2.4,0,-7);
+dinding(1.6,2.4,2.6,7,-3.5);
+dinding(1.6,2.4,2.6,-7,-3.5);
+s.add(B(5,.5,5,0x6b4a1f,0,.25,0));
+// gapura tengah
+s.add(B(3.4,3.2,1,0x5f3d1c,0,1.6,-1.5));
+s.add(B(1.6,4,1.4,0xc9a25a,0,2.6,-1.6));
+const pintu=new THREE.Mesh(new THREE.BoxGeometry(2.4,2.2,.5),M(0x4a2c10));pintu.position.set(0,1.1,-1.85);s.add(pintu);
+// 4 menara sudut + kubah & bendera
+function menara(x,z,tinggi){
+ const bodi=new THREE.Mesh(new THREE.CylinderGeometry(1.1,1.3,tinggi,14),M(0x9a6a34,.9));bodi.position.set(x,tinggi/2,z);bodi.castShadow=true;s.add(bodi);
+ const atap=new THREE.Mesh(new THREE.ConeGeometry(1.25,1.4,14),M(0xcc0000,.8));atap.position.set(x,tinggi+.7,z);atap.castShadow=true;s.add(atap);
+ const tombak=new THREE.Mesh(new THREE.CylinderGeometry(.04,.04,.6,6),M(0x333333,.6,.8));tombak.position.set(x,tinggi+1.7,z);s.add(tombak);
+ const bendera=new THREE.Mesh(new THREE.PlaneGeometry(1.1,.6),M(0xcc0000,.7,.2));bendera.position.set(x+.55,tinggi+1.4,z);s.add(bendera);
+ return bodi;}
+menara(6.5,4,5);menara(-6.5,4,5);menara(6.5,-4,5);menara(-6.5,-4,5);
+// bangunan TIANG UTAMA di tengah (clan castle)
+s.add(B(4.6,3.6,4.6,0xc9a25a,0,1.8,-3.5));
+const kubah=new THREE.Mesh(new THREE.SphereGeometry(2.2,20,14,0,Math.PI*2,0,Math.PI/2),M(0xcc0000,.7));kubah.position.set(0,4.6,-3.5);kubah.castShadow=true;s.add(kubah);
+s.add(B(3,3,3,0xd9b36a,-6,1.5,5));
+s.add(B(3,3,3,0xd9b36a,6,1.5,5));
+s.add(B(3,3,3,0xd9b36a,-6,1.5,-8));
+s.add(B(3,3,3,0xd9b36a,6,1.5,-8));
+// meriam COC
+function meriam(x,z,hdg){
+ const g2=new THREE.Group();
+ const alas=new THREE.Mesh(new THREE.BoxGeometry(1.4,1,.8),M(0x5f3d1c));alas.position.y=.5;g2.add(alas);
+ const laras=new THREE.Mesh(new THREE.CylinderGeometry(.18,.22,1.3,10),M(0x222222,.3,.9));laras.rotation.x=Math.PI/2;laras.position.set(0,1.05,.4);g2.add(laras);
+ const mur=new THREE.Mesh(new THREE.SphereGeometry(.28,10,10),M(0x222222,.3,.9));mur.position.set(0,1.05,.05);g2.add(mur);
+ g2.position.set(x,0,z);g2.rotation.y=hdg;g2.traverse(o=>o.castShadow=true);s.add(g2);return g2;
+}
+const canons=[meriam(-8.3,-1,0),meriam(8.3,2,Math.PI),meriam(1,-8.6,Math.PI/2)];
+// 2 pahlawan barbar + ratu
+function orang(x,z,hero,hdg=0){
+ const gr=new THREE.Group();
+ let baju=hero==='king'?0xcc0000:(hero==='queen'?0x2255cc:0x228822);
+ const bd=new THREE.Mesh(new THREE.BoxGeometry(.6,.9,.4),M(baju));bd.position.y=.95;gr.add(bd);
+ const kp=new THREE.Mesh(new THREE.SphereGeometry(.24,12,12),M(0xffdbac));kp.position.y=1.6;gr.add(kp);
+ const topi=new THREE.Mesh(hero==='king'?new THREE.ConeGeometry(.28,.5,10):new THREE.SphereGeometry(.26,10,10,0,Math.PI*2,0,Math.PI/2),M(hero==='king'?0xcc0000:0xffd700));topi.position.y=1.85;gr.add(topi);
+ if(hero==='queen'){const mahkota=new THREE.Mesh(new THREE.ConeGeometry(.18,.35,8),M(0xffd700));mahkota.position.y=2.1;gr.add(mahkota);
+  const panah=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,1.2,6),M(0x5f3d1c));panah.rotation.x=Math.PI/2;panah.position.set(0,1.3,.6);gr.add(panah);}
+ else{const pedang=new THREE.Mesh(new THREE.BoxGeometry(.08,1.3,.08),M(0xddd));pedang.position.set(.3,1.1,-.05);gr.add(pedang);}
+ gr.position.set(x,0,z);gr.rotation.y=hdg;gr.traverse(o=>o.castShadow=true);s.add(gr);return gr;
+}
+const p1=orang(-3.4,2.5,'king',Math.PI);const p2=orang(3.4,2.5,'queen',Math.PI);const p3=orang(1.5,-10,'barba');
+// emas & elixir
+for(let i=0;i<7;i++){const ky=new THREE.Mesh(new THREE.CylinderGeometry(.2,.24,.5,8),new THREE.MeshStandardMaterial({color:0xffd700,emissive:0xffaa00,emissiveIntensity:.55,metalness:.8,roughness:.25}));ky.position.set((Math.random()-.5)*14,.25,(Math.random()-.5)*14);ky.castShadow=true;s.add(ky);}
+// awan
+function awan(x,y,z){const gr=new THREE.Group();const aw=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1,transparent:true,opacity:.92});
+ for(const xx of[0,1.2,-1.2,.5,-.5,0]){const sp=new THREE.Mesh(new THREE.SphereGeometry(.8,10,10),aw);sp.position.set(xx,0,Math.random()*.5);gr.add(sp);}gr.scale.set(3,1,2);gr.position.set(x,y,z);s.add(gr);return gr;}
+const awans=[awan(14,12,-8),awan(-12,13,10),awan(16,15,4),awan(-17,10,-12)];
+const KING=p1,QUEEN=p2;const mana=[];const ray=new THREE.Raycaster(),ptr=new THREE.Vector2();let qx=0,qy=0,qt=0;
+r.domElement.addEventListener('pointerdown',e=>{qx=e.clientX;qy=e.clientY;qt=performance.now();});
+addEventListener('resize',()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});r.setSize(innerWidth,innerHeight);
+(function l(){requestAnimationFrame(l);const t=performance.now()/1000;
+ p1.position.y=Math.abs(Math.sin(t*2))*.08;p1.rotation.z=Math.sin(t*4+.5)*.05;
+ p2.position.y=Math.abs(Math.cos(t*1.7))*.08;p2.rotation.z=Math.cos(t*3.1)*.05;
+ p3.position.y=Math.abs(Math.sin(t*2.3+1))*.08;
+ for(let i=mana.length-1;i>=0;i--){const m=mana[i];m.t+=.016;m.m.position.y+=1.5*.016;m.m.position.x+=Math.sin(m.t*4)*.012;
+  if(m.t>1.4){s.remove(m.m);mana.splice(i,1);}}
+ for(const w of awans)w.position.x+=Math.sin(t*.1+w.position.y)*.003;
+ o.update();r.render(s,c);})();
+window.tutupGame=tutupGame;
+</script>
+</body></html>
