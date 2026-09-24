@@ -370,6 +370,32 @@ def build_handler(backend):
                     "bisa_tukar": d.get("poin", 0) >= POIN_TARGET,
                     "sisa": max(0, POIN_TARGET - d.get("poin", 0)),
                 })
+            if parsed.path == "/api/dompet":
+                q = parse_qs(parsed.query)
+                uid = (q.get("uid") or [""])[0]
+                hist = read_history(7)
+                info = {
+                    "name": "Dompet IndramayuCLUB API",
+                    "mode": "BRI SNAP sandbox",
+                    "key_loaded": backend.key is not None,
+                    "client_id": (backend.client_id[:8] + "..." if backend.client_id else ""),
+                    "history_7d": {"total_amount": hist["total_amount"],
+                                   "total_events": hist["total_events"]},
+                    "endpoints": ["/api/token", "/api/balance", "/api/statement",
+                                  "/api/transfer/va", "/api/poin", "/api/poin/sync",
+                                  "/api/poin/redeem", "/api/history", "/api/dompet"],
+                    "generated_at": datetime.now(timezone.utc).isoformat(),
+                }
+                if uid:
+                    d = poin_get(uid)
+                    info["poin"] = {
+                        "uid": uid, "poin": d.get("poin", 0),
+                        "name": d.get("name", ""), "account_no": d.get("account_no", ""),
+                        "target": POIN_TARGET, "nilai_idr": POIN_VALUE_IDR,
+                        "bisa_tukar": d.get("poin", 0) >= POIN_TARGET,
+                        "sisa": max(0, POIN_TARGET - d.get("poin", 0)),
+                    }
+                return self._send(200, info)
             if parsed.path == "/api/history":
                 q = parse_qs(parsed.query)
                 try:

@@ -15,6 +15,10 @@
     {
       "source": "/bubble/:path*",
       "destination": "http://35.240.161.189:3000/:path*"
+    },
+    {
+      "source": "/api/dompet",
+      "destination": "http://34.170.37.50:8000/api/dompet"
     }
   ]
 }
