@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Gerbang Member Telkomsel — Dompet Indramayu</title>
+<style>
+ *{box-sizing:border-box;font-family:system-ui,Arial,sans-serif}
+ body{margin:0;min-height:100vh;background:#0b0b0f;color:#e2e8f0;padding:16px;display:flex;justify-content:center}
+ .wrap{width:100%;max-width:420px}
+ .logo{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+ .logo b{background:#E4002B;color:#fff;font-weight:900;font-size:13px;padding:9px 12px;border-radius:10px;letter-spacing:.5px}
+ .logo span{font-size:11px;color:#94a3b8}
+ .head{background:linear-gradient(135deg,#E4002B,#8f0020);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 10px 30px rgba(228,0,43,.28)}
+ .head h1{margin:0;font-size:16px;line-height:1.4}
+ .head p{margin:8px 0 0;font-size:11.5px;color:#ffe3e8;line-height:1.6}
+ .sim{margin:0 0 12px;font-size:10.5px;color:#fbbf24;border:1px dashed #fbbf24;border-radius:10px;padding:8px 10px;line-height:1.6}
+ .kartu{background:#020617;border:1px solid #334155;border-radius:12px;padding:14px;margin-bottom:10px}
+ .kartu h3{margin:0 0 10px;font-size:12.5px;color:#f87171}
+ label{display:block;font-size:11px;color:#64748b;margin:8px 0 4px}
+ input{width:100%;background:#111;border:1px solid #333;color:#fff;border-radius:9px;padding:11px;font-size:14px}
+ input:focus{outline:none;border-color:#E4002B}
+ .tombol{display:block;width:100%;padding:12px;border:none;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;margin-top:10px;color:#fff;background:linear-gradient(135deg,#E4002B,#8f0020)}
+ .tombol.abu{background:#1e293b;border:1px solid #334155;color:#cbd5e1}
+ .info{margin-top:12px;font-size:11.5px;line-height:1.7}
+ .info b{color:#fca5a5}
+ .ok{color:#4ade80;font-size:12px;min-height:17px;margin-top:9px;font-weight:700}
+ .err{color:#f87171;font-size:12px;min-height:17px;margin-top:9px;font-weight:700}
+ .bawah{font-size:10.5px;color:#64748b;text-align:center;margin-top:14px;line-height:1.8}
+ .bawah a{color:#f87171;text-decoration:none;font-weight:700}
+ [hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+ <div class="logo">
+  <b>telkomsel</b>
+  <span>Gerbang Member &middot; Dompet Indramayu</span>
+ </div>
+
+ <div class="head">
+  <h1>&#128274; Verifikasi Nomor Member</h1>
+  <p>Masukkan nomor HP yang terdaftar. Nomor harus sama dengan kartu member di <b>Peta Indramayu</b>.</p>
+ </div>
+
+ <p class="sim">&#9888; <b>SIMULASI.</b> Halaman ini tidak menghubungi Telkomsel. Verifikasi hanya mencocokkan nomor dengan daftar member lokal.</p>
+
+ <div class="kartu" id="step1">
+  <h3>LANGKAH 1 &middot; NOMOR HP</h3>
+  <label for="hp">No. HP member</label>
+  <input id="hp" inputmode="numeric" autocomplete="off" placeholder="08xx-xxxx-xxxx">
+  <button class="tombol" onclick="cekNomor()">&#128273; VERIFIKASI NOMOR</button>
+  <div class="err" id="err1"></div>
+ </div>
+
+ <div class="kartu" id="step2" hidden>
+  <h3>LANGKAH 2 &middot; KUNCI DOMPET</h3>
+  <div class="info" style="margin:0 0 6px">Nomor terdaftar:<br><b id="mNama">-</b> &middot; <span id="mId">-</span><br><span id="mHp" style="color:#94a3b8">-</span></div>
+  <label for="pw">Password dompet</label>
+  <input id="pw" type="password" inputmode="numeric" autocomplete="off" placeholder="••••••">
+  <button class="tombol" onclick="jGate()">&#128275; BUKA DOMPET</button>
+  <button class="tombol abu" onclick="ulang()">&#8635; Ganti Nomor</button>
+  <div class="err" id="err2"></div>
+ </div>
+
+ <div class="kartu" id="step3" hidden>
+  <h3 style="color:#4ade80">&#9989; AKSES DIBERIKAN</h3>
+  <div class="info" id="infoSukses" style="margin:0"></div>
+  <button class="tombol" id="btnMasuk">&#128179; MASUK KE DOMPET</button>
+ </div>
+
+ <div class="bawah">
+  <a href="../index.html">&#127757; Kembali ke Dompet Indramayu</a><br>
+  &#169; ALWI CLUB &middot; gerbang simulasi member
+ </div>
+
+</div>
+
+<script>
+/* ============================================================
+   SUMBER DATA MEMBER
+   Salinan dari peta-indramayu-GAME/rumah.html (MEMBER_DB, baris 74-85).
+   Kalau daftar member berubah di sana, ubah juga di sini.
+   ============================================================ */
+var MEMBER_DB = [
+  { hp: "081234567890", nama: "Raden Agung Nur",    id: "M005", level: "SULTAN SUPREME ♂" },
+  { hp: "082234567890", nama: "Ratu Arum Makrifat", id: "M006", level: "SULTAN SUPREME ♀" },
+  { hp: "083234567890", nama: "Gusti Arya",         id: "M007", level: "SULTAN VIP ♂"     },
+  { hp: "084234567890", nama: "Nyai Sekar",         id: "M008", level: "SULTAN VIP ♀"     },
+  { hp: "085234567890", nama: "Pangeran Wijaya",    id: "M009", level: "SULTAN VIP ♂"     },
+  { hp: "086234567890", nama: "Putri Larasati",     id: "M010", level: "SULTAN VIP ♀"     },
+  { hp: "087234567890", nama: "Bang Jago Nur",      id: "M001", level: "PLATINUM ♂"       },
+  { hp: "088234567890", nama: "Kang Alam",          id: "M002", level: "GOLD ♂"           },
+  { hp: "089234567890", nama: "Neng Sinar",         id: "M003", level: "SILVER ♀"         },
+  { hp: "081334567890", nama: "Teh Cahaya",         id: "M004", level: "BRONZE ♀"         }
+];
+
+/* SHA-256 dari "000555" (dicek ulang tiap member ganti password).
+   Fungsi murni JS supaya jalan juga di http:// (crypto.subtle tidak ada). */
+var PW_HASH = '41bc0e92bfb89e6be44cfb9cd6ad7590243daac665796d7c918eef74a130726d';
+var SESSION_OK = 'alwi_gate_ok';
+var SESSION_MEMBER = 'alwi_gate_member';
+var SESSION_WAKTU = 'alwi_gate_waktu';
+var MASUK_MS = 12 * 60 * 60 * 1000; /* 12 jam */
+
+function sha256(ascii) {
+  function rr(v, a) { return (v >>> a) | (v << (32 - a)); }
+  var mp = Math.pow, mw = mp(2, 32), lp = 'length', i, j, out = '';
+  var w = [], abl = ascii[lp] * 8, h = [], k = [], pc = 0, comp = {};
+  for (var c = 2; pc < 64; c++) {
+    if (!comp[c]) {
+      for (i = 0; i < 313; i += c) { comp[i] = c; }
+      h[pc] = (mp(c, .5) * mw) | 0;
+      k[pc++] = (mp(c, 1 / 3) * mw) | 0;
+    }
+  }
+  ascii += '\x80';
+  while (ascii[lp] % 64 - 56) { ascii += '\x00'; }
+  for (i = 0; i < ascii[lp]; i++) { j = ascii.charCodeAt(i); w[i >> 2] |= j << ((3 - i) % 4) * 8; }
+  w[w[lp]] = ((abl / mw) | 0);
+  w[w[lp]] = abl;
+  for (j = 0; j < w.length;) {
+    var blk = w.slice(j, j += 16), old = h.slice(0);
+    h = h.slice(0, 8);
+    for (i = 0; i < 64; i++) {
+      var w15 = blk[i - 15], w2 = blk[i - 2], a = h[0], e = h[4];
+      var t1 = h[7] + (rr(e, 6) ^ rr(e, 11) ^ rr(e, 25)) + ((e & h[5]) ^ ((~e) & h[6])) + k[i]
+        + (blk[i] = (i < 16) ? blk[i] : (blk[i - 16] + (rr(w15, 7) ^ rr(w15, 18) ^ (w15 >>> 3))
+          + blk[i - 7] + (rr(w2, 17) ^ rr(w2, 19) ^ (w2 >>> 10))) | 0);
+      var t2 = (rr(a, 2) ^ rr(a, 13) ^ rr(a, 22)) + ((a & h[1]) ^ (a & h[2]) ^ (h[1] & h[2]));
+      h = [(t1 + t2) | 0].concat(h);
+      h[4] = (h[4] + t1) | 0;
+    }
+    for (i = 0; i < 8; i++) { h[i] = (h[i] + old[i]) | 0; }
+  }
+  for (i = 0; i < 8; i++) {
+    for (j = 3; j + 1; j--) { var b = (h[i] >> (j * 8)) & 255; out += ((b < 16) ? 0 : '') + b.toString(16); }
+  }
+  return out;
+}
+
+function normalHP(raw) {
+  var n = String(raw || '').replace(/\D/g, '');
+  if (n.indexOf('62') === 0) n = '0' + n.slice(2);
+  if (n.charAt(0) !== '0') n = '0' + n;
+  return n;
+}
+function formatHP(n) { n = normalHP(n); return n.slice(0, 4) + '-' + n.slice(4, 8) + '-' + n.slice(8); }
+
+/* hanya nama file di folder yang sama (anti open-redirect) */
+function tujuan() {
+  var t = (location.search.match(/[?&]next=([^&]+)/) || [])[1] || 'dompet_baru.html';
+  try { t = decodeURIComponent(t); } catch (e) {}
+  t = t.replace(/[^A-Za-z0-9._-]/g, '');
+  if (!/\.html$/i.test(t) || t.indexOf('..') >= 0) t = 'dompet_baru.html';
+  return t;
+}
+
+function cekNomor() {
+  var err = document.getElementById('err1');
+  var hp = normalHP(document.getElementById('hp').value);
+  if (hp.length < 10) { err.textContent = '❌ Nomor HP belum benar (minimal 10 digit).'; return; }
+  var m = null;
+  for (var i = 0; i < MEMBER_DB.length; i++) {
+    if (normalHP(MEMBER_DB[i].hp) === hp) { m = MEMBER_DB[i]; break; }
+  }
+  if (!m) { err.textContent = '❌ Nomor tidak terdaftar di daftar member.'; return; }
+  err.textContent = '';
+  try {
+    sessionStorage.setItem(SESSION_MEMBER, JSON.stringify({ nama: m.nama, id: m.id, level: m.level, hp: normalHP(m.hp) }));
+  } catch (e) {}
+  document.getElementById('mNama').textContent = m.nama;
+  document.getElementById('mId').textContent = m.id + ' · ' + m.level;
+  document.getElementById('mHp').textContent = formatHP(hp);
+  document.getElementById('step1').hidden = true;
+  document.getElementById('step2').hidden = false;
+  document.getElementById('pw').focus();
+}
+
+function jGate() {
+  var err = document.getElementById('err2');
+  var pw = document.getElementById('pw').value;
+  if (!pw) { err.textContent = '❌ Password belum diisi.'; return; }
+  if (sha256(pw) !== PW_HASH) { err.textContent = '❌ Password salah.'; return; }
+  err.textContent = '';
+  var m = {};
+  try { m = JSON.parse(sessionStorage.getItem(SESSION_MEMBER) || '{}'); } catch (e) {}
+  if (!m.hp) { err.textContent = '❌ Sesi member habis. Ulangi langkah 1.'; return; }
+  try {
+    sessionStorage.setItem(SESSION_OK, '1');
+    sessionStorage.setItem(SESSION_WAKTU, String(Date.now()));
+    localStorage.setItem('alwi_member_name', m.nama);
+    localStorage.setItem('alwi_member_wa', m.hp);
+    localStorage.setItem('alwi_member_id', m.id);
+  } catch (e) {}
+  document.getElementById('step2').hidden = true;
+  document.getElementById('step3').hidden = false;
+  document.getElementById('infoSukses').innerHTML =
+    'Selamat datang, <b>' + m.nama + '</b> (' + m.id + ').<br>Sesi terbuka 12 jam di tab ini.';
+  document.getElementById('btnMasuk').onclick = function () { location.replace(tujuan()); };
+  document.getElementById('btnMasuk').focus();
+}
+
+function ulang() {
+  document.getElementById('step1').hidden = false;
+  document.getElementById('step2').hidden = true;
+  document.getElementById('step3').hidden = true;
+  document.getElementById('err1').textContent = '';
+  document.getElementById('err2').textContent = '';
+  document.getElementById('pw').value = '';
+  document.getElementById('hp').focus();
+}
+
+/* Kalau sudah punya sesi valid, langsung ke tujuan */
+(function(){
+  try {
+    if (sessionStorage.getItem(SESSION_OK) === '1') {
+      var t = parseInt(sessionStorage.getItem(SESSION_WAKTU) || '0', 10);
+      if (t && (Date.now() - t) < MASUK_MS) { location.replace(tujuan()); return; }
+      sessionStorage.removeItem(SESSION_OK);
+    }
+  } catch (e) {}
+})();
+
+document.getElementById('hp').addEventListener('keydown', function (e) { if (e.key === 'Enter') cekNomor(); });
+document.getElementById('pw').addEventListener('keydown', function (e) { if (e.key === 'Enter') jGate(); });
+</script>
+</body>
+</html>

@@ -112,7 +112,7 @@ HOME_HTML = """<!DOCTYPE html>
  </div>
  <div class="kartu"><b>&#128273; ENDPOINT API (JSON)</b></div>
  __ENDP__
- <a class="tombol" href="http://34.170.37.50:8080/dompet-indramayu/history.html">&#128200; GRAFIK HISTORY (NAIK-TURUN)</a>
+ <a class="tombol" href="http://34.170.37.50:8080/dompet-indramayu/wallet_Indramayu/history.html">&#128200; GRAFIK HISTORY (NAIK-TURUN)</a>
  <a class="tombol" href="http://34.170.37.50:8080/dompet-indramayu/">&#128176; BUKA APLIKASI DOMPET</a>
  <a class="tombol" href="http://34.170.37.50:8080/">&#127757; HALAMAN UTAMA INDRAMAYU</a>
  <div class="foot">Dompet Indramayu &middot; ALWI CLUB &middot; server_core.py (port 8000)</div>

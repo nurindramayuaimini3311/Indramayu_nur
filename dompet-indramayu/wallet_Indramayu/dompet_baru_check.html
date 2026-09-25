@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<!-- GERBANG MEMBER: halaman ini hanya boleh dibuka lewat verifikasi-member.html -->
+<style id="alwiGateHide">html{visibility:hidden !important}</style>
+<script>
+(function(){
+  var ok=false;
+  try{
+    var t=parseInt(sessionStorage.getItem('alwi_gate_waktu')||'0',10);
+    ok = sessionStorage.getItem('alwi_gate_ok')==='1' && t && (Date.now()-t) < 12*60*60*1000;
+    if(!ok){ sessionStorage.removeItem('alwi_gate_ok'); }
+  }catch(e){ ok=false; }
+  if(ok){
+    var s=document.getElementById('alwiGateHide'); if(s&&s.parentNode) s.parentNode.removeChild(s);
+  }else{
+    location.replace('verifikasi-member.html?next=dompet_baru.html');
+  }
+})();
+</script>
+<noscript><style>html{visibility:visible !important}</style></noscript>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Dompet Indramayu — Dompet Baru</title>
@@ -56,7 +74,7 @@
 
  <div class="bawah">
   <a href="history.html">&#128200; Lihat Grafik History (naik-turun)</a><br>
-  <a href="index.html">&#127757; Kembali ke Dompet Indramayu</a><br>
+  <a href="../index.html">&#127757; Kembali ke Dompet Indramayu</a><br>
   &#169; ALWI CLUB &middot; tukar poin &#8594; BRI (sandbox)
  </div>
 
