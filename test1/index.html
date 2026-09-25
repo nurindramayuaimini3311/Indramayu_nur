@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BRIGAME</title>
+<style>
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;background:#0a0a0a;color:#fff;font-family:system-ui,Arial,sans-serif}
+.gate{position:fixed;inset:0;z-index:10;display:grid;place-items:center;padding:20px;background:#0a0a0a}
+.gate.hidden{display:none}
+.gate-card{width:100%;max-width:360px;padding:24px;border:2px solid #334155;border-radius:16px;background:#111827;box-shadow:0 18px 45px rgba(0,0,0,.5)}
+.gate-card h2{margin:0 0 18px;text-align:center;font-size:22px}
+.gate-card label{display:block;margin-bottom:7px;color:#cbd5e1;font-size:13px;font-weight:800}
+.gate-card input{width:100%;padding:13px;border:2px solid #475569;border-radius:9px;background:#020617;color:#fff;font:inherit;font-size:18px;text-align:center;letter-spacing:3px}
+.gate-card button{width:100%;margin-top:12px;padding:13px;border:0;border-radius:9px;background:#0284c7;color:#fff;font:inherit;font-weight:900;cursor:pointer}
+.gate-card button:active{transform:scale(.98)}
+#message{min-height:18px;margin:10px 0 0;color:#f87171;text-align:center;font-size:12px}
+.app{display:flex;flex-direction:column;height:100%;padding:10px;gap:10px}
+.app[hidden]{display:none}
+.tabs{display:flex;flex:0 0 auto;justify-content:center;gap:8px;flex-wrap:wrap}
+.tabs button{padding:10px 16px;border:2px solid #334155;border-radius:999px;background:#1e293b;color:#e2e8f0;font-weight:800;cursor:pointer}
+.tabs button.active{border-color:#38bdf8;background:#075985;color:#fff}
+.frame{width:100%;min-height:0;flex:1;overflow:hidden;border:1px solid #334155;border-radius:12px;background:#000}
+.frame iframe{display:block;width:100%;height:100%;border:0}
+</style>
+</head>
+<body>
+<div id="gate" class="gate">
+  <form id="loginForm" class="gate-card">
+    <h2>MASUK BRIGAME</h2>
+    <label for="password">PASSWORD</label>
+    <input id="password" type="password" inputmode="numeric" maxlength="6" autocomplete="off" required>
+    <button type="submit">MASUK</button>
+    <p id="message" role="alert"></p>
+  </form>
+</div>
+<div id="app" class="app" hidden>
+  <nav class="tabs" aria-label="Pilih halaman BRIGAME">
+    <button type="button" data-page="cs1.html">CS 1</button>
+    <button type="button" data-page="cs2.html" class="active">CS 2</button>
+    <button type="button" data-page="cs3.htm">CS 3</button>
+    <button type="button" data-page="cs4.html">CS 4</button>
+  </nav>
+  <main class="frame">
+    <iframe id="content" src="cs2.html" title="BRIGAME" allow="autoplay; fullscreen" allowfullscreen></iframe>
+  </main>
+</div>
+<script>
+(function(){
+  var passwordHash='41bc0e92bfb89e6be44cfb9cd6ad7590243daac665796d7c918eef74a130726d';
+  var gate=document.getElementById('gate');
+  var app=document.getElementById('app');
+  var form=document.getElementById('loginForm');
+  var input=document.getElementById('password');
+  var message=document.getElementById('message');
+  function hashPassword(value){
+    return crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)).then(function(buffer){
+      return Array.prototype.map.call(new Uint8Array(buffer),function(byte){return ('0'+byte.toString(16)).slice(-2);}).join('');
+    });
+  }
+  form.addEventListener('submit',function(event){
+    event.preventDefault();
+    hashPassword(input.value).then(function(hash){
+      if(hash===passwordHash){
+        gate.classList.add('hidden');
+        app.hidden=false;
+      }else{
+        message.textContent='Password salah';
+        input.select();
+      }
+    }).catch(function(){
+      message.textContent='Gunakan koneksi HTTPS untuk membuka halaman ini';
+    });
+  });
+  var frame=document.getElementById('content');
+  var buttons=document.querySelectorAll('.tabs button');
+  for(var i=0;i<buttons.length;i++){
+    buttons[i].addEventListener('click',function(){
+      frame.src=this.getAttribute('data-page');
+      for(var k=0;k<buttons.length;k++)buttons[k].classList.remove('active');
+      this.classList.add('active');
+    });
+  }
+})();
+</script>
+</body>
+</html>
