@@ -18,11 +18,9 @@ html,body{width:100%;height:100%;margin:0;background:#0a0a0a;color:#fff;font-fam
 #message{min-height:18px;margin:10px 0 0;color:#f87171;text-align:center;font-size:12px}
 .app{display:flex;flex-direction:column;height:100%;padding:10px;gap:10px}
 .app[hidden]{display:none}
-.tabs{display:flex;flex:0 0 auto;justify-content:center;gap:8px;flex-wrap:wrap}
-.tabs button{padding:10px 16px;border:2px solid #334155;border-radius:999px;background:#1e293b;color:#e2e8f0;font-weight:800;cursor:pointer}
-.tabs button.active{border-color:#38bdf8;background:#075985;color:#fff}
-.frame{width:100%;min-height:0;flex:1;overflow:hidden;border:1px solid #334155;border-radius:12px;background:#000}
-.frame iframe{display:block;width:100%;height:100%;border:0}
+.tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%;max-width:520px;margin:auto}
+.tabs a{display:block;padding:16px 12px;border:2px solid #334155;border-radius:14px;background:#1e293b;color:#e2e8f0;font-weight:800;text-align:center;text-decoration:none}
+.tabs a:active{transform:scale(.98)}
 </style>
 </head>
 <body>
@@ -37,14 +35,11 @@ html,body{width:100%;height:100%;margin:0;background:#0a0a0a;color:#fff;font-fam
 </div>
 <div id="app" class="app" hidden>
   <nav class="tabs" aria-label="Pilih halaman BRIGAME">
-    <button type="button" data-page="cs1.html">CS 1</button>
-    <button type="button" data-page="cs2.html" class="active">CS 2</button>
-    <button type="button" data-page="cs3.htm">CS 3</button>
-    <button type="button" data-page="cs4.html">CS 4</button>
+    <a href="cs1.html">CS 1</a>
+    <a href="cs2.html">CS 2</a>
+    <a href="cs3.html">CS 3</a>
+    <a href="cs4.html">CS 4</a>
   </nav>
-  <main class="frame">
-    <iframe id="content" src="cs2.html" title="BRIGAME" allow="autoplay; fullscreen" allowfullscreen></iframe>
-  </main>
 </div>
 <script>
 (function(){
@@ -73,15 +68,6 @@ html,body{width:100%;height:100%;margin:0;background:#0a0a0a;color:#fff;font-fam
       message.textContent='Gunakan koneksi HTTPS untuk membuka halaman ini';
     });
   });
-  var frame=document.getElementById('content');
-  var buttons=document.querySelectorAll('.tabs button');
-  for(var i=0;i<buttons.length;i++){
-    buttons[i].addEventListener('click',function(){
-      frame.src=this.getAttribute('data-page');
-      for(var k=0;k<buttons.length;k++)buttons[k].classList.remove('active');
-      this.classList.add('active');
-    });
-  }
 })();
 </script>
 </body>
