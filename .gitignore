@@ -1,58 +1,39 @@
+# ===== SECRET - JANGAN PERNAH DILACAK =====
 .env
-
 .env.local
+.env*
+*.env
+config.otomatis.env
+.dev.vars
+fb_config.json
+fresh.git/
+fresh/
+
+# ===== VERCEL & BUILD =====
 .vercel/
-
-# sampah react lama — jangan dilacak
-meta_folder/*.bak-lama
-meta_folder/meta_index.html
-meta_folder/sever.html
-
-# artefak build / salinan / proyek terpisah — jangan dilacak
-www/
-tangkapTERMUX/
+.wrangler/
 node_modules/
+NURgenerator/node_modules/
+www/
 *.apk
 *.idsig
 version.txt
-.env
-.env.local
-node_modules/
-.env
-.env.local
-*.env
-config.otomatis.env
+
+# ===== TUNNEL & SCRIPT OTOMATIS =====
 tunnel-url.txt
 catat-url-tunnel.sh
 otomatis.sh
 tunneling.sh
-.env
-.env.local
-*.env
-config.otomatis.env
-tunnel-url.txt
-catat-url-tunnel.sh
-otomatis.sh
-tunneling.sh
-NURgenerator/node_modules/
-node_modules/
-.wrangler
 
-# mp3 adzan besar — simpan di server, bukan di repo
-NURgenerator/ADZAN/*.mp3
-
-# cadangan file kerja
+# ===== FILE SAMPAH & CADANGAN =====
 *.bak*
-.vercel
-.env*
-sdcard
+*/*.bak-lama
+meta_folder/*.bak-lama
+meta_folder/meta_index.html
+meta_folder/sever.html
+sdcard/
 test1/sd-card/
+tangkapTERMUX/
 
-# secret — jangan pernah dilacak
-fb_config.json
-.dev.vars
-fb_config.json
-.env
-fresh.git/
-fresh/
-node_modules/
+# ===== MEDIA BESAR - JANGAN DI REPO =====
+NURgenerator/ADZAN/*.mp3
