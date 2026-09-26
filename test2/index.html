@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HALAMAN BAGIKAN - Semua Promosi BRIGAME Indramayu</title>
+<meta name="description" content="Satu halaman untuk dibagikan: 7 halaman promosi game, semua model rumah, peta 3D, dan video YouTube.">
+<meta property="og:title" content="HALAMAN BAGIKAN - Semua Promosi BRIGAME Indramayu">
+<meta property="og:description" content="7 halaman promosi game, 7 model rumah, peta 3D, dan video YouTube. Semua link ada di satu halaman.">
+<meta property="og:image" content="https://nurindramayuaimini3311.github.io/Indramayu_nur/test2/poster-bagian.jpg">
+<meta property="og:image:secure_url" content="https://nurindramayuaimini3311.github.io/Indramayu_nur/test2/poster-bagian.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Poster halaman bagikan promosi BRIGAME">
+<meta property="og:url" content="https://nurindramayuaimini3311.github.io/Indramayu_nur/test2/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BRIGAME">
+<meta property="og:locale" content="id_ID">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HALAMAN BAGIKAN - Semua Promosi BRIGAME Indramayu">
+<meta name="twitter:description" content="7 halaman promosi game, 7 model rumah, peta 3D, dan video YouTube.">
+<meta name="twitter:image" content="https://nurindramayuaimini3311.github.io/Indramayu_nur/test2/poster-bagian.jpg">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,Arial,sans-serif}
+body{background:#0b1220;color:#e8eef8;line-height:1.5;padding-bottom:40px}
+a{color:#7dd3fc}
+
+.kop{background:linear-gradient(135deg,#0b3d5c 0%,#123a63 45%,#0d2f4a 100%);padding:26px 16px 22px;border-bottom:4px solid #f5b301}
+.kop-in{max-width:900px;margin:0 auto}
+.kop .tag{display:inline-block;background:#f5b301;color:#0b1220;font-size:12px;font-weight:800;letter-spacing:1px;padding:4px 10px;border-radius:99px;margin-bottom:10px}
+.kop h1{color:#fff;font-size:27px;line-height:1.2;letter-spacing:-.5px}
+.kop p{color:#b9cde4;font-size:14px;margin-top:7px}
+.poster{width:100%;max-width:900px;margin:18px auto 0;display:block;border-radius:12px;border:1px solid #1e3a5f}
+
+.bungkus{max-width:900px;margin:0 auto;padding:0 16px}
+.pilah{margin-top:30px}
+.pilah h2{color:#f5b301;font-size:13px;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:12px;padding-bottom:7px;border-bottom:1px solid #1e3a5f}
+
+/* tombol besar */
+.besar{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.besar a{display:block;background:#123a63;border:2px solid #1e5c8a;border-radius:12px;padding:15px 12px;text-align:center;text-decoration:none;font-weight:800;font-size:15px;color:#fff}
+.besar a:hover{background:#1a4f85;border-color:#f5b301}
+.besar .yt{background:#7a1420;border-color:#a01c2b}
+.besar .yt:hover{background:#a01c2b}
+.besar .vd{background:#0f4c3a;border-color:#157a5e}
+.besar .vd:hover{background:#157a5e}
+
+/* grid tema */
+.tema{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.tema a{display:block;border-radius:12px;padding:16px 12px;text-decoration:none;font-weight:800;font-size:14px;color:#fff;text-align:center;border:2px solid rgba(0,0,0,.35)}
+.tema a small{display:block;font-weight:500;font-size:11px;opacity:.9;margin-top:4px}
+
+/* grid model */
+.model{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px}
+.model a{display:block;background:#101c30;border:1px solid #1e3a5f;border-radius:9px;padding:11px 9px;text-decoration:none;color:#cfe3f7;font-size:13px;font-weight:600;text-align:center}
+.model a:hover{border-color:#f5b301;color:#fff}
+.model .judul{font-size:11px;color:#7f97b3;display:block;font-weight:500;margin-top:2px}
+
+/* daftar link mentah */
+.daftar{background:#0f1a2b;border:1px solid #1e3a5f;border-radius:12px;padding:14px}
+.daftar div.kl{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:#9fd0f0;padding:7px 9px;border-radius:7px;background:#0a1421;margin-bottom:6px;word-break:break-all;display:flex;gap:8px;align-items:flex-start}
+.daftar div.kl b{color:#f5b301;font-weight:700;flex:0 0 118px;font-family:system-ui,sans-serif;font-size:11px;padding-top:1px}
+.daftar div.kl span{flex:1}
+.salin{margin-top:10px;width:100%;background:#f5b301;color:#0b1220;border:0;border-radius:10px;padding:13px;font-weight:800;font-size:15px;cursor:pointer}
+.salin:active{background:#d99e00}
+.salinok{background:#1a7f4b!important;color:#fff!important}
+
+/* link mentah (peta game, belum diedit) */
+.mentah{display:flex;flex-direction:column;gap:7px}
+.mentah a{display:block;background:#0f1a2b;border:1px dashed #3b5b7d;border-radius:9px;padding:11px 12px;
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:#9fd0f0;text-decoration:none;word-break:break-all}
+.mentah a:hover{border-color:#f5b301;color:#fff;background:#16273d}
+
+.foot{margin-top:34px;padding-top:16px;border-top:1px solid #1e3a5f;color:#6f86a1;font-size:12px;text-align:center}
+
+@media(max-width:560px){
+  .kop h1{font-size:22px}
+  .besar{grid-template-columns:1fr}
+  .daftar div.kl{flex-direction:column;gap:2px}
+  .daftar div.kl b{flex:none}
+}
+</style>
+</head>
+<body>
+
+<div class="kop">
+  <div class="kop-in">
+    <span class="tag">HALAMAN BAGIKAN</span>
+    <h1>Semua Promosi BRIGAME Indramayu</h1>
+    <p>Tinggal bagikan link ini. Di bawah sudah ada 7 halaman promosi, 7 model rumah, peta 3D, dan videonya.</p>
+    <img class="poster" src="https://nurindramayuaimini3311.github.io/Indramayu_nur/test2/poster-bagian.jpg"
+         alt="Poster halaman bagikan promosi BRIGAME" width="1200" height="630">
+  </div>
+</div>
+
+<div class="bungkus">
+
+  <div class="pilah">
+    <h2>Buka Cepat</h2>
+    <div class="besar">
+      <a href="https://indramayu-nur-ep1m.vercel.app/">Buka Index Vercel</a>
+      <a class="yt" href="https://www.youtube.com/watch?v=_I96PBVKi3M">Tonton Video YouTube</a>
+      <a class="vd" href="https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/promosi-game.html">Hub Promosi (7 halaman)</a>
+    </div>
+  </div>
+
+  <div class="pilah">
+    <h2>Link Peta Game (mentah, belum diedit)</h2>
+    <div class=" mentah">
+      <a href="https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/index.html">https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/index.html</a>
+      <a href="https://nurindramayuaimini3311.github.io/Indramayu_nur/peta-indramayu-GAME/index.html">https://nurindramayuaimini3311.github.io/Indramayu_nur/peta-indramayu-GAME/index.html</a>
+      <a href="http://34.170.37.50:8080/peta-indramayu-GAME/index.html">http://34.170.37.50:8080/peta-indramayu-GAME/index.html</a>
+    </div>
+  </div>
+
+  <div class="pilah">
+    <h2>7 Halaman Promosi</h2>
+    <div class="tema">
+      <a style="background:#c2410c" href="https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/cs5-rumah.html">Rumah<small>7 model desa</small></a>
+      <a style="background:#3f3f46" href="https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/cs6-kuburan.html">Kuburan<small>suara angker</small></a>
+      <a style="background:#b91c1c" href="https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/cs7-mobil.html">Mobil<small>sprite jalan</small></a>
+      <a style="background:#1d4ed8" href="https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/cs8-trayek.html">Trayek<small>jadwal bus</small></a>
+      <a style="background:#a16207" href="https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/cs9-mancing.html">Mancing<small>scene malam</small></a>
+      <a style="background:#15803d" href="https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/cs10-sawah.html">Sawah<small>petani lucu</small></a>
+      <a style="background:#0f766e" href="https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/promosi-game.html">Semua<small>hub satu halaman</small></a>
+    </div>
+  </div>
+
+  <div class="pilah">
+    <h2>7 Model Rumah (Vercel)</h2>
+    <div class="model">
+      <a href="https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/rumah.html">Rumah Utama<span class="judul">Jatibarang</span></a>
+      <a href="https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/rumah2.html">Rumah 2<span class="judul">Eretan Kulon</span></a>
+      <a href="https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/rumah3.html">Rumah 3<span class="judul">Losarang</span></a>
+      <a href="https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/rumah4.html">Rumah 4<span class="judul">Kroya</span></a>
+      <a href="https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/rumah5.html">Rumah 5<span class="judul">Bongas</span></a>
+      <a href="https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/rumah6.html">Rumah 6<span class="judul">Anjatan</span></a>
+      <a href="https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/rumah7.html">Rumah 7<span class="judul">Arahan</span></a>
+    </div>
+  </div>
+
+  <div class="pilah">
+    <h2>Model Lainnya (Vercel)</h2>
+    <div class="model">
+      <a href="https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/kuburan.html">Kuburan Hantu<span class="judul">Lobener</span></a>
+      <a href="https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/mancing.html">Mancing<span class="judul">Eretan</span></a>
+      <a href="https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/sawah.html">Sawah<span class="judul">Jatibarang</span></a>
+      <a href="https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/sawah2.html">Sawah 2<span class="judul">petani bubble</span></a>
+      <a href="https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/keren-jetbus.html">Jetbus Trayek<span class="judul">CK colase</span></a>
+      <a href="https://indramayu-nur-ep1m.vercel.app/Gudang_GAME/mobil/mobil.html">Mobil Retro<span class="judul">Road Fighter</span></a>
+      <a href="https://indramayu-nur-ep1m.vercel.app/Gudang_GAME/mobil/mobil3.html">Mobil Perang<span class="judul">5 level</span></a>
+      <a href="https://indramayu-nur-ep1m.vercel.app/Gudang_GAME/mobil/bonus_mobil.html">Bonus Mobil<span class="judul">Road Fighter</span></a>
+    </div>
+  </div>
+
+  <div class="pilah">
+    <h2>Salin Link (buat dippeding ke grup)</h2>
+    <div class="daftar" id="daftar">
+      <div class="kl"><b>Index Vercel</b><span>https://indramayu-nur-ep1m.vercel.app/</span></div>
+      <div class="kl"><b>Video YouTube</b><span>https://www.youtube.com/watch?v=_I96PBVKi3M</span></div>
+      <div class="kl"><b>Peta 3D</b><span>https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/index.html</span></div>
+      <div class="kl"><b>Hub Promosi</b><span>https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/promosi-game.html</span></div>
+      <div class="kl"><b>Halaman Ini</b><span>https://nurindramayuaimini3311.github.io/Indramayu_nur/test2/index.html</span></div>
+      <div class="kl"><b>Promosi Rumah</b><span>https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/cs5-rumah.html</span></div>
+      <div class="kl"><b>Promosi Kuburan</b><span>https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/cs6-kuburan.html</span></div>
+      <div class="kl"><b>Promosi Mobil</b><span>https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/cs7-mobil.html</span></div>
+      <div class="kl"><b>Promosi Trayek</b><span>https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/cs8-trayek.html</span></div>
+      <div class="kl"><b>Promosi MancING</b><span>https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/cs9-mancing.html</span></div>
+      <div class="kl"><b>Promosi Sawah</b><span>https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/cs10-sawah.html</span></div>
+      <div class="kl"><b>Model Rumah</b><span>https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/rumah.html</span></div>
+    </div>
+    <button class="salin" id="salin">Salin Semua Link</button>
+  </div>
+
+  <div class="pilah">
+    <h2>Bagikan Halaman Ini</h2>
+    <div class="besar">
+      <a class="yt" id="sharefb" href="#" target="_blank" rel="noopener">Bagikan ke Facebook</a>
+      <a href="https://www.youtube.com/watch?v=_I96PBVKi3M">Buka Video YouTube</a>
+    </div>
+  </div>
+
+  <div class="foot">BRIGAME - Peta Indramayu 3D - Halaman bagikan</div>
+</div>
+
+<script>
+var KANONIK = 'https://nurindramayuaimini3311.github.io/Indramayu_nur/test2/index.html';
+document.getElementById('sharefb').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(KANONIK);
+
+document.getElementById('salin').addEventListener('click', function () {
+  var btn = this;
+  var teks = [];
+  var bars = document.querySelectorAll('#daftar .kl span');
+  for (var i = 0; i < bars.length; i++) teks.push(bars[i].textContent.trim());
+  var semua = teks.join('\n');
+  var selesai = function () {
+    btn.textContent = 'Tersalin ' + teks.length + ' link';
+    btn.classList.add('salinok');
+    setTimeout(function () {
+      btn.textContent = 'Salin Semua Link';
+      btn.classList.remove('salinok');
+    }, 2000);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(semua).then(selesai, function () { selesai(); });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = semua;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    selesai();
+  }
+});
+</script>
+</body>
+</html>
