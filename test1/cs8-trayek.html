@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRAYEK &amp; JETBUS 3D - Bus Sinarjaya | BRIGAME</title>
+<meta name="description" content="Papan trayek bus 3D: Jetbus, Bus Sinarjaya, dan rute keliling Indramayu. Peta jadwal &amp; boarding pass.">
+<meta property="og:title" content="TRAYEK &amp; JETBUS 3D - Bus Sinarjaya">
+<meta property="og:description" content="Papan trayek bus 3D: Jetbus, Bus Sinarjaya, rute keliling Indramayu.">
+<meta property="og:image" content="https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/poster-trayek.jpg">
+<meta property="og:image:secure_url" content="https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/poster-trayek.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Poster Trayek dan Jetbus 3D">
+<meta property="og:url" content="https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/cs8-trayek.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BRIGAME">
+<meta property="og:locale" content="id_ID">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TRAYEK &amp; JETBUS 3D - Bus Sinarjaya">
+<meta name="twitter:description" content="Papan trayek bus 3D keliling Indramayu.">
+<meta name="twitter:image" content="https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/poster-trayek.jpg">
+<style>
+*{box-sizing:border-box;font-family:system-ui,Arial,sans-serif}
+body{margin:0;background:#e8eef7;color:#0f172a;
+ background-image:linear-gradient(#ffffff22 1px,transparent 1px),linear-gradient(90deg,#ffffff22 1px,transparent 1px);
+ background-size:26px 26px}
+.terminal{max-width:600px;margin:0 auto;padding:0 14px 44px}
+.papan{background:#003399;color:#fff;padding:16px 18px;display:flex;align-items:center;gap:13px;
+ border-radius:0 0 12px 12px;box-shadow:0 6px 0 #0b3f8a}
+.papan .lampu{width:15px;height:15px;border-radius:50%;background:#facc15;box-shadow:0 0 14px #facc15;animation:kedip 1.8s infinite}
+@keyframes kedip{0%,100%{opacity:1}50%{opacity:.25}}
+.papan b{font-size:16px;letter-spacing:2.5px;display:block}
+.papan small{font-size:9.5px;letter-spacing:1.5px;color:#bfdbfe}
+.kartu{background:#fff;border-radius:12px;margin:14px 0;overflow:hidden;box-shadow:0 4px 14px rgba(15,23,42,.13)}
+.kartu .gbr{width:100%;display:block}
+.jdl{padding:13px 16px 4px;font-size:12.5px;font-weight:800;letter-spacing:2px;color:#003399}
+.papan2{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;padding:6px 16px 14px}
+.baris{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed #cbd5e1}
+.baris:last-child{border-bottom:0}
+.jam{background:#003399;color:#fff;font-size:11px;font-weight:800;padding:4px 8px;border-radius:5px;min-width:52px;text-align:center}
+.jam.warn{background:#dc2626}
+.nama{flex:1;font-weight:700;font-size:13px}
+.nama small{display:block;font-weight:400;color:#64748b;font-size:10.5px}
+.tiket{background:#fff;border-radius:12px;padding:16px;margin:14px 0;box-shadow:0 4px 14px rgba(15,23,42,.13);
+ background-image:radial-gradient(#cbd5e1 1px,transparent 1px);background-size:9px 9px;background-position:0 0}
+.tiket . atas{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px dashed #94a3b8;padding-bottom:12px}
+.tiket .kota{font-size:19px;font-weight:900;color:#003399;letter-spacing:1px}
+.tiket .mulai{font-size:10px;color:#64748b;letter-spacing:1.5px}
+.tiket .jam2{font-size:26px;font-weight:900;color:#dc2626;line-height:1}
+.tiket .bawah{display:flex;justify-content:space-between;padding-top:12px;font-size:10.5px;color:#475569}
+.kode{font-family:ui-monospace,monospace;background:#0f172a;color:#facc15;padding:5px 11px;border-radius:6px;font-size:12px;letter-spacing:2px}
+.cat{background:#fffbeb;border:2px solid #fde68a;border-radius:10px;padding:11px 14px;font-size:11.5px;color:#78350f;line-height:1.7;margin:14px 0}
+.pintu{display:flex;flex-direction:column;gap:10px;margin:16px 0}
+.tbl{display:block;text-align:center;padding:15px;border-radius:10px;font-weight:800;font-size:14.5px;text-decoration:none}
+.t1{background:#003399;color:#fff}
+.t2{background:#fff;color:#003399;border:2px solid #003399}
+.t3{background:#0f172a;color:#facc15}
+.yt{display:block;text-align:center;padding:13px;border-radius:10px;background:#dc2626;color:#fff;font-weight:800;font-size:14px;text-decoration:none}
+.fb{display:block;text-align:center;padding:13px;border-radius:10px;background:#1877F2;color:#fff;font-weight:800;font-size:14px;text-decoration:none;margin-top:10px}
+.kaki{text-align:center;font-size:10.5px;color:#64748b;line-height:1.9;padding:0 10px}
+.kaki a{color:#003399;font-weight:700}
+</style>
+</head>
+<body>
+<div class="terminal">
+ <div class="papan">
+  <span class="lampu"></span>
+  <span><b>JADWAL TRAYEK</b><small>IND RAMAYU &bull; PAPAN DEPARTURE</small></span>
+ </div>
+
+ <div class="kartu">
+  <img class="gbr" src="https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/poster-trayek.jpg" alt="Trayek dan Jetbus 3D">
+  <div class="jdl">&#128652; RUTE YANG TERSEDIA</div>
+  <div class="papan2">
+   <div class="baris"><span class="jam">06:30</span><span class="nama">Sinarjaya &rarr; Eretan Kulon<small>Berhenti di pasar desa</small></span></div>
+   <div class="baris"><span class="jam">08:15</span><span class="nama">Jetbus &rarr; Losarang<small>Lewat Kandanghaur</small></span></div>
+   <div class="baris"><span class="jam warn">10:00</span><span class="nama">Sinarjaya &rarr; Kroya<small>Jadwal cepat</small></span></div>
+   <div class="baris"><span class="jam">13:20</span><span class="nama">Jetbus &rarr; Bongas<small>Via sawah</small></span></div>
+   <div class="baris"><span class="jam warn">16:45</span><span class="nama">Sinarjaya &rarr; Anjatan<small>Jadwal terakhir</small></span></div>
+  </div>
+ </div>
+
+ <div class="cat">&#9888; Jam di halaman ini adalah <b>jadwal game</b>, bukan jadwal bus sungguhan.</div>
+
+ <div class="tiket">
+  <div class="atas">
+   <span><span class="mulai">DARI</span><br><span class="kota">IND RAMAYU</span></span>
+   <span style="text-align:right"><span class="mulai">JAM</span><br><span class="jam2">08:15</span></span>
+  </div>
+  <div class="bawah">
+   <span>&#128652; JETBUS &bull; LOSARANG</span>
+   <span class="kode">BRG-0815</span>
+  </div>
+ </div>
+
+ <div class="pintu">
+  <a class="tbl t1" href="https://indramayu-nur-ep1m.vercel.app/peta-indramayu-GAME/keren-jetbus.html">&#128652; BUKA MODEL JETBUS (VERCEL)</a>
+  <a class="tbl t2" href="https://indramayu-nur-ep1m.vercel.app/">&#127758; BUKA INDEX VERCEL</a>
+  <a class="tbl t3" href="http://34.170.37.50:8080/peta-indramayu-GAME/index.html">&#127970; BUKA PETA DI VM1</a>
+ </div>
+
+ <a class="yt" href="https://www.youtube.com/watch?v=_I96PBVKi3M" target="_blank" rel="noopener">&#9654; LIHAT VIDEO YOUTUBE</a>
+ <a class="fb" id="btnFB" href="#" target="_blank" rel="noopener noreferrer">&#128214; BAGIKAN KE FACEBOOK</a>
+
+ <div class="kaki">
+  BRIGAME &bull; Peta Indramayu &bull; Sandbox<br>
+  <a href="https://nurindramayuaimini3311.github.io/Indramayu_nur/peta-indramayu-GAME/keren-jetbus.html">Jetbus (GitHub Pages)</a> &bull;
+  <a href="https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/promosi-game.html">Semua Promosi</a>
+ </div>
+</div>
+<script>
+(function () {
+  var KANONIK = 'https://nurindramayuaimini3311.github.io/Indramayu_nur/test1/cs8-trayek.html';
+  var a = document.getElementById('btnFB');
+  if (!a) return;
+  var daring = location.protocol === 'http:' || location.protocol === 'https:';
+  var lokal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  var alamat = (daring && !lokal) ? location.href.split('#')[0] : KANONIK;
+  a.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(alamat) +
+           '&quote=' + encodeURIComponent(document.title || 'Trayek dan Jetbus 3D');
+})();
+</script>
+</body>
+</html>
