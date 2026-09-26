@@ -47,3 +47,7 @@ NURgenerator/ADZAN/*.mp3
 .env*
 sdcard
 test1/sd-card/
+
+# secret — jangan pernah dilacak
+fb_config.json
+.dev.vars
