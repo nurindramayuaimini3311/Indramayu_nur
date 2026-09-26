@@ -15,6 +15,8 @@
  .head h1{margin:0;font-size:16px;line-height:1.4}
  .head p{margin:8px 0 0;font-size:11.5px;color:#ffe3e8;line-height:1.6}
  .sim{margin:0 0 12px;font-size:10.5px;color:#fbbf24;border:1px dashed #fbbf24;border-radius:10px;padding:8px 10px;line-height:1.6}
+ .mode{margin:0 0 12px;font-size:10.5px;border-radius:10px;padding:8px 10px;line-height:1.6;background:#052e16;border:1px solid #166534;color:#86efac}
+ .mode.kli{margin:0 0 12px;font-size:10.5px;border-radius:10px;padding:8px 10px;line-height:1.6;background:#2a0a0a;border:1px solid #7f1d1d;color:#fca5a5}
  .kartu{background:#020617;border:1px solid #334155;border-radius:12px;padding:14px;margin-bottom:10px}
  .kartu h3{margin:0 0 10px;font-size:12.5px;color:#f87171}
  label{display:block;font-size:11px;color:#64748b;margin:8px 0 4px}
@@ -44,7 +46,9 @@
   <p>Masukkan nomor HP yang terdaftar. Nomor harus sama dengan kartu member di <b>Peta Indramayu</b>.</p>
  </div>
 
- <p class="sim">&#9888; <b>SIMULASI.</b> Halaman ini tidak menghubungi Telkomsel. Verifikasi hanya mencocokkan nomor dengan daftar member lokal.</p>
+ <p class="sim">&#9888; <b>SIMULASI.</b> Verifikasi nomor hanya mencocokkan dengan daftar member lokal. Bukan koneksi ke Telkomsel.</p>
+
+ <p class="mode" id="modeInfo">Menyiapkan gerbang&#8230;</p>
 
  <div class="kartu" id="step1">
   <h3>LANGKAH 1 &middot; NOMOR HP</h3>
@@ -57,7 +61,7 @@
  <div class="kartu" id="step2" hidden>
   <h3>LANGKAH 2 &middot; KUNCI DOMPET</h3>
   <div class="info" style="margin:0 0 6px">Nomor terdaftar:<br><b id="mNama">-</b> &middot; <span id="mId">-</span><br><span id="mHp" style="color:#94a3b8">-</span></div>
-  <label for="pw">Password dompet</label>
+  <label for="pw">Password dompet (satu untuk semua member)</label>
   <input id="pw" type="password" inputmode="numeric" autocomplete="off" placeholder="••••••">
   <button class="tombol" onclick="jGate()">&#128275; BUKA DOMPET</button>
   <button class="tombol abu" onclick="ulang()">&#8635; Ganti Nomor</button>
@@ -96,9 +100,9 @@ var MEMBER_DB = [
   { hp: "081334567890", nama: "Teh Cahaya",         id: "M004", level: "BRONZE ♀"         }
 ];
 
-/* SHA-256 dari "000555" (dicek ulang tiap member ganti password).
+/* SHA-256 dari "alwi2021" (dicek ulang tiap member ganti password).
    Fungsi murni JS supaya jalan juga di http:// (crypto.subtle tidak ada). */
-var PW_HASH = '41bc0e92bfb89e6be44cfb9cd6ad7590243daac665796d7c918eef74a130726d';
+var PW_HASH = '7a389cac501f1198d883730bd72a154592efc5ec6fd8499d96ea670f12a322c9';
 var SESSION_OK = 'alwi_gate_ok';
 var SESSION_MEMBER = 'alwi_gate_member';
 var SESSION_WAKTU = 'alwi_gate_waktu';
@@ -178,12 +182,65 @@ function cekNomor() {
   document.getElementById('pw').focus();
 }
 
+var MODE = 'belum';
+
+function setMode(m) {
+  MODE = m;
+  var el = document.getElementById('modeInfo');
+  if (m === 'server') {
+    el.className = 'mode';
+    el.innerHTML = '&#128274; <b>MODE SERVER</b> &mdash; password dicek di server. <code>curl</code> tanpa password otomatis ditolak (401).';
+  } else {
+    el.className = 'mode kli';
+    el.innerHTML = '&#9888; <b>MODE KLIEN</b> &mdash; server gerbang tidak ada di alamat ini, password hanya dicek di HP ini dan <b>bisa ditembus</b>. Buka lewat alamat <code>workers.dev</code> untuk mode aman.';
+  }
+}
+
+function tanyaServer() {
+  return fetch('/api/sehat', { credentials: 'same-origin' })
+    .then(function (r) { return r.ok ? 'server' : 'klien'; })
+    .catch(function () { return 'klien'; });
+}
+
+function sukses(m, menit) {
+  document.getElementById('err2').textContent = '';
+  document.getElementById('step2').hidden = true;
+  document.getElementById('step3').hidden = false;
+  document.getElementById('infoSukses').innerHTML =
+    'Selamat datang, <b>' + (m.nama || '-') + '</b> (' + (m.id || '-') + ').<br>Berlaku ' +
+    Math.round((menit || 43200) / 60) + ' jam' + (MODE === 'server' ? ' di server.' : ' di tab ini.');
+  document.getElementById('btnMasuk').onclick = function () { location.replace(tujuan()); };
+  document.getElementById('btnMasuk').focus();
+}
+
 function jGate() {
   var err = document.getElementById('err2');
   var pw = document.getElementById('pw').value;
   if (!pw) { err.textContent = '❌ Password belum diisi.'; return; }
+  if (MODE === 'server') {
+    err.textContent = '⏳ Meminta server...';
+    var hp = normalHP(document.getElementById('hp').value);
+    fetch('/api/gate', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ hp: hp, password: pw })
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+      .then(function (res) {
+        if (!res.ok) { err.textContent = '❌ ' + (res.data && res.data.error ? res.data.error : 'Login gagal.'); return; }
+        var m = (res.data && res.data.member) || {};
+        try {
+          localStorage.setItem('alwi_member_name', m.nama || '');
+          localStorage.setItem('alwi_member_wa', m.hp || '');
+          localStorage.setItem('alwi_member_id', m.id || '');
+        } catch (e) {}
+        sukses(m, res.data.berlaku_menit);
+      })
+      .catch(function () { err.textContent = '❌ Server tidak bisa dihubungi.'; });
+    return;
+  }
   if (sha256(pw) !== PW_HASH) { err.textContent = '❌ Password salah.'; return; }
-  err.textContent = '';
   var m = {};
   try { m = JSON.parse(sessionStorage.getItem(SESSION_MEMBER) || '{}'); } catch (e) {}
   if (!m.hp) { err.textContent = '❌ Sesi member habis. Ulangi langkah 1.'; return; }
@@ -194,12 +251,7 @@ function jGate() {
     localStorage.setItem('alwi_member_wa', m.hp);
     localStorage.setItem('alwi_member_id', m.id);
   } catch (e) {}
-  document.getElementById('step2').hidden = true;
-  document.getElementById('step3').hidden = false;
-  document.getElementById('infoSukses').innerHTML =
-    'Selamat datang, <b>' + m.nama + '</b> (' + m.id + ').<br>Sesi terbuka 12 jam di tab ini.';
-  document.getElementById('btnMasuk').onclick = function () { location.replace(tujuan()); };
-  document.getElementById('btnMasuk').focus();
+  sukses(m, 43200);
 }
 
 function ulang() {
@@ -212,8 +264,15 @@ function ulang() {
   document.getElementById('hp').focus();
 }
 
-/* Kalau sudah punya sesi valid, langsung ke tujuan */
-(function(){
+/* Deteksi ada worker di depan (mode server) atau tidak (mode klien) */
+tanyaServer().then(function (mode) {
+  setMode(mode);
+  if (mode === 'server') {
+    fetch('/api/sesi', { credentials: 'same-origin' })
+      .then(function (r) { if (r.ok) location.replace(tujuan()); })
+      .catch(function () {});
+    return;
+  }
   try {
     if (sessionStorage.getItem(SESSION_OK) === '1') {
       var t = parseInt(sessionStorage.getItem(SESSION_WAKTU) || '0', 10);
@@ -221,7 +280,7 @@ function ulang() {
       sessionStorage.removeItem(SESSION_OK);
     }
   } catch (e) {}
-})();
+});
 
 document.getElementById('hp').addEventListener('keydown', function (e) { if (e.key === 'Enter') cekNomor(); });
 document.getElementById('pw').addEventListener('keydown', function (e) { if (e.key === 'Enter') jGate(); });

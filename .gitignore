@@ -51,3 +51,8 @@ test1/sd-card/
 # secret — jangan pernah dilacak
 fb_config.json
 .dev.vars
+fb_config.json
+.env
+fresh.git/
+fresh/
+node_modules/

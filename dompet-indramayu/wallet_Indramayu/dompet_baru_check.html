@@ -5,17 +5,24 @@
 <style id="alwiGateHide">html{visibility:hidden !important}</style>
 <script>
 (function(){
-  var ok=false;
-  try{
-    var t=parseInt(sessionStorage.getItem('alwi_gate_waktu')||'0',10);
-    ok = sessionStorage.getItem('alwi_gate_ok')==='1' && t && (Date.now()-t) < 12*60*60*1000;
-    if(!ok){ sessionStorage.removeItem('alwi_gate_ok'); }
-  }catch(e){ ok=false; }
-  if(ok){
+  function buka(){
     var s=document.getElementById('alwiGateHide'); if(s&&s.parentNode) s.parentNode.removeChild(s);
-  }else{
-    location.replace('verifikasi-member.html?next=dompet_baru.html');
   }
+  function tenda(){ location.replace('verifikasi-member.html?next=dompet_baru.html'); }
+  function klien(){
+    try{
+      var t=parseInt(sessionStorage.getItem('alwi_gate_waktu')||'0',10);
+      if(sessionStorage.getItem('alwi_gate_ok')==='1' && t && (Date.now()-t)<12*60*60*1000){ buka(); return; }
+      sessionStorage.removeItem('alwi_gate_ok');
+    }catch(e){}
+    tenda();
+  }
+  fetch('/api/sehat',{credentials:'same-origin'})
+    .then(function(r){
+      if(!r.ok){ klien(); return; }
+      return fetch('/api/sesi',{credentials:'same-origin'}).then(function(s){ s.ok?buka():tenda(); });
+    })
+    .catch(function(){ klien(); });
 })();
 </script>
 <noscript><style>html{visibility:visible !important}</style></noscript>

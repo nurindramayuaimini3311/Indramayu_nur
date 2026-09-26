@@ -43,39 +43,77 @@ Error generating stack: `+u.message+`
 <script src="../alwi_bubble4.js"></script>
 <script>
 (function(){
-if(window.__alwiWalletIcon) return; window.__alwiWalletIcon=true;
+if(window.__alwiEwallet) return; window.__alwiEwallet=true;
 var WA='6282147573665', TARGET=1000, IDR=10000;
 function uid(){var u=localStorage.getItem('alwi_uid');if(!u){u='U'+Date.now().toString(36)+Math.random().toString(36).substr(2,4);localStorage.setItem('alwi_uid',u);}return u;}
 function poin(){return parseInt(localStorage.getItem('alwi_poin')||'0');}
+function sisa(){return Math.max(0,TARGET-poin());}
 function fmt(n){return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
-function pesan(){
-  var v=poin();
-  if(v>=TARGET){
-    return '\ud83e\udd99 <b>TUKAR POIN ALWI</b>\n\n\ud83d\udc64 User: '+uid()+'\n\u2b50 Poin: <b>'+fmt(v)+'</b>\n\ud83c\udf7e Target: '+fmt(TARGET)+' poin\n\ud83d\udcb0 Hadiah: <b>Rp '+fmt(IDR)+'</b>\n\nMohon dicek & transfer manual oleh admin. Mohon konfirmasi nominal & nomor rekening BRI tujuan.';
-  }
-  return '\ud83d\udcb0 <b>CEK DOMPET ALWI</b>\n\n\ud83d\udc64 User: '+uid()+'\n\u2b50 Poin: <b>'+fmt(v)+'</b>\n\ud83c\udf7e Target: '+fmt(TARGET)+' poin ('+Math.min(100,Math.round(v/TARGET*100))+'%)\n\U0001f4cc Kurang <b>'+fmt(Math.max(0,TARGET-v))+'</b> poin lagi\n\nTukar 1.000 poin = Rp '+fmt(IDR)+', dicek manual oleh admin.';
-}
+var st=document.createElement('style');
+st.textContent='@keyframes alwiWslide{from{transform:translateX(110%)}to{transform:translateX(0)}}#alwiWpanel{animation:alwiWslide .28s ease}#alwiWback{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2147482998;display:none}#alwiWback.on{display:block}';
+document.head.appendChild(st);
+var back=document.createElement('div'); back.id='alwiWback'; back.onclick=tutup;
 var btn=document.createElement('button');
-btn.id='ALWI_WALLET_ICON';
+btn.id='ALWI_EWALLET_BTN';
 btn.setAttribute('aria-label','Dompet Alwi');
-btn.title='Dompet Alwi - Tukar Poin';
 btn.innerHTML='<span style="font-size:20px;line-height:1">\uD83D\uDCB0</span>';
 btn.style.cssText='position:fixed;right:12px;top:52px;z-index:2147482999;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:2px solid #fff;box-shadow:0 4px 14px rgba(5,150,105,.45);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s;';
-btn.onclick=function(e){
-  e.stopPropagation();
-  btn.style.transform='scale(.9)';
-  setTimeout(function(){btn.style.transform='scale(1)';},140);
-  window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(pesan()),'_blank');
+btn.onclick=function(e){e.stopPropagation();buka();};
+var p=document.createElement('div'); p.id='alwiWpanel';
+p.style.cssText='position:fixed;top:0;right:0;bottom:0;width:min(340px,88vw);background:#ffffff;z-index:2147482999;box-shadow:-8px 0 28px rgba(0,0,0,.22);display:none;flex-direction:column;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;';
+p.innerHTML=
+'<div style="background:linear-gradient(135deg,#059669,#10b981);color:#fff;padding:18px 16px 22px;display:flex;align-items:center;gap:12px;">'+
+'<div style="font-size:26px">\uD83D\uDCB0</div><div style="flex:1"><div style="font-size:15px;font-weight:800;letter-spacing:.3px">Dompet Alwi</div>'+
+'<div style="font-size:11px;opacity:.85;margin-top:2px" id="alwiWuid">ID: -</div></div>'+
+'<button id="alwiWclose" style="background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:8px;font-size:15px;cursor:pointer;font-weight:700">\u2715</button></div>'+
+'<div style="padding:16px;background:#f8fafc;flex:1;overflow-y:auto;">'+
+'<div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.04)">'+
+'<div style="font-size:11px;color:#64748b;font-weight:700;letter-spacing:.5px">SALDO POIN</div>'+
+'<div id="alwiWpoin" style="font-size:34px;font-weight:900;color:#059669;margin:6px 0 2px">0</div>'+
+'<div id="alwiWprogwrap" style="height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-top:10px"><div id="alwiWprog" style="height:100%;width:0%;background:linear-gradient(90deg,#10b981,#059669);border-radius:99px;transition:width .3s"></div></div>'+
+'<div id="alwiWprogtext" style="font-size:11px;color:#64748b;margin-top:7px">0% dari target</div></div>'+
+'<div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:14px;margin-top:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)">'+
+'<div style="font-size:11px;color:#64748b;font-weight:800;letter-spacing:.4px;margin-bottom:10px">TUKAR POIN</div>'+
+'<div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-bottom:1px dashed #e2e8f0"><span style="color:#64748b">Target tukar</span><b>'+fmt(TARGET)+' poin</b></div>'+
+'<div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-bottom:1px dashed #e2e8f0"><span style="color:#64748b">Diterima</span><b>Rp '+fmt(IDR)+'</b></div>'+
+'<div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0"><span style="color:#64748b">Sisa poin kamu</span><b id="alwiWsisa">0 poin</b></div></div>'+
+'<div id="alwiWstatus" style="margin-top:12px;border-radius:12px;padding:12px;font-size:12.5px;line-height:1.55;display:none"></div>'+
+'<button id="alwiWredeem" style="width:100%;margin-top:14px;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(5,150,105,.35)">Tukar ke WhatsApp Admin</button>'+
+'<button id="alwiWcek" style="width:100%;margin-top:8px;padding:11px;border:1px solid #059669;background:#fff;color:#059669;border-radius:12px;font-weight:700;font-size:12.5px;cursor:pointer">Cek Poin ke Admin</button>'+
+'<div style="font-size:10.5px;color:#94a3b8;text-align:center;margin-top:12px;line-height:1.5">Poin 1.000 = Rp '+fmt(IDR)+'. Transfer dicek manual oleh admin<br>melalui WhatsApp. Tidak ada uang otomatis.</div>'+
+'</div>';
+function tutup(){p.style.display='none';back.classList.remove('on');}
+function buka(){p.style.display='flex';back.classList.add('on');refresh();}
+function refresh(){
+var v=poin(), pr=Math.min(100,Math.round(v/TARGET*100));
+p.querySelector('#alwiWpoin').textContent=fmt(v);
+p.querySelector('#alwiWuid').textContent='ID: '+uid();
+p.querySelector('#alwiWprog').style.width=pr+'%';
+p.querySelector('#alwiWprogtext').textContent=pr+'% dari target';
+p.querySelector('#alwiWsisa').textContent=fmt(sisa())+' poin';
+p.querySelector('#alwiWredeem').style.opacity=v>=TARGET?'1':'.55';
+var b=localStorage.getItem('alwi_poin_claimed')==='1';
+var st=p.querySelector('#alwiWstatus');
+if(v>=TARGET){st.style.display='block';st.style.background='#ecfdf5';st.style.color='#065f46';st.style.border='1px solid #a7f3d0';
+st.innerHTML=(b?'\u2705 <b>Poin kamu sudah pernah diklaim.</b> Silakan hubungi admin bila ingin tukar lagi.':'\ud83c\udf89 <b>Selamat! Poin mencapai target.</b> Tekan tombol di bawah untuk tukar ke admin.')+'<br>Status: <b>'+fmt(v)+'</b> poin \u2192 Rp '+fmt(IDR);}
+else{st.style.display='block';st.style.background='#fffbeb';st.style.color='#92400e';st.style.border='1px solid #fde68a';
+st.innerHTML='Kurang <b>'+fmt(sisa())+'</b> poin lagi untuk bisa tukar. Kumpulkan dari game & belajar.';}
+}
+function redeem(){
+var v=poin();
+if(v<TARGET){p.querySelector('#alwiWredeem').animate([{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}],{duration:220});return;}
+var m='\ud83e\udd99 <b>TUKAR POIN ALWI</b>\n\n\ud83d\udc64 User: '+uid()+'\n\u2b50 Poin: <b>'+fmt(v)+'</b>\n\ud83c\udf7e Target: '+fmt(TARGET)+' poin\n\ud83d\udcb0 Hadiah: <b>Rp '+fmt(IDR)+'</b>\n\nMohon dicek & dicek manual oleh admin. Mohon konfirmasi nominal & nomor rekening BRI tujuan.';
+window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(m),'_blank');
+}
+p.querySelector('#alwiWclose').onclick=tutup;
+p.querySelector('#alwiWredeem').onclick=redeem;
+p.querySelector('#alwiWcek').onclick=function(){
+var v=poin();
+var m='\u2b50 <b>CEK POIN ALWI</b>\n\n\ud83d\udc64 User: '+uid()+'\n\u2b50 Poin: <b>'+fmt(v)+'</b>\n\ud83c\udf7e Target: '+fmt(TARGET)+' poin ('+Math.min(100,Math.round(v/TARGET*100))+'%)';
+window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(m),'_blank');
 };
-var tip=document.createElement('div');
-tip.style.cssText='position:fixed;right:64px;top:60px;z-index:2147482999;background:#065f46;color:#fff;font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;pointer-events:none;opacity:0;transition:opacity .25s;white-space:nowrap;';
-tip.textContent='Dompet Alwi';
-document.addEventListener('DOMContentLoaded',function(){
-  document.body.appendChild(btn);
-  document.body.appendChild(tip);
-  btn.addEventListener('mouseenter',function(){tip.style.opacity='1';});
-  btn.addEventListener('mouseleave',function(){tip.style.opacity='0';});
-});
+function mount(){if(!document.body) return; document.body.appendChild(back); document.body.appendChild(btn); document.body.appendChild(p);}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mount); else mount();
 })();
 </script>
 </body>

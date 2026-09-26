@@ -1,0 +1,119 @@
+NOTA NOMOR HP — PETA INDRAMAYU
+Sumber: INDRAMAYU_CLUBVV2/nur2_login.html (MEMBER_DB, urutan sama dengan kartu peta)
+Tanggal: 2026-09-25
+
+NO | NAMA               | ID   | LEVEL            | HP            | WA                | FILE PETA
+---+---------------------+------+------------------+---------------+-------------------+-----------
+ 2 | Ratu Arum Makrifat | M006 | SULTAN SUPREME ♀ | 0822-3456-7890| 6282234567890     | laut.html
+ 3 | Gusti Arya         | M007 | SULTAN VIP ♂     | 0832-3456-7890| 6283234567890     | rumah.html
+ 4 | Nyai Sekar         | M008 | SULTAN VIP ♀     | 0842-3456-7890| 6284234567890     | rumah2.html
+ 5 | Pangeran Wijaya    | M009 | SULTAN VIP ♂     | 0852-3456-7890| 6285234567890     | rumah3.html
+ 6 | Putri Larasati     | M010 | SULTAN VIP ♀     | 0862-3456-7890| 6286234567890     | rumah4.html
+ 7 | Bang Jago Nur      | M001 | PLATINUM ♂       | 0872-3456-7890| 6287234567890     | rumah5.html
+ 8 | Kang Alam          | M002 | GOLD ♂           | 0882-3456-7890| 6288234567890     | rumah6.html
+ 9 | Neng Sinar         | M003 | SILVER ♀         | 0892-3456-7890| 6289234567890     | rumah7.html
+
+BELUM DIPAKAI DI PETA (tersedia di daftar member)
+ 1 | Raden Agung Nur    | M005 | SULTAN SUPREME ♂ | 0812-3456-7890| 6281234567890     | -
+10 | Teh Cahaya         | M004 | BRONZE ♀         | 0813-3456-7890| 6281334567890     | -
+
+NOMOR LAIN
+- Tukar poin / admin dompet : 0821-4757-3665 (wa.me/6282147573665)
+- Laporan saja              : 0813-8651-752
+- Kunci dompet (server)     : 000555 (tersimpan di config/.env VM1, bukan di HTML)
+
+CARA UBAH NOMOR DI KARTU PETA
+- Ganti daftar MEMBER_DB di dalam file .html peta (bagian <script> terakhir)
+- atau cukup ubah const NOMOR = N; untuk pindah kartu member
+
+CARA MAIN
+- Buka index.html (peta utama). Menu ☰ di kanan atas berisi semua game & tempat.
+- Peta 2D: ketuk pin untuk lihat popup; tombol "▶ MASUK 3D" masuk ke scene 3D,
+  tombol "📹 Video & Komentar" membuka video + komentar (dari Apps Script).
+- Scene 3D (rumah, laut, masjid, istana, sawah, dst): geser layar = memutar kamera,
+  cubit/2 jari = zoom, kamera berputar sendiri (autoRotate). Tombol ✕ di kartu =
+  tutup kartu, tombol ← PETA = kembali.
+- Game stir (patrol-bebas, showroom-3D, final_github_pages, bebas-eretan2):
+  panah / WASD = kendali, layar sentuh = tombol arah. patrol-malam = versi malam.
+- Kartu member: nama + HP + level + poin otomatis. Foto dan tombol 💬 WA membuka
+  WhatsApp nomor member. Poin diambil dari localStorage alwi_poin.
+- Bisa dipasang ke HP: sudah ada manifest + service worker (offline, cache v6).
+
+TOOL YANG KURANG
+- Tidak ada tool admin: kartu member hanya bisa diubah manual edit MEMBER_DB
+  di tiap file. Belum ada halaman admin untuk tambah member/ubah nomor.
+- Tidak ada multiplayer/leaderboard: semua mainan 1 pemain, skor tidak disimpan
+  ke server (hanya di HP masing-masing).
+- Tidak ada login member sungguhan: nur2_login.html masih database lokal + simulasi.
+- Tidak ada input suara/microphone atau kamera depan untuk kartu member.
+- Tidak ada export PDF/PNG kartu member (belum ada tombol screenshot).
+- three.js lokal sudah ada (three.module.js + addons/controls/OrbitControls.js)
+  tapi tiap file 3D masih duplikasi kode, belum pakai satu file bersama.
+- Tidak ada tool gambar/peta: Leaflet dimuat dari internet (unpkg) — butuh internet.
+- Belum ada backup otomatis file peta; yang ada sw.js hanya cache di browser.
+
+================================================================
+NOTA WALLET INDRAMAYU — GERBANG TELKOMSEL (SIMULASI)
+Tanggal: 2026-09-25   Commit: 006e83e
+================================================================
+
+CARA MAIN (urutan)
+  1. Buka  dompet-indramayu/index.html        (menu, tetap terbuka)
+  2. Klik  "Main Sekarang" atau "Verifikasi Member Telkomsel"
+  3. Masuk gerbang: verifikasi-member.html
+  4. LANGKAH 1 -> ketik nomor HP member (harus terdaftar)
+  5. LANGKAH 2 -> ketik password dompet
+  6. Klik "BUKA DOMPET" -> masuk ke dompet_baru.html
+  Sesi berlaku 12 jam di tab itu. Tutup tab = terkunci lagi.
+
+PASSWORD
+  Kunci dompet : 000555
+  Disimpan sebagai hash SHA-256 di halaman gerbang (bukan angka polos).
+
+DAFTAR NOMOR (sama dengan kartu peta, urutan tidak berubah)
+   1  Raden Agung Nur    M005  SULTAN SUPREME   0812-3456-7890
+   2  Ratu Arum Makrifat M006  SULTAN SUPREME   0822-3456-7890
+   3  Gusti Arya         M007  SULTAN VIP       0832-3456-7890
+   4  Nyai Sekar         M008  SULTAN VIP       0842-3456-7890
+   5  Pangeran Wijaya    M009  SULTAN VIP       0852-3456-7890
+   6  Putri Larasati     M010  SULTAN VIP       0862-3456-7890
+   7  Bang Jago Nur      M001  PLATINUM         0872-3456-7890
+   8  Kang Alam          M002  GOLD             0882-3456-7890
+   9  Neng Sinar         M003  SILVER           0892-3456-7890
+  10  Teh Cahaya         M004  BRONZE           0813-3456-7890
+  Cara cek: ketik 0899-9999-9999 -> harus DITOLAK.
+  Cara cek: ketik 0832-3456-7890 -> harus LOLOS (Gusti Arya).
+  Nomor juga boleh ditulis 62... (mis. 6283234567890) -> otomatis jadi 08...
+
+FILE
+  dompet-indramayu/index.html                        terbuka (tidak dikunci)
+  dompet-indramayu/wallet_Indramayu/verifikasi-member.html   GERBANG
+  dompet-indramayu/wallet_Indramayu/dompet_baru.html         terkunci
+  dompet-indramayu/wallet_Indramayu/dompet_baru_check.html   terkunci
+  dompet-indramayu/wallet_Indramayu/history.html             BELUM dikunci
+  URL lama (/dompet-indramayu/dompet_baru.html) sudah 404.
+
+YANG BELUM AMAN (penting)
+  - Gate ini hanya di browser. HTML tetap bisa dibaca lewat View Source,
+    jadi 000555 bukan rahasia absolut.
+  - API http://34.170.37.50:8000 masih terbuka tanpa password:
+    /api/poin/redeem, /api/transfer/va, /api/balance, /api/history.
+  - /api/token masih membocorkan 20 karakter access token BRI ke siapa pun.
+  - Kunci sungguhan harus ditaruh di server_core.py (VM1) + HTTPS.
+    Akses SSH ke VM1 ditolak, jadi belum bisa dipasang.
+
+============================================================
+CATATAN ALWI BOT (VM3 136.85.74.104) — YANG WAJIB DISIMPAN
+============================================================
+JANGAN DIHAPUS: /home/imahazzah51/bot-alwi-wa/   bot WhatsApp yg jalan (pm2 bot-alwi-wa)
+                - .env (token WA + IMAP), folder auth/ (sesi login WA)
+                - bot-alwi.cjs, agent-alwi-data.cjs (kamus artikel)
+JANGAN DIHAPUS: /root/NURgenerator/              server.js (:8080), server3000.js (:3000), bot-wa
+JANGAN DIHAPUS: /home/imahazzah51/Indramayu_nur/ isi web :8080/:3000 (135M, BUKAN 9GB)
+JANGAN DIHAPUS: /root/backup-indramayu/20260925-1424/  mirror peta + dompet (chmod 700)
+SERVIS:        sudah pm2 save -> alwi-server, alwi-web-3000, bot-wa hidup lagi setelah restart
+CATATAN:       Ollama + kalkulator TIDAK ada di VM3 (ada di VM2 35.240.161.189)
+RUANG:         disk VM3 8.3G/9.6G (88%). Yang dihapus: snap lama, seed snap, log, transfer-html.zip
+BACKUP VM1:    Indramayu_nur.zip (231M) + Indramayu_nur-20260921.zip (152M) masih ada,
+               belum dihapus. File aslinya tetap utuh, mirror sudah ada di VM3.
+
