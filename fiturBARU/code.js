@@ -61,7 +61,7 @@ function include(filename) {
 // ==================== BOT EMAIL ====================
 
 function botKirimEmail(tujuan, subjek, pesan) {
-  tujuan = tujuan || Session.getActiveUser().getEmail() || 'jamHari87@gmail.com';
+  tujuan = tujuan || Session.getActiveUser().getEmail() || 'alwi.indramayuclub@gmail.com';
   subjek = subjek || 'Tes Bot Indramayu Club - ' + new Date().toLocaleString('id-ID');
   pesan = pesan || 'Halo! Ini email otomatis dari sistem Indramayu Club Makrifat.\n\nBot aktif dan berjalan normal.\nWaktu: ' + new Date().toLocaleString('id-ID') + '\n\nLink App: https://script.google.com/macros/s/11rbjpq2MFmBZR2FiIPI_It5iJAorwvbMfYLiO59esHKulpP2Fjc4AEuY/exec';
 
